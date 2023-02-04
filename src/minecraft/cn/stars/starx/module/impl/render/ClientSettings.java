@@ -17,7 +17,7 @@ import java.awt.*;
 public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Rise Rainbow",
             "Rise Rainbow", "Rise", "Comfort",
-            "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet");
+            "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet", "StarX");
     private final ModeValue list = new ModeValue("List Animation", this, "StarX", "StarX", "Slide");
     private final NumberValue red = new NumberValue("Red", this, 19, 0, 255, 1);
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);

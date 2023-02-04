@@ -8,14 +8,17 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.render.ClickGui;
 import cn.stars.starx.module.impl.render.GuiAnimation;
 import cn.stars.starx.setting.Setting;
-import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.setting.impl.ModeValue;
-import cn.stars.starx.setting.impl.NoteValue;
-import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.setting.impl.*;
+import cn.stars.starx.util.animation.normal.Animation;
+import cn.stars.starx.util.animation.normal.Direction;
+import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
+import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
+import cn.stars.starx.util.render.GlUtils;
 import cn.stars.starx.util.render.InGameBlurUtil;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,6 +26,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -109,6 +113,10 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
     double widthOfScript;
     double heightOfScript;
 
+    private SimpleAnimation changeAnimation = new SimpleAnimation(0.0F);
+    private Animation introAnimation;
+    private boolean close;
+
     public boolean blockScriptEditorOpen;
 
     public ClickGUI() {
@@ -123,6 +131,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     @Override
     public void initGui() {
+        close = false;
         size = GuiAnimation.startingSizeValue;
 
         holdingGui = false;
@@ -149,13 +158,12 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             i++;
             //Rise.addChatMessage(s + " " + i);
         }
+        introAnimation = new EaseBackIn(450, 1, 2);
         mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
     }
 
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        GlStateManager.pushMatrix();
-
         final boolean blur = ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Blur"))).isEnabled();
 
         if (blur) {
@@ -164,17 +172,16 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
         final ScaledResolution sr = new ScaledResolution(mc);
 
-        final boolean canPopUp = Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getModule("GuiAnimation")).isEnabled() && GuiAnimation.clickGuiValue;
-
-        if (canPopUp) {
-            size = (float) MathUtil.lerp(size, 1, GuiAnimation.speedValue / (Minecraft.getDebugFPS() / 20D));
-
-            GlStateManager.translate((x - x * size) + (width / 2F - width / 2F * size), (y - y * size) + (height / 2F - height / 2F * size), 0);
-            GlStateManager.scale(size, size, 1);
-        } else {
-            size = 1;
+        if (close) {
+            introAnimation.setDirection(Direction.BACKWARDS);
+            if(introAnimation.isDone(Direction.BACKWARDS)) {
+                mc.displayGuiScreen(null);
+            }
         }
 
+        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
+
+        size = 1;
         if (resizingGui) {
 
             width = 320;
@@ -254,7 +261,8 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         RenderUtil.roundedRectCustom(x + categoryWidth, y, width - categoryWidth, categoryHeight, 10, colorTop, false, true, false, false);
 
         //Logo
-        CustomFont.drawStringBig(StarX.NAME, x + 8, y + 1f, new Color(237, 237, 237).getRGB());
+        TTFFontRenderer title = CustomFont.FONT_MANAGER.getFont("Regular 35");
+        title.drawString(StarX.NAME, x + 8, y + 1f, new Color(237, 237, 237).getRGB());
         //CustomFont.drawString(Rise.CLIENT_VERSION, x + 46, y + 3.0, new Color(237, 237, 237).getRGB());
 
         // Handle the selected category.
@@ -290,7 +298,8 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
                     icon.drawString("c", x + 5, y + categoryHeight * (amount + 1) + categoryHeight / 2 - 3.5F, color.hashCode());
                     break;
                 }
-                case RENDER: {
+                case RENDER:
+                case HUD: {
                     icon2.drawString("D", x + 5, y + categoryHeight * (amount + 1) + categoryHeight / 2 - 3.5F, color.hashCode());
                     break;
                 }
@@ -359,6 +368,11 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
                                             CustomFont.drawString(s.name, settingsX, settingsY, new Color(237, 237, 237, 150).getRGB());
                                         } else {
                                             CustomFont.drawString(s.name, settingsX, settingsY, new Color(237, 237, 237).getRGB());
+                                        }
+
+                                        if (s instanceof TextValue) {
+                                            CustomFont.drawString(s.name, settingsX, settingsY, new Color(137, 137, 137, 100).getRGB());
+                                            CustomFont.drawString(": " + ((TextValue) s).readText(), settingsX + fontWidth, settingsY, new Color(237, 237, 237, 150).getRGB());
                                         }
 
                                         if (s instanceof BoolValue) {
@@ -549,8 +563,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar X"))).setValue(x);
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar Y"))).setValue(y);
         } */
-
-        GlStateManager.popMatrix();
+        GlUtils.stopScale();
     }
 
 //    public void drawScript(final OnlineScriptHandler.OnlineScript script, final double x, final double y, final double width, final double height) {
@@ -604,17 +617,35 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         }
     }
 
+    private boolean checkWhitelistModule(final Module m) {
+        String n = m.getModuleInfo().name();
+        if (!n.equals("ClientSettings") && !n.equals("ClickGui") && !n.equals("SkinLayers3D")) {
+            return true;
+        }
+        return false;
+    }
+
     public void renderModule(final float x, final float y, final float width, final float height, final Module m) {
+        ScaledResolution sr = new ScaledResolution(mc);
+        if (close) {
+            introAnimation.setDirection(Direction.BACKWARDS);
+            if(introAnimation.isDone(Direction.BACKWARDS)) {
+                mc.displayGuiScreen(null);
+            }
+        }
+
+        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
         //Module background
         RenderUtil.roundedRect(x, y, width, height, 5, new Color(255, 255, 255, 10));
 
         //Module name
-        CustomFont.drawString(m.getModuleInfo().name(), x + 4, y + 6, ((m.isEnabled()) ? booleanColor2 : new Color(237, 237, 237)).getRGB());
+        if (!checkWhitelistModule(m)) CustomFont.drawString(m.getModuleInfo().name(), x + 4, y + 6, new Color(237, 237, 17).getRGB());
+        else CustomFont.drawString(m.getModuleInfo().name(), x + 4, y + 6, ((m.isEnabled()) ? booleanColor2 : new Color(237, 237, 237)).getRGB());
 
         //Switch
-        if (!m.getModuleInfo().name().equals("Interface")) {
-            RenderUtil.roundedRect(x + width - 15, y + 8, 10, 5, 5, new Color(255, 255, 255, 255));
-            RenderUtil.circle(x + width - ((m.isEnabled()) ? 10 : 17), y + 7, 7, booleanColor1);
+        if (checkWhitelistModule(m)) {
+            RenderUtil.roundedRect(x + width - 15, y + 8, 10, 5, 7, new Color(255, 255, 255, 255));
+            RenderUtil.circle((x + width - ((m.isEnabled()) ? 10 : 17)), (y + 7), 7, booleanColor1);
         }
 
         if (m.clickGuiOpacity != 1)
@@ -624,6 +655,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         if (m.descOpacityInGui > 1)
             CustomFont.drawStringSmall(m.getModuleInfo().description(), x + (CustomFont.getWidth(m.getModuleInfo().name())) + 6, y + 8, new Color(175, 175, 175, Math.round(m.descOpacityInGui)).getRGB());
 
+        GlUtils.stopScale();
     }
 
 //    public void renderScript(final float x, final float y, final float width, final float height, final Script script) {
@@ -647,6 +679,13 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
         //Module name
         CustomFont.drawString(n, x + 4, y + 6, booleanColor2.hashCode());
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            close = true;
+        }
     }
 
     @Override
@@ -749,7 +788,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
                     }
 
                     if (mouseOver(x + categoryWidth, y + categoryHeight + heightOffset + offset * amount + renderScrollAmount, moduleWidth, moduleHeight, mouseX, mouseY)) {
-                        if (button == 0 && !m.getModuleInfo().name().equals("ClickGui")) {
+                        if (button == 0 && checkWhitelistModule(m)) {
                             m.toggleModule();
                             mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
                         }
@@ -814,9 +853,15 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     @Override
     public void onGuiClosed() {
+        close = true;
         selectedSlider = null;
         holdingGui = resizingGui = false;
         Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getModule("ClickGui")).toggleModule();
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
     }
 
 //    private static double round(final double value, final int places) {

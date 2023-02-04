@@ -67,6 +67,7 @@ public final class ThemeUtil implements GameInstance {
 
                 case "Rise Rainbow":
                 case "Minecraft Rainbow":
+                case "StarX":
                     colorOffsetMultiplier = 5f;
                     break;
             }
@@ -91,6 +92,7 @@ public final class ThemeUtil implements GameInstance {
 
                     case "Rise Rainbow":
                     case "Minecraft Rainbow":
+                    case "StarX":
                         color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
                         break;
                 }
@@ -107,6 +109,7 @@ public final class ThemeUtil implements GameInstance {
 
                     case "Rise Rainbow":
                     case "Minecraft Rainbow":
+                    case "StarX":
                         color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
                         break;
                 }

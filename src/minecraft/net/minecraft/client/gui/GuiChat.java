@@ -1,10 +1,26 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.StarX;
+import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.module.Category;
+import cn.stars.starx.module.Module;
+import cn.stars.starx.ui.gui.GuiEditHUD;
+import cn.stars.starx.util.animation.normal.Animation;
+import cn.stars.starx.util.animation.normal.Direction;
+import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
+import cn.stars.starx.util.render.ClickEffect;
+import cn.stars.starx.util.render.GlUtils;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.shader.round.RoundedUtils;
 import com.google.common.collect.Lists;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
@@ -20,7 +36,10 @@ import org.lwjgl.input.Mouse;
 
 public class GuiChat extends GuiScreen
 {
+    TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
     private static final Logger logger = LogManager.getLogger();
+    private List<ClickEffect> clickEffects = new ArrayList<>();
+
     private String historyBuffer = "";
 
     /**
@@ -41,6 +60,9 @@ public class GuiChat extends GuiScreen
      */
     private String defaultInputFieldText = "";
 
+    private Animation introAnimation;
+    private boolean close;
+
     public GuiChat()
     {
     }
@@ -56,6 +78,10 @@ public class GuiChat extends GuiScreen
      */
     public void initGui()
     {
+        close = false;
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+            m.setDragging(false);
+        }
         Keyboard.enableRepeatEvents(true);
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
         this.inputField = new GuiTextField(0, this.fontRendererObj, 4, this.height - 12, this.width - 4, 12);
@@ -64,6 +90,7 @@ public class GuiChat extends GuiScreen
         this.inputField.setFocused(true);
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
+        introAnimation = new EaseBackIn(100, 1, 0);
     }
 
     /**
@@ -71,6 +98,9 @@ public class GuiChat extends GuiScreen
      */
     public void onGuiClosed()
     {
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+            m.setDragging(false);
+        }
         Keyboard.enableRepeatEvents(false);
         this.mc.ingameGUI.getChatGUI().resetScroll();
     }
@@ -102,7 +132,7 @@ public class GuiChat extends GuiScreen
 
         if (keyCode == 1)
         {
-            this.mc.displayGuiScreen((GuiScreen)null);
+            close = true;
         }
         else if (keyCode != 28 && keyCode != 156)
         {
@@ -136,7 +166,7 @@ public class GuiChat extends GuiScreen
                 this.sendChatMessage(s);
             }
 
-            this.mc.displayGuiScreen((GuiScreen)null);
+            close = true;
         }
     }
 
@@ -169,11 +199,18 @@ public class GuiChat extends GuiScreen
         }
     }
 
+    public void mouseReleased(int mouseX, int mouseY, int state) {
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+            m.setDragging(false);
+        }
+    }
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
+        ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
+        clickEffects.add(clickEffect);
         if (mouseButton == 0)
         {
             IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -183,7 +220,19 @@ public class GuiChat extends GuiScreen
                 return;
             }
         }
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
 
+                boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
+                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+
+                if(isInside) {
+                    m.setDragging(true);
+                    m.setDraggingX(m.getX() - mouseX);
+                    m.setDraggingY(m.getY() - mouseY);
+                }
+            }
+        }
         this.inputField.mouseClicked(mouseX, mouseY, mouseButton);
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -303,6 +352,22 @@ public class GuiChat extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        final ScaledResolution sr = new ScaledResolution(mc);
+
+        if (close) {
+            introAnimation.setDirection(Direction.BACKWARDS);
+            if(introAnimation.isDone(Direction.BACKWARDS)) {
+                mc.displayGuiScreen(null);
+            }
+        }
+
+        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
+
+        gs.drawCenteredString("Drag huds to change their positions!", width / 2, 10, Color.WHITE.getRGB());
+        RoundedUtils.drawRoundOutline(width / 2 - 90, 8, 180, 14, 4, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, 255));
+
+        GlUtils.stopScale();
+
         RenderUtil.roundedRect(1, this.height - 14, this.width - 2, this.height, 5, new Color(0,0,0,120));
         this.inputField.drawTextBox();
         IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -311,8 +376,35 @@ public class GuiChat extends GuiScreen
         {
             this.handleComponentHover(ichatcomponent, mouseX, mouseY);
         }
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
+
+                boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
+                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                m.editOpacityAnimation.setAnimation(isInside ?  255 : 0, 10);
+
+                RoundedUtils.drawRoundOutline(m.getX() - 4, m.getY() - 4, (m.getWidth()) + 8, (m.getHeight()) + 8, 6, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()));
+
+                if (isInside) {
+                    gs.drawString(m.getModuleInfo().name(), m.getX() + m.getWidth() - gs.getWidth(m.getModuleInfo().name()), m.getY() + m.getHeight() - 7, new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()).getRGB());
+                }
+                if(m.isDragging()) {
+                    m.setX(mouseX + m.getDraggingX());
+                    m.setY(mouseY + m.getDraggingY());
+                }
+            }
+        }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
+
+        if(clickEffects.size() > 0) {
+            Iterator<ClickEffect> clickEffectIterator= clickEffects.iterator();
+            while(clickEffectIterator.hasNext()){
+                ClickEffect clickEffect = clickEffectIterator.next();
+                clickEffect.draw();
+                if (clickEffect.canRemove()) clickEffectIterator.remove();
+            }
+        }
     }
 
     public void onAutocompleteResponse(String[] p_146406_1_)

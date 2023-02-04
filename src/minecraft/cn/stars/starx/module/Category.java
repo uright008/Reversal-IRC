@@ -7,6 +7,7 @@ public enum Category {
     RENDER,
     MISC,
     WORLD,
+    HUD,
     ADDONS;
 
     public int moduleIndex;

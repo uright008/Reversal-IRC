@@ -5,6 +5,7 @@ import cn.stars.starx.font.TTFFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 
@@ -36,11 +37,11 @@ public class KeystrokeUtil {
         }
 
         if (key == Minecraft.getMinecraft().gameSettings.keyBindJump) {
-            RenderUtil.roundedRect(x - width - 4, y, width * 3 + 8, width, width, new Color(0, 0, 0, 55 + ticksSinceLastPress));
-            comfortaa.drawString(keyName, (float) (x), (float) (y + 15 - 2.5), -1);
+            RenderUtil.rect(x - width - 2, y, width * 3 + 8, width, new Color(255, 255, 255, 15 + ticksSinceLastPress));
+            comfortaa.drawString(keyName, (float) (x - 2), (float) (y + 15 - 4), -1);
         } else {
-            RenderUtil.circle(x, y, width, new Color(0, 0, 0, 55 + ticksSinceLastPress));
-            comfortaa.drawString(keyName, (float) (x + 15 + offset), (float) (y + 15 - 2.7), -1);
+            RenderUtil.rect(x, y, width, width, new Color(255,255,255, 15 + ticksSinceLastPress));
+            comfortaa.drawString(keyName, (float) (x + 13 + offset), (float) (y + 15 - 4.5), -1);
         }
     }
 
@@ -50,12 +51,12 @@ public class KeystrokeUtil {
             return;
 
         if (key.isKeyDown())
-            ticksSinceLastPress += 1;
+            ticksSinceLastPress += 5;
         else
-            ticksSinceLastPress -= 1;
+            ticksSinceLastPress -= 5;
 
-        if (ticksSinceLastPress > 55)
-            ticksSinceLastPress = 55;
+        if (ticksSinceLastPress > 150)
+            ticksSinceLastPress = 150;
 
         if (ticksSinceLastPress < 0)
             ticksSinceLastPress = 0;

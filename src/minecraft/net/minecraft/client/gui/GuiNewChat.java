@@ -164,19 +164,9 @@ public class GuiNewChat extends Gui
             this.field_146253_i.add(0, new ChatLine(p_146237_3_, ichatcomponent, p_146237_2_));
         }
 
-        while (this.field_146253_i.size() > 100)
-        {
-            this.field_146253_i.remove(this.field_146253_i.size() - 1);
-        }
-
         if (!p_146237_4_)
         {
             this.chatLines.add(0, new ChatLine(p_146237_3_, p_146237_1_, p_146237_2_));
-
-            while (this.chatLines.size() > 100)
-            {
-                this.chatLines.remove(this.chatLines.size() - 1);
-            }
         }
     }
 

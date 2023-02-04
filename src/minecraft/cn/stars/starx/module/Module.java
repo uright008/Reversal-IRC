@@ -6,11 +6,13 @@ import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.util.animation.simple.SimpleAnimation;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,6 +21,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @Setter
 public abstract class Module implements GameInstance {
 
+    private ScaledResolution sr = new ScaledResolution(mc);
+    public int scaledWidth = sr.getScaledWidth();
+    public int scaledHeight = sr.getScaledHeight();
     private boolean enabled;
     private int keyBind;
 
@@ -30,7 +35,14 @@ public abstract class Module implements GameInstance {
     public float clickGuiOpacity;
     public float descOpacityInGui = 1;
     public boolean hidden = false;
-
+    private int x, y, draggingX, draggingY;
+    private int width, height;
+    private boolean dragging, hide;
+    public SimpleAnimation buttonAnimation = new SimpleAnimation(0.0F);
+    public SimpleAnimation buttonOpacityAnimation = new SimpleAnimation(0.0F);
+    public SimpleAnimation selectAnimation = new SimpleAnimation(0.0F);
+    public SimpleAnimation editOpacityAnimation = new SimpleAnimation(0.0F);
+    public SimpleAnimation boxAnimation = new SimpleAnimation(0.0F);
     //Module Settings
     public List<Setting> settings = new ArrayList<>();
 
@@ -42,8 +54,11 @@ public abstract class Module implements GameInstance {
         } else {
             throw new RuntimeException("ModuleInfo annotation not found on " + this.getClass().getSimpleName());
         }
-
         keyBind = getModuleInfo().defaultKey();
+        this.x = 100;
+        this.y = 100;
+        this.width = 100;
+        this.height = 100;
     }
 
     public void registerNotification(String s) {
@@ -67,6 +82,7 @@ public abstract class Module implements GameInstance {
     }
 
     public boolean toggleModule() {
+        if (StarX.isDestructed) return false;
         boolean canNoti = ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().
                 getSetting("ClientSettings", "Show Notifications"))).isEnabled();
         enabled = !enabled;

@@ -22,6 +22,9 @@ public interface GameInstance {
     TTFFontRenderer museo = CustomFont.FONT_MANAGER.getFont("Museo 20");
     TTFFontRenderer eaves = CustomFont.FONT_MANAGER.getFont("Eaves 18");
     TTFFontRenderer skeet = CustomFont.FONT_MANAGER.getFont("SkeetBold 12");
+    TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
+    TTFFontRenderer gsTitle = CustomFont.FONT_MANAGER.getFont("GoogleSans 24");
+    TTFFontRenderer gsBig = CustomFont.FONT_MANAGER.getFont("GoogleSans 36");
 
     default Module getModule(final Class<? extends Module> clazz) {
         for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {

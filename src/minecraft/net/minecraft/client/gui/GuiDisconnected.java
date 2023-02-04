@@ -1,7 +1,12 @@
 package net.minecraft.client.gui;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+
+import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.TTFFontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 
@@ -68,7 +73,12 @@ public class GuiDisconnected extends GuiScreen
                 i += this.fontRendererObj.FONT_HEIGHT;
             }
         }
-
+     /*   ScaledResolution sr = new ScaledResolution(mc);
+        TTFFontRenderer fr = CustomFont.FONT_MANAGER.getFont("Regular 18");
+        final String message2 = "StarX Admin Notice: This is not a hack client! Just hack visual! Visit github.com/StarsHackerMC/StarX to learn more.";
+        final String message3 = "(This client is fully open-source! if you have any questions,view our code first.)";
+        fr.drawString(message3, sr.getScaledWidth() / 2 - CustomFont.getWidth(message3) / 2, sr.getScaledHeight() - 12.5f, new Color(255, 0,0, 180).hashCode());
+        fr.drawString(message2, sr.getScaledWidth() / 2 - CustomFont.getWidth(message2) / 2, sr.getScaledHeight() - 25, new Color(255, 0,0, 180).hashCode()); */
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

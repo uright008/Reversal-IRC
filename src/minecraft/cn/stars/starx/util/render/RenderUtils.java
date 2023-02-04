@@ -9,9 +9,14 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static net.minecraft.client.renderer.GlStateManager.disableBlend;
+import static net.minecraft.client.renderer.GlStateManager.enableTexture2D;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtils {
@@ -27,6 +32,51 @@ public class RenderUtils {
         glDepthMask(true);
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
+    }
+
+    public static void drawArc(float x1, float y1, double r, int color, int startPoint, double arc, int linewidth) {
+        r *= 2.0D;
+        x1 *= 2;
+        y1 *= 2;
+        float f = (color >> 24 & 0xFF) / 255.0F;
+        float f1 = (color >> 16 & 0xFF) / 255.0F;
+        float f2 = (color >> 8 & 0xFF) / 255.0F;
+        float f3 = (color & 0xFF) / 255.0F;
+        GL11.glDisable(2929);
+        GL11.glEnable(3042);
+        GL11.glDisable(3553);
+        GL11.glBlendFunc(770, 771);
+        GL11.glDepthMask(true);
+        GL11.glEnable(2848);
+        GL11.glHint(3154, 4354);
+        GL11.glHint(3155, 4354);
+        GL11.glScalef(0.5F, 0.5F, 0.5F);
+        GL11.glLineWidth(linewidth);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glColor4f(f1, f2, f3, f);
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = startPoint; i <= arc; i += 1) {
+            double x = Math.sin(i * Math.PI / 180.0D) * r;
+            double y = Math.cos(i * Math.PI / 180.0D) * r;
+            GL11.glVertex2d(x1 + x, y1 + y);
+        }
+        GL11.glEnd();
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GL11.glScalef(2.0F, 2.0F, 2.0F);
+        GL11.glEnable(3553);
+        GL11.glDisable(3042);
+        GL11.glEnable(2929);
+        GL11.glDisable(2848);
+        GL11.glHint(3154, 4352);
+        GL11.glHint(3155, 4352);
+    }
+
+    public static boolean isHovering(int mouseX, int mouseY, float xLeft, float yUp, float xRight, float yBottom) {
+        return (float)mouseX > xLeft && (float)mouseX < xRight && (float)mouseY > yUp && (float)mouseY < yBottom;
+    }
+
+    public static boolean isInside(int mouseX, int mouseY, double x, double y, double width, double height) {
+        return (mouseX > x && mouseX < (x + width)) && (mouseY > y && mouseY < (y + height));
     }
 
     public static void drawSelectionBoundingBox(AxisAlignedBB boundingBox) {
@@ -283,6 +333,23 @@ public class RenderUtils {
         glColor4f(1F, 1F, 1F, 1F);
     }
 
+    public static void drawRoundedCornerRectWH(float x, float y, float w, float h, float radius, int color) {
+        glColor(color);
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_CULL_FACE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+
+        glColor(color);
+        drawRoundedCornerRect(x, y, x + w, y + h, radius);
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glColor4f(1F, 1F, 1F, 1F);
+    }
+
     public static void drawRoundedCornerRect(float x, float y, float x1, float y1, float radius) {
         glBegin(GL_POLYGON);
 
@@ -300,5 +367,52 @@ public class RenderUtils {
         for(int i = end; i >= start; i-=split) {
             glVertex2d(x + Math.sin(i * Math.PI / 180.0D) * xRadius, y + Math.cos(i * Math.PI / 180.0D) * yRadius);
         }
+    }
+
+    public static void drawFilledCircle(final int xx, final int yy, final float radius, final Color color) {
+        int sections = 50;
+        double dAngle = 2 * Math.PI / sections;
+        float x, y;
+
+        glPushAttrib(GL_ENABLE_BIT);
+
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glBegin(GL_TRIANGLE_FAN);
+
+        for (int i = 0; i < sections; i++) {
+            x = (float) (radius * Math.sin((i * dAngle)));
+            y = (float) (radius * Math.cos((i * dAngle)));
+
+            glColor4f(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, color.getAlpha() / 255F);
+            glVertex2f(xx + x, yy + y);
+        }
+
+        GlStateManager.color(0, 0, 0);
+
+        glEnd();
+
+        glPopAttrib();
+    }
+
+    public static void drawCircle(float x, float y, float radius, float lineWidth, int start, int end, Color color) {
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+        glColor(color);
+
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(lineWidth);
+        glBegin(GL_LINE_STRIP);
+        for (float i = end; i >= start; i -= (360 / 90.0f)) {
+            glVertex2f((float) (x + (cos(i * PI / 180) * (radius * 1.001F))), (float) (y + (sin(i * PI / 180) * (radius * 1.001F))));
+        }
+        glEnd();
+        glDisable(GL_LINE_SMOOTH);
+
+        enableTexture2D();
+        disableBlend();
     }
 }

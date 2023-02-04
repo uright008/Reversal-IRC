@@ -2718,9 +2718,6 @@ public abstract class World implements IBlockAccess
      */
     public boolean canSnowAt(BlockPos pos, boolean checkLight)
     {
-        if (((ModeValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("TimeTraveller", "Weather"))).getMode().equals("Snow")) {
-            return true;
-        } else {
             BiomeGenBase biomegenbase = this.getBiomeGenForCoords(pos);
             float f = biomegenbase.getFloatTemperature(pos);
 
@@ -2746,7 +2743,6 @@ public abstract class World implements IBlockAccess
 
                 return false;
             }
-        }
     }
 
     public boolean checkLight(BlockPos pos)

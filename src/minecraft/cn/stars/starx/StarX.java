@@ -5,14 +5,17 @@ import cn.stars.starx.command.CommandManager;
 import cn.stars.starx.command.impl.Bind;
 import cn.stars.starx.command.impl.ClientName;
 import cn.stars.starx.command.impl.ClientTitle;
+import cn.stars.starx.command.impl.SelfDestruct;
+import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleManager;
-import cn.stars.starx.module.impl.addons.NoClickDelay;
-import cn.stars.starx.module.impl.addons.WaveyCapes;
-import cn.stars.starx.module.impl.movement.KeepSprint;
+import cn.stars.starx.module.impl.addons.*;
+import cn.stars.starx.module.impl.hud.Arraylist;
+import cn.stars.starx.module.impl.hud.TextGui;
 import cn.stars.starx.module.impl.misc.ClientSpoofer;
 import cn.stars.starx.module.impl.misc.NoAchievements;
 import cn.stars.starx.module.impl.misc.Plugins;
+import cn.stars.starx.module.impl.movement.Sprint;
 import cn.stars.starx.module.impl.player.HealthWarn;
 import cn.stars.starx.module.impl.render.*;
 import cn.stars.starx.module.impl.world.BanChecker;
@@ -49,11 +52,12 @@ public enum StarX {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "0015";
+    public static final String VERSION = "0021";
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
     public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR = new Color(185, 69, 255);
+    public static boolean isDestructed = false;
 
     // Init
     public ModuleManager moduleManager;
@@ -77,7 +81,7 @@ public enum StarX {
     // Core
     public void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION);
+            Display.setTitle(NAME + " " + VERSION + " | Github.com/StarsHackerMC/StarX");
             // ViaMCP init
             ViaMCP.getInstance().start();
             ViaMCP.getInstance().initAsyncSlider();
@@ -175,6 +179,19 @@ public enum StarX {
                 }
             }
 
+            if (split[0].contains("PositionX")) {
+                Objects.requireNonNull(getModuleManager().getModule(split[1])).setX(Integer.parseInt(split[2]));
+            }
+            if (split[0].contains("PositionY")) {
+                Objects.requireNonNull(getModuleManager().getModule(split[1])).setY(Integer.parseInt(split[2]));
+            }
+            if (split[0].contains("PositionWidth")) {
+                Objects.requireNonNull(getModuleManager().getModule(split[1])).setWidth(Integer.parseInt(split[2]));
+            }
+            if (split[0].contains("PositionHeight")) {
+                Objects.requireNonNull(getModuleManager().getModule(split[1])).setHeight(Integer.parseInt(split[2]));
+            }
+
             final Setting setting = getModuleManager().getSetting(split[1], split[2]);
 
             if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
@@ -252,6 +269,12 @@ public enum StarX {
             final String moduleName = m.getModuleInfo().name();
             configBuilder.append("Toggle_").append(moduleName).append("_").append(m.isEnabled()).append("\r\n");
 
+            if (m.getModuleInfo().category().equals(Category.HUD)) {
+                configBuilder.append("PositionX_").append(moduleName).append("_").append(m.getX()).append("\r\n");
+                configBuilder.append("PositionY_").append(moduleName).append("_").append(m.getY()).append("\r\n");
+                configBuilder.append("PositionWidth_").append(moduleName).append("_").append(m.getWidth()).append("\r\n");
+                configBuilder.append("PositionHeight_").append(moduleName).append("_").append(m.getHeight()).append("\r\n");
+            }
             for (final Setting s : m.getSettings()) {
                 if (s instanceof BoolValue) {
                     configBuilder.append("BoolValue_").append(moduleName).append("_").append(s.name).append("_").append(((BoolValue) s).enabled).append("\r\n");
@@ -320,28 +343,35 @@ public enum StarX {
     }
 
     public boolean onSendChatMessage(final String s) {
-        if (s.startsWith(".")) {
+        if (s.startsWith(".") && !isDestructed) {
             cmdManager.callCommand(s.substring(1));
             return false;
         }
-        //ircClient.write(s.substring(1));
-        return !s.startsWith("-");
+    //    return !s.startsWith("-");
+        return true;
+        // 我操你妈的irc
     }
 
     private final Command[] commands = new Command[] {
             new Bind(),
             new ClientName(),
-            new ClientTitle()
+            new ClientTitle(),
+            new SelfDestruct()
     };
 
-    private final Module[] modules = new Module[] {
+    public final Module[] modules = new Module[] {
             // Addons
+            new EditHUD(),
             new WaveyCapes(),
             new NoClickDelay(),
+            new SkinLayers3D(),
+            new ScreenshotViewer(),
+            new TNTTimer(),
             // Combat 我测你这要combat有什么用(
             // 走个仪式
             // Movement
-            new KeepSprint(),
+         //   new KeepSprint(),
+            new Sprint(),
             // Misc
             new ClientSpoofer(),
             new NoAchievements(),
@@ -357,17 +387,24 @@ public enum StarX {
             new ChunkAnimator(),
             new ClickGui(),
             new ClientSettings(),
-            new CPSCounter(),
             new ChinaHat(),
+          //  new FreeLook(),
             new Fullbright(),
             new GuiAnimation(),
             new HitEffect(),
+            new HUD(),
             new ItemPhysics(),
             new NoBob(),
             new TargetHud(),
             new TimeTraveller(),
             new Particles(),
             new SpeedGraph(),
-            new Wings() // SB
+            new Wings(),
+            // Hud
+            new Arraylist(),
+            new CPSCounter(),
+            new TextGui()
     };
+
+
 }

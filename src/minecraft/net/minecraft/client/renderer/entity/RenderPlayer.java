@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
+import cn.stars.addons.skinlayers3d.BodyLayerFeatureRenderer;
+import cn.stars.addons.skinlayers3d.HeadLayerFeatureRenderer;
+import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
 import cn.stars.addons.waveycapes.CustomCapeRenderLayer;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -20,10 +23,12 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
+public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> implements PlayerEntityModelAccessor
 {
     /** this field is used to indicate the 3-pixel wide arms */
     private boolean smallArms;
+    private HeadLayerFeatureRenderer headLayer;
+    private BodyLayerFeatureRenderer bodyLayer;
 
     public RenderPlayer(RenderManager renderManager)
     {
@@ -41,11 +46,28 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
         this.addLayer(new LayerCape(this));
         this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
         this.addLayer(new CustomCapeRenderLayer(this, this.getMainModel()));
+        this.headLayer = new HeadLayerFeatureRenderer(this);
+        this.bodyLayer = new BodyLayerFeatureRenderer(this);
     }
 
     public ModelPlayer getMainModel()
     {
         return (ModelPlayer)super.getMainModel();
+    }
+
+    @Override
+    public boolean hasThinArms() {
+        return this.smallArms;
+    }
+
+    @Override
+    public HeadLayerFeatureRenderer getHeadLayer() {
+        return this.headLayer;
+    }
+
+    @Override
+    public BodyLayerFeatureRenderer getBodyLayer() {
+        return this.bodyLayer;
     }
 
     /**

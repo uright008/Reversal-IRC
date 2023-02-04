@@ -33,4 +33,14 @@ public final class NumberValue extends Setting {
         this.increment = increment;
         this.replacements = Arrays.asList(replacements);
     }
+
+    public float getFloat() {
+        return (float) this.value;
+    }
+    public double getDouble() {
+        return (double) this.value;
+    }
+    public int getInt() {
+        return (int) this.value;
+    }
 }

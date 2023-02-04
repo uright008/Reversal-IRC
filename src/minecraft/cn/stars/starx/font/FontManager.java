@@ -35,12 +35,20 @@ public final class FontManager {
                 this.fonts.put("Dreamscape " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{1, 2, 200}) {
+            for (final int i : new int[]{1, 2, 18,24, 36}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/GoogleSans.ttf");
 
                 Font myFont = Font.createFont(0, istream);
                 myFont = myFont.deriveFont(Font.PLAIN, (float) i);
                 this.fonts.put("GoogleSans " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
+            }
+
+            for (final int i : new int[]{1, 2, 18, 35, 200}) {
+                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/regular.ttf");
+
+                Font myFont = Font.createFont(0, istream);
+                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
+                this.fonts.put("Regular " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
             for (final int i : new int[]{10,14, 16, 18, 19, 20, 22, 24, 36, 48, 72, 96}) {
@@ -91,12 +99,20 @@ public final class FontManager {
                 this.fonts.put("Comfortaa " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{18}) {
+            for (final int i : new int[]{18, 24}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Icon-Font.ttf");
 
                 Font myFont = Font.createFont(0, istream);
                 myFont = myFont.deriveFont(Font.PLAIN, (float) i);
                 this.fonts.put("Icon " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
+            }
+
+            for (final int i : new int[]{18, 24}) {
+                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/check.ttf");
+
+                Font myFont = Font.createFont(0, istream);
+                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
+                this.fonts.put("Check " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
             for (final int i : new int[]{18}) {

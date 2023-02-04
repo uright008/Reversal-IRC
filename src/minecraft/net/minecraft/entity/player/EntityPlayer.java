@@ -1,5 +1,7 @@
 package net.minecraft.entity.player;
 
+import cn.stars.addons.skinlayers3d.CustomizableModelPart;
+import cn.stars.addons.skinlayers3d.PlayerSettings;
 import cn.stars.addons.waveycapes.CapeHolder;
 import cn.stars.addons.waveycapes.StickSimulation;
 import cn.stars.starx.StarX;
@@ -83,10 +85,12 @@ import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 
-@SuppressWarnings("incomplete-switch")
-public abstract class EntityPlayer extends EntityLivingBase implements CapeHolder
+@SuppressWarnings("all")
+public abstract class EntityPlayer extends EntityLivingBase implements CapeHolder,PlayerSettings
 {
-    private final StickSimulation stickSimulation;
+    private CustomizableModelPart headLayer;
+    private CustomizableModelPart[] skinLayer;
+    public final StickSimulation stickSimulation;
     /** Inventory of the player */
     public InventoryPlayer inventory = new InventoryPlayer(this);
     private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
@@ -423,6 +427,23 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         {
             this.setPosition(d3, this.posY, d4);
         }
+    }
+
+
+    public CustomizableModelPart[] getSkinLayers() {
+        return this.skinLayer;
+    }
+
+    public void setupSkinLayers(CustomizableModelPart[] box) {
+        this.skinLayer = box;
+    }
+
+    public CustomizableModelPart getHeadLayers() {
+        return this.headLayer;
+    }
+
+    public void setupHeadLayers(CustomizableModelPart box) {
+        this.headLayer = box;
     }
 
     /**

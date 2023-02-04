@@ -3,6 +3,7 @@ package net.minecraft.client;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.ui.splash.SplashProgress;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -487,13 +488,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-        this.drawSplashScreen(this.renderEngine);
+        drawSplashScreen(getTextureManager());
+        SplashProgress.drawSplash(getTextureManager());
         this.initStream();
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
+        SplashProgress.setProgress(1, "File");
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
+        SplashProgress.setProgress(2, "SoundHandler");
         this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
         this.mcMusicTicker = new MusicTicker(this);
+        SplashProgress.setProgress(3, "FontRenderer");
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
 
         if (this.gameSettings.language != null)
@@ -501,7 +506,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
-
+        SplashProgress.setProgress(4, "GalacticFontRenderer");
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
@@ -523,7 +528,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         });
         this.mouseHelper = new MouseHelper();
         this.checkGLError("Pre startup");
-        StarX.INSTANCE.start();
+        SplashProgress.setProgress(5, "OpenGL");
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(7425);
         GlStateManager.clearDepth(1.0D);
@@ -536,15 +541,20 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         GlStateManager.loadIdentity();
         GlStateManager.matrixMode(5888);
         this.checkGLError("Startup");
+        SplashProgress.setProgress(6, "StarX");
+        StarX.INSTANCE.start();
         this.textureMapBlocks = new TextureMap("textures");
         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
         this.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        SplashProgress.setProgress(7, "Texture");
         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
+        SplashProgress.setProgress(8, "ModelManager");
         this.modelManager = new ModelManager(this.textureMapBlocks);
         this.mcResourceManager.registerReloadListener(this.modelManager);
         this.renderItem = new RenderItem(this.renderEngine, this.modelManager);
         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
+        SplashProgress.setProgress(9, "RenderEngine");
         this.itemRenderer = new ItemRenderer(this);
         this.mcResourceManager.registerReloadListener(this.renderItem);
         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
@@ -552,11 +562,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.gameSettings);
         this.mcResourceManager.registerReloadListener(this.blockRenderDispatcher);
         this.renderGlobal = new RenderGlobal(this);
+        SplashProgress.setProgress(10, "Renderer");
         this.mcResourceManager.registerReloadListener(this.renderGlobal);
         this.guiAchievement = new GuiAchievement(this);
         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
+        SplashProgress.setProgress(11, "InGame");
         this.ingameGUI = new GuiIngame(this);
 
         if (this.serverName != null)
@@ -567,17 +579,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             this.displayGuiScreen(new GuiMainMenu());
         }
-
         this.renderEngine.deleteTexture(this.mojangLogo);
         this.mojangLogo = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
-
+        SplashProgress.setProgress(12, "Display");
         if (this.gameSettings.fullScreen && !this.fullscreen)
         {
             this.toggleFullscreen();
         }
 
-
+        SplashProgress.setProgress(13, "Finalize");
         try
         {
             Display.setVSyncEnabled(this.gameSettings.enableVsync);
@@ -587,7 +598,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.gameSettings.enableVsync = false;
             this.gameSettings.saveOptions();
         }
-
+        SplashProgress.setProgress(14, "Finish");
         this.renderGlobal.makeEntityOutlineShader();
     }
 

@@ -1,11 +1,13 @@
 package cn.stars.starx.module.impl.render;
 
+import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.ClickEvent;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.TickEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
+import cn.stars.starx.module.impl.Draggable;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import net.minecraft.client.gui.Gui;
@@ -14,18 +16,22 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModuleInfo(name = "CPSCounter", description = "Show your CPS on screen", category = Category.RENDER)
+@ModuleInfo(name = "CPSCounter", description = "Show your CPS on screen", category = Category.HUD)
 public class CPSCounter extends Module {
     public CPSCounter() {
+        setWidth(60);
+        setHeight(30);
         this.Lclicks = new ArrayList<>();
         this.Rclicks = new ArrayList<>();
     }
     private final List<Long> Lclicks;
     private final List<Long> Rclicks;
-    private float width;
     private final BoolValue showBackground = new BoolValue("Show Background",this ,true);
-    private final NumberValue x = new NumberValue("X", this, 10, 0, 300, 0.1);
-    private final NumberValue y = new NumberValue("Y", this, 10, 0, 150, 0.1);
+
+    public int x;
+    public int y;
+    private int width;
+    private int height;
 
     @Override
     public void onRender2DEvent(Render2DEvent event) {
@@ -59,10 +65,12 @@ public class CPSCounter extends Module {
         }
     }
 
+    // No more using "*" because position wrong when restart
     public double getXPosition() {
-        return x.getValue() * 3.0;
+        return getX();
     }
     public double getYPosition() {
-        return y.getValue() * 3.3;
+        return getY();
     }
+
 }

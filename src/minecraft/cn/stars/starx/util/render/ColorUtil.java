@@ -1,5 +1,8 @@
 package cn.stars.starx.util.render;
 
+import cn.stars.starx.StarX;
+import cn.stars.starx.ui.theme.Theme;
+import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import com.ibm.icu.text.NumberFormat;
 import lombok.experimental.UtilityClass;
 import java.awt.*;
@@ -7,6 +10,24 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public final class ColorUtil {
+
+    public static SimpleAnimation[] animation = {
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
+
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
+            new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F)
+    };
+
+    public static int reAlpha(int color, float alpha) {
+        Color c = new Color(color);
+        float r = 0.003921569f * (float)c.getRed();
+        float g = 0.003921569f * (float)c.getGreen();
+        float b = 0.003921569f * (float)c.getBlue();
+        return new Color(r, g, b, alpha).getRGB();
+    }
 
     private final Pattern COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]");
 
@@ -43,6 +64,138 @@ public final class ColorUtil {
                 Math.min((int) (g / factor), 255),
                 Math.min((int) (b / factor), 255),
                 alpha);
+    }
+
+    public static Color getFontColor(int id, int alpha) {
+        Color rawColor = getRawFontColor(id);
+        int speed = 12;
+
+        if(id == 1) {
+            animation[12].setAnimation(rawColor.getRed(), speed);
+            animation[13].setAnimation(rawColor.getGreen(), speed);
+            animation[14].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[12].getValue(), (int) animation[13].getValue(), (int) animation[14].getValue(), alpha);
+        }
+
+        if(id == 2) {
+            animation[15].setAnimation(rawColor.getRed(), speed);
+            animation[16].setAnimation(rawColor.getGreen(), speed);
+            animation[17].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[15].getValue(), (int) animation[16].getValue(), (int) animation[17].getValue(), alpha);
+        }
+
+        return rawColor;
+    }
+
+    private static Color getRawFontColor(int id) {
+        Color color = new Color(0, 0, 255);
+        boolean dark = StarX.INSTANCE.getGuiTheme().currentTheme == Theme.DARKMODE;
+
+        switch(id) {
+            case 1:
+                if(dark) {
+                    color = new Color(255, 255, 255);
+                }else {
+                    color = new Color(27, 27, 27);
+                }
+                break;
+            case 2:
+                if(dark) {
+                    color = new Color(207, 209, 210);
+                }else {
+                    color = new Color(96, 97, 97);
+                }
+                break;
+        }
+
+        return color;
+    }
+
+    public static Color getFontColor(int id) {
+        return getFontColor(id, 255);
+    }
+
+    private static Color getRawBackgroundColor(int id) {
+        Color color = new Color(255, 0, 0);
+        boolean dark = StarX.INSTANCE.getGuiTheme().currentTheme == Theme.DARKMODE;
+
+        switch(id) {
+            case 1:
+                if(dark) {
+                    color = new Color(26, 33, 42);
+                }else {
+                    color = new Color(232, 234, 240);
+                }
+                break;
+            case 2:
+                if(dark) {
+                    color = new Color(35, 40, 46);
+                }else {
+                    color = new Color(239, 244, 249);
+                }
+                break;
+            case 3:
+                if(dark) {
+                    color = new Color(46, 51, 57);
+                }else {
+                    color = new Color(247, 250, 252);
+                }
+                break;
+            case 4:
+                if(dark) {
+                    color = new Color(57, 61, 67);
+                }else {
+                    color = new Color(253, 254, 254);
+                }
+                break;
+        }
+        return color;
+    }
+
+    public static Color getBackgroundColor(int id, int alpha) {
+
+        int speed = 12;
+        Color rawColor = getRawBackgroundColor(id);
+
+        if(id == 1) {
+            animation[0].setAnimation(rawColor.getRed(), speed);
+            animation[1].setAnimation(rawColor.getGreen(), speed);
+            animation[2].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[0].getValue(), (int) animation[1].getValue(), (int) animation[2].getValue(), alpha);
+        }
+
+        if(id == 2) {
+            animation[3].setAnimation(rawColor.getRed(), speed);
+            animation[4].setAnimation(rawColor.getGreen(), speed);
+            animation[5].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[3].getValue(), (int) animation[4].getValue(), (int) animation[5].getValue(), alpha);
+        }
+
+        if(id == 3) {
+            animation[6].setAnimation(rawColor.getRed(), speed);
+            animation[7].setAnimation(rawColor.getGreen(), speed);
+            animation[8].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[6].getValue(), (int) animation[7].getValue(), (int) animation[8].getValue(), alpha);
+        }
+
+        if(id == 4) {
+            animation[9].setAnimation(rawColor.getRed(), speed);
+            animation[10].setAnimation(rawColor.getGreen(), speed);
+            animation[11].setAnimation(rawColor.getBlue(), speed);
+
+            return new Color((int) animation[9].getValue(), (int) animation[10].getValue(), (int) animation[11].getValue(), alpha);
+        }
+
+        return rawColor;
+    }
+
+    public static Color getBackgroundColor(int id) {
+        return getBackgroundColor(id, 255);
     }
 
     public Color darker(final Color c, final double FACTOR) {

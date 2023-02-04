@@ -1,5 +1,6 @@
 package net.minecraft.client.entity;
 
+import cn.stars.addons.skinlayers3d.CustomizableModelPart;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.MoveEvent;

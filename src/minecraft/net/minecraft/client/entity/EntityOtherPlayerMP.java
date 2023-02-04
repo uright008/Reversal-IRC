@@ -1,5 +1,6 @@
 package net.minecraft.client.entity;
 
+import cn.stars.addons.skinlayers3d.CustomizableModelPart;
 import cn.stars.addons.waveycapes.StickSimulation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
@@ -22,7 +23,7 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
 
     @Override
     public StickSimulation getSimulation() {
-        return new StickSimulation();
+        return this.stickSimulation;
     }
     public EntityOtherPlayerMP(World worldIn, GameProfile gameProfileIn)
     {

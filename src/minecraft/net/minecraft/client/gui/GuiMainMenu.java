@@ -5,7 +5,12 @@ import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.ui.theme.Theme;
+import cn.stars.starx.util.animation.normal.Animation;
+import cn.stars.starx.util.animation.normal.Direction;
+import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
+import cn.stars.starx.util.render.GlUtils;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.render.UIUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -63,6 +68,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     private float themeWidth;
     private float themeHeight;
 
+    private Animation introAnimation;
+
+
     //Called from the main game loop to update the screen.
     public void updateScreen() {
         ++panoramaTimer;
@@ -70,7 +78,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
     public void initGui() {
         panoramaTimer = 150;
-
+        introAnimation = new EaseBackIn(400, 1, 2);
         easterEgg = Math.random() > 0.99;
     }
 
@@ -80,6 +88,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     }
 
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
+        final ScaledResolution sr = new ScaledResolution(mc);
 
         if (mc.mouseHelper != null) mc.mouseHelper.mouseGrab(false);
 
@@ -106,11 +115,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         drawModalRectWithCustomSizedTexture(0, 0, width / scale + smoothedX - 150, height / scale + smoothedY - 100, width, height, width * scale, height * scale);
 
-        // Render the rise text
+        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
+
         screenWidth = fontRenderer.getWidth(StarX.NAME);
         screenHeight = fontRenderer.getHeight(StarX.NAME);
-
-        final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
         UIUtil.logoPosition = /*MathUtil.lerp(UIUtil.logoPosition, */sr.getScaledHeight() / 2.0F - (screenHeight / 2.0F) - 6/*, 0.2f)*/;
 
@@ -130,10 +138,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         changes.add("");
         changes.add("Version " + StarX.VERSION);
-        changes.add("[+] Wing");
-        changes.add("[+] NoBob");
-        changes.add("[+] LightningTrack");
-        changes.add("[+] HealthWarn");
+        changes.add("[+] TNTTimer");
+        changes.add("[+] Better ScreenshotViewer");
+        changes.add("[+] Better GuiMainMenu");
 
 
         if (sr.getScaledWidth() > 600 && sr.getScaledHeight() > 300) {
@@ -191,10 +198,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         //Note
         final String message = "Made with <3 by Stars";
+        final String message2 = "Notice: THIS IS NOT A HACK CLIENT!";
 
         if (sr.getScaledHeight() > 300) {
             CustomFont.drawString(message, sr.getScaledWidth() - CustomFont.getWidth(message) - 2, sr.getScaledHeight() - 12.5, new Color(255, 255, 255, 180).hashCode());
-
+            CustomFont.drawString(message2, sr.getScaledWidth() / 2 - CustomFont.getWidth(message2) / 2, sr.getScaledHeight() - 12.5, new Color(255, 0,0, 180).hashCode());
 
             //Theme selector
             themeX = 10;
@@ -235,6 +243,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
                     theme.nameOpacityInMainMenu -= 20;
                 }
 
+             //   CustomFont.drawStringBig("News:", 10, 110, Color.WHITE.getRGB());
+                mc.fontRendererObj.drawString("裱起来让我笑一辈子^^", 10, 110, Color.WHITE.getRGB());
+                RenderUtils.drawImage(new ResourceLocation("starx/FwNoName.png"), 10, 130, 228, 212);
+
                 theme.nameOpacityInMainMenu = Math.max(0, Math.min(225, theme.nameOpacityInMainMenu));
 
                 if (theme.nameOpacityInMainMenu > 1)
@@ -255,11 +267,13 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
             }
         }
 
+        GlUtils.stopScale();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     public void mouseClicked(final int mouseX, final int mouseY, final int button) {
+        sr = new ScaledResolution(mc);
         // Rick roll
         if (mouseOver(x, y, fontRenderer.getWidth(StarX.NAME), fontRenderer.getHeight(StarX.NAME) - 8, mouseX, mouseY)) {
                 try {
@@ -267,6 +281,14 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
+        }
+
+        if (mouseOver(10, 130, 183, 256, mouseX, mouseY) && sr.getScaledHeight() > 300) {
+            try {
+                openWebpage(new URI("https://www.bilibili.com/video/BV1XR4y1b7P2"));
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
 
         float offset = 0;
@@ -312,7 +334,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
 
         //Proxy
         if (mouseOver(x + gap + buttonWidth, y + fontRenderer.getHeight() + buttonHeight * 2 + gap * 2 + 2 + 2, buttonWidth, buttonHeight + gap, mouseX, mouseY)) {
-          //  mc.displayGuiScreen(new ProxyGUI(this));
             mc.displayGuiScreen(new GuiProtocolSelector(this));
         }
 

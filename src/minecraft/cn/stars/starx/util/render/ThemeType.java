@@ -5,4 +5,5 @@ public enum ThemeType {
     LOGO,
     FLAT_COLOR,
     GENERAL,
+    SPECIAL1,
 }
