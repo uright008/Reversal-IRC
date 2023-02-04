@@ -243,9 +243,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
                     theme.nameOpacityInMainMenu -= 20;
                 }
 
-             //   CustomFont.drawStringBig("News:", 10, 110, Color.WHITE.getRGB());
-                mc.fontRendererObj.drawString("裱起来让我笑一辈子^^", 10, 110, Color.WHITE.getRGB());
-                RenderUtils.drawImage(new ResourceLocation("starx/FwNoName.png"), 10, 130, 228, 212);
+                CustomFont.drawStringBig("News:", 10, 110, Color.WHITE.getRGB());
+                RenderUtils.drawImage(new ResourceLocation("starx/666.png"), 10, 130, 228, 212);
 
                 theme.nameOpacityInMainMenu = Math.max(0, Math.min(225, theme.nameOpacityInMainMenu));
 
