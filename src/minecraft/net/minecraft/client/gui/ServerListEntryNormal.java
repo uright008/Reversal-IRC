@@ -9,10 +9,12 @@ import io.netty.handler.codec.base64.Base64;
 import java.awt.image.BufferedImage;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
+
+import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -25,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
 {
     private static final Logger logger = LogManager.getLogger();
-    private static final ThreadPoolExecutor field_148302_b = new ScheduledThreadPoolExecutor(5, (new ThreadFactoryBuilder()).setNameFormat("Server Pinger #%d").setDaemon(true).build());
+    private static ThreadPoolExecutor field_148302_b = new ScheduledThreadPoolExecutor(5, (new ThreadFactoryBuilder()).setNameFormat("Server Pinger #%d").setDaemon(true).build());
     private static final ResourceLocation UNKNOWN_SERVER = new ResourceLocation("textures/misc/unknown_server.png");
     private static final ResourceLocation SERVER_SELECTION_BUTTONS = new ResourceLocation("textures/gui/server_selection.png");
     private final GuiMultiplayer field_148303_c;
@@ -35,6 +37,39 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
     private String field_148299_g;
     private DynamicTexture field_148305_h;
     private long field_148298_f;
+    // still callign mcMod.getinstance.getconfigcache just in case
+    private static final int MAX_THREAD_COUNT_PINGER = 50;
+    private static final int MAX_THREAD_COUNT_TIMEOUT = 100;
+
+
+    // Note: if servers are added, this will be inaccurate
+    // But it should be good enough still
+    // Can't bother to mixin onto some other classes just to change that (rn at least).
+    private static final int serverCountCache;
+    private final ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(Math.min(serverCountCache + 5, MAX_THREAD_COUNT_TIMEOUT));
+
+    private static int runningTaskCount = 0;
+
+    static {
+        serverCountCache = new ServerList(Minecraft.getMinecraft()).countServers();
+        // Note: not even sure this reassignement works since the field is final
+        field_148302_b = new ScheduledThreadPoolExecutor(Math.min(serverCountCache + 5, MAX_THREAD_COUNT_PINGER), (new ThreadFactoryBuilder()).setNameFormat("Server Pinger #%d").setDaemon(true).build());
+    }
+
+    private Runnable getPingTask() {
+        return new Thread() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                field_148303_c.getOldServerPinger().ping(field_148301_e);
+            }
+        };
+    }
+
+    private void setServerFail(String error) {
+        field_148301_e.pingToServer = -1L;
+        field_148301_e.serverMOTD = error;
+    }
 
     protected ServerListEntryNormal(GuiMultiplayer p_i45048_1_, ServerData p_i45048_2_)
     {
@@ -53,26 +88,35 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
             this.field_148301_e.pingToServer = -2L;
             this.field_148301_e.serverMOTD = "";
             this.field_148301_e.populationInfo = "";
-            field_148302_b.submit(new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        ServerListEntryNormal.this.field_148303_c.getOldServerPinger().ping(ServerListEntryNormal.this.field_148301_e);
+
+            if (runningTaskCount > serverCountCache * 2) {
+                setServerFail(EnumChatFormatting.GRAY + "Spamming...");
+                field_148302_b.submit(() -> {});
+            } else {
+                // Start up the timeout task
+                final Future<?> future = timeoutExecutor.submit(getPingTask());
+                runningTaskCount++;
+
+                field_148302_b.submit(new Runnable() {
+                    public void run() {
+                        try {
+                            future.get(4, TimeUnit.SECONDS);
+                        } catch (TimeoutException e1) {
+                            setServerFail(EnumChatFormatting.RED + "Timed out");
+                        } catch (ExecutionException e2) {
+                            if (e2.getCause() instanceof UnknownHostException)
+                                setServerFail(EnumChatFormatting.DARK_RED + "Can't resolve hostname");
+                            else
+                                setServerFail(EnumChatFormatting.DARK_RED + "Can't connect to server.");
+
+                        } catch (Exception e3) {
+                            // Shouldn't happen anymore but just in case
+                            setServerFail(EnumChatFormatting.DARK_RED + "Can't connect to server.");
+                        }
+                        runningTaskCount--;
                     }
-                    catch (UnknownHostException var2)
-                    {
-                        ServerListEntryNormal.this.field_148301_e.pingToServer = -1L;
-                        ServerListEntryNormal.this.field_148301_e.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t resolve hostname";
-                    }
-                    catch (Exception var3)
-                    {
-                        ServerListEntryNormal.this.field_148301_e.pingToServer = -1L;
-                        ServerListEntryNormal.this.field_148301_e.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t connect to server.";
-                    }
-                }
-            });
+                });
+            }
         }
 
         boolean flag = this.field_148301_e.version > 47;
