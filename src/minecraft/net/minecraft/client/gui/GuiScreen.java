@@ -37,6 +37,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -660,8 +661,14 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
         else
         {
-            this.drawBackground(tint);
+         //   this.drawBackground(tint);
+            drawStarXBackground();
         }
+    }
+
+    public void drawStarXBackground() {
+        mc.getTextureManager().bindTexture(new ResourceLocation("starx/images/game.png"));
+        drawModalRectWithCustomSizedTexture(0, 0, 0f, 0f, width, height, width, height);
     }
 
     /**
@@ -771,4 +778,5 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         this.setWorldAndResolution(mcIn, p_175273_2_, p_175273_3_);
     }
+
 }

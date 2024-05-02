@@ -1,10 +1,18 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.render.ThemeType;
+import cn.stars.starx.util.render.ThemeUtil;
+import cn.stars.starx.util.shader.round.RoundedUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
 
 public class GuiButton extends Gui
 {
@@ -77,31 +85,46 @@ public class GuiButton extends Gui
      */
     public void drawButton(Minecraft mc, int mouseX, int mouseY)
     {
-        if (this.visible)
-        {
-            FontRenderer fontrenderer = mc.fontRendererObj;
-            mc.getTextureManager().bindTexture(buttonTextures);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-            int i = this.getHoverState(this.hovered);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.blendFunc(770, 771);
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
-            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-            this.mouseDragged(mc, mouseX, mouseY);
-            int j = 14737632;
+        if (this.visible) {
+            if (ModuleInstance.getBool("SpecialGuis", "BetterButton").isEnabled()) {
+                int j = 14737632;
+                this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+                if (!this.enabled) {
+                    j = 10526880;
+                    RoundedUtils.drawRoundOutline(xPosition, yPosition, width, height, 3f, 1f, new Color(0,0,0,120), new Color(j));
+                } else if (this.hovered) {
+                    j = 16777120;
+                    RoundedUtils.drawRoundOutline(xPosition, yPosition, width, height, 3f, 1f, new Color(0,0,0,120), new Color(j));
+                } else {
+                    RoundedUtils.drawRoundOutline(xPosition, yPosition, width, height, 3f, 1f, new Color(0,0,0,120), new Color(0,255,255,130));
+                }
+                mc.getTextureManager().bindTexture(buttonTextures);
+                FontRenderer fontrenderer = mc.fontRendererObj;
 
-            if (!this.enabled)
-            {
-                j = 10526880;
-            }
-            else if (this.hovered)
-            {
-                j = 16777120;
-            }
+                this.mouseDragged(mc, mouseX, mouseY);
+                this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j);
+            } else {
+                FontRenderer fontrenderer = mc.fontRendererObj;
+                mc.getTextureManager().bindTexture(buttonTextures);
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+                int i = this.getHoverState(this.hovered);
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.blendFunc(770, 771);
+                this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
+                this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+                this.mouseDragged(mc, mouseX, mouseY);
+                int j = 14737632;
 
-            this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j);
+                if (!this.enabled) {
+                    j = 10526880;
+                } else if (this.hovered) {
+                    j = 16777120;
+                }
+
+                this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j);
+            }
         }
     }
 

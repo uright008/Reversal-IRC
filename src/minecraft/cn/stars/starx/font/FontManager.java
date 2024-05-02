@@ -35,7 +35,7 @@ public final class FontManager {
                 this.fonts.put("Dreamscape " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{1, 2, 18,24, 36}) {
+            for (final int i : new int[]{1, 2, 12, 18,24, 36}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/GoogleSans.ttf");
 
                 Font myFont = Font.createFont(0, istream);
@@ -43,7 +43,7 @@ public final class FontManager {
                 this.fonts.put("GoogleSans " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{1, 2, 18, 35, 200}) {
+            for (final int i : new int[]{1, 2, 18, 32, 35, 200}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/regular.ttf");
 
                 Font myFont = Font.createFont(0, istream);

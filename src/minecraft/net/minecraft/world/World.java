@@ -8,6 +8,8 @@ import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+
+import de.florianmichael.viamcp.fixes.FixedSoundEngine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockLiquid;
@@ -49,7 +51,6 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
-import viamcp.utils.FixedSoundEngine;
 
 public abstract class World implements IBlockAccess
 {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
@@ -90,7 +92,7 @@ public class GuiConnecting extends GuiScreen
                     if (inetaddress != null)
                     {
                         String s1 = inetaddress.toString() + ":" + port;
-                        s = s.replaceAll(s1, "");
+                        s = "ERROR: " + s.replaceAll(s1, "");
                     }
 
                     GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", new Object[] {s})));
@@ -158,16 +160,17 @@ public class GuiConnecting extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
+        drawDefaultBackground();
+        RenderUtils.drawLoadingCircle(this.width / 2, this.height / 4 + 70);
 
-        if (this.networkManager == null)
-        {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("connect.connecting", new Object[0]), this.width / 2, this.height / 2 - 50, 16777215);
-        }
-        else
-        {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("connect.authorizing", new Object[0]), this.width / 2, this.height / 2 - 50, 16777215);
-        }
+        String ip = "Unknown";
+
+        final ServerData serverData = mc.getCurrentServerData();
+        if(serverData != null)
+            ip = serverData.serverIP;
+
+        mc.fontRendererObj.drawCenteredString(I18n.format("connect.connecting", new Object[0]), this.width / 2, this.height / 4 + 110, 0xFFFFFF);
+        mc.fontRendererObj.drawCenteredString(ip, this.width / 2, this.height / 4 + 120, 0x5281FB);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

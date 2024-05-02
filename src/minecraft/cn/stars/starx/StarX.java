@@ -10,8 +10,8 @@ import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleManager;
 import cn.stars.starx.module.impl.addons.*;
-import cn.stars.starx.module.impl.hud.Arraylist;
-import cn.stars.starx.module.impl.hud.TextGui;
+import cn.stars.starx.module.impl.combat.NoClickDelay;
+import cn.stars.starx.module.impl.hud.*;
 import cn.stars.starx.module.impl.misc.ClientSpoofer;
 import cn.stars.starx.module.impl.misc.NoAchievements;
 import cn.stars.starx.module.impl.misc.Plugins;
@@ -31,13 +31,11 @@ import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.ui.theme.Theme;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.render.ThemeUtil;
+import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
-import viamcp.ViaMCP;
 
 import java.awt.*;
 import java.io.File;
@@ -52,7 +50,7 @@ public enum StarX {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "0021";
+    public static final String VERSION = "0029";
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
@@ -64,8 +62,6 @@ public enum StarX {
     public NotificationManager notificationManager;
     public CommandManager cmdManager;
     public ClickGUI clickGUI;
-    private ResourceLocation backgroundTexture;
-    private DynamicTexture viewportTexture;
     public GuiTheme guiTheme;
     public static String ip;
     public static int totalKills;
@@ -81,10 +77,10 @@ public enum StarX {
     // Core
     public void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION + " | Github.com/StarsHackerMC/StarX");
+            Display.setTitle(NAME + " " + VERSION);
             // ViaMCP init
-            ViaMCP.getInstance().start();
-            ViaMCP.getInstance().initAsyncSlider();
+            ViaMCP.create();
+            ViaMCP.INSTANCE.initAsyncSlider();
             // configs
             initCore();
             loadConfigs();
@@ -102,11 +98,6 @@ public enum StarX {
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] " + msg));
         }
-    }
-
-    public void textureStart() {
-        viewportTexture = new DynamicTexture(256, 256);
-        backgroundTexture = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("background", this.viewportTexture);
     }
 
     // run required
@@ -324,7 +315,7 @@ public enum StarX {
     //    mc.gameSettings.ofSmoothFps = false;
 
         try {
-            // Creating Rise folder
+            // Creating folder
             if (!FileUtil.coreDirectoryExists()) {
                 firstBoot = true;
                 FileUtil.createCoreDirectory();
@@ -363,14 +354,13 @@ public enum StarX {
             // Addons
             new EditHUD(),
             new WaveyCapes(),
-            new NoClickDelay(),
             new SkinLayers3D(),
+            new SpecialGuis(),
             new ScreenshotViewer(),
-            new TNTTimer(),
-            // Combat 我测你这要combat有什么用(
-            // 走个仪式
+
+            // Combat
+            new NoClickDelay(),
             // Movement
-         //   new KeepSprint(),
             new Sprint(),
             // Misc
             new ClientSpoofer(),
@@ -386,23 +376,26 @@ public enum StarX {
             new Breadcrumbs(),
             new ChunkAnimator(),
             new ClickGui(),
-            new ClientSettings(),
             new ChinaHat(),
-          //  new FreeLook(),
+            new DamageParticle(),
             new Fullbright(),
             new GuiAnimation(),
             new HitEffect(),
-            new HUD(),
             new ItemPhysics(),
             new NoBob(),
             new TargetHud(),
+            new TNTTimer(),
             new TimeTraveller(),
             new Particles(),
             new SpeedGraph(),
             new Wings(),
             // Hud
             new Arraylist(),
+            new BPSCounter(),
             new CPSCounter(),
+            new ClientSettings(),
+            new HUD(),
+            new Keystrokes(),
             new TextGui()
     };
 

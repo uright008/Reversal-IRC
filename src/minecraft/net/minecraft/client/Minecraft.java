@@ -3,7 +3,9 @@ package net.minecraft.client;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.ui.gui.breakout.BreakoutGuiIngameMenu;
 import cn.stars.starx.ui.splash.SplashProgress;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
+import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -182,10 +185,11 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
-import viamcp.utils.AttackOrder;
 
 public class Minecraft implements IThreadListener, IPlayerUsage
 {
+
+    public static boolean big = false;
     private static final Logger logger = LogManager.getLogger();
     private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
@@ -670,7 +674,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
-    private void setWindowIcon()
+    public void setWindowIcon()
     {
         Util.EnumOS util$enumos = Util.getOSType();
 
@@ -843,7 +847,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void updateDisplayMode() throws LWJGLException
     {
-        Set<DisplayMode> set = Sets.<DisplayMode>newHashSet();
+        Set<DisplayMode> set = Sets.newHashSet();
         Collections.addAll(set, Display.getAvailableDisplayModes());
         DisplayMode displaymode = Display.getDesktopDisplayMode();
 
@@ -1039,6 +1043,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void shutdownMinecraftApplet()
     {
+        StarX.INSTANCE.stop();
         try
         {
             this.stream.shutdownStream();
@@ -1261,13 +1266,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
         catch (Throwable var3)
         {
-            ;
         }
 
         try
         {
             System.gc();
-            this.loadWorld((WorldClient)null);
+            this.loadWorld(null);
         }
         catch (Throwable var2)
         {
@@ -1477,7 +1481,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         if (this.currentScreen == null)
         {
-            this.displayGuiScreen(new GuiIngameMenu());
+            if (ModuleInstance.getBool("SpecialGuis", "PauseMenu").isEnabled())
+                displayGuiScreen(new BreakoutGuiIngameMenu());
+            else
+                displayGuiScreen(new GuiIngameMenu());
 
             if (this.isSingleplayer() && !this.theIntegratedServer.getPublic())
             {
@@ -1511,7 +1518,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             }
         } else if (leftClick && this.leftClickCounter <= 0 && ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("Animations", "Interact While Swing"))).isEnabled()) {
             this.thePlayer.swingItem();
-            this.playerController.curBlockDamageMP = 0;
+            this.playerController.resetBlockRemoving();
             if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
@@ -1747,6 +1754,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void runTick() throws IOException
     {
         new TickEvent().call();
+
+        if (Display.isFullscreen()) {
+            big = true;
+        } else {
+            big = false;
+        }
         if (this.rightClickDelayTimer > 0)
         {
             --this.rightClickDelayTimer;

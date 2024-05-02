@@ -15,10 +15,7 @@ import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
-import cn.stars.starx.util.render.GlUtils;
-import cn.stars.starx.util.render.InGameBlurUtil;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
@@ -49,6 +46,8 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     private float width = 320;
     private static float height = 260;
+
+    private static boolean inited = false;
 
     private float categoryWidth;
     private static float categoryHeight;
@@ -147,6 +146,12 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             }
         }
 
+        if (!inited) {
+            x = 270;
+            y = 100;
+            inited = true;
+        }
+
         hasEditedSliders = false;
         blockScriptEditorOpen = false;
 
@@ -173,13 +178,10 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         final ScaledResolution sr = new ScaledResolution(mc);
 
         if (close) {
-            introAnimation.setDirection(Direction.BACKWARDS);
-            if(introAnimation.isDone(Direction.BACKWARDS)) {
                 mc.displayGuiScreen(null);
-            }
         }
 
-        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
+   //     GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
 
         size = 1;
         if (resizingGui) {
@@ -261,8 +263,10 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         RenderUtil.roundedRectCustom(x + categoryWidth, y, width - categoryWidth, categoryHeight, 10, colorTop, false, true, false, false);
 
         //Logo
-        TTFFontRenderer title = CustomFont.FONT_MANAGER.getFont("Regular 35");
-        title.drawString(StarX.NAME, x + 8, y + 1f, new Color(237, 237, 237).getRGB());
+        TTFFontRenderer title = CustomFont.FONT_MANAGER.getFont("GoogleSans 24");
+        TTFFontRenderer title2 = CustomFont.FONT_MANAGER.getFont("GoogleSans 12");
+        title.drawString(StarX.NAME, x + 7, y + 4f, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+        title2.drawString(StarX.VERSION, x + 36, y + 1.5f, new Color(237, 237, 237).getRGB());
         //CustomFont.drawString(Rise.CLIENT_VERSION, x + 46, y + 3.0, new Color(237, 237, 237).getRGB());
 
         // Handle the selected category.
@@ -518,7 +522,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             }
 
             if (lastModulePosition < height - categoryHeight && firstModulePosition < categoryHeight) {
-                scrollAmount += ((height - categoryHeight) - lastModulePosition) * 0.14;
+                scrollAmount += ((height - categoryHeight) - lastModulePosition) * 0.2;
             }
         }
 
@@ -563,7 +567,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar X"))).setValue(x);
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar Y"))).setValue(y);
         } */
-        GlUtils.stopScale();
+    //    GlUtils.stopScale();
     }
 
 //    public void drawScript(final OnlineScriptHandler.OnlineScript script, final double x, final double y, final double width, final double height) {
@@ -627,14 +631,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     public void renderModule(final float x, final float y, final float width, final float height, final Module m) {
         ScaledResolution sr = new ScaledResolution(mc);
-        if (close) {
-            introAnimation.setDirection(Direction.BACKWARDS);
-            if(introAnimation.isDone(Direction.BACKWARDS)) {
-                mc.displayGuiScreen(null);
-            }
-        }
 
-        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
         //Module background
         RenderUtil.roundedRect(x, y, width, height, 5, new Color(255, 255, 255, 10));
 
@@ -655,7 +652,6 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         if (m.descOpacityInGui > 1)
             CustomFont.drawStringSmall(m.getModuleInfo().description(), x + (CustomFont.getWidth(m.getModuleInfo().name())) + 6, y + 8, new Color(175, 175, 175, Math.round(m.descOpacityInGui)).getRGB());
 
-        GlUtils.stopScale();
     }
 
 //    public void renderScript(final float x, final float y, final float width, final float height, final Script script) {

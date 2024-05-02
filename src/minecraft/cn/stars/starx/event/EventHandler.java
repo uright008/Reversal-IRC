@@ -4,7 +4,7 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.AlwaysHandle;
-import cn.stars.starx.module.impl.render.ClientSettings;
+import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.ClickGUI;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;

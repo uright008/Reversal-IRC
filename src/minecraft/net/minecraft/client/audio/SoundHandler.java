@@ -56,6 +56,10 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
         this.sndManager = new SoundManager(this, gameSettingsIn);
     }
 
+    public void playButtonPress() {
+        playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press")));
+    }
+
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
         this.sndManager.reloadSoundSystem();

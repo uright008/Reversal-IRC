@@ -12,6 +12,7 @@ import cn.stars.starx.util.render.GlUtils;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.render.UIUtil;
+import de.florianmichael.viamcp.gui.GuiProtocolSelector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,9 +22,9 @@ import net.minecraft.src.CustomPanorama;
 import net.minecraft.src.CustomPanoramaProperties;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
-import viamcp.gui.GuiProtocolSelector;
 
 import java.awt.*;
 import java.net.URI;
@@ -102,7 +103,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         RenderUtil.color(StarX.INSTANCE.getGuiTheme().getThemeColor());
         mc.getTextureManager().bindTexture(new ResourceLocation("starx/images/blue.png"));
 
-        final float scale = 1.66f;
+        final float scale = 1.99f;
         final float amount = height;
 
         if (panoramaTimer % 100 == 0) {

@@ -8,6 +8,7 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.ui.notification.NotificationType;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 
@@ -17,7 +18,9 @@ public final class ClientSpoofer extends Module {
 
     @Override
     protected void onEnable() {
+        ScaledResolution sr = new ScaledResolution(mc);
         StarX.INSTANCE.notificationManager.registerNotification("Rejoin for " + this.getModuleInfo().name() + " to work.", NotificationType.NOTIFICATION);
+        StarX.INSTANCE.showMsg("W:"+sr.getScaledWidth() + " ,H:"+sr.getScaledHeight());
     }
 
     @Override

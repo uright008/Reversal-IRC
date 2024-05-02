@@ -26,7 +26,7 @@ public class GuiEditHUD extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
-            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
                         Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
@@ -57,7 +57,7 @@ public class GuiEditHUD extends GuiScreen {
     public void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
 
         for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
-            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
                         Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);

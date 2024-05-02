@@ -5,10 +5,7 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.hud.Arraylist;
-import cn.stars.starx.module.impl.hud.TextGui;
-import cn.stars.starx.module.impl.render.ClientSettings;
-import cn.stars.starx.module.impl.render.HUD;
+import cn.stars.starx.module.impl.hud.*;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
@@ -19,14 +16,12 @@ import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Vec3;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -78,17 +73,13 @@ public class Hud implements GameInstance {
     }
 
     public static void renderKeyStrokes() {
-        if (((BoolValue) Objects.requireNonNull(
-                StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "Keystrokes"))).isEnabled()) {
+        final Keystrokes keystrokes = (Keystrokes) ModuleInstance.getModule(Keystrokes.class);
+        if (keystrokes.isEnabled()) {
 
             final Minecraft mc = Minecraft.getMinecraft();
-            final ScaledResolution SR = new ScaledResolution(mc);
 
-            final float xPercentage = (float) ((NumberValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "KeystrokesX"))).getValue();
-            final float yPercentage = (float) ((NumberValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "KeystrokesY"))).getValue();
-
-            final int x = (int) (SR.getScaledWidth() * xPercentage) / 100;
-            final int y = (int) (SR.getScaledHeight() * yPercentage) / 100;
+            final int x = keystrokes.getX() + 35;
+            final int y = keystrokes.getY();
 
             final int distanceBetweenButtons = 30;
             final int width = 26;
@@ -116,13 +107,13 @@ public class Hud implements GameInstance {
     }
 
     private static void renderBPS() {
-        final boolean enabled = getBoolean2(ClientSettings.class, "BPS Counter");
+        final BPSCounter bpsCounter = (BPSCounter) ModuleInstance.getModule(BPSCounter.class);
+        final boolean enabled = bpsCounter.isEnabled();
         if (!enabled) return;
 
         final String mode = getMode2(ClientSettings.class, "Theme");
-        final ScaledResolution sr = new ScaledResolution(mc);
 
-        final double x = 2, y = sr.getScaledHeight() - 10;
+        final double x = bpsCounter.getX(), y = bpsCounter.getY() + 15;
         final String bps = "BPS: " + MathUtil.round(((Math.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * mc.timer.timerSpeed) * 20), 2);
         final String bps2 = "Speed: " + MathUtil.round(((Math.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * mc.timer.timerSpeed) * 20), 2);
         switch (mode) {
@@ -379,92 +370,125 @@ public class Hud implements GameInstance {
             final TextGui textGui =(TextGui) ModuleInstance.getModule(TextGui.class);
             if (!textGui.isEnabled()) return;
             final String mode = getMode2(ClientSettings.class, "Theme");
-            final boolean module = getBoolean2(ClientSettings.class, "Logo");
+            final boolean useDefaultName = !getBoolean2(TextGui.class, "Custom Name");
 
             final float offset;
             final String name = StarX.NAME, customName = ThemeUtil.getCustomClientName();
 
-            final boolean shouldRenderCustomClientName = !(customName.isEmpty() || customName.equals(" "));
-
-            if (!module) return;
 
             switch (mode) {
                 case "Rise": {
-                    textGui.setWidth(80);
-                    CustomFont.drawStringBigWithDropShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    if (useDefaultName) {
+                        textGui.setWidth(70);
+                        CustomFont.drawStringBigWithDropShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
 
-                    offset = CustomFont.getWidthBig(name);
-                    CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + offset, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                    if (shouldRenderCustomClientName)
-                        CustomFont.drawStringWithDropShadow(customName, textGui.getX() + offset, textGui.getY() + 7, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        offset = CustomFont.getWidthBig(name);
+                        CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + offset, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    } else {
+                        textGui.setWidth((int) (20 + CustomFont.getWidthBig(customName)));
+                        CustomFont.drawStringBigWithDropShadow(customName, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    }
                     break;
                 }
 
                 case "Rise Rainbow": {
-                    textGui.setWidth(80);
-                    float off2 = 0;
+                    if (useDefaultName) {
+                        textGui.setWidth(70);
+                        float off2 = 0;
 
-                    for (int i = 0; i < name.length(); i++) {
-                        final String character = String.valueOf(name.charAt(i));
+                        for (int i = 0; i < name.length(); i++) {
+                            final String character = String.valueOf(name.charAt(i));
 
-                        CustomFont.drawStringBigWithDropShadow(character, textGui.getX() + 1 + off2, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+                            CustomFont.drawStringBigWithDropShadow(character, textGui.getX() + 1 + off2, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
 
-                        off2 += CustomFont.getWidthBig(character) - 2;
+                            off2 += CustomFont.getWidthBig(character) - 2;
+                        }
+
+                        off2 = CustomFont.getWidthBig(name);
+                        CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + off2, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    } else {
+                        textGui.setWidth((int) (20 + CustomFont.getWidthBig(customName)));
+                        float off2 = 0;
+
+                        for (int i = 0; i < customName.length(); i++) {
+                            final String character = String.valueOf(customName.charAt(i));
+
+                            CustomFont.drawStringBigWithDropShadow(character, textGui.getX() + 1 + off2, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+
+                            off2 += CustomFont.getWidthBig(character) - 2;
+                        }
+
                     }
 
-                    off2 = CustomFont.getWidthBig(name);
-                    CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + off2, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                    if (shouldRenderCustomClientName)
-                        CustomFont.drawStringWithDropShadow(customName, textGui.getX() + off2, textGui.getY() + 7, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
                     break;
                 }
 
                 case "Minecraft": {
-                    textGui.setWidth(80);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                    mc.fontRendererObj.drawStringWithShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                    GlStateManager.popMatrix();
+                    if (useDefaultName) {
+                        textGui.setWidth(70);
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(1.5F, 1.5F, 1.5F);
+                        mc.fontRendererObj.drawStringWithShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        GlStateManager.popMatrix();
 
-                    offset = CustomFont.getWidthBig(name);
-                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, textGui.getX() + offset - 10, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        offset = CustomFont.getWidthBig(name);
+                        mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, textGui.getX() + offset + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
 
-                    if (shouldRenderCustomClientName)
-                        mc.fontRendererObj.drawStringWithShadow(customName, textGui.getX() + offset, textGui.getY() + 8, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    } else {
+                        textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(1.5F, 1.5F, 1.5F);
+                        mc.fontRendererObj.drawStringWithShadow(customName, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        GlStateManager.popMatrix();
+                    }
                     break;
                 }
 
                 case "StarX": {
-                    textGui.setWidth(100);
-                    gsTitle.drawStringWithShadow("S", textGui.getX() + 7,textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                    gsTitle.drawStringWithShadow("tarX [" + StarX.VERSION + "]", textGui.getX() + 5 + gsTitle.getWidth("S"), textGui.getY() + 4.9f, new Color(230,230,230,200).getRGB());
+                    if (useDefaultName) {
+                        textGui.setWidth(100);
+                        gsTitle.drawStringWithShadow("S", textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        gsTitle.drawStringWithShadow("tarX [" + StarX.VERSION + "]", textGui.getX() + 5 + gsTitle.getWidth("S"), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
+                    } else {
+                        textGui.setWidth((int) (20 + gsTitle.getWidth(customName)));
+                        // FOOLISH
+                        gsTitle.drawStringWithShadow(String.valueOf(customName.charAt(0)), textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        // 从字符串第二个字开始获取
+                        gsTitle.drawStringWithShadow(customName.substring(1), textGui.getX() + 5 + gsTitle.getWidth(String.valueOf(customName.charAt(0))), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
+                    }
                     break;
                 }
 
                 case "Minecraft Rainbow": {
-                    textGui.setWidth(80);
-                    float off = 0;
+                    if (useDefaultName) {
+                        textGui.setWidth(75);
+                        float off = 0;
 
-                    for (int i = 0; i < name.length(); i++) {
-                        final String character = String.valueOf(name.charAt(i));
+                        for (int i = 0; i < name.length(); i++) {
+                            final String character = String.valueOf(name.charAt(i));
 
-                        GlStateManager.pushMatrix();
-                        GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                        mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
-                        GlStateManager.popMatrix();
+                            GlStateManager.pushMatrix();
+                            GlStateManager.scale(1.5F, 1.5F, 1.5F);
+                            mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+                            GlStateManager.popMatrix();
 
-                        off += mc.fontRendererObj.getStringWidth(character);
-                    }
+                            off += mc.fontRendererObj.getStringWidth(character);
+                        }
 
-                    off = CustomFont.getWidthBig(name);
-                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, off - 10, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        off = CustomFont.getWidthBig(name);
+                        mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, off + 20, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    } else {
+                        textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
+                        float off = 0;
 
-                    if (shouldRenderCustomClientName) {
                         for (int i = 0; i < customName.length(); i++) {
                             final String character = String.valueOf(customName.charAt(i));
-                            mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + off, textGui.getY() + 8, ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+
+                            GlStateManager.pushMatrix();
+                            GlStateManager.scale(1.5F, 1.5F, 1.5F);
+                            mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+                            GlStateManager.popMatrix();
+
                             off += mc.fontRendererObj.getStringWidth(character);
                         }
                     }
@@ -472,21 +496,24 @@ public class Hud implements GameInstance {
                 }
 
                 case "Comfort": {
-                    textGui.setWidth(80);
-                    comfortaaBig.drawStringWithShadow(name, textGui.getX(), textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    if (useDefaultName) {
+                        textGui.setWidth(70);
+                        comfortaaBig.drawStringWithShadow(name, textGui.getX(), textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
 
-                    offset = CustomFont.getWidthBig(name);
-                    comfortaa.drawStringWithShadow(StarX.VERSION, textGui.getX() + 3 + offset, textGui.getY() - 1, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                        offset = CustomFont.getWidthBig(name);
+                        comfortaa.drawStringWithShadow(StarX.VERSION, textGui.getX() + 3 + offset, textGui.getY() - 1, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    } else {
+                        textGui.setWidth((int) (20 + comfortaaBig.getWidth(customName)));
+                        comfortaaBig.drawStringWithShadow(customName, textGui.getX(), textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
 
-                    if (shouldRenderCustomClientName)
-                        comfortaa.drawStringWithShadow(customName, textGui.getX() + offset, textGui.getY() + 7, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    }
                     break;
                 }
 
                 case "Never Lose": {
                     float x = textGui.getX() + 2;
                     final float y = textGui.getY() - 1;
-                    final String clientName = "STARX";
+                    final String clientName = useDefaultName ? "STARX" : customName.toUpperCase();
                     final String ip = (mc.getCurrentServerData() == null ? "Singleplayer" : mc.getCurrentServerData().serverIP);
                     String username = mc.getSession().getUsername();
                     if (username == null) username = mc.thePlayer.getName();
@@ -506,10 +533,10 @@ public class Hud implements GameInstance {
                             85
                     );
 
-                    museo.drawString(clientName, x - 1, y + 1, color.hashCode());
-                    museo.drawString(clientName, x, y + 2, informationColor);
+                    museo.drawString(clientName, x + 1, y, color.hashCode());
+                    museo.drawString(clientName, x + 2, y + 1, informationColor);
 
-                    x += museo.getHeight(clientName) + 30;
+                    x += museo.getWidth(clientName) + 5;
                     eaves.drawString("|", x - 4, y + 2, new Color(255, 255, 255, 150).hashCode());
                     eaves.drawString(username, x, y + 2, informationColor);
 
@@ -520,18 +547,6 @@ public class Hud implements GameInstance {
                     x += eaves.getWidth(ip) + 4;
                     eaves.drawString("|", x - 4, y + 2, new Color(255, 255, 255, 150).hashCode());
                     eaves.drawString("FPS " + Minecraft.getDebugFPS(), x, y + 2, informationColor);
-
-                    if (shouldRenderCustomClientName) {
-                        final float customWidth = eaves.getWidth(customName) + 2;
-                        final float customY = textGui.getY() + 13;
-                        final float customX = textGui.getX() + 2;
-
-                        RenderUtil.roundedRect(customX - 1, customY - 1, customWidth, 12, 3, Color.black);
-
-                        RenderUtil.roundedRect(customX - 1 - 4 / 2f, customY - 1 - 4 / 2f, customWidth + 4, 12 + 4, 6, new Color(0, 0, 0, 25));
-
-                        eaves.drawString(customName, customX, customY + 2, informationColor);
-                    }
                 }
                 break;
 
@@ -539,7 +554,7 @@ public class Hud implements GameInstance {
                     float x = textGui.getX() + 4;
                     final float y = textGui.getY() + 1f;
 
-                    final String clientName = "starx";
+                    final String clientName = useDefaultName ? "starx" : customName.toLowerCase();
                     final NetworkPlayerInfo info = mc.getNetHandler().getPlayerInfo(mc.thePlayer.getUniqueID());
                     final int responseTime = info == null || mc.isSingleplayer() ? 0 : info.getResponseTime();
 
@@ -557,9 +572,9 @@ public class Hud implements GameInstance {
                     RenderUtil.rect(x - 1, y - 1, width + 34, 8, true, Color.DARK_GRAY.darker().darker());
 
                     skeet.drawString(clientName, x + 2, y + 0.5f, informationColor);
-                    skeet.drawString("sense", (x + 2) + skeet.getWidth("starx") - 2, y + 0.5f, StarX.CLIENT_THEME_COLOR_BRIGHT);
+                    skeet.drawString(" sense", (x + 2) + skeet.getWidth(clientName) - 2, y + 0.5f, StarX.CLIENT_THEME_COLOR_BRIGHT);
 
-                    x += skeet.getHeight(clientName) + 43;
+                    x += skeet.getWidth(clientName + "sense") + 15;
                     skeet.drawString("|", x - 12, y + 0.5f, new Color(255, 255, 255, 150).hashCode());
                     skeet.drawString(Minecraft.getDebugFPS() + " fps", x - 6, y + 0.5f, informationColor);
 
@@ -570,21 +585,6 @@ public class Hud implements GameInstance {
                     x += skeet.getWidth(responseTime + "ms") + 6;
                     skeet.drawString("|", x - 12, y + 0.5f, new Color(255, 255, 255, 150).hashCode());
                     skeet.drawString(username, x - 6, y + 0.5f, informationColor);
-
-                    if (shouldRenderCustomClientName) {
-                        final float customWidth = skeet.getWidth(customName) + 4;
-                        final float customX = textGui.getX() + 4;
-                        final float customY = textGui.getY() + 15;
-
-                        for (int i = 1; i <= 4; i++) {
-                            RenderUtil.rect(customX - 1.5 - i / 2f, customY - 1.5 - i / 2f, customWidth + 1 + i, 9 + i, true, Color.DARK_GRAY.darker());
-                            RenderUtil.rect(customX - 1 - i / 2f, customY - 1 - i / 2f, customWidth + i, 8 + i, true, Color.DARK_GRAY);
-                        }
-
-                        RenderUtil.rect(customX - 1, customY - 1, customWidth, 8, true, Color.DARK_GRAY.darker().darker());
-
-                        skeet.drawString(customName, customX + 2, customY + 0.5f, informationColor);
-                    }
                 }
                 break;
             }

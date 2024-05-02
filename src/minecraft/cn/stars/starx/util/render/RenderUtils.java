@@ -1,5 +1,6 @@
 package cn.stars.starx.util.render;
 
+import cn.stars.starx.util.animation.simple.AnimationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,6 +35,38 @@ public class RenderUtils {
         glEnable(GL_DEPTH_TEST);
     }
 
+    public static void drawLoadingCircle(float x, float y) {
+        for (int i = 0; i < 4; i++) {
+            int rot = (int) ((System.nanoTime() / 5000000 * i) % 360);
+            drawCircle(x, y, i * 10, rot - 180, rot, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+        }
+    }
+
+    public static float smoothAnimation(float ani, float finalState, float speed, float scale) {
+        return AnimationUtils.getAnimationState(ani, finalState, Math.max(10.0F, Math.abs(ani - finalState) * speed) * scale);
+    }
+
+    public static float smoothAnimation(float ani, float finalState, float speed) {
+        return AnimationUtils.getAnimationState(ani, finalState, Math.max(10.0F, Math.abs(ani - finalState) * speed));
+    }
+
+    public static void drawCircle(float x, float y, float radius, int start, int end, int color) {
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+        glColor(color);
+
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(2F);
+        glBegin(GL_LINE_STRIP);
+        for (float i = end; i >= start; i -= (360 / 90.0f))
+            glVertex2f((float) (x + (cos(i * PI / 180) * (radius * 1.001F))), (float) (y + (sin(i * PI / 180) * (radius * 1.001F))));
+        glEnd();
+        glDisable(GL_LINE_SMOOTH);
+
+        GlStateManager.enableTexture2D();
+        disableBlend();
+    }
     public static void drawArc(float x1, float y1, double r, int color, int startPoint, double arc, int linewidth) {
         r *= 2.0D;
         x1 *= 2;
@@ -195,6 +228,21 @@ public class RenderUtils {
         glShadeModel(GL_SMOOTH);
 
         quickDrawGradientSidewaysH(left, top, right, bottom, col1, col2);
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glShadeModel(GL_FLAT);
+    }
+
+    public static void drawGradientSidewaysHPlus(double left, double top, double right, double bottom, int col1, int col2) {
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glShadeModel(GL_SMOOTH);
+
+        quickDrawGradientSidewaysH(left, top,left + right,top+ bottom, col1, col2);
 
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);

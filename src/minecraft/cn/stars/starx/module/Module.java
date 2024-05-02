@@ -10,6 +10,7 @@ import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.ArrayList;
@@ -37,16 +38,24 @@ public abstract class Module implements GameInstance {
     public boolean hidden = false;
     private int x, y, draggingX, draggingY;
     private int width, height;
-    private boolean dragging, hide;
+    private boolean dragging, hide, canBeEdited;
     public SimpleAnimation buttonAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation buttonOpacityAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation selectAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation editOpacityAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation boxAnimation = new SimpleAnimation(0.0F);
+
     //Module Settings
     public List<Setting> settings = new ArrayList<>();
-
     private ModuleInfo moduleInfo;
+
+    public int getY() {
+        if (Minecraft.big) {
+            if (y > 270) return y + 35;
+            else return y;
+        }
+        else return y;
+    }
 
     public Module() {
         if (this.getClass().isAnnotationPresent(ModuleInfo.class)) {
@@ -90,12 +99,12 @@ public abstract class Module implements GameInstance {
         if (enabled) {
             onEnable();
             if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
-                    "Enabled" + " " + getModuleInfo().name(), "Info", 2000, NotificationType.SUCCESS);
+                    "Enabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.SUCCESS);
         }
         else {
             onDisable();
             if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
-                    "Disabled" + " " + getModuleInfo().name(), "Info", 2000, NotificationType.ERROR);
+                    "Disabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.ERROR);
         }
 
         renderX = mc.displayWidth;

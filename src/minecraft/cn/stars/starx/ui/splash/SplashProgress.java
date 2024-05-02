@@ -3,6 +3,9 @@ package cn.stars.starx.ui.splash;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.util.animation.lb.AnimatedValue;
+import cn.stars.starx.util.animation.lb.EaseUtils;
+import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.shader.round.RoundedUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -18,12 +21,9 @@ import java.awt.*;
 public final class SplashProgress {
     // Max amount of progress updates
     private static final int DEFAULT_MAX = 14;
-    // Font renderer
     private static final TTFFontRenderer fontRenderer = CustomFont.FONT_MANAGER.getFont("Skid 96");
     private static final TTFFontRenderer fontRenderer2 = CustomFont.FONT_MANAGER.getFont("Biko 18");
-    // Current progress
     private static int PROGRESS;
-    // Currently displayed progress text
     private static String CURRENT = "";
     // Background texture
     private static ResourceLocation splash;
@@ -117,26 +117,25 @@ public final class SplashProgress {
      * Render the progress bar and text
      */
     private static void drawProgress() {
-        if (Minecraft.getMinecraft().gameSettings == null || Minecraft.getMinecraft().getTextureManager() == null)
+        if (Minecraft.getMinecraft().getTextureManager() == null)
             return;
 
-        // Get the users screen width and height to apply
+        // Screen Height
         final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
-        // Get the wanted x position
+        // Pos
         final float startX = (sr.getScaledWidth() / 2.0F - 80);
         final float endX = (sr.getScaledWidth() / 2.0F + 80);
 
         // Calculate the progress bar
         final double nProgress = PROGRESS;
         final double calc = (nProgress / DEFAULT_MAX) * 160;
-
         // Draw the transparent bar before the green bar
-        RoundedUtils.drawRoundOutline(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 5F, 3f, 1f, new Color(255, 255, 255, 60), new Color(255, 255, 255, 60));
+        RoundedUtils.drawRoundOutline(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 5F, 3f, 1f, new Color(255, 255, 255, 160), new Color(255, 255, 255, 160));
       //  Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, endX, sr.getScaledHeight() / 2.0F + 20.0F, new Color(255, 255, 255, 60).getRGB());
 
         // Render the blue progress bar
-        RoundedUtils.drawGradientRound(startX, sr.getScaledHeight() / 2.0F + 20.0F, (float) (calc), 5F, 3f, new Color(170, 250, 20, 160), new Color(79, 199, 79, 160), new Color(30, 255, 160, 160), new Color(10, 255, 250, 230));
+        RoundedUtils.drawGradientRound(startX, sr.getScaledHeight() / 2.0F + 20.0F, (float) (Math.round(calc)), 5F, 3f, new Color(170, 250, 20, 160), new Color(79, 199, 79, 160), new Color(30, 255, 160, 160), new Color(10, 255, 250, 230));
      //   Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, (float) (startX + calc), sr.getScaledHeight() / 2.0F + 20.0F, new Color(20, 255, 20, 160).getRGB());
 
         // Render the rise text

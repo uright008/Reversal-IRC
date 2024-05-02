@@ -311,6 +311,10 @@ public class FontRenderer implements IResourceManagerReloadListener
         return f;
     }
 
+    public void drawCenteredString(String s, int x, int y, int color) {
+        drawString(s, x - getStringWidth(s) / 2, y, color);
+    }
+
     private ResourceLocation getUnicodePageLocation(int p_111271_1_)
     {
         if (unicodePageLocations[p_111271_1_] == null)

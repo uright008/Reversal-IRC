@@ -23,7 +23,10 @@ import net.minecraft.util.ResourceLocation;
 @ModuleInfo(name = "HitEffect", description = "Renders particle effect when you attack someone", category = Category.RENDER)
 public final class HitEffect extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this, "Blood", "Blood", "Critical", "MagicCritical", "Heart");
+    private final ModeValue mode = new ModeValue("Mode", this, "Blood", "None", "Blood", "Heart", "Flame", "Portal", "Bubble", "Explosion", "Lava",
+            "Smoke", "Note", "Footstep", "Slime");
+    private final BoolValue sharp = new BoolValue("Sharpness", this ,false);
+    private final BoolValue crit = new BoolValue("Critical", this ,false);
     private final NumberValue amount = new NumberValue("Amount", this, 5, 1, 10, 1);
     private final BoolValue sound = new BoolValue("BloodSound", this, true);
 
@@ -44,6 +47,14 @@ public final class HitEffect extends Module {
     public void onPreMotion(final PreMotionEvent event) {
         if (target != null && target.hurtTime >= 9 && mc.thePlayer.getDistance(target.posX, target.posY, target.posZ) < 10) {
             if (mc.thePlayer.ticksExisted > 3) {
+                if (sharp.isEnabled()) {
+                    for (int i = 0; i < amount.getValue(); i++)
+                        mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.CRIT_MAGIC);
+                }
+                if (crit.isEnabled()) {
+                    for (int i = 0; i < amount.getValue(); i++)
+                        mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.CRIT);
+                }
                 switch (mode.getMode()) {
                     case "Blood":
                         for (int i = 0; i < amount.getValue(); i++)
@@ -53,18 +64,45 @@ public final class HitEffect extends Module {
                             mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("dig.stone"), 1.2F, ((float) target.posX), ((float) target.posY), ((float) target.posZ)));
                         break;
 
-                    case "Critical":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.CRIT);
-                        break;
-
                     case "Heart":
                         for (int i = 0; i < amount.getValue(); i++)
                             mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.HEART);
-
-                    case "MagicCritical":
+                        break;
+                    case "Flame":
                         for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.CRIT_MAGIC);
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.FLAME);
+                        break;
+                    case "Portal":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.PORTAL);
+                        break;
+                    case "Bubble":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.WATER_BUBBLE);
+                        break;
+                    case "Explosion":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.EXPLOSION_NORMAL);
+                        break;
+                    case "Lava":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.DRIP_LAVA);
+                        break;
+                    case "Note":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.NOTE);
+                        break;
+                    case "Slime":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.SLIME);
+                        break;
+                    case "Footstep":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.FOOTSTEP);
+                        break;
+                    case "Smoke":
+                        for (int i = 0; i < amount.getValue(); i++)
+                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.SMOKE_NORMAL);
                         break;
                 }
             }

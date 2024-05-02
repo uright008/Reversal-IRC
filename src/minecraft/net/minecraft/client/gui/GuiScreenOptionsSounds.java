@@ -1,6 +1,9 @@
 package net.minecraft.client.gui;
 
+import java.awt.*;
 import java.io.IOException;
+
+import cn.stars.starx.util.shader.round.RoundedUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;

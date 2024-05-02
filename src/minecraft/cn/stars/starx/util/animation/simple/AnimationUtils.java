@@ -34,6 +34,18 @@ public class AnimationUtils {
         return current;
     }
 
+    public static double getAnimationState(double animation, double finalState, double speed) {
+        float add = (float) (0.01 * speed);
+        animation = animation < finalState ? (Math.min(animation + add, finalState)) : (Math.max(animation - add, finalState));
+        return animation;
+    }
+
+    public static float getAnimationState(float animation, float finalState, float speed) {
+        float add = (float) (0.01 * speed);
+        animation = animation < finalState ? (Math.min(animation + add, finalState)) : (Math.max(animation - add, finalState));
+        return animation;
+    }
+
     public static float calculateCompensation(final float target, float current, final double speed, long delta) {
 
         final float diff = current - target;

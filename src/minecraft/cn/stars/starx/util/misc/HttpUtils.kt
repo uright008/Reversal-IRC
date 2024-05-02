@@ -1,6 +1,5 @@
 package cn.stars.starx.util.misc
 
-import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -61,8 +60,5 @@ object HttpUtils {
     fun get(url: String) = request(url, "GET")
 
 
-    @Throws(IOException::class)
-    @JvmStatic
-    fun download(url: String, file: File) = FileUtils.copyInputStreamToFile(make(url, "GET").inputStream, file)
 
 }

@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.PreBlurEvent;
-import cn.stars.starx.module.impl.render.ClientSettings;
+import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
@@ -364,6 +364,7 @@ public class GuiIngame extends Gui
 
         final PreBlurEvent eventPreBlur = new PreBlurEvent();
         eventPreBlur.call();
+
     }
 
     protected void renderTooltip(ScaledResolution sr, float partialTicks)

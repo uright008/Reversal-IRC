@@ -221,7 +221,7 @@ public class GuiChat extends GuiScreen
             }
         }
         for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
-            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
                         Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
@@ -355,18 +355,12 @@ public class GuiChat extends GuiScreen
         final ScaledResolution sr = new ScaledResolution(mc);
 
         if (close) {
-            introAnimation.setDirection(Direction.BACKWARDS);
-            if(introAnimation.isDone(Direction.BACKWARDS)) {
-                mc.displayGuiScreen(null);
-            }
+            mc.displayGuiScreen(null);
         }
 
-        GlUtils.startScale(sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, (float) introAnimation.getValue());
 
         gs.drawCenteredString("Drag huds to change their positions!", width / 2, 10, Color.WHITE.getRGB());
-        RoundedUtils.drawRoundOutline(width / 2 - 90, 8, 180, 14, 4, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, 255));
-
-        GlUtils.stopScale();
+        RoundedUtils.drawRoundOutline(width / 2 - 90, 7.5f, 180, 14, 4, 0.5f, new Color(255, 255, 255, 0), new Color(255, 255, 255, 255));
 
         RenderUtil.roundedRect(1, this.height - 14, this.width - 2, this.height, 5, new Color(0,0,0,120));
         this.inputField.drawTextBox();
@@ -377,7 +371,7 @@ public class GuiChat extends GuiScreen
             this.handleComponentHover(ichatcomponent, mouseX, mouseY);
         }
         for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
-            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD)) {
+            if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
                         Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);

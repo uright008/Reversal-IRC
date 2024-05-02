@@ -531,6 +531,18 @@ public final class RenderUtil implements GameInstance {
         disable(GL11.GL_BLEND);
     }
 
+    public void imageWithAlpha(final ResourceLocation imageLocation, final float x, final float y, final float width, final float height, float alpha) {
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        enable(GL11.GL_BLEND);
+        GlStateManager.enableAlpha();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, alpha);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        mc.getTextureManager().bindTexture(imageLocation);
+        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+        disable(GL11.GL_BLEND);
+    }
+
     public void imageCentered(final ResourceLocation imageLocation, float x, float y, final float width, final float height) {
         x -= width / 2f;
         y -= height / 2f;

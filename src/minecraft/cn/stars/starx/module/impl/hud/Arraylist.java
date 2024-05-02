@@ -12,6 +12,7 @@ public class Arraylist extends Module {
     final float arraylistX = SR.getScaledWidth() - offset;
 
     public Arraylist() {
+        setCanBeEdited(true);
         setX((int) arraylistX);
     }
 }
