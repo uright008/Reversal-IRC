@@ -10,5 +10,6 @@ This client has no hacked features.Always notice this!
 5. Wings
 6. Chunk Animator
 # Optimzed Gaming
-1. ServerListBufferFixer
-2. Optifine
+1. Optifine
+2. ServerListBufferFixer
+3. Scoreboard Fix
