@@ -115,7 +115,7 @@ public class AsyncVersionSlider extends GuiButton {
 
     public void setVersion(int protocol)
     {
-        this.dragValue = (float) ViaLoadingBase.PROTOCOLS.indexOf(ProtocolVersion.getProtocol(protocol)) / ViaLoadingBase.PROTOCOLS.size();
+        this.dragValue = this.dragValue = (float) ViaLoadingBase.PROTOCOLS.indexOf(ProtocolVersion.getProtocol(protocol)) / (ViaLoadingBase.PROTOCOLS.size() - 1);
         this.sliderValue = this.dragValue;
         this.displayString = values.get((int) (this.sliderValue * (values.size() - 1))).getName();
     }

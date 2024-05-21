@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL11.*;
 @ModuleInfo(name = "BoxWeapon", description = "ARIS doesn't have a b", category = Category.HUD)
 public class BoxWeapon extends Module {
     private final ModeValue character = new ModeValue("Character", this, "Aris",
-            "Aris", "Shiroko", "Azusa", "Hina Swimsuit", "Ui", "Hoshino Swimsuit");
+            "Aris", "Shiroko", "Azusa", "Hina Swimsuit", "Ui", "Hoshino Swimsuit", "Mika", "Yuuka Track");
     private final NumberValue scale = new NumberValue("Scale", this, 1, 0.1, 2, 0.1);
     private final NoteValue note = new NoteValue("Add scale to make pictures look better,", this);
     private final NoteValue note2 = new NoteValue("which may HIDE the screen.", this);
@@ -71,9 +71,21 @@ public class BoxWeapon extends Module {
                 break;
             }
             case "Hoshino Swimsuit": {
-                setRoundedWidth(130, scale.getValue());
+                setRoundedWidth(135, scale.getValue());
                 setRoundedHeight(170, scale.getValue());
                 drawImage(new ResourceLocation("starx/images/box_weapon/hoshino_swimsuit.png"), x, y, 125, 160, scale.getValue());
+                break;
+            }
+            case "Mika": {
+                setRoundedWidth(110, scale.getValue());
+                setRoundedHeight(170, scale.getValue());
+                drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 100, 160, scale.getValue());
+                break;
+            }
+            case "Yuuka Track": {
+                setRoundedWidth(114, scale.getValue());
+                setRoundedHeight(170, scale.getValue());
+                drawImage(new ResourceLocation("starx/images/box_weapon/yuuka_track.png"), x, y, 105, 160, scale.getValue());
                 break;
             }
         }
