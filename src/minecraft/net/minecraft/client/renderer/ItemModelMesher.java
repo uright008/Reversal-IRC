@@ -37,9 +37,13 @@ public class ItemModelMesher
         Item item = stack.getItem();
         IBakedModel ibakedmodel = this.getItemModel(item, this.getMetadata(stack));
 
+        if (item == null) {
+            return this.modelManager.getMissingModel();
+        }
+
         if (ibakedmodel == null)
         {
-            ItemMeshDefinition itemmeshdefinition = (ItemMeshDefinition)this.shapers.get(item);
+            ItemMeshDefinition itemmeshdefinition = this.shapers.get(item);
 
             if (itemmeshdefinition != null)
             {

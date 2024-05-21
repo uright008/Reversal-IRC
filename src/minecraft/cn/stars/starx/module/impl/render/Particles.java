@@ -39,7 +39,7 @@ public final class Particles extends Module {
     }
 
     @Override
-    public void onAttackEvent(final AttackEvent event) {
+    public void onAttack(final AttackEvent event) {
         if (event.getTarget() instanceof EntityLivingBase)
             target = (EntityLivingBase) event.getTarget();
     }
@@ -55,7 +55,7 @@ public final class Particles extends Module {
     }
 
     @Override
-    public void onRender3DEvent(final Render3DEvent event) {
+    public void onRender3D(final Render3DEvent event) {
         if (particles.isEmpty())
             return;
 

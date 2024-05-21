@@ -57,7 +57,6 @@ public class BanChecker extends Module {
                                 // watchdog ban doesnt matter, open an issue if you want to add it.
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
 
                             if (alertValue.isEnabled() && mc.thePlayer != null && (!serverCheckValue.isEnabled() || isOnHypixel()))
                                 registerNotification("An error has occurred.", "BanChecker", NotificationType.ERROR, 1000L);

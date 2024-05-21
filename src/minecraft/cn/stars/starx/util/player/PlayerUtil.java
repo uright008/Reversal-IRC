@@ -30,6 +30,33 @@ public final class PlayerUtil {
     public static boolean sentEmail;
     public static boolean firstWorld;
     public static int worldChanges;
+    private static HashMap<Integer, Integer> GOOD_POTIONS = new HashMap<Integer, Integer>() {{
+        put(6, 1); // Instant Health
+        put(10, 2); // Regeneration
+        put(11, 3); // Resistance
+        put(21, 4); // Health Boost
+        put(22, 5); // Absorption
+        put(23, 6); // Saturation
+        put(5, 7); // Strength
+        put(1, 8); // Speed
+        put(12, 9); // Fire Resistance
+        put(14, 10); // Invisibility
+        put(3, 11); // Haste
+        put(13, 12); // Water Breathing
+    }};
+
+    public static boolean getGoodPotion(final int id) {
+        return GOOD_POTIONS.containsKey(id);
+    }
+
+    /**
+     * Gets a potions ranking
+     *
+     * @return potion ranking
+     */
+    public static int getPotionRanking(final int id) {
+        return GOOD_POTIONS.getOrDefault(id, -1);
+    }
 
     public static boolean isHoldingSword() {
         return mc.thePlayer.ticksExisted > 3 && PlayerUtil.mc.thePlayer.getCurrentEquippedItem() != null && PlayerUtil.mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemSword;
@@ -97,6 +124,8 @@ public final class PlayerUtil {
 
         return null;
     }
+
+
 
     public static boolean isOnSameTeam(final EntityLivingBase entity) {
         if (entity.getTeam() != null && PlayerUtil.mc.thePlayer.getTeam() != null) {

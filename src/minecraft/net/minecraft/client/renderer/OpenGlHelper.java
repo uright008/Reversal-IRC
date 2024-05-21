@@ -930,6 +930,6 @@ public class OpenGlHelper
 
     public static String func_183029_j()
     {
-        return field_183030_aa == null ? "<unknown>" : field_183030_aa;
+        return field_183030_aa == null ? "<未知>" : field_183030_aa;
     }
 }

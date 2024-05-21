@@ -1,6 +1,8 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
+
+import cn.stars.starx.ui.gui.GuiMainMenuNew;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -12,7 +14,6 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
      * The integer value containing the number of ticks that have passed since the player's death
      */
     private int enableButtonsTimer;
-    private boolean field_146346_f = false;
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
@@ -20,6 +21,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
      */
     public void initGui()
     {
+        this.enableButtonsTimer = 0;
         this.buttonList.clear();
 
         if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
@@ -73,7 +75,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
             case 1:
                 if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
                 {
-                    this.mc.displayGuiScreen(new GuiMainMenu());
+                    this.mc.displayGuiScreen(new GuiMainMenuNew());
                 }
                 else
                 {
@@ -90,7 +92,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.loadWorld((WorldClient)null);
-            this.mc.displayGuiScreen(new GuiMainMenu());
+            this.mc.displayGuiScreen(new GuiMainMenuNew());
         }
         else
         {

@@ -172,7 +172,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
     public void func_146615_e(int p_146615_1_)
     {
-        this.mc.displayGuiScreen((GuiScreen)null);
+        this.mc.displayGuiScreen(null);
 
         if (!this.field_146634_i)
         {
@@ -193,7 +193,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
             if (this.mc.getSaveLoader().canLoadWorld(s))
             {
-                this.mc.launchIntegratedServer(s, s1, (WorldSettings)null);
+                this.mc.launchIntegratedServer(s, s1, null);
             }
         }
     }
@@ -283,7 +283,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
         protected void drawBackground()
         {
-            GuiSelectWorld.this.drawDefaultBackground();
+            drawDefaultBackground();
         }
 
         protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)

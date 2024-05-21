@@ -85,7 +85,7 @@ public class SmartLeaves
 
         if (list.size() > 0)
         {
-            Config.dbg("Enable face culling: " + Config.arrayToString(list.toArray()));
+            Config.dbg("启用表面剔除: " + Config.arrayToString(list.toArray()));
         }
     }
 

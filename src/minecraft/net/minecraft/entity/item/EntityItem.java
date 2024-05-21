@@ -1,5 +1,6 @@
 package net.minecraft.entity.item;
 
+import cn.stars.starx.util.StarXLogger;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -460,7 +461,7 @@ public class EntityItem extends Entity
         {
             if (this.worldObj != null)
             {
-                logger.error("Item entity " + this.getEntityId() + " has no item?!");
+                StarXLogger.error(StarXLogger.mcl + "Item Entity has no item??? " + getEntityId());
             }
 
             return new ItemStack(Blocks.stone);

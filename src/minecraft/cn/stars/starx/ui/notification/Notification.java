@@ -3,6 +3,7 @@ package cn.stars.starx.ui.notification;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
@@ -70,10 +71,14 @@ public final class Notification implements GameInstance {
     }
 
     public void render() {
+        TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Check 24");
+        TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 24");
+        TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 20");
         final String name = StringUtils.capitalize(type.name().toLowerCase());
         Color sideColor = new Color(-1);
         final float screenWidth = sr.getScaledWidth();
-        float x = (screenWidth) - (Math.max(gs.getWidth(description), gs.getWidth(name))) - 2;
+        float x = (screenWidth) - (Math.max(psm.getWidth(description), psb.getWidth(name))) - 6;
+        String iconString = "b";
 
         final float curr = System.currentTimeMillis() - getStart();
         final float percentageLeft = curr / getDelay();
@@ -89,15 +94,19 @@ public final class Notification implements GameInstance {
         switch (type) {
             case NOTIFICATION:
                 sideColor = new Color(210,210,210,200);
+                iconString = "m";
                 break;
             case WARNING:
                 sideColor = new Color(255,255,120,200);
+                iconString = "r";
                 break;
             case ERROR:
                 sideColor = new Color(255,50,50,200);
+                iconString = "p";
                 break;
             case SUCCESS:
                 sideColor = new Color(50,255,50,200);
+                iconString = "o";
                 break;
         }
 
@@ -107,12 +116,25 @@ public final class Notification implements GameInstance {
      //   RenderUtil.roundedRect(xVisual - 5, yVisual - 3, 3, 25, 2, sideColor);
      //   RenderUtils.drawImage2(new ResourceLocation("starx/images/info.png"), (int) (x - 27), (int) yVisual, 25,25);
 
-        RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, sideColor);
+        RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
+    //    RenderUtil.roundedRectangle(xVisual - 1, yVisual + 6, 2, 8, 2, sideColor);
 
-        final Color bright = new Color(Math.min(c.getRed() + 16, 255), Math.min(c.getGreen() + 35, 255), Math.min(c.getBlue() + 7, 255));
+        Color finalSideColor = sideColor;
+        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+            RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
+            RenderUtil.roundedRectangle(xVisual - 1, yVisual + 6, 2, 8, 2, finalSideColor);
+        });
 
-        gsTitle.drawString(title, xVisual + 3, yVisual - 2, Color.WHITE.getRGB());
-        gs.drawString(description, xVisual + 2, yVisual + 11, Color.WHITE.getRGB());
+        icon.drawString(iconString, xVisual + 4, yVisual - 1, sideColor.getRGB());
+        psb.drawString(title, xVisual + 4 + icon.getWidth(iconString), yVisual - 2, new Color(255,255,255,220).getRGB());
+        psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255,255,255,220).getRGB());
+
+        String finalIconString = iconString;
+        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+            icon.drawString(finalIconString, xVisual + 4, yVisual - 1, finalSideColor.getRGB());
+            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual - 2, new Color(255,255,255,220).getRGB());
+            psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255,255,255,220).getRGB());
+        });
     }
 
     public final float lerp(final float a, final float b, final float c) {

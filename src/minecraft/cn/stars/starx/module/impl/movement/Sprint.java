@@ -29,11 +29,6 @@ public class Sprint extends Module {
         }
     }
 
-    @Override
-    public void onRender2DEvent(Render2DEvent event) {
-        mc.fontRendererObj.drawString("State:" + sprintState, scaledWidth / 2, scaledHeight / 2, Color.WHITE.getRGB());
-    }
-
     private boolean isOtherKeyPressed() {
         return !mc.gameSettings.keyBindForward.isKeyDown() && (mc.gameSettings.keyBindLeft.isKeyDown() || mc.gameSettings.keyBindRight.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown());
     }

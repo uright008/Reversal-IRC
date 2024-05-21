@@ -3,14 +3,17 @@ package net.minecraft.util;
 public abstract class LazyLoadBase<T>
 {
     private T value;
-    private boolean isLoaded = false;
+    private volatile boolean isLoaded = false;
 
     public T getValue()
     {
-        if (!this.isLoaded)
-        {
-            this.isLoaded = true;
-            this.value = this.load();
+        if (!this.isLoaded) {
+            synchronized (this) {
+                if (!this.isLoaded) {
+                    this.value = this.load();
+                    this.isLoaded = true;
+                }
+            }
         }
 
         return this.value;

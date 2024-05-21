@@ -176,6 +176,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         }
 
         final ScaledResolution sr = new ScaledResolution(mc);
+        RenderUtil.rect(0.0,0.0, sr.getScaledWidth_double(), sr.getScaledHeight_double(), new Color(0,0,0,100));
 
         if (close) {
                 mc.displayGuiScreen(null);
@@ -568,6 +569,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar Y"))).setValue(y);
         } */
     //    GlUtils.stopScale();
+        super.drawScreen(mouseX, mouseY, partialTicks, true);
     }
 
 //    public void drawScript(final OnlineScriptHandler.OnlineScript script, final double x, final double y, final double width, final double height) {

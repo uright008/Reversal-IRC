@@ -1,6 +1,6 @@
 package net.minecraft.client.renderer;
 
-import cn.stars.starx.event.impl.FadingOutlineEvent;
+import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiDownloadTerrain;
-import net.minecraft.client.gui.GuiMainMenu;
+import cn.stars.starx.ui.gui.GuiMainMenuNew;
 import net.minecraft.client.gui.MapItemRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -1390,12 +1390,14 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     GlStateManager.alphaFunc(516, 0.1F);
 
                     this.mc.ingameGUI.renderGameOverlay(p_181560_1_);
-                    Hud.renderGameOverlay(p_181560_1_);
+                    Hud.renderGameOverlay();
 
                     final Render2DEvent render2DEvent = new Render2DEvent(p_181560_1_, scaledresolution);
                     render2DEvent.call();
 
            //         new FadingOutlineEvent().call();
+                    GameInstance.render2DRunnables(p_181560_1_, true);
+                    GameInstance.clearRunnables();
 
                     if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
                     {
@@ -1473,11 +1475,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
     }
 
-    public void renderStreamIndicator(float partialTicks)
-    {
-        this.setupOverlayRendering();
-        this.mc.ingameGUI.renderStreamIndicator(new ScaledResolution(this.mc));
-    }
 
     private boolean isDrawBlockOutline()
     {
@@ -1714,6 +1711,10 @@ public class EntityRenderer implements IResourceManagerReloadListener
         GlStateManager.pushMatrix();
         GlStateManager.disableAlpha();
 
+        // StarX Modified
+        GlStateManager.enablePolygonOffset();
+        GlStateManager.doPolygonOffset(-0.325F, -0.325F);
+
         if (flag)
         {
             ShadersRender.beginTerrainSolid();
@@ -1744,6 +1745,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
 
         Lagometer.timerTerrain.end();
+        GlStateManager.disablePolygonOffset();
         GlStateManager.shadeModel(7424);
         GlStateManager.alphaFunc(516, 0.1F);
 
@@ -1927,6 +1929,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         final Render3DEvent render3DEvent = new Render3DEvent(partialTicks);
         render3DEvent.call();
 
+
         this.mc.mcProfiler.endStartSection("hand");
         boolean flag2 = ReflectorForge.renderFirstPersonHand(this.mc.renderGlobal, partialTicks, pass);
 
@@ -1959,6 +1962,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
         final Shader3DEvent shader3DEvent = new Shader3DEvent(partialTicks);
         shader3DEvent.call();
+
+        GameInstance.render3DRunnables(partialTicks);
+        GameInstance.clearRunnables();
     }
 
     private void renderCloudsCheck(RenderGlobal renderGlobalIn, float partialTicks, int pass)
@@ -2774,9 +2780,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
         }
 
-        if (this.mc.currentScreen instanceof GuiMainMenu)
+        if (this.mc.currentScreen instanceof GuiMainMenuNew)
         {
-            this.updateMainMenu((GuiMainMenu)this.mc.currentScreen);
+            this.updateMainMenu((GuiMainMenuNew)this.mc.currentScreen);
         }
 
         if (this.updatedWorld != world)
@@ -2815,7 +2821,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
     }
 
-    private void updateMainMenu(GuiMainMenu p_updateMainMenu_1_)
+    private void updateMainMenu(GuiMainMenuNew p_updateMainMenu_1_)
     {
         try
         {
@@ -2840,7 +2846,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 return;
             }
 
-            Field[] afield = GuiMainMenu.class.getDeclaredFields();
+            Field[] afield = GuiMainMenuNew.class.getDeclaredFields();
 
             for (int k = 0; k < afield.length; ++k)
             {

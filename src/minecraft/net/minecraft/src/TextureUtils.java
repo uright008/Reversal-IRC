@@ -232,7 +232,7 @@ public class TextureUtils
     {
         if (getTextureMapBlocks() != null)
         {
-            Config.dbg("*** Reloading custom textures ***");
+            Config.dbg("*** 重载自定义材质 ***");
             CustomSky.reset();
             TextureAnimations.reset();
             update();

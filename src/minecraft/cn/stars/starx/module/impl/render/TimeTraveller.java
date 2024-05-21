@@ -35,7 +35,7 @@ public class TimeTraveller extends Module {
     }
 
     @Override
-    public void onRender3DEvent(final Render3DEvent event) {
+    public void onRender3D(final Render3DEvent event) {
         mc.theWorld.setWorldTime((long) ((time.getValue() + (timer.getElapsedTime() * timeSpeed.getValue()))));
         switch (weather.getMode()) {
             case "Sun":

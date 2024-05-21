@@ -4,48 +4,64 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.ClickEvent;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.TickEvent;
+import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.ThemeType;
+import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @ModuleInfo(name = "CPSCounter", description = "Show your CPS on screen", category = Category.HUD)
 public class CPSCounter extends Module {
+    private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
+    private final BoolValue shadow = new BoolValue("Shadow", this, true);
+    private final BoolValue outline = new BoolValue("Outline", this, true);
     public CPSCounter() {
         setCanBeEdited(true);
-        setWidth(60);
-        setHeight(30);
+        setWidth(100);
+        setHeight(20);
         this.Lclicks = new ArrayList<>();
         this.Rclicks = new ArrayList<>();
     }
     private final List<Long> Lclicks;
     private final List<Long> Rclicks;
-    private final BoolValue showBackground = new BoolValue("Show Background",this ,true);
-
-    public int x;
-    public int y;
-    private int width;
-    private int height;
 
     @Override
-    public void onRender2DEvent(Render2DEvent event) {
-        GL11.glPushMatrix();
-        if (this.showBackground.isEnabled()) {
-            Gui.drawRect((int) getXPosition() - 3, (int) getYPosition() - 2, (int) (getXPosition() + width + 2), (int) (getYPosition() + mc.fontRendererObj.FONT_HEIGHT + 1), 0x6F000000);
-            String string = this.Lclicks.size() + " | " + this.Rclicks.size() + " CPS";
-            mc.fontRendererObj.drawString(string, (int) getXPosition(), (int) getYPosition(), 0xffffffff);
-            this.width = mc.fontRendererObj.getStringWidth(string);
-        } else {
-            String string = "[" + this.Lclicks.size() + " | " + this.Rclicks.size() + " CPS]";
-            mc.fontRendererObj.drawString(string, (int) getXPosition(), (int) getYPosition(), 0xffffffff, true);
-            this.width = mc.fontRendererObj.getStringWidth(string);
+    public void onRender2D(Render2DEvent event) {
+        TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
+        TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Mi 24");
+        String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
+        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250,250,250,200);
+
+
+        if (outline.isEnabled()) {
+            RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0,0,0, 80));
+            RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+
+            if (shadow.isEnabled()) {
+                NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                    RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+                });
+            }
         }
-        GL11.glPopMatrix();
+        icon.drawString("P", getX() + 4, getY(), color.getRGB());
+        psm.drawString(cpsString, getX() + 18, getY() + 0.5f, color.getRGB());
+        if (shadow.isEnabled()) {
+            NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                icon.drawString("P", getX() + 4, getY(), color.getRGB());
+                psm.drawString(cpsString, getX() + 18, getY() + 0.5f, color.getRGB());
+            });
+        }
+
     }
 
     @Override
@@ -63,13 +79,4 @@ public class CPSCounter extends Module {
             this.Rclicks.add(System.currentTimeMillis());
         }
     }
-
-    // No more using "*" because position wrong when restart
-    public double getXPosition() {
-        return getX();
-    }
-    public double getYPosition() {
-        return getY();
-    }
-
 }

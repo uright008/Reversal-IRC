@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.util.StarXLogger;
 import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.buffer.ByteBuf;
@@ -102,7 +103,7 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
                         try {
                             future.get(4, TimeUnit.SECONDS);
                         } catch (TimeoutException e1) {
-                            setServerFail(EnumChatFormatting.RED + "Timed out");
+                            setServerFail(EnumChatFormatting.DARK_RED + "Timed out");
                         } catch (ExecutionException e2) {
                             if (e2.getCause() instanceof UnknownHostException)
                                 setServerFail(EnumChatFormatting.DARK_RED + "Can't resolve hostname");
@@ -201,7 +202,12 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
         if (this.field_148301_e.getBase64EncodedIconData() != null && !this.field_148301_e.getBase64EncodedIconData().equals(this.field_148299_g))
         {
             this.field_148299_g = this.field_148301_e.getBase64EncodedIconData();
-            this.prepareServerIcon();
+            try {
+                prepareServerIcon();
+            } catch (Exception e) {
+                StarXLogger.error(StarXLogger.mcl + "Failed to prepare server icon, setting to default.", e);
+                field_148301_e.setBase64EncodedIconData(null);
+            }
             this.field_148303_c.getServerList().saveServerList();
         }
 

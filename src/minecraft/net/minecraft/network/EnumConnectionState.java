@@ -1,5 +1,6 @@
 package net.minecraft.network;
 
+import cn.stars.starx.util.StarXLogger;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -276,7 +277,7 @@ public enum EnumConnectionState
         }
         else
         {
-            bimap.put(Integer.valueOf(bimap.size()), packetClass);
+            bimap.put(bimap.size(), packetClass);
             return this;
         }
     }
@@ -287,7 +288,7 @@ public enum EnumConnectionState
     }
 
     public Packet getPacket(EnumPacketDirection direction, int packetId) throws InstantiationException, IllegalAccessException {
-        Class <? extends Packet > oclass = (Class)((BiMap)this.directionMaps.get(direction)).get(Integer.valueOf(packetId));
+        Class oclass = (Class)((BiMap<?, ?>)this.directionMaps.get(direction)).get(packetId);
         return oclass == null ? null : (Packet)oclass.newInstance();
     }
 
@@ -303,7 +304,7 @@ public enum EnumConnectionState
 
     public static EnumConnectionState getFromPacket(Packet packetIn)
     {
-        return (EnumConnectionState)STATES_BY_CLASS.get(packetIn.getClass());
+        return STATES_BY_CLASS.get(packetIn.getClass());
     }
 
     static {
@@ -313,7 +314,7 @@ public enum EnumConnectionState
 
             if (i < field_181136_e || i > field_181137_f)
             {
-                throw new Error("Invalid protocol ID " + Integer.toString(i));
+                StarXLogger.fatal(StarXLogger.mcl + "Invalid protocol ID " + i);
             }
 
             STATES_BY_ID[i - field_181136_e] = enumconnectionstate;
@@ -324,7 +325,7 @@ public enum EnumConnectionState
                 {
                     if (STATES_BY_CLASS.containsKey(oclass) && STATES_BY_CLASS.get(oclass) != enumconnectionstate)
                     {
-                        throw new Error("Packet " + oclass + " is already assigned to protocol " + STATES_BY_CLASS.get(oclass) + " - can\'t reassign to " + enumconnectionstate);
+                        StarXLogger.fatal(StarXLogger.mcl + "Packet " + oclass + " is already assigned to protocol " + STATES_BY_CLASS.get(oclass) + " - can't reassign to " + enumconnectionstate);
                     }
 
                     try
@@ -333,7 +334,7 @@ public enum EnumConnectionState
                     }
                     catch (Throwable var10)
                     {
-                        throw new Error("Packet " + oclass + " fails instantiation checks! " + oclass);
+                        StarXLogger.fatal(StarXLogger.mcl + "Packet " + oclass + " fails instantiation checks! " + oclass, var10);
                     }
 
                     STATES_BY_CLASS.put(oclass, enumconnectionstate);

@@ -16,10 +16,10 @@ public class VisGraph
     private final BitSet field_178612_d = new BitSet(4096);
     private static final int[] field_178613_e = new int[1352];
     private int field_178611_f = 4096;
-    private static final String __OBFID = "CL_00002450";
 
     public void func_178606_a(BlockPos pos)
     {
+
         this.field_178612_d.set(getIndex(pos), true);
         --this.field_178611_f;
     }

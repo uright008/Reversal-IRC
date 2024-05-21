@@ -19,6 +19,15 @@ import shadersmod.client.GuiShaders;
 
 public class GuiVideoSettings extends GuiScreenOF
 {
+    public static boolean patcher$needsResourceRefresh;
+
+    public void patcher$onSettingsGuiClosed() {
+        if (patcher$needsResourceRefresh) {
+            mc.scheduleResourcesRefresh();
+            patcher$needsResourceRefresh = false;
+        }
+    }
+
     private GuiScreen parentGuiScreen;
     protected String screenTitle = "Video Settings";
     private GameSettings guiGameSettings;
@@ -32,6 +41,12 @@ public class GuiVideoSettings extends GuiScreenOF
     {
         this.parentGuiScreen = parentScreenIn;
         this.guiGameSettings = gameSettingsIn;
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        patcher$onSettingsGuiClosed();
     }
 
     /**

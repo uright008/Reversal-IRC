@@ -1,5 +1,6 @@
 package net.minecraft.server.integrated;
 
+import cn.stars.starx.StarX;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import java.io.File;
@@ -176,13 +177,13 @@ public class IntegratedServer extends MinecraftServer
      */
     protected boolean startServer() throws IOException
     {
-        logger.info("Starting integrated minecraft server version 1.8.8");
+        logger.info("启动集成的 Minecraft 服务器版本 " + StarX.MINECRAFT_VERSION);
         this.setOnlineMode(true);
         this.setCanSpawnAnimals(true);
         this.setCanSpawnNPCs(true);
         this.setAllowPvp(true);
         this.setAllowFlight(true);
-        logger.info("Generating keypair");
+        logger.info("生成密钥对...");
         this.setKeyPair(CryptManager.generateKeyPair());
 
         if (Reflector.FMLCommonHandler_handleServerAboutToStart.exists())
@@ -223,7 +224,7 @@ public class IntegratedServer extends MinecraftServer
 
         if (!flag && this.isGamePaused)
         {
-            logger.info("Saving and pausing game...");
+            logger.info("保存并暂停游戏...");
             this.getConfigurationManager().saveAllPlayerData();
             this.saveAllWorlds(false);
         }
@@ -246,7 +247,7 @@ public class IntegratedServer extends MinecraftServer
 
             if (this.mc.gameSettings.renderDistanceChunks != this.getConfigurationManager().getViewDistance())
             {
-                logger.info("Changing view distance to {}, from {}", new Object[] {Integer.valueOf(this.mc.gameSettings.renderDistanceChunks), Integer.valueOf(this.getConfigurationManager().getViewDistance())});
+                logger.info("改变渲染距离至 {}, 从 {}", new Object[] {Integer.valueOf(this.mc.gameSettings.renderDistanceChunks), Integer.valueOf(this.getConfigurationManager().getViewDistance())});
                 this.getConfigurationManager().setViewDistance(this.mc.gameSettings.renderDistanceChunks);
             }
 

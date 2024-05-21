@@ -1,5 +1,17 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.StarX;
+import cn.stars.starx.module.impl.render.GuiClickEffect;
+import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.math.TimeUtil;
+import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.ClickEffect;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.shader.RiseShaders;
+import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.starx.util.shader.base.ShaderToy;
+import cn.stars.starx.util.shader.impl.BackgroundShader;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -12,11 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.stream.GuiTwitchUserMode;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -43,13 +53,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tv.twitch.chat.ChatUserInfo;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
+    private List<ClickEffect> clickEffects = new ArrayList<>();
 
     /** Reference to the Minecraft object. */
     protected Minecraft mc;
@@ -82,21 +94,58 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     private int touchValue;
     private URI clickedLinkURI;
+    public float screenPartialTicks;
+    public TimeUtil timer = new TimeUtil();
+    ShaderToy mario;
+    ShaderToy redround;
+    ShaderToy water;
+    ShaderToy blackhole;
+    ShaderToy octagrams;
+    ShaderToy tokyo;
+
+    public GuiScreen() {
+        try {
+            mario = new ShaderToy("mario.fsh");
+            redround = new ShaderToy("redround.fsh");
+            water = new ShaderToy("water.fsh");
+            blackhole = new ShaderToy("blackhole.fsh");
+            octagrams = new ShaderToy("octagrams.fsh");
+            tokyo = new ShaderToy("tokyo.fsh");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
+     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks, canRunClickEffect
+     * TODO: Dangerous method rewrote. Expected crashes may happen.
      */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        drawScreen(mouseX, mouseY, partialTicks, true);
+    }
+    /**
+     * New: Draws the screen with the choice to run click effect
+     */
+    public void drawScreen(int mouseX, int mouseY, float partialTicks, boolean canRunClickEffect)
     {
-        for (int i = 0; i < this.buttonList.size(); ++i)
-        {
-            ((GuiButton)this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY);
+        mc.timeScreen.reset();
+        for (GuiButton guiButton : this.buttonList) {
+            guiButton.drawButton(this.mc, mouseX, mouseY);
         }
 
-        for (int j = 0; j < this.labelList.size(); ++j)
-        {
-            ((GuiLabel)this.labelList.get(j)).drawLabel(this.mc, mouseX, mouseY);
+        for (GuiLabel guiLabel : this.labelList) {
+            guiLabel.drawLabel(this.mc, mouseX, mouseY);
         }
+
+        if(clickEffects.size() > 0 && canRunClickEffect) {
+            Iterator<ClickEffect> clickEffectIterator = clickEffects.iterator();
+            while (clickEffectIterator.hasNext()) {
+                ClickEffect clickEffect = clickEffectIterator.next();
+                clickEffect.draw();
+                if (clickEffect.canRemove()) clickEffectIterator.remove();
+            }
+        }
+        this.screenPartialTicks = partialTicks;
     }
 
     /**
@@ -107,7 +156,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         if (keyCode == 1)
         {
-            this.mc.displayGuiScreen((GuiScreen)null);
+            this.mc.displayGuiScreen(null);
 
             if (this.mc.currentScreen == null)
             {
@@ -359,7 +408,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 }
                 else
                 {
-                    this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid statistic/achievement!", p_175272_2_, p_175272_3_);
+                    this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "未知数据/成就!", p_175272_2_, p_175272_3_);
                 }
             }
 
@@ -410,12 +459,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
                         if (s == null)
                         {
-                            throw new URISyntaxException(clickevent.getValue(), "Missing protocol");
+                            throw new URISyntaxException(clickevent.getValue(), "丢失协议");
                         }
 
                         if (!PROTOCOLS.contains(s.toLowerCase()))
                         {
-                            throw new URISyntaxException(clickevent.getValue(), "Unsupported protocol: " + s.toLowerCase());
+                            throw new URISyntaxException(clickevent.getValue(), "不支持的协议: " + s.toLowerCase());
                         }
 
                         if (this.mc.gameSettings.chatLinksPrompt)
@@ -430,7 +479,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                     }
                     catch (URISyntaxException urisyntaxexception)
                     {
-                        LOGGER.error((String)("Can\'t open url for " + clickevent), (Throwable)urisyntaxexception);
+                        LOGGER.error((String)("无法打开url: " + clickevent), (Throwable)urisyntaxexception);
                     }
                 }
                 else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE)
@@ -446,22 +495,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 {
                     this.sendChatMessage(clickevent.getValue(), false);
                 }
-                else if (clickevent.getAction() == ClickEvent.Action.TWITCH_USER_INFO)
-                {
-                    ChatUserInfo chatuserinfo = this.mc.getTwitchStream().func_152926_a(clickevent.getValue());
-
-                    if (chatuserinfo != null)
-                    {
-                        this.mc.displayGuiScreen(new GuiTwitchUserMode(this.mc.getTwitchStream(), chatuserinfo));
-                    }
-                    else
-                    {
-                        LOGGER.error("Tried to handle twitch user but couldn\'t find them!");
-                    }
-                }
                 else
                 {
-                    LOGGER.error("Don\'t know how to handle " + clickevent);
+                    LOGGER.error("无法控制事件: " + clickevent);
                 }
 
                 return true;
@@ -493,18 +529,21 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         if (mouseButton == 0)
         {
-            for (int i = 0; i < this.buttonList.size(); ++i)
-            {
-                GuiButton guibutton = (GuiButton)this.buttonList.get(i);
-
-                if (guibutton.mousePressed(this.mc, mouseX, mouseY))
-                {
-                    this.selectedButton = guibutton;
-                    guibutton.playPressSound(this.mc.getSoundHandler());
-                    this.actionPerformed(guibutton);
+            try {
+                for (GuiButton guibutton : this.buttonList) {
+                    if (guibutton.mousePressed(this.mc, mouseX, mouseY)) {
+                        this.selectedButton = guibutton;
+                        guibutton.playPressSound(this.mc.getSoundHandler());
+                        this.actionPerformed(guibutton);
+                    }
                 }
+            } catch (Exception ignored) {
+
             }
         }
+        ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
+        GuiClickEffect guiClickEffect = (GuiClickEffect) ModuleInstance.getModule(GuiClickEffect.class);
+        if (guiClickEffect.isEnabled()) clickEffects.add(clickEffect);
     }
 
     /**
@@ -574,6 +613,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         {
             while (Keyboard.next())
             {
+                if (this != this.mc.currentScreen) {
+                    StarXLogger.error(StarXLogger.mcl + "(GuiScreen) An error has occurred.");
+                    return;
+                }
                 this.handleKeyboardInput();
             }
         }
@@ -650,7 +693,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     public void drawDefaultBackground()
     {
-        this.drawWorldBackground(0);
+        drawWorldBackground(0);
     }
 
     public void drawWorldBackground(int tint)
@@ -661,14 +704,16 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
         else
         {
-         //   this.drawBackground(tint);
-            drawStarXBackground();
+            if (ModuleInstance.getBool("SpecialGuis", "Shader In All Guis").isEnabled()) {
+                try {
+                    drawMenuBackground(screenPartialTicks, this.width, this.height);
+                } catch (Exception e) {
+                    StarXLogger.error("(GuiScreen) Error while loading background");
+                }
+            } else {
+                drawBackground(tint);
+            }
         }
-    }
-
-    public void drawStarXBackground() {
-        mc.getTextureManager().bindTexture(new ResourceLocation("starx/images/game.png"));
-        drawModalRectWithCustomSizedTexture(0, 0, 0f, 0f, width, height, width, height);
     }
 
     /**
@@ -779,4 +824,79 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         this.setWorldAndResolution(mcIn, p_175273_2_, p_175273_3_);
     }
 
+    public void useShaderToyBackground(ShaderToy shader, int scale) {
+        GlStateManager.disableCull();
+        shader.useShader(this.width * scale, this.height * scale, (System.currentTimeMillis() - RenderUtil.initTime) / 1000.0f);
+        GL11.glBegin(7);
+        GL11.glVertex2d(-1.0, -1.0);
+        GL11.glVertex2d(-1.0, 1.0);
+        GL11.glVertex2d(1.0, 1.0);
+        GL11.glVertex2d(1.0, -1.0);
+        GL11.glEnd();
+        GL20.glUseProgram(0);
+        GlStateManager.enableAlpha();
+    }
+
+    public void useShaderToyBackground(ShaderToy shader, int scale, int mouseX, int mouseY) {
+        GlStateManager.disableCull();
+        shader.useShader(this.width * scale, this.height * scale, (System.currentTimeMillis() - RenderUtil.initTime) / 1000.0f, mouseX, mouseY);
+        GL11.glBegin(7);
+        GL11.glVertex2d(-1.0, -1.0);
+        GL11.glVertex2d(-1.0, 1.0);
+        GL11.glVertex2d(1.0, 1.0);
+        GL11.glVertex2d(1.0, -1.0);
+        GL11.glEnd();
+        GL20.glUseProgram(0);
+        GlStateManager.enableAlpha();
+    }
+
+    public void useShaderToyBackground(ShaderToy shader, int width, int height) {
+        GlStateManager.disableCull();
+        shader.useShader(width, height, (System.currentTimeMillis() - RenderUtil.initTime) / 1000.0f);
+        GL11.glBegin(7);
+        GL11.glVertex2d(-1.0, -1.0);
+        GL11.glVertex2d(-1.0, 1.0);
+        GL11.glVertex2d(1.0, 1.0);
+        GL11.glVertex2d(1.0, -1.0);
+        GL11.glEnd();
+        GL20.glUseProgram(0);
+        GlStateManager.enableAlpha();
+    }
+
+    public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
+        if (StarX.INSTANCE.backgroundId == 0) {
+            GlStateManager.disableLighting();
+            GlStateManager.disableFog();
+            BackgroundShader.BACKGROUND_SHADER.startShader();
+            final Tessellator instance = Tessellator.getInstance();
+            final WorldRenderer worldRenderer = instance.getWorldRenderer();
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(0, height, 0.0D).endVertex();
+            worldRenderer.pos(width, height, 0.0D).endVertex();
+            worldRenderer.pos(width, 0, 0.0D).endVertex();
+            worldRenderer.pos(0, 0, 0.0D).endVertex();
+            instance.draw();
+            BackgroundShader.BACKGROUND_SHADER.stopShader();
+        } else if (StarX.INSTANCE.backgroundId == 1) {
+            RiseShaders.MAIN_MENU_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, null);
+        } else if (StarX.INSTANCE.backgroundId == 2) {
+            useShaderToyBackground(mario, 2);
+        } else if (StarX.INSTANCE.backgroundId == 3) {
+            useShaderToyBackground(redround, 2);
+        } else if (StarX.INSTANCE.backgroundId == 4) {
+            useShaderToyBackground(water, 1);
+        } else if (StarX.INSTANCE.backgroundId == 5) {
+            useShaderToyBackground(blackhole, 2);
+        } else if (StarX.INSTANCE.backgroundId == 6) {
+            useShaderToyBackground(octagrams, 2);
+        } else if (StarX.INSTANCE.backgroundId == 7) {
+            useShaderToyBackground(tokyo, this.width * 2, this.height * 2);
+        }
+        if (timer.hasReached(30000)) {
+            // Shader should use much memory usage.
+            System.gc();
+            StarXLogger.info("Garbage cleaned because shader is running");
+            timer.reset();
+        }
+    }
 }

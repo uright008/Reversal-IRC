@@ -9,7 +9,7 @@ import cn.stars.starx.util.render.WingUtils;
 @ModuleInfo(name = "Wings", description = "Render a wing on your back", category = Category.RENDER)
 public class Wings extends Module {
     @Override
-    public void onRender3DEvent(Render3DEvent event) {
+    public void onRender3D(Render3DEvent event) {
         WingUtils wingUtils = new WingUtils();
         wingUtils.renderWings(event.getPartialTicks());
     }

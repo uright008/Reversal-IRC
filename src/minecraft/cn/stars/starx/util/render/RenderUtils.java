@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtils {
     private final static Minecraft mc = Minecraft.getMinecraft();
+    public static int deltaTime;
     public static void drawImage(ResourceLocation image, int x, int y, int width, int height) {
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -33,6 +34,34 @@ public class RenderUtils {
         glDepthMask(true);
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
+    }
+
+    public static void drawFilledCircle(final float xx, final float yy, final float radius, final Color color) {
+        int sections = 50;
+        double dAngle = 2 * Math.PI / sections;
+        float x, y;
+
+        glPushAttrib(GL_ENABLE_BIT);
+
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glBegin(GL_TRIANGLE_FAN);
+
+        for (int i = 0; i < sections; i++) {
+            x = (float) (radius * Math.sin((i * dAngle)));
+            y = (float) (radius * Math.cos((i * dAngle)));
+
+            glColor4f(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, color.getAlpha() / 255F);
+            glVertex2f(xx + x, yy + y);
+        }
+
+        GlStateManager.color(0, 0, 0);
+
+        glEnd();
+
+        glPopAttrib();
     }
 
     public static void drawLoadingCircle(float x, float y) {
@@ -68,6 +97,7 @@ public class RenderUtils {
         disableBlend();
     }
     public static void drawArc(float x1, float y1, double r, int color, int startPoint, double arc, int linewidth) {
+        GlStateManager.disableTexture2D();
         r *= 2.0D;
         x1 *= 2;
         y1 *= 2;
@@ -102,6 +132,7 @@ public class RenderUtils {
         GL11.glDisable(2848);
         GL11.glHint(3154, 4352);
         GL11.glHint(3155, 4352);
+        GlStateManager.enableTexture2D();
     }
 
     public static boolean isHovering(int mouseX, int mouseY, float xLeft, float yUp, float xRight, float yBottom) {
@@ -235,20 +266,6 @@ public class RenderUtils {
         glShadeModel(GL_FLAT);
     }
 
-    public static void drawGradientSidewaysHPlus(double left, double top, double right, double bottom, int col1, int col2) {
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glShadeModel(GL_SMOOTH);
-
-        quickDrawGradientSidewaysH(left, top,left + right,top+ bottom, col1, col2);
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glShadeModel(GL_FLAT);
-    }
     public static void quickDrawGradientSidewaysH(double left, double top, double right, double bottom, int col1, int col2) {
         glBegin(GL_QUADS);
 

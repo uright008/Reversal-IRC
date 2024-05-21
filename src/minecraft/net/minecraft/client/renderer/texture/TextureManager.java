@@ -165,8 +165,8 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
 
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
-        Config.dbg("*** Reloading textures ***");
-        Config.log("Resource packs: " + Config.getResourcePackNames());
+        Config.dbg("*** 重载材质 ***");
+        Config.log("材质包: " + Config.getResourcePackNames());
         Iterator iterator = this.mapTextureObjects.keySet().iterator();
 
         while (iterator.hasNext())

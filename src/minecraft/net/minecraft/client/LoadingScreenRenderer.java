@@ -37,6 +37,7 @@ public class LoadingScreenRenderer implements IProgressUpdate
         this.framebuffer.setFramebufferFilter(9728);
     }
 
+
     /**
      * this string, followed by "working..." and then the "% complete" are the 3 lines shown. This resets progress to 0,
      * and the WorkingString to "working...".

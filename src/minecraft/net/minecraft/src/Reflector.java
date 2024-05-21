@@ -14,7 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiEnchantment;
 import net.minecraft.client.gui.GuiHopper;
-import net.minecraft.client.gui.GuiMainMenu;
+import cn.stars.starx.ui.gui.GuiMainMenuNew;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiBeacon;
 import net.minecraft.client.gui.inventory.GuiBrewingStand;
@@ -91,7 +91,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class Reflector
 {
-    private static boolean logForge = logEntry("*** Reflector Forge ***");
+    private static boolean logForge = logEntry("*** 反射 Forge ***");
     public static ReflectorClass Attributes = new ReflectorClass("net.minecraftforge.client.model.Attributes");
     public static ReflectorField Attributes_DEFAULT_BAKED_FORMAT = new ReflectorField(Attributes, "DEFAULT_BAKED_FORMAT");
     public static ReflectorClass BetterFoliageClient = new ReflectorClass("mods.betterfoliage.client.BetterFoliageClient");
@@ -279,7 +279,7 @@ public class Reflector
     public static ReflectorClass SplashScreen = new ReflectorClass("net.minecraftforge.fml.client.SplashProgress");
     public static ReflectorClass WorldEvent_Load = new ReflectorClass("net.minecraftforge.event.world.WorldEvent$Load");
     public static ReflectorConstructor WorldEvent_Load_Constructor = new ReflectorConstructor(WorldEvent_Load, new Class[] {World.class});
-    private static boolean logVanilla = logEntry("*** Reflector Vanilla ***");
+    private static boolean logVanilla = logEntry("*** 反射 Vanilla ***");
     public static ReflectorClass ChunkProviderClient = new ReflectorClass(ChunkProviderClient.class);
     public static ReflectorField ChunkProviderClient_chunkMapping = new ReflectorField(ChunkProviderClient, LongHashMap.class);
     public static ReflectorClass EntityVillager = new ReflectorClass(EntityVillager.class);
@@ -297,7 +297,7 @@ public class Reflector
     public static ReflectorField GuiFurnace_tileFurnace = new ReflectorField(GuiFurnace, IInventory.class);
     public static ReflectorClass GuiHopper = new ReflectorClass(GuiHopper.class);
     public static ReflectorField GuiHopper_hopperInventory = new ReflectorField(GuiHopper, IInventory.class, 1);
-    public static ReflectorClass GuiMainMenu = new ReflectorClass(GuiMainMenu.class);
+    public static ReflectorClass GuiMainMenu = new ReflectorClass(GuiMainMenuNew.class);
     public static ReflectorField GuiMainMenu_splashText = new ReflectorField(GuiMainMenu, String.class);
     public static ReflectorClass Minecraft = new ReflectorClass(Minecraft.class);
     public static ReflectorField Minecraft_defaultResourcePack = new ReflectorField(Minecraft, DefaultResourcePack.class);

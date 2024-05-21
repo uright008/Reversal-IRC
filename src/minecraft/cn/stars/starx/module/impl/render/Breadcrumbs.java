@@ -45,7 +45,7 @@ public final class Breadcrumbs extends Module {
     }
 
     @Override
-    public void onRender3DEvent(final Render3DEvent event) {
+    public void onRender3D(final Render3DEvent event) {
         RenderUtil.renderBreadCrumbs(path);
     }
 }

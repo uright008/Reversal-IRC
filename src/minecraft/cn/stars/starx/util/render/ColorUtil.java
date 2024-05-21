@@ -3,6 +3,7 @@ package cn.stars.starx.util.render;
 import cn.stars.starx.StarX;
 import cn.stars.starx.ui.theme.Theme;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
+import cn.stars.starx.util.math.MathUtil;
 import com.ibm.icu.text.NumberFormat;
 import lombok.experimental.UtilityClass;
 import java.awt.*;
@@ -27,6 +28,10 @@ public final class ColorUtil {
         float g = 0.003921569f * (float)c.getGreen();
         float b = 0.003921569f * (float)c.getBlue();
         return new Color(r, g, b, alpha).getRGB();
+    }
+
+    public static Color withAlpha(final Color color, final int alpha) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) MathUtil.clamp(0, 255, alpha));
     }
 
     private final Pattern COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]");

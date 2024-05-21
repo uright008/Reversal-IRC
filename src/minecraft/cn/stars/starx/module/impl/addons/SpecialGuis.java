@@ -9,4 +9,5 @@ import cn.stars.starx.setting.impl.BoolValue;
 public class SpecialGuis extends Module {
     private final BoolValue guiInGameMenu = new BoolValue("PauseMenu", this, false);
     private final BoolValue betterButton = new BoolValue("BetterButton", this, false);
+    private final BoolValue allGuisShaderBackground = new BoolValue("Shader In All Guis", this, false);
 }

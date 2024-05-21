@@ -155,7 +155,6 @@ public class Config
             {
                 initialized = true;
                 checkOpenGlCaps();
-                startVersionCheckThread();
             }
         }
     }
@@ -456,8 +455,6 @@ public class Config
 
     private static void startVersionCheckThread()
     {
-        VersionCheckThread versioncheckthread = new VersionCheckThread();
-        versioncheckthread.start();
     }
 
     public static boolean isMipmaps()

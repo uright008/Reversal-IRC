@@ -65,6 +65,7 @@ public final class ThemeUtil implements GameInstance {
                     colorOffsetMultiplier = 2.2f;
                     break;
 
+                case "Modern":
                 case "Rise Rainbow":
                 case "Minecraft Rainbow":
                 case "StarX":
@@ -90,6 +91,7 @@ public final class ThemeUtil implements GameInstance {
                         color = ColorUtil.liveColorBrighter(StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, offset1);
                         break;
 
+                    case "Modern":
                     case "Rise Rainbow":
                     case "Minecraft Rainbow":
                     case "StarX":
@@ -107,6 +109,7 @@ public final class ThemeUtil implements GameInstance {
                         color = new Color(StarX.CLIENT_THEME_COLOR_BRIGHT);
                         break;
 
+                    case "Modern":
                     case "Rise Rainbow":
                     case "Minecraft Rainbow":
                     case "StarX":

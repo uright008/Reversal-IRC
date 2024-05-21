@@ -35,13 +35,38 @@ public final class FontManager {
                 this.fonts.put("Dreamscape " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{1, 2, 12, 18,24, 36}) {
+            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 24, 36}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/GoogleSans.ttf");
 
                 Font myFont = Font.createFont(0, istream);
                 myFont = myFont.deriveFont(Font.PLAIN, (float) i);
                 this.fonts.put("GoogleSans " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
+
+            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 20, 24, 36}) {
+                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/ProductSansMedium.ttf");
+
+                Font myFont = Font.createFont(0, istream);
+                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
+                this.fonts.put("PSM " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
+            }
+
+            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 20, 24, 36}) {
+                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/ProductSansBold.ttf");
+
+                Font myFont = Font.createFont(0, istream);
+                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
+                this.fonts.put("PSB " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
+            }
+
+            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 24, 36}) {
+                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Moreicon.ttf");
+
+                Font myFont = Font.createFont(0, istream);
+                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
+                this.fonts.put("Mi " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
+            }
+
 
             for (final int i : new int[]{1, 2, 18, 32, 35, 200}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/regular.ttf");

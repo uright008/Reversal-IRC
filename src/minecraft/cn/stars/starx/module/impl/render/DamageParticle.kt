@@ -68,7 +68,7 @@ class DamageParticle : Module(){
         }
     }
 
-    override fun onRender3DEvent(event: Render3DEvent) {
+    override fun onRender3D(event: Render3DEvent) {
         synchronized(particles) {
             val renderManager = mc.renderManager
             val size = sizeValue.value * 0.01

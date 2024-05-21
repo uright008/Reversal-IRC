@@ -31,7 +31,7 @@ public class FieldLocatorName implements IFieldLocator
             }
             catch (NoSuchFieldException var3)
             {
-                Config.log("(Reflector) Field not present: " + oclass.getName() + "." + this.targetFieldName);
+                Config.log("(反射) Field不存在: " + oclass.getName() + "." + this.targetFieldName);
                 return null;
             }
             catch (SecurityException securityexception)

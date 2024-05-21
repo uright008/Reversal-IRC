@@ -1,5 +1,6 @@
 package net.minecraft.nbt;
 
+import cn.stars.starx.util.StarXLogger;
 import com.google.common.collect.Maps;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -75,6 +76,7 @@ public class NBTTagCompound extends NBTBase
      */
     public void setTag(String key, NBTBase value)
     {
+        if (value == null) StarXLogger.error(StarXLogger.mcl + "Invalid NBT Tag value: " + key, new IllegalArgumentException());
         this.tagMap.put(key, value);
     }
 

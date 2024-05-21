@@ -357,7 +357,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         int i1 = 0;
         this.setUserMessage("menu.generatingTerrain");
         int j1 = 0;
-        logger.info("Preparing start region for level " + j1);
+        logger.info("正在为世界 " + j1 + " 准备生成区块");
         WorldServer worldserver = this.worldServers[j1];
         BlockPos blockpos = worldserver.getSpawnPoint();
         long k1 = getCurrentTimeMillis();
@@ -444,7 +444,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                 {
                     if (!dontLog)
                     {
-                        logger.info("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
+                        logger.info("保存维度区块: \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
                     }
 
                     try
@@ -467,7 +467,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
     {
         if (!this.worldIsBeingDeleted)
         {
-            logger.info("Stopping server");
+            logger.info("停止服务器...");
 
             if (this.getNetworkSystem() != null)
             {
@@ -476,14 +476,14 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
 
             if (this.serverConfigManager != null)
             {
-                logger.info("Saving players");
+                logger.info("保存玩家数据...");
                 this.serverConfigManager.saveAllPlayerData();
                 this.serverConfigManager.removeAllPlayers();
             }
 
             if (this.worldServers != null)
             {
-                logger.info("Saving worlds");
+                logger.info("保存世界...");
                 this.saveAllWorlds(false);
 
                 for (int i = 0; i < this.worldServers.length; ++i)
@@ -635,6 +635,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                 ImageIO.write(bufferedimage, "PNG", (OutputStream)(new ByteBufOutputStream(bytebuf)));
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
                 response.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
+                bytebuf1.release();
             }
             catch (Exception exception)
             {

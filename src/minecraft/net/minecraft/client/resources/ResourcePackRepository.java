@@ -32,7 +32,6 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -214,7 +213,7 @@ public class ResourcePackRepository
                 }
             }
 
-            this.func_183028_i();
+            this.deleteOldServerResourcesPacks();
             final GuiScreenWorking guiscreenworking = new GuiScreenWorking();
             Map<String, String> map = Minecraft.getSessionInfo();
             final Minecraft minecraft = Minecraft.getMinecraft();
@@ -248,19 +247,21 @@ public class ResourcePackRepository
         }
     }
 
-    private void func_183028_i()
+    private void deleteOldServerResourcesPacks()
     {
-        List<File> list = Lists.newArrayList(FileUtils.listFiles(this.dirServerResourcepacks, TrueFileFilter.TRUE, (IOFileFilter)null));
-        Collections.sort(list, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-        int i = 0;
+        try {
+            List<File> lvt_1_1_ = Lists.newArrayList(FileUtils.listFiles(this.dirServerResourcepacks, TrueFileFilter.TRUE, null));
+            lvt_1_1_.sort(LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+            int lvt_2_1_ = 0;
 
-        for (File file1 : list)
-        {
-            if (i++ >= 10)
-            {
-                logger.info("Deleting old server resource pack " + file1.getName());
-                FileUtils.deleteQuietly(file1);
+            for (File lvt_4_1_ : lvt_1_1_) {
+                if (lvt_2_1_++ >= 10) {
+                    logger.info("Deleting old server resource pack " + lvt_4_1_.getName());
+                    FileUtils.deleteQuietly(lvt_4_1_);
+                }
             }
+        } catch (final Throwable e) {
+            e.printStackTrace();
         }
     }
 

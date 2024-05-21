@@ -7,7 +7,8 @@ import cn.stars.starx.setting.impl.BoolValue;
 
 @ModuleInfo(name = "Keystrokes", description = "Show the WASD operation on screen.", category = Category.HUD)
 public class Keystrokes extends Module {
-    public final BoolValue custom = new BoolValue("Custom Name", this,false);
+    public final BoolValue rainbow = new BoolValue("Rainbow when key down", this,false);
+    public final BoolValue shadow = new BoolValue("Shadow", this,false);
     public Keystrokes() {
         setCanBeEdited(true);
         setX(1);

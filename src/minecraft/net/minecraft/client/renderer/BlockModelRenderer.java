@@ -588,11 +588,6 @@ public class BlockModelRenderer
     {
         private final float[] vertexColorMultiplier = new float[4];
         private final int[] vertexBrightness = new int[4];
-        private static final String __OBFID = "CL_00002515";
-
-        public AmbientOcclusionFace(BlockModelRenderer p_i46235_1_)
-        {
-        }
 
         public AmbientOcclusionFace()
         {

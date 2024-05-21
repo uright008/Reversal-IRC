@@ -5,7 +5,11 @@ import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.util.animation.lb.AnimatedValue;
 import cn.stars.starx.util.animation.lb.EaseUtils;
+import cn.stars.starx.util.animation.rise.Animation;
+import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
+import cn.stars.starx.util.math.MathUtil;
+import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.round.RoundedUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -22,13 +26,14 @@ public final class SplashProgress {
     // Max amount of progress updates
     private static final int DEFAULT_MAX = 14;
     private static final TTFFontRenderer fontRenderer = CustomFont.FONT_MANAGER.getFont("Skid 96");
-    private static final TTFFontRenderer fontRenderer2 = CustomFont.FONT_MANAGER.getFont("Biko 18");
+    private static final TTFFontRenderer fontRenderer2 = CustomFont.FONT_MANAGER.getFont("PSM 20");
     private static int PROGRESS;
     private static String CURRENT = "";
     // Background texture
     private static ResourceLocation splash;
     // Texture manager
     private static TextureManager ctm;
+    private static Animation animation = new Animation(Easing.EASE_OUT_SINE, 400);
 
     /**
      * Update the splash text
@@ -83,9 +88,7 @@ public final class SplashProgress {
         GlStateManager.enableTexture2D();
 
         // Initialize the splash texture
-        if (splash == null) {
-            splash = new ResourceLocation("starx/images/splash.jpg");
-        }
+        splash = new ResourceLocation("starx/images/splash.jpg");
 
         // Bind the texture
         tm.bindTexture(splash);
@@ -117,9 +120,9 @@ public final class SplashProgress {
      * Render the progress bar and text
      */
     private static void drawProgress() {
+        animation = new Animation(Easing.EASE_OUT_SINE, 250);
         if (Minecraft.getMinecraft().getTextureManager() == null)
             return;
-
         // Screen Height
         final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
@@ -129,13 +132,13 @@ public final class SplashProgress {
 
         // Calculate the progress bar
         final double nProgress = PROGRESS;
-        final double calc = (nProgress / DEFAULT_MAX) * 160;
+        final double calc = (nProgress / DEFAULT_MAX) * 160 - 2;
         // Draw the transparent bar before the green bar
-        RoundedUtils.drawRoundOutline(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 5F, 3f, 1f, new Color(255, 255, 255, 160), new Color(255, 255, 255, 160));
+        RenderUtil.roundedOutlineGradientRectangle(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 10F, 3f, 1f, new Color(0, 200, 100, 200), new Color(0, 200, 200, 200));
       //  Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, endX, sr.getScaledHeight() / 2.0F + 20.0F, new Color(255, 255, 255, 60).getRGB());
 
         // Render the blue progress bar
-        RoundedUtils.drawGradientRound(startX, sr.getScaledHeight() / 2.0F + 20.0F, (float) (Math.round(calc)), 5F, 3f, new Color(170, 250, 20, 160), new Color(79, 199, 79, 160), new Color(30, 255, 160, 160), new Color(10, 255, 250, 230));
+        RenderUtil.roundedRectangle(startX + 1, sr.getScaledHeight() / 2.0F + 21.0F, MathUtil.round(calc, 2), 8F, 3f, new Color(180, 180, 180, 220));
      //   Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, (float) (startX + calc), sr.getScaledHeight() / 2.0F + 20.0F, new Color(20, 255, 20, 160).getRGB());
 
         // Render the rise text

@@ -5,12 +5,8 @@ import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.ui.gui.GuiEditHUD;
 import cn.stars.starx.util.animation.normal.Animation;
-import cn.stars.starx.util.animation.normal.Direction;
 import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
-import cn.stars.starx.util.render.ClickEffect;
-import cn.stars.starx.util.render.GlUtils;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.shader.round.RoundedUtils;
@@ -37,8 +33,6 @@ import org.lwjgl.input.Mouse;
 public class GuiChat extends GuiScreen
 {
     TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
-    private static final Logger logger = LogManager.getLogger();
-    private List<ClickEffect> clickEffects = new ArrayList<>();
 
     private String historyBuffer = "";
 
@@ -209,8 +203,6 @@ public class GuiChat extends GuiScreen
      */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
-        ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
-        clickEffects.add(clickEffect);
         if (mouseButton == 0)
         {
             IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -352,7 +344,6 @@ public class GuiChat extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        final ScaledResolution sr = new ScaledResolution(mc);
 
         if (close) {
             mc.displayGuiScreen(null);
@@ -360,7 +351,7 @@ public class GuiChat extends GuiScreen
 
 
         gs.drawCenteredString("Drag huds to change their positions!", width / 2, 10, Color.WHITE.getRGB());
-        RoundedUtils.drawRoundOutline(width / 2 - 90, 7.5f, 180, 14, 4, 0.5f, new Color(255, 255, 255, 0), new Color(255, 255, 255, 255));
+        RoundedUtils.drawRoundOutline(width / 2 - 90, 7.5f, 180, 14, 3, 0.1f, new Color(255, 255, 255, 0), new Color(255, 255, 255, 255));
 
         RenderUtil.roundedRect(1, this.height - 14, this.width - 2, this.height, 5, new Color(0,0,0,120));
         this.inputField.drawTextBox();
@@ -390,15 +381,6 @@ public class GuiChat extends GuiScreen
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-
-        if(clickEffects.size() > 0) {
-            Iterator<ClickEffect> clickEffectIterator= clickEffects.iterator();
-            while(clickEffectIterator.hasNext()){
-                ClickEffect clickEffect = clickEffectIterator.next();
-                clickEffect.draw();
-                if (clickEffect.canRemove()) clickEffectIterator.remove();
-            }
-        }
     }
 
     public void onAutocompleteResponse(String[] p_146406_1_)

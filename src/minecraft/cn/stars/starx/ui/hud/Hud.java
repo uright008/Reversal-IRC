@@ -3,6 +3,7 @@ package cn.stars.starx.ui.hud;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.*;
@@ -114,8 +115,8 @@ public class Hud implements GameInstance {
         final String mode = getMode2(ClientSettings.class, "Theme");
 
         final double x = bpsCounter.getX(), y = bpsCounter.getY() + 15;
-        final String bps = "BPS: " + MathUtil.round(((Math.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * mc.timer.timerSpeed) * 20), 2);
-        final String bps2 = "Speed: " + MathUtil.round(((Math.hypot(mc.thePlayer.posX - mc.thePlayer.prevPosX, mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * mc.timer.timerSpeed) * 20), 2);
+        final String bps = "BPS: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
+        final String bps2 = "Speed: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
         switch (mode) {
             case "Minecraft Rainbow":
             case "Minecraft": {
@@ -132,6 +133,17 @@ public class Hud implements GameInstance {
             case "StarX": {
                 gs.drawStringWithShadow(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 gs.drawStringWithShadow("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ,1),(float) x, (float) y - 10f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                break;
+            }
+
+            case "Modern": {
+                TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 16");
+                NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                    psm.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                    psm.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ,1),(float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                });
+                psm.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                psm.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ,1),(float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
@@ -207,6 +219,11 @@ public class Hud implements GameInstance {
 
                 case "StarX": {
                     return Float.compare(gs.getWidth(name2), gs.getWidth(name));
+                }
+
+                case "Modern": {
+                    TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
+                    return Float.compare(psm.getWidth(name2), psm.getWidth(name));
                 }
 
                 default: {
@@ -293,12 +310,32 @@ public class Hud implements GameInstance {
                         final int offsetX = 1;
 
                         final double stringWidth = gs.getWidth(name);
-                        RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, gs.getHeight() + offsetY - 0.7, new Color(0, 0, 0, 50));
-                        RenderUtil.roundedRect(renderX + stringWidth, renderY - offsetY + 0.5, 2.5, gs.getHeight() + offsetY - 0.6, 3, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
+                        RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, gs.getHeight() + offsetY - 0.7, new Color(0, 0, 0, 60));
+                        RenderUtil.roundedRect(renderX + stringWidth, renderY - offsetY + 0.5, 2, gs.getHeight() + offsetY - 0.6, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
 
                         finalX = arraylistX - gs.getWidth(name);
 
                         gs.drawString(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+                    }
+                    break;
+
+                    case "Modern": {
+                        final int offsetY = 2;
+                        final int offsetX = 1;
+                        TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
+                        
+                        final double stringWidth = psm.getWidth(name);
+                        RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, psm.getHeight() + offsetY - 0.2, new Color(0, 0, 0, 80));
+                        RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY + 1, 2, psm.getHeight() + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
+                        final int mC = moduleCount;
+                        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY + 0.5, 2, psm.getHeight() + offsetY - 0.6, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
+                            psm.drawString(name, renderX, renderY, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
+                        });
+
+
+                        psm.drawString(name, renderX, renderY, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
+                        finalX = arraylistX - psm.getWidth(name);
                     }
                     break;
 
@@ -367,15 +404,15 @@ public class Hud implements GameInstance {
     
     private static void renderClientName() {
         {
-            final TextGui textGui =(TextGui) ModuleInstance.getModule(TextGui.class);
+            final TextGui textGui = (TextGui) ModuleInstance.getModule(TextGui.class);
             if (!textGui.isEnabled()) return;
             final String mode = getMode2(ClientSettings.class, "Theme");
             final boolean useDefaultName = !getBoolean2(TextGui.class, "Custom Name");
 
             final float offset;
-            final String name = StarX.NAME, customName = ThemeUtil.getCustomClientName();
+            String name = StarX.NAME, customName = ThemeUtil.getCustomClientName();
 
-
+            if (customName.isEmpty()) customName = "Use \".clientname <name>\" to set custom name.";
             switch (mode) {
                 case "Rise": {
                     if (useDefaultName) {
@@ -456,6 +493,42 @@ public class Hud implements GameInstance {
                         // 从字符串第二个字开始获取
                         gsTitle.drawStringWithShadow(customName.substring(1), textGui.getX() + 5 + gsTitle.getWidth(String.valueOf(customName.charAt(0))), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
                     }
+                    break;
+                }
+
+                case "Modern": {
+                    TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 20");
+                    TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
+                    int x = textGui.getX() + 5;
+                    int y = textGui.getY();
+                    float off = 0;
+                    String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
+                    float extraWidth = psm.getWidth(extraText);
+
+                    RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, new Color(0,0,0, 80));
+                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, ThemeUtil.getThemeColor(ThemeType.LOGO));
+                    psm.drawString(extraText, x + 32, y + 2.5f, new Color(250,250,250,200).getRGB());
+
+
+                    NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                        psm.drawString(extraText, x + 32, y + 2.5f, new Color(250,250,250,200).getRGB());
+                        RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, ThemeUtil.getThemeColor(ThemeType.LOGO));
+                    });
+
+
+                    textGui.setWidth((int) (44 + extraWidth));
+                    for (int i = 0; i < name.length(); i++) {
+                        final String character = String.valueOf(name.charAt(i));
+
+                        final float off1 = off;
+                        final int i1 = i;
+                        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                            psb.drawString(character, x + 5 + off1, y + 2, ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO));
+                        });
+                        psb.drawString(character, x + 5 + off, y + 2, ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+                        off += psb.getWidth(character) - 2;
+                    }
+
                     break;
                 }
 
@@ -592,8 +665,9 @@ public class Hud implements GameInstance {
     }
 
 
-    public static void renderGameOverlay(float partialTicks) {
+    public static void renderGameOverlay() {
         if (StarX.isDestructed || !ModuleInstance.getModule(HUD.class).isEnabled()) return;
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         renderKeyStrokes();
         renderBPS();
         renderClientName();

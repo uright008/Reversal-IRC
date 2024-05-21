@@ -7,7 +7,7 @@ import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.render.ThemeUtil;
 import org.lwjgl.opengl.Display;
 
-@CommandInfo(name = "ClientTitle", description = "Customize the client window title", syntax = ".clienttitle <name/reset>", aliases = "clienttitle")
+@CommandInfo(name = "ClientTitle", description = "Customize the client window title", syntax = ".clienttitle(ct) <name/reset>", aliases = {"clienttitle", "ct"})
 public final class ClientTitle extends Command {
 
     @Override

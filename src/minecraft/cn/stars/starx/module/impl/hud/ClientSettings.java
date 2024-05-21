@@ -17,7 +17,7 @@ import java.awt.*;
 public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Rise Rainbow",
             "Rise Rainbow", "Rise", "Comfort",
-            "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet", "StarX");
+            "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet", "StarX", "Modern");
     private final ModeValue list = new ModeValue("List Animation", this, "StarX", "StarX", "Slide");
     private final NumberValue red = new NumberValue("Red", this, 19, 0, 255, 1);
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);
@@ -66,7 +66,7 @@ public final class ClientSettings extends Module {
     }
 
     @Override
-    public void onRender2DEvent(final Render2DEvent event) {
+    public void onRender2D(final Render2DEvent event) {
         final ScaledResolution sr = new ScaledResolution(mc);
 
         final int posX = (mc.displayWidth / (mc.gameSettings.guiScale * 2));

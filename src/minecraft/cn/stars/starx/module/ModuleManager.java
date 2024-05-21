@@ -1,6 +1,8 @@
 package cn.stars.starx.module;
 
+import cn.stars.starx.StarX;
 import cn.stars.starx.setting.Setting;
+import cn.stars.starx.util.StarXLogger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +39,16 @@ public final class ModuleManager {
      *
      * @return all enabled modules.
      */
+    public void registerModules(Module[] modules) {
+        try {
+            this.moduleList = modules;
+        }
+        catch (Exception e) {
+            StarXLogger.error("An error has occurred while loading StarX." + e);
+        }
+
+    }
+
     public List<Module> getEnabledModules() {
         if (edited) {
             enabledModules = new ArrayList<>();

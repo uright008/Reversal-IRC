@@ -6,7 +6,7 @@ import cn.stars.starx.command.api.CommandInfo;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.render.ThemeUtil;
 
-@CommandInfo(name = "ClientName", description = "Customize the client name", syntax = ".clientname <name/reset>", aliases = "clientname")
+@CommandInfo(name = "ClientName", description = "Customize the client name", syntax = ".clientname(cn) <name/reset>", aliases = {"clientname", ".cn"})
 public final class ClientName extends Command {
 
     @Override

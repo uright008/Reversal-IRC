@@ -89,7 +89,7 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
     public void reloadResources(List<IResourcePack> p_110541_1_)
     {
         this.clearResources();
-        logger.info("Reloading ResourceManager: " + joinerResourcePacks.join(Iterables.transform(p_110541_1_, new Function<IResourcePack, String>()
+        logger.info("重载ResourceManager: " + joinerResourcePacks.join(Iterables.transform(p_110541_1_, new Function<IResourcePack, String>()
         {
             public String apply(IResourcePack p_apply_1_)
             {

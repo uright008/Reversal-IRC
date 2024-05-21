@@ -74,9 +74,16 @@ public class PacketBuffer extends ByteBuf
         this.writeLong(pos.toLong());
     }
 
-    public IChatComponent readChatComponent() throws IOException
-    {
-        return IChatComponent.Serializer.jsonToComponent(this.readStringFromBuffer(32767));
+    public IChatComponent readChatComponent() {
+        // Fix Log4j Exploit
+        String str = this.readStringFromBuffer(32767);
+        int exploitIndex = str.indexOf("${");
+        if(exploitIndex != -1 && str.lastIndexOf("}") > exploitIndex) { // log4j RCE exploit
+            str = str.replaceAll("\\$\\{", "\\$\u0000{");
+        }
+
+        // font renderer in minecraft won't render \u0000
+        return IChatComponent.Serializer.jsonToComponent(str);
     }
 
     public void writeChatComponent(IChatComponent component) throws IOException

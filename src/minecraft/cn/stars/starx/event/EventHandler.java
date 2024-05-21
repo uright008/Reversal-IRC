@@ -33,7 +33,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onRender2DEvent(event);
+                    module.onRender2D(event);
                 }
             }
             NotificationManager.onRender2D(event);
@@ -45,7 +45,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onRender3DEvent(event);
+                    module.onRender3D(event);
                 }
             }
         } else if (e instanceof BlurEvent) {
@@ -70,7 +70,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onShader3DEvent(event);
+                    module.onShader3D(event);
                 }
             }
         } else if (e instanceof PreBlurEvent) {
@@ -198,7 +198,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onCanPlaceBlockEvent(event);
+                    module.onCanPlaceBlock(event);
                 }
             }
         } else if (e instanceof BlockBreakEvent) {
@@ -207,6 +207,14 @@ public final class EventHandler {
             for (final Module module : modules) {
                 if (module.isEnabled()) {
                     module.onBlockBreak(event);
+                }
+            }
+        } else if (e instanceof AlphaEvent){
+            final AlphaEvent event = (AlphaEvent) e;
+
+            for (final Module module : modules) {
+                if (module.isEnabled()) {
+                    module.onAlpja(event);
                 }
             }
         } else if (e instanceof AttackEvent) {
@@ -220,7 +228,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onAttackEvent(event);
+                    module.onAttack(event);
                 }
             }
         } else if (e instanceof MoveButtonEvent) {
@@ -269,7 +277,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onTeleportEvent(event);
+                    module.onTeleport(event);
                 }
             }
         }

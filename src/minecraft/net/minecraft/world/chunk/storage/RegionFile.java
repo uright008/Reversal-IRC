@@ -1,5 +1,6 @@
 package net.minecraft.world.chunk.storage;
 
+import cn.stars.starx.util.StarXLogger;
 import com.google.common.collect.Lists;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -284,10 +285,14 @@ public class RegionFile
      */
     private void write(int sectorNumber, byte[] data, int length) throws IOException
     {
-        this.dataFile.seek((long)(sectorNumber * 4096));
-        this.dataFile.writeInt(length + 1);
-        this.dataFile.writeByte(2);
-        this.dataFile.write(data, 0, length);
+        try {
+            this.dataFile.seek((long)(sectorNumber * 4096));
+            this.dataFile.writeInt(length + 1);
+            this.dataFile.writeByte(2);
+            this.dataFile.write(data, 0, length);
+        } catch (IOException ignored) {
+            StarXLogger.error(StarXLogger.mcl + "(RegionLoader) Something bad happened.");
+        }
     }
 
     /**
@@ -329,9 +334,13 @@ public class RegionFile
      */
     private void setChunkTimestamp(int x, int z, int timestamp) throws IOException
     {
-        this.chunkTimestamps[x + z * 32] = timestamp;
-        this.dataFile.seek((long)(4096 + (x + z * 32) * 4));
-        this.dataFile.writeInt(timestamp);
+        try {
+            this.chunkTimestamps[x + z * 32] = timestamp;
+            this.dataFile.seek((long)(4096 + (x + z * 32) * 4));
+            this.dataFile.writeInt(timestamp);
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "(RegionLoader) Something bad happened.");
+        }
     }
 
     /**

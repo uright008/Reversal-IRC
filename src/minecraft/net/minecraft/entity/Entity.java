@@ -469,7 +469,7 @@ public abstract class Entity implements ICommandSender
             this.worldObj.theProfiler.endSection();
         }
 
-        this.spawnRunningParticles();
+        if (this.onGround) this.spawnRunningParticles();
         this.handleWaterMovement();
 
         if (this.worldObj.isRemote)
@@ -1248,7 +1248,7 @@ public abstract class Entity implements ICommandSender
     public int getBrightnessForRender(float partialTicks)
     {
         BlockPos blockpos = new BlockPos(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ);
-        return this.worldObj.isBlockLoaded(blockpos) ? this.worldObj.getCombinedLight(blockpos, 0) : 0;
+        return this.worldObj.getCombinedLight(blockpos, 0);
     }
 
     /**
@@ -2802,5 +2802,9 @@ public abstract class Entity implements ICommandSender
         }
 
         EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
+    }
+
+    public double getSpeed() {
+        return (Math.hypot(this.posX - this.prevPosX, this.posZ - this.prevPosZ) * Minecraft.getMinecraft().timer.timerSpeed) * 20;
     }
 }

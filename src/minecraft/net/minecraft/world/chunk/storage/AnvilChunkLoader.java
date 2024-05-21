@@ -50,7 +50,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
     public Chunk loadChunk(World worldIn, int x, int z) throws IOException
     {
         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
-        NBTTagCompound nbttagcompound = (NBTTagCompound)this.chunksToRemove.get(chunkcoordintpair);
+        NBTTagCompound nbttagcompound = this.chunksToRemove.get(chunkcoordintpair);
 
         if (nbttagcompound == null)
         {

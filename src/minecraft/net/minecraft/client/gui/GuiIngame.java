@@ -6,6 +6,7 @@ import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
+import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
 import com.google.common.base.Predicate;
@@ -67,7 +68,6 @@ public class GuiIngame extends Gui
 
     /** ChatGUI instance that retains all previous chat data */
     private final GuiNewChat persistantChatGUI;
-    private final GuiStreamIndicator streamIndicator;
     private int updateCounter;
 
     /** The string specifying which record music is playing */
@@ -113,7 +113,6 @@ public class GuiIngame extends Gui
         this.overlayDebug = new GuiOverlayDebug(mcIn);
         this.spectatorGui = new GuiSpectator(mcIn);
         this.persistantChatGUI = new GuiNewChat(mcIn);
-        this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.func_175177_a();
     }
@@ -335,6 +334,10 @@ public class GuiIngame extends Gui
         if (scoreobjective1 != null)
         {
             this.renderScoreboard(scoreobjective1, scaledresolution);
+        } else {
+            cn.stars.starx.module.impl.hud.Scoreboard scoreboardModule = (cn.stars.starx.module.impl.hud.Scoreboard) ModuleInstance.getModule(cn.stars.starx.module.impl.hud.Scoreboard.class);
+            scoreboardModule.setWidth(0);
+            scoreboardModule.setHeight(0);
         }
 
         GlStateManager.enableBlend();
@@ -571,18 +574,17 @@ public class GuiIngame extends Gui
         }
     }
 
-    public void renderStreamIndicator(ScaledResolution p_180478_1_)
-    {
-        this.streamIndicator.render(p_180478_1_.getScaledWidth() - 10, 10);
-    }
 
     private void renderScoreboard(ScoreObjective p_180475_1_, ScaledResolution p_180475_2_)
     {
         Scoreboard scoreboard = p_180475_1_.getScoreboard();
+        cn.stars.starx.module.impl.hud.Scoreboard scoreboardModule = (cn.stars.starx.module.impl.hud.Scoreboard) ModuleInstance.getModule(cn.stars.starx.module.impl.hud.Scoreboard.class);
+
+        if (!scoreboardModule.isEnabled()) return;
+
         Collection collection = scoreboard.getSortedScores(p_180475_1_);
         ArrayList arraylist = Lists.newArrayList(Iterables.filter(collection, new Predicate()
         {
-            private static final String __OBFID = "CL_00001958";
             public boolean apply(Score p_apply_1_)
             {
                 return p_apply_1_.getPlayerName() != null && !p_apply_1_.getPlayerName().startsWith("#");
@@ -639,6 +641,9 @@ public class GuiIngame extends Gui
                 drawRect(j - 2, l - 1, i1, l, 1342177280);
                 this.getFontRenderer().drawString(s3, j + i / 2 - this.getFontRenderer().getStringWidth(s3) / 2, l - this.getFontRenderer().FONT_HEIGHT, 553648127);
             }
+
+            scoreboardModule.setWidth(i1 - j + 2);
+            scoreboardModule.setHeight(arraylist1.size() * this.getFontRenderer().FONT_HEIGHT);
         }
     }
 
@@ -1137,7 +1142,6 @@ public class GuiIngame extends Gui
         }
 
         ++this.updateCounter;
-        this.streamIndicator.func_152439_a();
 
         if (this.mc.thePlayer != null)
         {

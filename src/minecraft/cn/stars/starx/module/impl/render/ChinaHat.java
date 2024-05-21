@@ -28,7 +28,7 @@ public class ChinaHat extends Module {
     private int ticks;
 
     @Override
-    public void onRender3DEvent(final Render3DEvent event) {
+    public void onRender3D(final Render3DEvent event) {
         if (mc.gameSettings.thirdPersonView == 0 && !showInFirstPerson.isEnabled()) return;
 
         //ticks++;

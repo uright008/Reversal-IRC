@@ -1,5 +1,6 @@
 package net.minecraft.client.multiplayer;
 
+import cn.stars.starx.util.StarXLogger;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ServerList
         }
         catch (Exception exception)
         {
-            logger.error((String)"Couldn\'t load server list", (Throwable)exception);
+            logger.error("Couldn't load server list", exception);
         }
     }
 
@@ -74,32 +75,45 @@ public class ServerList
         }
         catch (Exception exception)
         {
-            logger.error((String)"Couldn\'t save server list", (Throwable)exception);
+            logger.error("Couldn't save server list", exception);
         }
     }
 
     /**
      * Gets the ServerData instance stored for the given index in the list.
      */
-    public ServerData getServerData(int p_78850_1_)
+    public ServerData getServerData(int index)
     {
-        return (ServerData)this.servers.get(p_78850_1_);
+        try {
+            return this.servers.get(index);
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "Failed to get server data.", e);
+            return null;
+        }
     }
 
     /**
      * Removes the ServerData instance stored for the given index in the list.
      */
-    public void removeServerData(int p_78851_1_)
+    public void removeServerData(int index)
     {
-        this.servers.remove(p_78851_1_);
+        try {
+            this.servers.remove(index);
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "Failed to remove server data.", e);
+        }
     }
 
     /**
      * Adds the given ServerData instance to the list.
      */
-    public void addServerData(ServerData p_78849_1_)
+    public void addServerData(ServerData server)
     {
-        this.servers.add(p_78849_1_);
+        try {
+            this.servers.add(server);
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "Failed to add server data.", e);
+        }
     }
 
     /**
@@ -115,15 +129,23 @@ public class ServerList
      */
     public void swapServers(int p_78857_1_, int p_78857_2_)
     {
-        ServerData serverdata = this.getServerData(p_78857_1_);
-        this.servers.set(p_78857_1_, this.getServerData(p_78857_2_));
-        this.servers.set(p_78857_2_, serverdata);
-        this.saveServerList();
+        try {
+            ServerData serverdata = this.getServerData(p_78857_1_);
+            this.servers.set(p_78857_1_, this.getServerData(p_78857_2_));
+            this.servers.set(p_78857_2_, serverdata);
+            this.saveServerList();
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "Failed to swap servers.", e);
+        }
     }
 
-    public void func_147413_a(int p_147413_1_, ServerData p_147413_2_)
+    public void func_147413_a(int index, ServerData server)
     {
-        this.servers.set(p_147413_1_, p_147413_2_);
+        try {
+            this.servers.set(index, server);
+        } catch (Exception e) {
+            StarXLogger.error(StarXLogger.mcl + "Failed to set server data.", e);
+        }
     }
 
     public static void func_147414_b(ServerData p_147414_0_)

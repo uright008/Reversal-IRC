@@ -22,7 +22,7 @@ import org.lwjgl.input.Keyboard;
 @ModuleInfo(name = "ClickGui", description = "Opens a Gui where you can toggle modules and change their settings", category = Category.RENDER, defaultKey = Keyboard.KEY_RSHIFT)
 public final class ClickGui extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this, "Rise", "Rise", "Dropdown");
+    private final ModeValue mode = new ModeValue("Mode", this, "StarX", "StarX", "Dropdown");
 
     private final ModeValue theme = new ModeValue("Theme", this, "Deep Blue", "Deep Blue",
             "Rural Amethyst", "Rustic Desert", "Orchid Aqua", "Alyssum Pink", "Sweet Grape Vine", "Disco");
@@ -46,8 +46,8 @@ public final class ClickGui extends Module {
 
     @Override
     public void onUpdateAlwaysInGui() {
-        transparency.hidden = !mode.is("Rise");
-        blur.hidden = !mode.is("Rise");
+        transparency.hidden = !mode.is("StarX");
+        blur.hidden = !mode.is("StarX");
 
         scale.hidden = !mode.is("Dropdown");
         speedValue = (float)(speed.getValue());
@@ -58,14 +58,13 @@ public final class ClickGui extends Module {
     @Override
     protected void onEnable() {
         switch (mode.getMode()) {
-            case "Rise": {
+            case "StarX": {
                 mc.displayGuiScreen(StarX.INSTANCE.getClickGUI());
                 break;
             }
 
             case "Dropdown": {
-               // mc.displayGuiScreen(Rise.INSTANCE.getStrikeGUI());
-                mc.displayGuiScreen(StarX.INSTANCE.getClickGUI());
+                mc.displayGuiScreen(StarX.INSTANCE.getStrikeGUI());
                 break;
             }
         }
@@ -82,7 +81,7 @@ public final class ClickGui extends Module {
     public void onPreMotion(final PreMotionEvent event) {
         //Invmove for clickgui
    /*    if (!(mc.currentScreen instanceof GuiChat)
-                && !Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getModule("InvMove")).isEnabled()) {
+                && !Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getModule("InvMove")).isEnabled()) {
             for (final KeyBinding a : affectedBindings) {
                 a.setKeyPressed(GameSettings.isKeyDown(a));
             }

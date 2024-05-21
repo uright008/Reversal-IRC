@@ -69,7 +69,6 @@ public class AsyncVersionSlider extends GuiButton {
         {
             if (this.dragging)
             {
-                System.out.println(ProtocolVersion.isRegistered(values.indexOf(ProtocolVersion.v1_20)));
                 this.sliderValue = (float)(mouseX - (this.xPosition + 4)) / (float)(this.width - 8);
                 this.sliderValue = MathHelper.clamp_float(this.sliderValue, 0.0F, 1.0F);
                 this.dragValue = sliderValue;

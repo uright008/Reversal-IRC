@@ -84,4 +84,8 @@ public final class MathUtil {
     public double getCps(final Collection<? extends Number> data) {
         return 20.0D * getAverage(data);
     }
+
+    public double clamp(double min, double max, double n) {
+        return Math.max(min, Math.min(max, n));
+    }
 }

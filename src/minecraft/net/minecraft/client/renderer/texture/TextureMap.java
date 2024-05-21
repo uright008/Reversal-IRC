@@ -130,7 +130,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
         if (this.mipmapLevels >= 4)
         {
             this.mipmapLevels = this.detectMaxMipmapLevel(this.mapRegisteredSprites, resourceManager);
-            Config.log("Mipmap levels: " + this.mipmapLevels);
+            Config.log("Mipmap 等级: " + this.mipmapLevels);
         }
 
         this.initMissingImage();
@@ -140,7 +140,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
 
     public void loadTextureAtlas(IResourceManager resourceManager)
     {
-    	Config.dbg("Multitexture: " + Config.isMultiTexture());
+    	Config.dbg("多纹理: " + Config.isMultiTexture());
 
         if (Config.isMultiTexture())
         {
@@ -307,7 +307,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                         return textureatlassprite2.getFrameCount() + " frames";
                     }
                 });
-                crashreportcategory.addCrashSection("Mipmap levels", Integer.valueOf(this.mipmapLevels));
+                crashreportcategory.addCrashSection("Mipmap 等级", Integer.valueOf(this.mipmapLevels));
                 throw new ReportedException(crashreport);
             }
         }
@@ -324,7 +324,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
             throw stitcherexception;
         }
 
-        logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
+        logger.info("已创建: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
         TextureUtil.allocateTextureImpl(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
         HashMap hashmap = Maps.newHashMap(this.mapRegisteredSprites);
 

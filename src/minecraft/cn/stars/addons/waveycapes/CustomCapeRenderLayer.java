@@ -6,6 +6,7 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.addons.WaveyCapes;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -16,7 +17,7 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
 
 public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer>, GameInstance {
-    private Module waveyCapes = StarX.INSTANCE.moduleManager.getModule("WaveyCapes");
+    private Module waveyCapes = ModuleInstance.getModule(WaveyCapes.class);
     private ModelRenderer[] customCape;
     private final RenderPlayer playerRenderer;
     private final SmoothCapeRenderer smoothCapeRenderer;
@@ -39,7 +40,7 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
 
     @Override
     public void doRenderLayer(AbstractClientPlayer abstractClientPlayer, final float nameFloat1, final float nameFloat2, final float deltaTick, final float animationTick, final float nameFloat5, final float nameFloat6, final float nameFloat7) {
-        if (!waveyCapes.isEnabled() || abstractClientPlayer.isInvisible() || !abstractClientPlayer.hasPlayerInfo() || !abstractClientPlayer.isWearing(EnumPlayerModelParts.CAPE) || abstractClientPlayer.getLocationCape() == null) {
+        if (waveyCapes == null || !waveyCapes.isEnabled() || abstractClientPlayer.isInvisible() || !abstractClientPlayer.hasPlayerInfo() || !abstractClientPlayer.isWearing(EnumPlayerModelParts.CAPE) || abstractClientPlayer.getLocationCape() == null) {
             return;
         }
         if (((ModeValue)StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {

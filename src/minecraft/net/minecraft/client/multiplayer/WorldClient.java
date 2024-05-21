@@ -1,5 +1,7 @@
 package net.minecraft.client.multiplayer;
 
+import cn.stars.starx.module.impl.render.TrueSights;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Sets;
 import java.util.Random;
 import java.util.Set;
@@ -331,9 +333,9 @@ public class WorldClient extends World
             IBlockState iblockstate = this.getBlockState(blockposm);
             iblockstate.getBlock().randomDisplayTick(this, blockposm, iblockstate, random);
 
-            if (flag && iblockstate.getBlock() == Blocks.barrier)
+            if ((flag || ModuleInstance.getModule(TrueSights.class).isEnabled()) && iblockstate.getBlock() == Blocks.barrier)
             {
-                this.spawnParticle(EnumParticleTypes.BARRIER, (double)((float)j + 0.5F), (double)((float)k + 0.5F), (double)((float)l + 0.5F), 0.0D, 0.0D, 0.0D, new int[0]);
+                this.spawnParticle(EnumParticleTypes.BARRIER, (double)((float)j + 0.5F), (double)((float)k + 0.5F), (double)((float)l + 0.5F), 0.0D, 0.0D, 0.0D);
             }
         }
     }

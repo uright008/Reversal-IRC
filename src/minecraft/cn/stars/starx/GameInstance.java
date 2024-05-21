@@ -7,7 +7,13 @@ import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.util.shader.RiseShaders;
+import cn.stars.starx.util.shader.base.ShaderRenderType;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface GameInstance {
     Minecraft mc = Minecraft.getMinecraft();
@@ -25,6 +31,64 @@ public interface GameInstance {
     TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
     TTFFontRenderer gsTitle = CustomFont.FONT_MANAGER.getFont("GoogleSans 24");
     TTFFontRenderer gsBig = CustomFont.FONT_MANAGER.getFont("GoogleSans 36");
+
+    List<Runnable> UI_BLOOM_RUNNABLES = new ArrayList<>();
+    List<Runnable> UI_POST_BLOOM_RUNNABLES = new ArrayList<>();
+    List<Runnable> UI_RENDER_RUNNABLES = new ArrayList<>();
+    List<Runnable> UI_BLUR_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_PRE_RENDER_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_BLUR_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_POST_BLOOM_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_OUTLINE_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_RENDER_RUNNABLES = new ArrayList<>();
+    List<Runnable> NORMAL_POST_RENDER_RUNNABLES = new ArrayList<>();
+
+    static void render2DRunnables(float partialTicks, boolean shaders) {
+
+        NORMAL_PRE_RENDER_RUNNABLES.forEach(Runnable::run);
+
+        if (shaders) {
+            RiseShaders.OUTLINE_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_OUTLINE_RUNNABLES);
+            RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+        }
+
+        NORMAL_RENDER_RUNNABLES.forEach(Runnable::run);
+
+        NORMAL_POST_RENDER_RUNNABLES.forEach(Runnable::run);
+
+        if (shaders) {
+            RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+        }
+
+        UI_RENDER_RUNNABLES.forEach(Runnable::run);
+
+        if (mc.currentScreen != null) {
+
+            RiseShaders.UI_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, UI_BLOOM_RUNNABLES);
+
+            RiseShaders.UI_POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, UI_POST_BLOOM_RUNNABLES);
+        }
+
+    }
+
+    static void render3DRunnables(float partialTicks) {
+        RiseShaders.OUTLINE_SHADER.run(ShaderRenderType.CAMERA, partialTicks, NORMAL_OUTLINE_RUNNABLES);
+        RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.CAMERA, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+        RiseShaders.UI_BLOOM_SHADER.run(ShaderRenderType.CAMERA, partialTicks, UI_BLOOM_RUNNABLES);
+        RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.CAMERA, partialTicks, NORMAL_BLUR_RUNNABLES);
+    }
+
+    static void clearRunnables() {
+        NORMAL_BLUR_RUNNABLES.clear();
+        NORMAL_POST_BLOOM_RUNNABLES.clear();
+        NORMAL_OUTLINE_RUNNABLES.clear();
+        NORMAL_RENDER_RUNNABLES.clear();
+        UI_BLOOM_RUNNABLES.clear();
+        UI_RENDER_RUNNABLES.clear();
+        NORMAL_PRE_RENDER_RUNNABLES.clear();
+        NORMAL_POST_RENDER_RUNNABLES.clear();
+        UI_POST_BLOOM_RUNNABLES.clear();
+    }
 
     default Module getModule(final Class<? extends Module> clazz) {
         for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {

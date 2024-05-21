@@ -7,7 +7,6 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -36,9 +35,9 @@ public abstract class Module implements GameInstance {
     public float clickGuiOpacity;
     public float descOpacityInGui = 1;
     public boolean hidden = false;
-    private int x, y, draggingX, draggingY;
-    private int width, height;
-    private boolean dragging, hide, canBeEdited;
+    public int x, y, draggingX, draggingY;
+    public int width, height;
+    public boolean dragging, hide, canBeEdited;
     public SimpleAnimation buttonAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation buttonOpacityAnimation = new SimpleAnimation(0.0F);
     public SimpleAnimation selectAnimation = new SimpleAnimation(0.0F);
@@ -98,11 +97,13 @@ public abstract class Module implements GameInstance {
 
         if (enabled) {
             onEnable();
+            mc.getSoundHandler().playButtonPress();
             if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
                     "Enabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.SUCCESS);
         }
         else {
             onDisable();
+            mc.getSoundHandler().playButtonPress();
             if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
                     "Disabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.ERROR);
         }
@@ -182,22 +183,25 @@ public abstract class Module implements GameInstance {
     public void onStrafe(final StrafeEvent event) {
     }
 
-    public void onShader3DEvent(final Shader3DEvent event) {
+    public void onShader3D(final Shader3DEvent event) {
     }
 
-    public void onRender3DEvent(final Render3DEvent event) {
+    public void onAlpja(final AlphaEvent event) {
     }
 
-    public void onRender2DEvent(final Render2DEvent event) {
+    public void onRender3D(final Render3DEvent event) {
     }
 
-    public void onCanPlaceBlockEvent(final CanPlaceBlockEvent event) {
+    public void onRender2D(final Render2DEvent event) {
+    }
+
+    public void onCanPlaceBlock(final CanPlaceBlockEvent event) {
     }
 
     public void onBlockBreak(final BlockBreakEvent event) {
     }
 
-    public void onAttackEvent(final AttackEvent event) {
+    public void onAttack(final AttackEvent event) {
     }
 
     public void onMoveButton(final MoveButtonEvent event) {
@@ -233,7 +237,7 @@ public abstract class Module implements GameInstance {
     public void onBlockCollide(final BlockCollideEvent event) {
     }
 
-    public void onTeleportEvent(final TeleportEvent event) {
+    public void onTeleport(final TeleportEvent event) {
     }
 
     public void onTick(final TickEvent event) {

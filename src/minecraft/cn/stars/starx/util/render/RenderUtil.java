@@ -3,6 +3,7 @@ package cn.stars.starx.util.render;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -42,6 +43,7 @@ public final class RenderUtil implements GameInstance {
 
     public float delta2DFrameTime;
     public float delta3DFrameTime;
+    public long initTime = System.currentTimeMillis();
 
     public void push() {
         GL11.glPushMatrix();
@@ -75,6 +77,10 @@ public final class RenderUtil implements GameInstance {
         enable(GL11.GL_TEXTURE_2D);
         disable(GL11.GL_BLEND);
         color(Color.white);
+    }
+
+    public boolean isHovered(final double x, final double y, final double width, final double height, final int mouseX, final int mouseY) {
+        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
     public void startSmooth() {
@@ -391,6 +397,10 @@ public final class RenderUtil implements GameInstance {
         polygon(x, y, radius, 360, filled, color);
     }
 
+    public void circle(final double x, final double y, final double radius, final double angle, final boolean filled, final Color color) {
+        polygon(x, y, radius, angle, filled, color);
+    }
+
     public void circle(final double x, final double y, final double radius, final boolean filled) {
         polygon(x, y, radius, 360, filled);
     }
@@ -401,6 +411,12 @@ public final class RenderUtil implements GameInstance {
 
     public void circle(final double x, final double y, final double radius) {
         polygon(x, y, radius, 360);
+    }
+
+    public void circleCentered(double x, double y, final double radius, final double angle, final boolean filled, final Color color) {
+        x -= radius / 2;
+        y -= radius / 2;
+        polygon(x, y, radius, angle, filled, color);
     }
 
     public void circleCentered(double x, double y, final double radius, final boolean filled, final Color color) {
@@ -547,6 +563,39 @@ public final class RenderUtil implements GameInstance {
         x -= width / 2f;
         y -= height / 2f;
         image(imageLocation, x, y, width, height);
+    }
+
+    public void roundedRectangle(double x, double y, double width, double height, double radius, Color color) {
+        RiseShaders.RQ_SHADER.draw(x, y, width, height, radius, color);
+    }
+
+    public void roundedOutlineRectangle(double x, double y, double width, double height, double radius, double borderSize, Color color) {
+        RiseShaders.ROQ_SHADER.draw(x, y, width, height, radius, borderSize, color);
+    }
+
+    public void roundedOutlineGradientRectangle(double x, double y, double width, double height, double radius, double borderSize, Color color1, Color color2) {
+        RiseShaders.ROGQ_SHADER.draw(x, y, width, height, radius, borderSize, color1, color2);
+    }
+
+    public void rectangle(final double x, final double y, final double width, final double height, final Color color) {
+        start();
+
+        if (color != null) {
+            glColor(color);
+        }
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2d(x, y);
+        GL11.glVertex2d(x + width, y);
+        GL11.glVertex2d(x + width, y + height);
+        GL11.glVertex2d(x, y + height);
+        GL11.glEnd();
+
+        stop();
+    }
+
+    static void glColor(final Color color) {
+        GL11.glColor4f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
     }
 
     public static void scissor(double x, double y, double width, double height) {

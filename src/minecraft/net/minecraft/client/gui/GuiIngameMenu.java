@@ -2,16 +2,12 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cn.stars.starx.ui.gui.breakout.BreakoutGuiIngameMenu;
-import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.GlUtils;
-import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.ui.gui.GuiMainMenuNew;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.realms.RealmsBridge;
-import org.newdawn.slick.opengl.GLUtils;
 
 public class GuiIngameMenu extends GuiScreen
 {
@@ -64,16 +60,16 @@ public class GuiIngameMenu extends GuiScreen
 
                 if (flag)
                 {
-                    this.mc.displayGuiScreen(new GuiMainMenu());
+                    this.mc.displayGuiScreen(new GuiMainMenuNew());
                 }
                 else if (flag1)
                 {
                     RealmsBridge realmsbridge = new RealmsBridge();
-                    realmsbridge.switchToRealms(new GuiMainMenu());
+                    realmsbridge.switchToRealms(new GuiMainMenuNew());
                 }
                 else
                 {
-                    this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                    this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenuNew()));
                 }
 
             case 2:

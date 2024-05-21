@@ -59,7 +59,7 @@ public class SpeedGraph extends Module {
     }
 
     @Override
-    public void onRender2DEvent(final Render2DEvent event) {
+    public void onRender2D(final Render2DEvent event) {
         final ScaledResolution sr = new ScaledResolution(mc);
 
         GL11.glPushMatrix();

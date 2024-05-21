@@ -7,7 +7,6 @@ import cn.stars.addons.waveycapes.StickSimulation;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.AttackEvent;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.movement.KeepSprint;
 import cn.stars.starx.setting.Setting;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;

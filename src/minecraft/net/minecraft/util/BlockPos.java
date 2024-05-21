@@ -79,15 +79,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos up()
     {
-        return this.up(1);
+        return new BlockPos(this.getX(), this.getY() + 1, this.getZ());
     }
 
     /**
      * Offset this BlockPos n blocks up
      */
-    public BlockPos up(int n)
+    public BlockPos up(int offset)
     {
-        return this.offset(EnumFacing.UP, n);
+        return offset == 0 ? this : new BlockPos(this.getX(), this.getY() + offset, this.getZ());
     }
 
     /**
@@ -95,15 +95,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos down()
     {
-        return this.down(1);
+        return new BlockPos(this.getX(), this.getY() - 1, this.getZ());
     }
 
     /**
      * Offset this BlockPos n blocks down
      */
-    public BlockPos down(int n)
+    public BlockPos down(int offset)
     {
-        return this.offset(EnumFacing.DOWN, n);
+        return offset == 0 ? this : new BlockPos(this.getX(), this.getY() - offset, this.getZ());
     }
 
     /**
@@ -111,15 +111,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos north()
     {
-        return this.north(1);
+        return new BlockPos(this.getX(), this.getY(), this.getZ() - 1);
     }
 
     /**
      * Offset this BlockPos n blocks in northern direction
      */
-    public BlockPos north(int n)
+    public BlockPos north(int offset)
     {
-        return this.offset(EnumFacing.NORTH, n);
+        return offset == 0 ? this : new BlockPos(this.getX(), this.getY(), this.getZ() - offset);
     }
 
     /**
@@ -127,15 +127,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos south()
     {
-        return this.south(1);
+        return new BlockPos(this.getX(), this.getY(), this.getZ() + 1);
     }
 
     /**
      * Offset this BlockPos n blocks in southern direction
      */
-    public BlockPos south(int n)
+    public BlockPos south(int offset)
     {
-        return this.offset(EnumFacing.SOUTH, n);
+        return offset == 0 ? this : new BlockPos(this.getX(), this.getY(), this.getZ() + offset);
     }
 
     /**
@@ -143,15 +143,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos west()
     {
-        return this.west(1);
+        return new BlockPos(this.getX() - 1, this.getY(), this.getZ());
     }
 
     /**
      * Offset this BlockPos n blocks in western direction
      */
-    public BlockPos west(int n)
+    public BlockPos west(int offset)
     {
-        return this.offset(EnumFacing.WEST, n);
+        return offset == 0 ? this : new BlockPos(this.getX() - offset, this.getY(), this.getZ());
     }
 
     /**
@@ -159,15 +159,15 @@ public class BlockPos extends Vec3i
      */
     public BlockPos east()
     {
-        return this.east(1);
+        return new BlockPos(this.getX() + 1, this.getY(), this.getZ());
     }
 
     /**
      * Offset this BlockPos n blocks in eastern direction
      */
-    public BlockPos east(int n)
+    public BlockPos east(int offset)
     {
-        return this.offset(EnumFacing.EAST, n);
+        return offset == 0 ? this : new BlockPos(this.getX() + offset, this.getY(), this.getZ());
     }
 
     /**
@@ -175,7 +175,7 @@ public class BlockPos extends Vec3i
      */
     public BlockPos offset(EnumFacing facing)
     {
-        return this.offset(facing, 1);
+        return new BlockPos(this.getX() + facing.getFrontOffsetX(), this.getY() + facing.getFrontOffsetY(), this.getZ() + facing.getFrontOffsetZ());
     }
 
     /**

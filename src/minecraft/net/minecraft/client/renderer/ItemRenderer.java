@@ -1,8 +1,8 @@
 package net.minecraft.client.renderer;
 
 import cn.stars.starx.StarX;
-import cn.stars.starx.module.Module;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -19,10 +19,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemMap;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.src.Config;
 import net.minecraft.src.DynamicLights;
 import net.minecraft.src.Reflector;
@@ -326,7 +323,7 @@ public class ItemRenderer
         GlStateManager.scale(1.0F, 1.0F, 1.0F + f1 * 0.2F);
     }
 
-    private void func_178103_d()
+    private void doBlockTransformations()
     {
         GlStateManager.translate(-0.5F, 0.2F, 0.0F);
         GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
@@ -339,6 +336,7 @@ public class ItemRenderer
      */
     public void renderItemInFirstPerson(float partialTicks)
     {
+        boolean anythingBlock = ModuleInstance.getBool("Animations", "Anything Block").isEnabled();
         float f = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
         EntityPlayerSP entityplayersp = this.mc.thePlayer;
         float f1 = entityplayersp.getSwingProgress(partialTicks);
@@ -356,20 +354,20 @@ public class ItemRenderer
             {
                 this.renderItemMap(entityplayersp, f2, f, f1);
             }
-            else if (entityplayersp.getItemInUseCount() > 0)
+            else if (entityplayersp.isUsingItem() || (mc.gameSettings.keyBindUseItem.isKeyDown() && anythingBlock) || entityplayersp.getItemInUseCount() > 0)
             {
                 EnumAction enumaction = this.itemToRender.getItemUseAction();
                 boolean m = Objects.requireNonNull(StarX.INSTANCE.moduleManager.getModule("Animations")).isEnabled();
-                switch (ItemRenderer.ItemRenderer$1.field_178094_a[enumaction.ordinal()])
+                switch (anythingBlock ? EnumAction.BLOCK : this.itemToRender.getItemUseAction())
                 {
-                    case 1:
+                    case NONE:
                         this.transformFirstPersonItem(f, 0.0F);
                         break;
 
-                    case 2:
+                    case EAT:
                         if (m && ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("Animations", "Food Swing"))).isEnabled())
                             this.transformFirstPersonFood(f, f1);
-                    case 3:
+                    case DRINK:
                         this.func_178104_a(entityplayersp, partialTicks);
                         if (m && ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("Animations", "Drink Swing"))).isEnabled())
                             this.transformFirstPersonItem(f, f1);
@@ -377,28 +375,137 @@ public class ItemRenderer
                             this.transformFirstPersonItem(f, 0.0F);
                         break;
 
-                    case 4:
+                    case BLOCK:
                         if (m && ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("Animations", "Sword Swing"))).isEnabled())
                         {
-                            this.transformFirstPersonItem(f, f1);
-                            GlStateManager.translate(0.0f, 0.2f, 0.0f);
+                            final float convertedProgress = MathHelper.sin(MathHelper.sqrt_float(f1) * (float) Math.PI);
+                            switch (ModuleInstance.getMode("Animations", "Sword Mode").getMode()) {
+                                case "None": {
+                                    transformFirstPersonItem(f, 0.0f);
+                                    break;
+                                }
+                                case "1.7": {
+                                    transformFirstPersonItem(f, f1);
+                                    break;
+                                }
+                                case "Smooth": {
+                                    transformFirstPersonItem(f, 0.0F);
+                                    final float y = -convertedProgress * 2.0F;
+                                    GlStateManager.translate(0.0F, y / 10.0F + 0.1F, 0.0F);
+                                    GlStateManager.rotate(y * 10.0F, 0.0F, 1.0F, 0.0F);
+                                    GlStateManager.rotate(250, 0.2F, 1.0F, -0.6F);
+                                    GlStateManager.rotate(-10.0F, 1.0F, 0.5F, 1.0F);
+                                    GlStateManager.rotate(-y * 20.0F, 1.0F, 0.5F, 1.0F);
+                                    break;
+                                }
+                                case "Stab": {
+                                    GlStateManager.translate(0.6f, 0.3f, -0.6f + -convertedProgress * 0.7);
+                                    GlStateManager.rotate(6090, 0.0f, 0.0f, 0.1f);
+                                    GlStateManager.rotate(6085, 0.0f, 0.1f, 0.0f);
+                                    GlStateManager.rotate(6110, 0.1f, 0.0f, 0.0f);
+                                    transformFirstPersonItem(0.0F, 0.0f);
+                                    break;
+                                }
+                                case "Spin": {
+                                    transformFirstPersonItem(f, 0.0F);
+                                    GlStateManager.translate(0, 0.2F, -1);
+                                    GlStateManager.rotate(-59, -1, 0, 3);
+                                    // Don't make the /2 a float it causes the animation to break
+                                    GlStateManager.rotate(-(System.currentTimeMillis() / 2 % 360), 1, 0, 0.0F);
+                                    GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+                                    break;
+                                }
+                                case "Leaked": {
+                                    transformFirstPersonItem(f, 0.0F);
+                                    GlStateManager.translate(0.0f, 0.1F, 0.0F);
+                                    GlStateManager.rotate(convertedProgress * 35.0F / 2.0F, 0.0F, 1.0F, 1.5F);
+                                    GlStateManager.rotate(-convertedProgress * 135.0F / 4.0F, 1.0f, 1.0F, 0.0F);
+                                    break;
+                                }
+                                case "Old": {
+                                    GlStateManager.translate(0.0F, 0.18F, 0.0F);
+                                    transformFirstPersonItem(f / 2.0F, f1);
+                                    break;
+                                }
+                                case "Exhibition": {
+                                    transformFirstPersonItem(f / 2.0F, 0.0F);
+                                    GlStateManager.translate(0.0F, 0.3F, -0.0F);
+                                    GlStateManager.rotate(-convertedProgress * 31.0F, 1.0F, 0.0F, 2.0F);
+                                    GlStateManager.rotate(-convertedProgress * 33.0F, 1.5F, (convertedProgress / 1.1F), 0.0F);
+                                    break;
+                                }
+                                case "Wood": {
+                                    transformFirstPersonItem(f / 2.0F, 0.0F);
+                                    GlStateManager.translate(0.0F, 0.3F, -0.0F);
+                                    GlStateManager.rotate(-convertedProgress * 30.0F, 1.0F, 0.0F, 2.0F);
+                                    GlStateManager.rotate(-convertedProgress * 44.0F, 1.5F, (convertedProgress / 1.2F), 0.0F);
+                                    break;
+                                }
+                                case "Swong": {
+                                    transformFirstPersonItem(f / 2.0F, f1);
+                                    GlStateManager.rotate(convertedProgress * 30.0F / 2.0F, -convertedProgress, -0.0F, 9.0F);
+                                    GlStateManager.rotate(convertedProgress * 40.0F, 1.0F, -convertedProgress / 2.0F, -0.0F);
+                                    GlStateManager.translate(0.0F, 0.2F, 0.0F);
+                                    break;
+                                }
+                                case "Chill": {
+                                    transformFirstPersonItem(f / 1.5F, 0.0F);
+                                    GlStateManager.translate(-0.05F, 0.3F, 0.3F);
+                                    GlStateManager.rotate(-convertedProgress * 140.0F, 8.0F, 0.0F, 8.0F);
+                                    GlStateManager.rotate(convertedProgress * 90.0F, 8.0F, 0.0F, 8.0F);
+                                    break;
+                                }
+                                case "Komorebi": {
+                                    transformFirstPersonItem(-0.25F, 1.0F + convertedProgress / 10.0F);
+                                    GL11.glRotated(-convertedProgress * 25.0F, 1.0F, 0.0F, 0.0F);
+                                    break;
+                                }
+                                case "Rhys": {
+                                    GlStateManager.translate(0.41F, -0.25F, -0.5555557F);
+                                    GlStateManager.translate(0.0F, 0, 0.0F);
+                                    GlStateManager.rotate(35.0F, 0f, 1.5F, 0.0F);
+                                    final float sinned = MathHelper.sin(f1 * f1 / 64 * (float) Math.PI);
+                                    GlStateManager.rotate(sinned * -5.0F, 0.0F, 0.0F, 0.0F);
+                                    GlStateManager.rotate(convertedProgress * -12.0F, 0.0F, 0.0F, 1.0F);
+                                    GlStateManager.rotate(convertedProgress * -65.0F, 1.0F, 0.0F, 0.0F);
+                                    break;
+                                }
+                                case "Allah": {
+                                    GlStateManager.translate(-0.3F, -0.1F, -0.0F);
+                                    break;
+                                }
+                                case "SlideDown": {
+                                    transformFirstPersonItem(0.2F, f1);
+                                    GlStateManager.translate(0.0F, 0.5F, 0.0F);
+                                    break;
+                                }
+                                case "Liquid": {
+                                    transformFirstPersonItem(f + 0.1F, f1);
+                                    GlStateManager.translate(-0.5F, 0.5F, 0.0F);
+                                    GlStateManager.scale(0.8f,0.8f,0.8f);
+                                    break;
+                                }
+                            }
                         }
-                        else
-                            this.transformFirstPersonItem(f, 0.0F);
-                        this.func_178103_d();
+                        else {
+                            transformFirstPersonItem(f, 0.0F);
+                        }
+                        doBlockTransformations();
                         break;
 
-                    case 5:
+                    case BOW:
                         if (m && ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.moduleManager.getSetting("Animations", "Bow Swing"))).isEnabled())
                             this.transformFirstPersonItem(f, f1);
                         else
                             this.transformFirstPersonItem(f, 0.0F);
                         this.func_178098_a(partialTicks, entityplayersp);
                 }
+                float addY = ModuleInstance.getNumber("Animations", "Item Position Y").getFloat();
+                GlStateManager.translate(0.0f, addY, 0.0f);
             }
             else
             {
-                this.func_178105_d(f1);
+                if (!ModuleInstance.getBool("Animations", "Swing Animation").isEnabled()) this.func_178105_d(f1);
                 this.transformFirstPersonItem(f, f1);
             }
 

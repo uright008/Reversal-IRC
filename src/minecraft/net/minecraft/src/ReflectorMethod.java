@@ -64,18 +64,18 @@ public class ReflectorMethod
 
                         if (amethod.length <= 0)
                         {
-                            Config.log("(Reflector) Method not present: " + oclass.getName() + "." + this.targetMethodName);
+                            Config.log("(反射) Method不存在: " + oclass.getName() + "." + this.targetMethodName);
                             return null;
                         }
 
                         if (amethod.length > 1)
                         {
-                            Config.warn("(Reflector) More than one method found: " + oclass.getName() + "." + this.targetMethodName);
+                            Config.warn("(反射) 找到了一个以上的方法: " + oclass.getName() + "." + this.targetMethodName);
 
                             for (int i = 0; i < amethod.length; ++i)
                             {
                                 Method method = amethod[i];
-                                Config.warn("(Reflector)  - " + method);
+                                Config.warn("(反射)  - " + method);
                             }
 
                             return null;
@@ -90,7 +90,7 @@ public class ReflectorMethod
 
                     if (this.targetMethod == null)
                     {
-                        Config.log("(Reflector) Method not present: " + oclass.getName() + "." + this.targetMethodName);
+                        Config.log("(反射) Method不存在: " + oclass.getName() + "." + this.targetMethodName);
                         return null;
                     }
                     else
