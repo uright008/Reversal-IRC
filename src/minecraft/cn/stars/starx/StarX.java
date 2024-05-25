@@ -3,10 +3,7 @@ package cn.stars.starx;
 import cn.stars.addons.creativetab.StarXTab;
 import cn.stars.starx.command.Command;
 import cn.stars.starx.command.CommandManager;
-import cn.stars.starx.command.impl.Bind;
-import cn.stars.starx.command.impl.ClientName;
-import cn.stars.starx.command.impl.ClientTitle;
-import cn.stars.starx.command.impl.SelfDestruct;
+import cn.stars.starx.command.impl.*;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleManager;
@@ -30,7 +27,6 @@ import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.ui.theme.GuiTheme;
-import cn.stars.starx.ui.theme.Theme;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.render.ThemeUtil;
@@ -44,6 +40,8 @@ import org.lwjgl.opengl.Display;
 import java.awt.*;
 import java.io.File;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /*
  * TODO: IMPORTANT INFORMATION
@@ -55,7 +53,7 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v0.2.1";
+    public static final String VERSION = "v0.4.0";
     public static final String MINECRAFT_VERSION = "1.8.8";
     public static final String AUTHOR = "Stars";
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
@@ -65,13 +63,16 @@ public enum StarX implements GameInstance {
     public static boolean isDestructed = false;
 
     // Witty comments
-    public static String[] crashReport_wittyComment = new String[]
+    public static final String[] crashReport_wittyComment = new String[]
             {"玩原神玩的", "粥批差不多得了", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
                     "闭嘴!我的父亲在mojang工作,他可以使你的mInEcRaFt崩溃", "纪狗气死我了", "致敬传奇耐崩王MiNeCrAfT", "你的客户端坠机了",
             "It's been a long day without you my friend", "回来吧牢端"};
 
 
+
     // Init
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     public int backgroundId = 0;
     public ModuleManager moduleManager;
     public NotificationManager notificationManager;
@@ -94,7 +95,7 @@ public enum StarX implements GameInstance {
     // Core
     public void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION + " | Using Java" + System.getProperty("java.version"));
+            Display.setTitle(NAME + " " + VERSION + " | Java" + System.getProperty("java.version") + (mc.isJava64bit() ? "(64)" : "(32)"));
 
             // ViaMCP init
             ViaMCP.create();
@@ -165,10 +166,6 @@ public enum StarX implements GameInstance {
                 }
             }
 
-            if (split[0].contains("MainMenuTheme")) {
-                getGuiTheme().setCurrentTheme(Theme.valueOf(split[1]));
-                continue;
-            }
 
             if (split[0].contains("ClientName")) {
                 ThemeUtil.setCustomClientName(split.length > 1 ? split[1] : "");
@@ -274,7 +271,6 @@ public enum StarX implements GameInstance {
         final StringBuilder configBuilder = new StringBuilder();
         configBuilder.append("StarX_Version_").append(VERSION).append("\r\n");
       //  configBuilder.append("PlayMusic_").append(Minecraft.getMinecraft().riseMusicTicker.shouldKeepPlaying).append("\r\n");
-        configBuilder.append("MainMenuTheme_").append(getGuiTheme().getCurrentTheme()).append("\r\n");
         configBuilder.append("ClientName_").append(ThemeUtil.getCustomClientName()).append("\r\n");
         configBuilder.append("MainMenuBackground_").append(backgroundId).append("\r\n");
 
@@ -372,12 +368,15 @@ public enum StarX implements GameInstance {
             new Bind(),
             new ClientName(),
             new ClientTitle(),
+            new Config(),
+            new Help(),
             new SelfDestruct()
     };
 
     public final Module[] modules = new Module[] {
             // Addons
             new EditHUD(),
+            new MoBends(),
             new WaveyCapes(),
             new SkinLayers3D(),
             new SpecialGuis(),

@@ -1,5 +1,6 @@
 package net.minecraft.client.multiplayer;
 
+import cn.stars.starx.module.impl.render.TimeTraveller;
 import cn.stars.starx.module.impl.render.TrueSights;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Sets;
@@ -479,6 +480,22 @@ public class WorldClient extends World
      * Sets the world time.
      */
     public void setWorldTime(long time)
+    {
+        if (ModuleInstance.getModule(TimeTraveller.class).isEnabled()) return;
+        if (time < 0L)
+        {
+            time = -time;
+            this.getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
+        }
+        else
+        {
+            this.getGameRules().setOrCreateGameRule("doDaylightCycle", "true");
+        }
+
+        super.setWorldTime(time);
+    }
+
+    public void setWorldTime2(long time)
     {
         if (time < 0L)
         {

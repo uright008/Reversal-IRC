@@ -73,6 +73,15 @@ public final class ModuleManager {
         return null;
     }
 
+    public <T extends Module> T getModule(final Class<T> cls) {
+        for (final Module m : this.moduleList) {
+            if (m.getClass() == cls) {
+                return (T)m;
+            }
+        }
+        return null;
+    }
+
     public List<Module> getModulesByCategory(final Category category) {
         final List<Module> modules = new ArrayList<>();
         for (final Module module : moduleList) {

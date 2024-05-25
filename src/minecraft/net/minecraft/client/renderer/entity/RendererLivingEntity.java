@@ -3,7 +3,9 @@ package net.minecraft.client.renderer.entity;
 import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.ModuleManager;
+import cn.stars.starx.module.impl.addons.MoBends;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -108,6 +110,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
     {
         if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
         {
+
+            if (ModuleInstance.getModule(MoBends.class).isEnabled()) {
+                if (MoBends.onRenderLivingEvent(this, entity, x, y, z, entityYaw, partialTicks)) {
+                    return;
+                }
+            }
+
             GlStateManager.pushMatrix();
             GlStateManager.disableCull();
             this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
@@ -307,7 +316,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
         }
         // This should be different parts
-        if (!(this instanceof PlayerEntityModelAccessor)) {
+        if (!(this instanceof PlayerEntityModelAccessor) || ModuleInstance.getModule(MoBends.class).isEnabled()) {
             return;
         }
         if (flag || flag1)

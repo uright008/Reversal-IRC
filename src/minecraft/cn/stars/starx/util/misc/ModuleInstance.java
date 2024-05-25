@@ -17,6 +17,9 @@ public class ModuleInstance {
     public static Module getModule(Class<? extends Module> clazz) {
         return StarX.INSTANCE.moduleManager.getByClass(clazz);
     }
+    public static Module getModuleClass(Class clazz) {
+        return StarX.INSTANCE.moduleManager.getModule(clazz);
+    }
     public static ModeValue getMode(String moduleName, String settingName) {
         return (ModeValue) StarX.INSTANCE.moduleManager.getSetting(moduleName, settingName);
     }

@@ -23,15 +23,13 @@ public final class ClientSettings extends Module {
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);
     private final NumberValue blue = new NumberValue("Blue", this, 255, 0, 255, 1);
 
-    private final BoolValue logo = new BoolValue("Logo", this, true);
     private final BoolValue outLine = new BoolValue("Arraylist Outline", this, false);
-    private final BoolValue customHotbar = new BoolValue("Custom Hotbar", this, true);
-    private final BoolValue smoothHotbar = new BoolValue("Smooth Hotbar", this, true);
+    private final BoolValue customHotbar = new BoolValue("Custom Hotbar", this, false);
+    private final BoolValue smoothHotbar = new BoolValue("Smooth Hotbar", this, false);
     private final BoolValue armorHUD = new BoolValue("Armor HUD", this, false);
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     private final BoolValue customChatFont = new BoolValue("Custom Chat Font", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
-    private final ModeValue cape = new ModeValue("Cape", this, "Electric Sky", "Night", "Electric Sky");
 
     public static boolean customChat, customHotbarEnabled;
 

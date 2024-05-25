@@ -41,7 +41,6 @@ public class GuiMainMenuNew extends GuiScreen implements GameInstance {
 
     private MenuTextButton singlePlayerButton, multiPlayerButton, settingsButton, viaVersionButton, exitButton, cbButton, authorButton, msLoginButton;
     private MenuButton[] menuButtons;
-    private int tick = 0;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {

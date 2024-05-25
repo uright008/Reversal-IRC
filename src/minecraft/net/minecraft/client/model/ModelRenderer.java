@@ -42,8 +42,8 @@ public class ModelRenderer
 
     /** Hides the model. */
     public boolean isHidden;
-    public List cubeList;
-    public List childModels;
+    public List<ModelBox> cubeList;
+    public List<ModelRenderer> childModels;
     public final String boxName;
     private ModelBase baseModel;
     public float offsetX;

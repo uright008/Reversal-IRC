@@ -1,7 +1,5 @@
 package net.minecraft.client.entity;
 
-import cn.stars.addons.skinlayers3d.CustomizableModelPart;
-import cn.stars.addons.skinlayers3d.PlayerSettings;
 import com.mojang.authlib.GameProfile;
 import java.io.File;
 import net.minecraft.client.Minecraft;

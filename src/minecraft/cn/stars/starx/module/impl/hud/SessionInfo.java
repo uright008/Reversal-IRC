@@ -45,6 +45,7 @@ public class SessionInfo extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
+        if (!getModule("HUD").isEnabled()) return;
         int x = getX() + 4;
         int y = getY() + 4;
         TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 20");

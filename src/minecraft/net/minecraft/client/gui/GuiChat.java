@@ -370,8 +370,9 @@ public class GuiChat extends GuiScreen
 
                 RoundedUtils.drawRoundOutline(m.getX() - 4, m.getY() - 4, (m.getWidth()) + 8, (m.getHeight()) + 8, 6, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()));
 
+                String info = m.getModuleInfo().name() + " (" + m.getX() + "," + m.getY() + ")";
                 if (isInside) {
-                    gs.drawString(m.getModuleInfo().name(), m.getX() + m.getWidth() - gs.getWidth(m.getModuleInfo().name()), m.getY() + m.getHeight() - 7, new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()).getRGB());
+                    gs.drawString(info, m.getX() + m.getWidth() - gs.getWidth(info), m.getY() + m.getHeight() - 7, new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()).getRGB());
                 }
                 if(m.isDragging()) {
                     m.setX(mouseX + m.getDraggingX());

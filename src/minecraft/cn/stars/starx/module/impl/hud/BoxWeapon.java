@@ -65,9 +65,9 @@ public class BoxWeapon extends Module {
                 break;
             }
             case "Ui": {
-                setRoundedWidth(115, scale.getValue());
+                setRoundedWidth(110, scale.getValue());
                 setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/ui.png"), x, y, 105, 160, scale.getValue());
+                drawImage(new ResourceLocation("starx/images/box_weapon/ui.png"), x, y, 100, 160, scale.getValue());
                 break;
             }
             case "Hoshino Swimsuit": {
@@ -79,7 +79,7 @@ public class BoxWeapon extends Module {
             case "Mika": {
                 setRoundedWidth(110, scale.getValue());
                 setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 100, 160, scale.getValue());
+                drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 95, 160, scale.getValue());
                 break;
             }
             case "Yuuka Track": {
@@ -99,13 +99,6 @@ public class BoxWeapon extends Module {
         setHeight(Math.round(height * (float)scale));
     }
 
-    public int getRoundedX(int x, double scale) {
-        return Math.round(x * (float)scale);
-    }
-
-    public int getRoundedY(int y, double scale) {
-        return Math.round(y * (float)scale);
-    }
 
     public static void drawImage(ResourceLocation image, int x, int y, int width, int height, double scale) {
         glDisable(GL_DEPTH_TEST);

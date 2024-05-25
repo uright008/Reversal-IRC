@@ -15,7 +15,7 @@ import net.minecraft.util.EnumFacing;
 
 @ModuleInfo(name = "Animations", description = "Display special swing animations.", category = Category.RENDER)
 public class Animations extends Module {
-    private final NumberValue itemPositionY = new NumberValue("Item Position Y", this, 0.3, 0, 2, 0.1);
+    private final NumberValue itemPositionY = new NumberValue("Item Position Y", this, 0.0, 0, 2, 0.1);
     private final BoolValue swordSwing = new BoolValue("Sword Swing", this, true);
     private final ModeValue swordMode = new ModeValue("Sword Mode", this, "1.7",
             "None" ,"1.7", "Smooth", "Stab", "Spin", "Leaked", "Old", "Exhibition", "Wood", "Swong", "Chill",

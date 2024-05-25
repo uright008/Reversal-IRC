@@ -37,6 +37,7 @@ public class CPSCounter extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
+        if (!getModule("HUD").isEnabled()) return;
         TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
         TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Mi 24");
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";

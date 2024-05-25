@@ -456,11 +456,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     /**
      * Starts the game: initializes the canvas, the title, the settings, etcetera.
      */
-    private void startGame() throws LWJGLException, IOException
+    private void startGame() throws LWJGLException
     {
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-        this.startTimerHackThread();
 
         if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0)
         {
@@ -605,7 +604,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private void createDisplay() throws LWJGLException
     {
         Display.setResizable(true);
-        Display.setTitle("StarX is loading...");
+        Display.setTitle("Modern startup progress | StarX is loading...");
 
         try
         {
@@ -697,30 +696,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         return this.launchedVersion;
     }
 
-    private void startTimerHackThread()
-    {
-        Thread thread = new Thread("Timer hack thread")
-        {
-            public void run()
-            {
-                while (Minecraft.this.running)
-                {
-                    try
-                    {
-                        Thread.sleep(2147483647L);
-                    }
-                    catch (InterruptedException var2)
-                    {
-                    }
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
-    }
 
     public void crashed(CrashReport crash)
     {
+        StarX.INSTANCE.stop();
         this.hasCrashed = true;
         this.crashReporter = crash;
     }

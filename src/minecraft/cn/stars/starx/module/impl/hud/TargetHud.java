@@ -42,6 +42,7 @@ public final class TargetHud extends Module {
     private final TimeUtil timer = new TimeUtil();
     private final ModeValue mode = new ModeValue("Mode", this, "Normal", "Normal", "Simple", "Classic", "Other", "FpsEater3000", "Exhibition", "OldExhibition", "Remix");
     private final BoolValue backGround = new BoolValue("Background", this, true);
+    private final BoolValue shadow = new BoolValue("Shadow", this, true);
 
     private float xVisual, yVisual;
     private float percentageVisual;
@@ -93,6 +94,7 @@ public final class TargetHud extends Module {
 
     @Override
     public void onRender2D(final Render2DEvent event) {
+        if (!getModule("HUD").isEnabled()) return;
         final ScaledResolution sr = new ScaledResolution(mc);
 
         final float nameWidth = 38;
@@ -235,11 +237,13 @@ public final class TargetHud extends Module {
 
                         Gui.drawRect(drawBarPosX + offset, posY + 5, drawBarPosX + 1 + offset * 1.25, posY + 10, color);
 
-                        float finalOffset = offset;
-                        int finalColor = color;
-                        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                            Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
-                        });
+                        if (shadow.isEnabled()) {
+                            float finalOffset = offset;
+                            int finalColor = color;
+                            NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                                Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
+                            });
+                        }
 
                         offset += 1;
                     }
@@ -745,6 +749,12 @@ public final class TargetHud extends Module {
                         }
 
                         Gui.drawRect(drawBarPosX + offset, posY, drawBarPosX + 1 + offset, posY + 10, color);
+
+                        if (shadow.isEnabled()) {
+                            float finalOffset = offset;
+                            int finalColor = color;
+                            NORMAL_POST_BLOOM_RUNNABLES.add(() -> Gui.drawRect(drawBarPosX + finalOffset, posY, drawBarPosX + 1 + finalOffset, posY + 10, finalColor));
+                        }
 
                         offset += 1;
                     }

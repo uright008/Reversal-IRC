@@ -43,6 +43,24 @@ public class HeadLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
         this.renderCustomHelmet((PlayerSettings) player, player);
     }
 
+    public void doRenderLayer(AbstractClientPlayer player) {
+        if (!player.hasSkin() || player.isInvisible() || !player.isWearing(EnumPlayerModelParts.HAT)) {
+            return;
+        }
+        if (HeadLayerFeatureRenderer.mc.thePlayer.getPositionVector().squareDistanceTo(player.getPositionVector()) >
+                ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt() * ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt()) {
+            return;
+        }
+        final ItemStack itemStack = player.getEquipmentInSlot(1);
+        if (itemStack != null && this.hideHeadLayers.contains(itemStack.getItem())) {
+            return;
+        }
+        if (((PlayerSettings) player).getHeadLayers() == null && !this.setupModel(player, (PlayerSettings) player)) {
+            return;
+        }
+        this.renderCustomHelmet((PlayerSettings) player, player);
+    }
+
     private boolean setupModel(final AbstractClientPlayer abstractClientPlayerEntity, final PlayerSettings settings) {
         if (!SkinUtil.hasCustomSkin(abstractClientPlayerEntity)) {
             return false;

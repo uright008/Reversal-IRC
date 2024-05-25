@@ -1,6 +1,5 @@
 package net.minecraft.client.entity;
 
-import cn.stars.addons.skinlayers3d.CustomizableModelPart;
 import cn.stars.addons.waveycapes.StickSimulation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;

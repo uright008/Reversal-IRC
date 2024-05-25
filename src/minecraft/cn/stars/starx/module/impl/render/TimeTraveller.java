@@ -1,5 +1,6 @@
 package cn.stars.starx.module.impl.render;
 
+import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.PacketReceiveEvent;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.module.Category;
@@ -36,7 +37,7 @@ public class TimeTraveller extends Module {
 
     @Override
     public void onRender3D(final Render3DEvent event) {
-        mc.theWorld.setWorldTime((long) ((time.getValue() + (timer.getElapsedTime() * timeSpeed.getValue()))));
+        mc.theWorld.setWorldTime2((long) ((time.getValue() + (timer.getElapsedTime() * timeSpeed.getValue()))));
         switch (weather.getMode()) {
             case "Sun":
                 mc.theWorld.setRainStrength(0f);

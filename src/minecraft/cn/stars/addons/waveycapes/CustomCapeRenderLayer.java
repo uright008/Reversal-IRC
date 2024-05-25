@@ -3,6 +3,7 @@ package cn.stars.addons.waveycapes;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Module;
+import cn.stars.starx.module.impl.addons.MoBends;
 import cn.stars.starx.module.impl.addons.WaveyCapes;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;

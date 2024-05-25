@@ -42,29 +42,9 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
         retryButton =
             MenuTextButton(width / 2 - 40.0, height / 2 + 55.0, 80.0, 30.0,
                 {
-                    server = MicrosoftAccount.buildFromOpenBrowser(object : MicrosoftAccount.OAuthHandler {
-                        override fun openUrl(url: String) {
-                            stage = "Check your browser to continue..."
-                            StarXLogger.info("Opening URL: $url")
-                            showURL(url)
-                        }
-
-                        override fun authError(error: String) {
-                            if (error.contains("OpenGL") || error.equals("context")) stage = "Succeed."
-                            else {
-                                isError = true
-                                stage = "Error: $error"
-                            }
-                        }
-
-                        override fun authResult(account: MicrosoftAccount) {
-                            stage = login(account)
-                            if (timer.hasReached(5000)) {
-                                mc.displayGuiScreen(prevGui)
-                                timer.reset()
-                            }
-                        }
-                    })
+                    isError = false
+                    server.stop(true)
+                    server.start()
 
                 }, "Retry", "g", true, 5, 7)
         server = MicrosoftAccount.buildFromOpenBrowser(object : MicrosoftAccount.OAuthHandler {
@@ -75,15 +55,16 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
             }
 
             override fun authError(error: String) {
-                if (error.contains("OpenGL") || error.equals("context")) stage = "Succeed."
+                stage = if (error.contains("OpenGL") || error.equals("context")) "Succeed."
                 else {
-                    isError = true
-                    stage = "Error: $error"
+                    "Error: $error"
                 }
+                isError = true
             }
 
             override fun authResult(account: MicrosoftAccount) {
                 stage = login(account)
+                isError = true
                 if (timer.hasReached(5000)) {
                     mc.displayGuiScreen(prevGui)
                     timer.reset()
@@ -114,6 +95,7 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
         if (isError) retryButton!!.draw(mouseX, mouseY, partialTicks)
 
         CustomFont.FONT_MANAGER.getFont("PSB 24").drawCenteredString(stage, width / 2f, height / 2f - 50, Color.WHITE.rgb)
+        CustomFont.FONT_MANAGER.getFont("PSB 36").drawCenteredString("### Microsoft Login Process ###", width / 2f, 70f, Color.WHITE.rgb)
 
 
         GameInstance.UI_BLOOM_RUNNABLES.forEach(Consumer { obj: Runnable -> obj.run() })

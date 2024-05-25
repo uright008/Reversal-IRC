@@ -16,10 +16,19 @@ class OAuthServer(val handler: MicrosoftAccount.OAuthHandler) {
      * Start the server.
      */
     fun start() {
-        httpServer.createContext("/login", OAuthHttpHandler(this))
-        httpServer.executor = threadPoolExecutor
-        httpServer.start()
-        handler.openUrl(MicrosoftAccount.replaceKeys(MicrosoftAccount.AuthMethod.AZURE_APP, MicrosoftAccount.XBOX_PRE_AUTH_URL))
+        try {
+            httpServer.createContext("/login", OAuthHttpHandler(this))
+            httpServer.executor = threadPoolExecutor
+            httpServer.start()
+            handler.openUrl(
+                MicrosoftAccount.replaceKeys(
+                    MicrosoftAccount.AuthMethod.AZURE_APP,
+                    MicrosoftAccount.XBOX_PRE_AUTH_URL
+                )
+            )
+        } catch (_: Exception) {
+            handler.authError("Address already bound")
+        }
     }
 
     /**

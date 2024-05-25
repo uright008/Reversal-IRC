@@ -7,6 +7,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
+import cn.stars.starx.util.misc.ModuleInstance;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -114,6 +115,14 @@ public abstract class Module implements GameInstance {
         StarX.INSTANCE.getModuleManager().setEdited(true);
 
         return enabled;
+    }
+
+    public Module getModule(String module) {
+        return ModuleInstance.getModule(module);
+    }
+
+    public Module getModule(Class module) {
+        return ModuleInstance.getModule(module);
     }
 
     public boolean toggleNoEvent() {

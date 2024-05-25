@@ -890,12 +890,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         } else if (StarX.INSTANCE.backgroundId == 6) {
             useShaderToyBackground(octagrams, 2);
         } else if (StarX.INSTANCE.backgroundId == 7) {
-            useShaderToyBackground(tokyo, this.width * 2, this.height * 2);
+            useShaderToyBackground(tokyo, 2);
         }
-        if (timer.hasReached(30000)) {
+        if (timer.hasReached(60000)) {
             // Shader should use much memory usage.
             System.gc();
-            StarXLogger.info("Garbage cleaned because shader is running");
+            StarXLogger.info("Garbage cleaned because shader is running.");
             timer.reset();
         }
     }

@@ -27,6 +27,8 @@
 package javax.vecmath;
 
 
+import org.lwjgl.util.vector.ReadableVector3f;
+
 /**
  * A generic 3-element tuple that is represented by single precision-floating
  * point x,y,z coordinates.
@@ -137,6 +139,12 @@ public abstract class Tuple3f implements java.io.Serializable, Cloneable {
 	this.z = z;
     }
 
+
+    public void set(ReadableVector3f src) {
+        this.x = src.getX();
+        this.y = src.getY();
+        this.z = src.getZ();
+    }
 
     /**
      * Sets the value of this tuple to the xyz coordinates specified in

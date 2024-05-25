@@ -7,6 +7,8 @@ import cn.stars.starx.event.impl.MoveEvent;
 import cn.stars.starx.event.impl.PostMotionEvent;
 import cn.stars.starx.event.impl.PreMotionEvent;
 import cn.stars.starx.event.impl.UpdateEvent;
+import cn.stars.starx.module.impl.movement.Sprint;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -827,7 +829,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements GameInstance
             }
         }
 
-        if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown())
+        if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && (this.mc.gameSettings.keyBindSprint.isKeyDown() || ModuleInstance.getModule(Sprint.class).isEnabled()))
         {
             this.setSprinting(true);
         }

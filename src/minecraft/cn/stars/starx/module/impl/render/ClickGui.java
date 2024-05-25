@@ -30,19 +30,10 @@ public final class ClickGui extends Module {
     private final BoolValue blur = new BoolValue("Blur", this, false);
     private final NumberValue scale = new NumberValue("Scale", this, 0.7, 0.3, 1, 0.05);
 
-    private final NumberValue speed = new NumberValue("Scroll Speed", this, 3.0, 0.5, 10.0, 1.0);
+    private final NumberValue speed = new NumberValue("Scroll Speed", this, 2.0, 0.5, 10.0, 1.0);
 
     public static float speedValue;
 
-    private final KeyBinding[] affectedBindings = new KeyBinding[]{
-            mc.gameSettings.keyBindForward,
-            mc.gameSettings.keyBindBack,
-            mc.gameSettings.keyBindRight,
-            mc.gameSettings.keyBindLeft,
-            mc.gameSettings.keyBindJump
-    };
-
-    public static Boolean brickClickGUI = null;
 
     @Override
     public void onUpdateAlwaysInGui() {
