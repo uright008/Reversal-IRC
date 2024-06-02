@@ -6,10 +6,13 @@ import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.TickEvent;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
@@ -34,32 +37,43 @@ public class CPSCounter extends Module {
     }
     private final List<Long> Lclicks;
     private final List<Long> Rclicks;
+    MFont psm = FontManager.getPSM(18);
+    MFont icon = FontManager.getMi(24);
 
     @Override
     public void onRender2D(Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
-        TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 18");
-        TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Mi 24");
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
         Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250,250,250,200);
 
 
         if (outline.isEnabled()) {
-            RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0,0,0, 80));
-            RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+            NORMAL_RENDER_RUNNABLES.add(() -> {
+                RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 80));
+                RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+            });
 
             if (shadow.isEnabled()) {
                 NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
                     RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
                 });
             }
+
+            if (canBlur()) {
+                NORMAL_BLUR_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, Color.BLACK);
+                });
+            }
         }
-        icon.drawString("P", getX() + 4, getY(), color.getRGB());
-        psm.drawString(cpsString, getX() + 18, getY() + 0.5f, color.getRGB());
+        NORMAL_RENDER_RUNNABLES.add(() -> {
+            icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
+            psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
+        });
         if (shadow.isEnabled()) {
             NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                icon.drawString("P", getX() + 4, getY(), color.getRGB());
-                psm.drawString(cpsString, getX() + 18, getY() + 0.5f, color.getRGB());
+                icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
+                psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
             });
         }
 

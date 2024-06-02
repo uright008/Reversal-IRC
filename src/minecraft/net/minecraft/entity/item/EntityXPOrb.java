@@ -169,18 +169,18 @@ public class EntityXPOrb extends Entity
     /**
      * Returns if this entity is in water and will end up adding the waters velocity to the entity
      */
-    public boolean handleWaterMovement()
+    public void handleWaterMovement()
     {
-        return this.worldObj.handleMaterialAcceleration(this.getEntityBoundingBox(), Material.water, this);
+        this.worldObj.handleMaterialAcceleration(this.getEntityBoundingBox(), Material.water, this);
     }
 
     /**
      * Will deal the specified amount of damage to the entity if the entity isn't immune to fire damage. Args:
      * amountDamage
      */
-    protected void dealFireDamage(int amount)
+    protected void dealFireDamage()
     {
-        this.attackEntityFrom(DamageSource.inFire, (float)amount);
+        this.attackEntityFrom(DamageSource.inFire, (float) 1);
     }
 
     /**

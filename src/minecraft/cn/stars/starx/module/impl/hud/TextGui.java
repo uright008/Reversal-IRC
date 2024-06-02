@@ -7,6 +7,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 
 @ModuleInfo(name = "TextGui", description = "Display a text on your hud", category = Category.HUD)
 public class TextGui extends Module {
+    private final BoolValue shadow = new BoolValue("Shadow", this, true);
     public final BoolValue custom = new BoolValue("Custom Name", this,false);
     public TextGui() {
         setCanBeEdited(true);

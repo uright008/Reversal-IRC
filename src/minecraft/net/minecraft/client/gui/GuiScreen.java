@@ -95,24 +95,31 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     private int touchValue;
     private URI clickedLinkURI;
     public float screenPartialTicks;
-    public TimeUtil timer = new TimeUtil();
     ShaderToy mario;
     ShaderToy redround;
     ShaderToy water;
     ShaderToy blackhole;
     ShaderToy octagrams;
     ShaderToy tokyo;
+    boolean isShaderToyInitialized = false;
 
     public GuiScreen() {
-        try {
-            mario = new ShaderToy("mario.fsh");
-            redround = new ShaderToy("redround.fsh");
-            water = new ShaderToy("water.fsh");
-            blackhole = new ShaderToy("blackhole.fsh");
-            octagrams = new ShaderToy("octagrams.fsh");
-            tokyo = new ShaderToy("tokyo.fsh");
-        } catch (IOException e) {
-            e.printStackTrace();
+        initializeShaderToy();
+    }
+
+    public void initializeShaderToy() {
+        if (!isShaderToyInitialized) {
+            try {
+                mario = new ShaderToy("mario.fsh");
+                redround = new ShaderToy("redround.fsh");
+                water = new ShaderToy("water.fsh");
+                blackhole = new ShaderToy("blackhole.fsh");
+                octagrams = new ShaderToy("octagrams.fsh");
+                tokyo = new ShaderToy("tokyo.fsh");
+                isShaderToyInitialized = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -137,14 +144,18 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             guiLabel.drawLabel(this.mc, mouseX, mouseY);
         }
 
-        if(clickEffects.size() > 0 && canRunClickEffect) {
-            Iterator<ClickEffect> clickEffectIterator = clickEffects.iterator();
-            while (clickEffectIterator.hasNext()) {
-                ClickEffect clickEffect = clickEffectIterator.next();
-                clickEffect.draw();
-                if (clickEffect.canRemove()) clickEffectIterator.remove();
+        GuiClickEffect guiClickEffect = (GuiClickEffect) ModuleInstance.getModule(GuiClickEffect.class);
+        if (guiClickEffect.isEnabled()) {
+            if (clickEffects.size() > 0 && canRunClickEffect) {
+                Iterator<ClickEffect> clickEffectIterator = clickEffects.iterator();
+                while (clickEffectIterator.hasNext()) {
+                    ClickEffect clickEffect = clickEffectIterator.next();
+                    clickEffect.draw();
+                    if (clickEffect.canRemove()) clickEffectIterator.remove();
+                }
             }
         }
+
         this.screenPartialTicks = partialTicks;
     }
 
@@ -541,9 +552,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
             }
         }
-        ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
-        GuiClickEffect guiClickEffect = (GuiClickEffect) ModuleInstance.getModule(GuiClickEffect.class);
-        if (guiClickEffect.isEnabled()) clickEffects.add(clickEffect);
+        if (ModuleInstance.getModule(GuiClickEffect.class).isEnabled()) {
+            ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
+            clickEffects.add(clickEffect);
+        }
     }
 
     /**
@@ -864,6 +876,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
+        if (StarX.INSTANCE.isAMDShaderCompatibility) {
+            drawBackground(0);
+            return;
+        }
         if (StarX.INSTANCE.backgroundId == 0) {
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
@@ -891,12 +907,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             useShaderToyBackground(octagrams, 2);
         } else if (StarX.INSTANCE.backgroundId == 7) {
             useShaderToyBackground(tokyo, 2);
-        }
-        if (timer.hasReached(60000)) {
-            // Shader should use much memory usage.
-            System.gc();
-            StarXLogger.info("Garbage cleaned because shader is running.");
-            timer.reset();
         }
     }
 }

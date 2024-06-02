@@ -1819,7 +1819,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
         if (entity != null)
         {
-            entity.clientUpdateEntityNBT(packetIn.getTagCompound());
+            entity.clientUpdateEntityNBT();
         }
     }
 

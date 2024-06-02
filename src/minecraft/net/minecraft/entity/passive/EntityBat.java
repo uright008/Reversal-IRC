@@ -207,7 +207,7 @@ public class EntityBat extends EntityAmbientCreature
      */
     public boolean doesEntityNotTriggerPressurePlate()
     {
-        return true;
+        return false;
     }
 
     /**

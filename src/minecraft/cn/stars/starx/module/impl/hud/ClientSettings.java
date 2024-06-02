@@ -15,7 +15,7 @@ import java.awt.*;
 
 @ModuleInfo(name = "ClientSettings", description = "Some settings to change your hud.", category = Category.HUD)
 public final class ClientSettings extends Module {
-    private final ModeValue mode = new ModeValue("Theme", this, "Rise Rainbow",
+    private final ModeValue mode = new ModeValue("Theme", this, "Modern",
             "Rise Rainbow", "Rise", "Comfort",
             "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet", "StarX", "Modern");
     private final ModeValue list = new ModeValue("List Animation", this, "StarX", "StarX", "Slide");
@@ -28,10 +28,10 @@ public final class ClientSettings extends Module {
     private final BoolValue smoothHotbar = new BoolValue("Smooth Hotbar", this, false);
     private final BoolValue armorHUD = new BoolValue("Armor HUD", this, false);
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
-    private final BoolValue customChatFont = new BoolValue("Custom Chat Font", this, false);
+    private final BoolValue blur = new BoolValue("Blur", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
 
-    public static boolean customChat, customHotbarEnabled;
+    public static boolean customHotbarEnabled;
 
     public static String theme;
 
@@ -47,32 +47,21 @@ public final class ClientSettings extends Module {
     public void onUpdateAlways() {
         theme = mode.getMode();
 
-        customChat = customChatFont.isEnabled();
         customHotbarEnabled = customHotbar.isEnabled();
 
         red0 = (int) red.getValue();
         green0 = (int) green.getValue();
         blue0 = (int) blue.getValue();
 
-        outLine.hidden = !mode.is("Rice")
-                && !mode.is("Rise Christmas")
-                && !mode.is("Rise Blend")
-                && !mode.is("Never Lose");
-
 
         if (!isEnabled()) toggleModule();
+
+        setSuffix(mode.getMode());
     }
 
     @Override
     public void onRender2D(final Render2DEvent event) {
         final ScaledResolution sr = new ScaledResolution(mc);
-
-        final int posX = (mc.displayWidth / (mc.gameSettings.guiScale * 2));
-        final int x = posX + 80, y = sr.getScaledHeight() - 30;
-
-        if (armorHUD.isEnabled() && !StarX.isDestructed) {
-            RenderUtil.drawArmorHUD(x, y);
-        }
 
 
     }

@@ -19,11 +19,12 @@ void main()
     float half_radius = u_radius / 2.0;
     vec4 pixel_color = texture2D(u_diffuse_sampler, uv) * u_kernel[0];
 
-    for (float f = 1; f <= u_radius; f++) {
+    for (int f = 1; f <= int(u_radius); f++) {
         vec2 offset = f * u_texel_size * u_direction;
         pixel_color += texture2D(u_diffuse_sampler, uv - offset) * u_kernel[int(f)];
         pixel_color += texture2D(u_diffuse_sampler, uv + offset) * u_kernel[int(f)];
     }
 
     gl_FragColor = vec4(pixel_color.rgb, u_direction.x == 0.0 ? alpha : 1.0);
+
 }

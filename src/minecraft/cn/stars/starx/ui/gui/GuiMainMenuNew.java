@@ -2,30 +2,22 @@ package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
-import cn.stars.starx.util.shader.base.ShaderToy;
 import cn.stars.starx.util.shader.impl.BackgroundShader;
 import de.florianmichael.viamcp.gui.GuiProtocolSelector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
 import java.io.IOException;
@@ -34,7 +26,7 @@ import java.net.URI;
 public class GuiMainMenuNew extends GuiScreen implements GameInstance {
     ScaledResolution sr;
     Minecraft mc = Minecraft.getMinecraft();
-    TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("PSM 20");
+    MFont psm = FontManager.getPSM(20);
     private Animation animation = new Animation(Easing.EASE_OUT_QUINT, 600);
     private Animation textHoverAnimation = new Animation(Easing.EASE_OUT_SINE, 250);
     private Animation textHoverAnimation2 = new Animation(Easing.EASE_OUT_SINE, 250);
@@ -86,13 +78,17 @@ public class GuiMainMenuNew extends GuiScreen implements GameInstance {
         String s1 = "Aerolite Team © 2024, All rights reserved.";
         // 动画
         textHoverAnimation.run(RenderUtil.isHovered(0, height - 37, 140, 37, mouseX, mouseY) ? 255 : 155);
-        textHoverAnimation2.run(RenderUtil.isHovered(width - gs.getWidth(s1), height - 13, gs.getWidth(s1), 13, mouseX, mouseY) ? 255 : 155);
+        textHoverAnimation2.run(RenderUtil.isHovered(width - psm.getWidth(s1), height - 13, psm.getWidth(s1), 13, mouseX, mouseY) ? 255 : 155);
 
         Color stringColor = new Color(50, 150, 250, 155);
-        gs.drawString(s1, width - gs.getWidth(s1), height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
-        gs.drawString("Minecraft 1.8.8 (Vanilla/StarX)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        gs.drawString("OptiFine_1.8.8_HD_U_I7", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        gs.drawString("Current Background ID: " + StarX.INSTANCE.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psm.drawString(s1, width - psm.getWidth(s1), height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
+        psm.drawString("Minecraft 1.8.8 (Vanilla/StarX)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psm.drawString("OptiFine_1.8.8_HD_U_I7", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psm.drawString("Current Background ID: " + StarX.INSTANCE.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+
+        if (StarX.INSTANCE.isAMDShaderCompatibility) {
+            psm.drawCenteredString("WARNING: Shader compatibility issue detected, background is disabled. (AMD CPU?)", width / 2f, height / 2f + 100, new Color(250,50,50, 250).getRGB());
+        }
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();
@@ -141,9 +137,9 @@ public class GuiMainMenuNew extends GuiScreen implements GameInstance {
         this.settingsButton = new MenuTextButton(centerX - 40, centerY - 25, 75, 75, () -> mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings)), "Settings", "N");
         this.viaVersionButton = new MenuTextButton(centerX + 40, centerY - 25, 75, 75, () -> mc.displayGuiScreen(new GuiProtocolSelector(this)), "Protocol", "x");
         this.exitButton = new MenuTextButton(centerX + 120, centerY - 25, 75, 75, () -> mc.shutdown(), "Exit", "O");
-        this.cbButton = new MenuTextButton(4, 4, 160, 25, () -> changeMenuBackground(false), "Change Background", "q", true, 10, 5);
-        this.authorButton = new MenuTextButton(4, 64, 80, 25, this::openBiliBili, "Author", "e", true, 6, 5);
-        this.msLoginButton = new MenuTextButton(4, 34, 125, 25, () -> mc.displayGuiScreen(new GuiMicrosoftLoginPending(this)), "Microsoft Login", "M", true, 6, 5);
+        this.cbButton = new MenuTextButton(4, 4, 160, 25, () -> changeMenuBackground(false), "Change Background", "q", true, 10, 7);
+        this.authorButton = new MenuTextButton(4, 64, 80, 25, this::openBiliBili, "Author", "e", true, 6, 7);
+        this.msLoginButton = new MenuTextButton(4, 34, 125, 25, () -> mc.displayGuiScreen(new GuiMicrosoftLoginPending(this)), "Microsoft Login", "M", true, 6, 7);
 
         // 简化MouseClicked方法
         this.menuButtons = new MenuButton[]{this.singlePlayerButton, this.multiPlayerButton, this.settingsButton, this.viaVersionButton, this.exitButton

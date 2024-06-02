@@ -7,13 +7,11 @@ import cn.stars.addons.waveycapes.StickSimulation;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.AttackEvent;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.setting.Setting;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -2322,16 +2320,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     {
         if (!this.isInvisible())
         {
-            return false;
+            return true;
         }
         else if (player.isSpectator())
         {
-            return false;
+            return true;
         }
         else
         {
             Team team = this.getTeam();
-            return team == null || player == null || player.getTeam() != team || !team.getSeeFriendlyInvisiblesEnabled();
+            return team != null && player != null && player.getTeam() == team && team.getSeeFriendlyInvisiblesEnabled();
         }
     }
 
@@ -2461,7 +2459,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         if (inventorySlot >= 0 && inventorySlot < this.inventory.mainInventory.length)
         {
             this.inventory.setInventorySlotContents(inventorySlot, itemStackIn);
-            return true;
+            return false;
         }
         else
         {
@@ -2477,17 +2475,17 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
                     {
                         if (EntityLiving.getArmorPosition(itemStackIn) != k)
                         {
-                            return false;
+                            return true;
                         }
                     }
                     else if (k != 4 || itemStackIn.getItem() != Items.skull && !(itemStackIn.getItem() instanceof ItemBlock))
                     {
-                        return false;
+                        return true;
                     }
                 }
 
                 this.inventory.setInventorySlotContents(i + this.inventory.mainInventory.length, itemStackIn);
-                return true;
+                return false;
             }
             else
             {
@@ -2496,11 +2494,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
                 if (j >= 0 && j < this.theInventoryEnderChest.getSizeInventory())
                 {
                     this.theInventoryEnderChest.setInventorySlotContents(j, itemStackIn);
-                    return true;
+                    return false;
                 }
                 else
                 {
-                    return false;
+                    return true;
                 }
             }
         }

@@ -16,7 +16,6 @@ import cn.stars.starx.module.impl.misc.Plugins;
 import cn.stars.starx.module.impl.movement.Sprint;
 import cn.stars.starx.module.impl.player.HealthWarn;
 import cn.stars.starx.module.impl.render.*;
-import cn.stars.starx.module.impl.world.BanChecker;
 import cn.stars.starx.module.impl.world.LightningTracker;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
@@ -24,6 +23,7 @@ import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.ui.clickgui.ClickGUI;
 import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
+import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.ui.theme.GuiTheme;
@@ -53,7 +53,7 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v0.4.0";
+    public static final String VERSION = "v0.5.2";
     public static final String MINECRAFT_VERSION = "1.8.8";
     public static final String AUTHOR = "Stars";
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
@@ -73,7 +73,9 @@ public enum StarX implements GameInstance {
     // Init
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    public boolean isAMDShaderCompatibility = false;
     public int backgroundId = 0;
+
     public ModuleManager moduleManager;
     public NotificationManager notificationManager;
     public CommandManager cmdManager;
@@ -120,7 +122,7 @@ public enum StarX implements GameInstance {
     // Usages
     public void showMsg(String msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] " + msg));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
         }
     }
 
@@ -319,6 +321,8 @@ public enum StarX implements GameInstance {
             moduleManager = new ModuleManager();
             moduleManager.registerModules(modules);
 
+            Hud.initializeModules();
+
             notificationManager = new NotificationManager();
 
             cmdManager = new CommandManager();
@@ -390,7 +394,6 @@ public enum StarX implements GameInstance {
             new NoAchievements(),
             new Plugins(),
             // World
-            new BanChecker(),
             new LightningTracker(),
             // Player
             new HealthWarn(),
@@ -424,7 +427,8 @@ public enum StarX implements GameInstance {
             new Scoreboard(),
             new SessionInfo(),
             new TargetHud(),
-            new TextGui()
+            new TextGui(),
+            new TestElement()
     };
 
 

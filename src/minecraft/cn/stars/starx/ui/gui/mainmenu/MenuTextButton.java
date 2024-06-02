@@ -1,20 +1,17 @@
 package cn.stars.starx.ui.gui.mainmenu;
 
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.util.render.ColorUtil;
-import cn.stars.starx.util.render.ColorUtils;
 import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
 
 import java.awt.*;
 
 
 public class MenuTextButton extends MenuButton {
 
-    private static final TTFFontRenderer FONT_RENDERER = CustomFont.FONT_MANAGER.getFont("PSM 24");
-    private static final TTFFontRenderer ICON_RENDERER = CustomFont.FONT_MANAGER.getFont("Mi 36");
+    private static final MFont FONT_RENDERER = FontManager.getPSM(24);
+    private static final MFont ICON_RENDERER = FontManager.getMi(36);
 
     public boolean left = false;
     public String name;
@@ -62,7 +59,7 @@ public class MenuTextButton extends MenuButton {
                     ColorUtil.withAlpha(BORDER_TWO, (int) (this.getHoverAnimation().getValue() * 2 + 10)));
             if (this.left) {
                 ICON_RENDERER.drawString(this.icon, (float) (this.getX() + textX), (float) (value + textY), fontColor.getRGB());
-                FONT_RENDERER.drawString(this.name, (float) (this.getX() + textX + ICON_RENDERER.getWidth(this.icon) + 5), (float) (value + textY + 2), fontColor.getRGB());
+                FONT_RENDERER.drawString(this.name, (float) (this.getX() + textX + ICON_RENDERER.getWidth(this.icon) + 6), (float) (value + textY + 2), fontColor.getRGB());
             } else {
                 ICON_RENDERER.drawCenteredString(this.icon, (float) (this.getX() + this.getWidth() / 2.0F), (float) (value + this.getHeight() / 2.0F - 15), fontColor.getRGB());
                 FONT_RENDERER.drawCenteredString(this.name, (float) (this.getX() + this.getWidth() / 2.0F), (float) (value + this.getHeight() / 2.0F + 5), fontColor.getRGB());

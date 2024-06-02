@@ -139,18 +139,18 @@ public class EntityArmorStand extends EntityLivingBase
 
             if (i < 0 || i >= this.contents.length)
             {
-                return false;
+                return true;
             }
         }
 
         if (itemStackIn != null && EntityLiving.getArmorPosition(itemStackIn) != i && (i != 4 || !(itemStackIn.getItem() instanceof ItemBlock)))
         {
-            return false;
+            return true;
         }
         else
         {
             this.setCurrentItemOrArmor(i, itemStackIn);
-            return true;
+            return false;
         }
     }
 

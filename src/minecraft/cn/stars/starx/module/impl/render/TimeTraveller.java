@@ -9,6 +9,7 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
@@ -22,6 +23,11 @@ public class TimeTraveller extends Module {
     private final NumberValue lnSt = new NumberValue("Lightning Strength", this, 1, 0, 3, 0.1);
 
     private final TimeUtil timer = new TimeUtil();
+
+    @Override
+    public void onUpdateAlways() {
+        setSuffix(String.valueOf((int)time.getValue()));
+    }
 
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {

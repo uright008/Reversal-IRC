@@ -7,11 +7,13 @@ import cn.stars.addons.mobends.client.renderer.entity.RenderBendsZombie;
 import cn.stars.addons.mobends.data.Data_Player;
 import cn.stars.addons.mobends.data.Data_Spider;
 import cn.stars.addons.mobends.data.Data_Zombie;
+import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.event.impl.TickEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
@@ -32,6 +34,14 @@ public class MoBends extends Module {
     public static float ticks;
     public static float ticksPerFrame;
     public static final ResourceLocation texture_NULL;
+
+    @Override
+    public void onUpdateAlways() {
+        if (ModuleInstance.getModule(WaveyCapes.class).isEnabled()) {
+            StarX.INSTANCE.showMsg("WaveyCapes and SkinLayers3D are not supported by MoBends.");
+            ModuleInstance.getModule(WaveyCapes.class).toggleModule();
+        }
+    }
 
     @Override
     public void onRender3D(final Render3DEvent e) {

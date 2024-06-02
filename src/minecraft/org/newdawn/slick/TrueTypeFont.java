@@ -36,10 +36,10 @@ public class TrueTypeFont implements Font {
 	/** Boolean flag on whether AntiAliasing is enabled or not */
 	private boolean antiAlias;
 
-	/** Font's size */
+	/** MFont's size */
 	private int fontSize = 0;
 
-	/** Font's height */
+	/** MFont's height */
 	private int fontHeight = 0;
 
 	/** Texture used to cache the font 0-255 characters */
@@ -51,7 +51,7 @@ public class TrueTypeFont implements Font {
 	/** Default font texture height */
 	private int textureHeight = 512;
 
-	/** A reference to Java's AWT Font that we create our font texture from */
+	/** A reference to Java's AWT MFont that we create our font texture from */
 	private java.awt.Font font;
 
 	/** The font metrics for our Java AWT font */

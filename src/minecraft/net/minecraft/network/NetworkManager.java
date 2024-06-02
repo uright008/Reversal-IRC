@@ -1,7 +1,11 @@
 package net.minecraft.network;
 
+import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.PacketReceiveEvent;
 import cn.stars.starx.event.impl.PacketSendEvent;
+import cn.stars.starx.module.impl.player.AntiDisconnectEx;
+import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.viaversion.viaversion.api.connection.UserConnection;
@@ -36,6 +40,8 @@ import io.netty.handler.timeout.TimeoutException;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.Queue;
@@ -186,20 +192,25 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
         }
     }
 
-    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) {
         ChatComponentTranslation chatcomponenttranslation;
 
         if (p_exceptionCaught_2_ instanceof TimeoutException)
         {
-            chatcomponenttranslation = new ChatComponentTranslation("disconnect.timeout", new Object[0]);
+            chatcomponenttranslation = new ChatComponentTranslation("disconnect.timeout");
+            this.closeChannel(chatcomponenttranslation);
         }
         else
         {
-            chatcomponenttranslation = new ChatComponentTranslation("disconnect.genericReason", new Object[] {"Internal Exception: " + p_exceptionCaught_2_});
+            chatcomponenttranslation = new ChatComponentTranslation("disconnect.genericReason", "Internal Exception: " + p_exceptionCaught_2_);
+            if (ModuleInstance.getModule(AntiDisconnectEx.class).isEnabled()) {
+                if (p_exceptionCaught_2_ instanceof IOException) return;
+                StarX.INSTANCE.showMsg(String.valueOf(p_exceptionCaught_2_));
+                StarXLogger.warn("(NetworkManager) Incoming closeChannel() call: " + chatcomponenttranslation.getFormattedText());
+            } else {
+                this.closeChannel(chatcomponenttranslation);
+            }
         }
-
-        this.closeChannel(chatcomponenttranslation);
     }
 
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception

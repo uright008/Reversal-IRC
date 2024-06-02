@@ -1,5 +1,6 @@
 package cn.stars.starx.module.impl.render
 
+import cn.stars.starx.StarX
 import cn.stars.starx.event.impl.Render3DEvent
 import cn.stars.starx.event.impl.UpdateEvent
 import cn.stars.starx.event.impl.WorldEvent
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.lang.Math.abs
+import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
@@ -46,12 +48,30 @@ class DamageParticle : Module(){
                     healthData[entity.entityId] = entity.health
                     if(lastHealth == entity.health) continue
 
-                    val prefix = if (!colorRainbowValue.isEnabled) (if(lastHealth>entity.health){"§c❤"}else{"§a§l❤"}) else (if(lastHealth>entity.health){"-"}else{"+"})
-                    particles.add(SingleParticle(prefix + BigDecimal(kotlin.math.abs(lastHealth - entity.health).toDouble()).setScale(1, BigDecimal.ROUND_HALF_UP).toDouble()
-                        ,entity.posX - 0.5 + Random(System.currentTimeMillis()).nextInt(5).toDouble() * 0.1
-                        ,entity.entityBoundingBox.minY + (entity.entityBoundingBox.maxY - entity.entityBoundingBox.minY) / 2.0
-                        ,entity.posZ - 0.5 + Random(System.currentTimeMillis() + 1L).nextInt(5).toDouble() * 0.1)
-                    )
+                    try {
+                        val prefix = if (!colorRainbowValue.isEnabled) (if (lastHealth > entity.health) {
+                            "§c❤"
+                        } else {
+                            "§a§l❤"
+                        }) else (if (lastHealth > entity.health) {
+                            "-"
+                        } else {
+                            "+"
+                        })
+                        particles.add(
+                            SingleParticle(
+                                prefix + BigDecimal(kotlin.math.abs(lastHealth - entity.health).toDouble()).setScale(
+                                    1,
+                                    BigDecimal.ROUND_HALF_UP
+                                ).toDouble(),
+                                entity.posX - 0.5 + Random(System.currentTimeMillis()).nextInt(5).toDouble() * 0.1,
+                                entity.entityBoundingBox.minY + (entity.entityBoundingBox.maxY - entity.entityBoundingBox.minY) / 2.0,
+                                entity.posZ - 0.5 + Random(System.currentTimeMillis() + 1L).nextInt(5).toDouble() * 0.1
+                            )
+                        )
+                    } catch (e: NumberFormatException) {
+                        StarX.INSTANCE.showMsg("java.lang.NumberFormatException: Infinite or NaN")
+                    }
                 }
             }
 

@@ -40,6 +40,11 @@ public final class HitEffect extends Module {
     }
 
     @Override
+    public void onUpdateAlways() {
+        setSuffix(mode.getMode());
+    }
+
+    @Override
     public void onAttack(final AttackEvent event) {
         if (event.getTarget() instanceof EntityLivingBase)
             target = (EntityLivingBase) event.getTarget();

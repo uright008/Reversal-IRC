@@ -39,7 +39,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     private float x, y, size;
 
-    //Font
+    //MFont
     private static final TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Icon 18");
     private static final TTFFontRenderer icon2 = CustomFont.FONT_MANAGER.getFont("Icon2 18");
     private static final TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 40");

@@ -7,7 +7,6 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
-import net.minecraft.client.renderer.WorldRenderer$1;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -37,7 +36,6 @@ public class WorldRenderer
     private double zOffset;
     private VertexFormat vertexFormat;
     private boolean isDrawing;
-    private static final String __OBFID = "CL_00000942";
     private EnumWorldBlockLayer blockLayer = null;
     private boolean[] drawnIcons = new boolean[256];
     private TextureAtlasSprite[] quadSprites = null;
@@ -124,7 +122,7 @@ public class WorldRenderer
 
         for (int k = 0; k < ainteger.length; ++k)
         {
-            ainteger[k] = Integer.valueOf(k);
+            ainteger[k] = k;
         }
 
         Arrays.sort(ainteger, new WorldRenderer$1(this, afloat));
@@ -134,7 +132,7 @@ public class WorldRenderer
 
         for (int l1 = 0; (l1 = bitset.nextClearBit(l1)) < ainteger.length; ++l1)
         {
-            int i1 = ainteger[l1].intValue();
+            int i1 = ainteger[l1];
 
             if (i1 != l1)
             {
@@ -143,7 +141,7 @@ public class WorldRenderer
                 this.rawIntBuffer.get(aint);
                 int j1 = i1;
 
-                for (int k1 = ainteger[i1].intValue(); j1 != l1; k1 = ainteger[k1].intValue())
+                for (int k1 = ainteger[i1]; j1 != l1; k1 = ainteger[k1])
                 {
                     this.rawIntBuffer.limit(k1 * l + l);
                     this.rawIntBuffer.position(k1 * l);
@@ -169,11 +167,10 @@ public class WorldRenderer
         if (this.quadSprites != null)
         {
             TextureAtlasSprite[] atextureatlassprite = new TextureAtlasSprite[this.vertexCount / 4];
-            int i2 = this.vertexFormat.func_181719_f() / 4 * 4;
 
             for (int j2 = 0; j2 < ainteger.length; ++j2)
             {
-                int k2 = ainteger[j2].intValue();
+                int k2 = ainteger[j2];
                 atextureatlassprite[j2] = this.quadSprites[k2];
             }
 
@@ -783,7 +780,6 @@ public class WorldRenderer
             }
 
             Arrays.fill(this.drawnIcons, false);
-            int j = 0;
             int k = -1;
             int l = this.vertexCount / 4;
 
@@ -807,7 +803,6 @@ public class WorldRenderer
                         else
                         {
                             i1 = this.drawForIcon(textureatlassprite, i1) - 1;
-                            ++j;
 
                             if (this.blockLayer != EnumWorldBlockLayer.TRANSLUCENT)
                             {
@@ -821,13 +816,8 @@ public class WorldRenderer
             if (k >= 0)
             {
                 this.drawForIcon(TextureUtils.iconGrassSideOverlay, k);
-                ++j;
             }
 
-            if (j > 0)
-            {
-                ;
-            }
         }
     }
 
@@ -910,20 +900,9 @@ public class WorldRenderer
 
     private int getBufferQuadSize()
     {
-        int i = this.rawIntBuffer.capacity() * 4 / (this.vertexFormat.func_181719_f() * 4);
-        return i;
+        return this.rawIntBuffer.capacity() * 4 / (this.vertexFormat.func_181719_f() * 4);
     }
-
-    public void checkAndGrow()
-    {
-        this.func_181670_b(this.vertexFormat.func_181719_f());
-    }
-
-    public boolean isColorDisabled()
-    {
-        return this.needsUpdate;
-    }
-
+    
     static final class WorldRenderer$2
     {
         static final int[] field_181661_a = new int[VertexFormatElement.EnumType.values().length];
@@ -1000,7 +979,6 @@ public class WorldRenderer
     {
         private final int[] stateRawBuffer;
         private final VertexFormat stateVertexFormat;
-        private static final String __OBFID = "CL_00002568";
         private TextureAtlasSprite[] stateQuadSprites;
 
         public State(int[] p_i3_2_, VertexFormat p_i3_3_, TextureAtlasSprite[] p_i3_4_)

@@ -1,6 +1,5 @@
 package net.minecraft.client.entity;
 
-import cn.stars.addons.skinlayers3d.CustomizableModelPart;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.MoveEvent;
@@ -702,7 +701,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements GameInstance
      */
     public boolean isSneaking()
     {
-        boolean flag = this.movementInput != null ? this.movementInput.sneak : false;
+        boolean flag = this.movementInput != null && this.movementInput.sneak;
         return flag && !this.sleeping;
     }
 
@@ -935,10 +934,6 @@ public class EntityPlayerSP extends AbstractClientPlayer implements GameInstance
         if (moveEvent.isCancelled()) return;
 
         super.moveEntity(moveEvent.getX(), moveEvent.getY(), moveEvent.getZ());
-    }
-
-    public void moveEntityNoEvent(double x, double y, double z) {
-        super.moveEntity(x, y, z);
     }
 
 }

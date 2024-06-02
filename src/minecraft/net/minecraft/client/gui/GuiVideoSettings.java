@@ -55,7 +55,7 @@ public class GuiVideoSettings extends GuiScreenOF
      */
     public void initGui()
     {
-        this.screenTitle = I18n.format("options.videoTitle", new Object[0]);
+        this.screenTitle = I18n.format("options.videoTitle");
         this.buttonList.clear();
 
         for (int i = 0; i < videoOptions.length; ++i)

@@ -27,6 +27,7 @@ public abstract class Module implements GameInstance {
     public int scaledHeight = sr.getScaledHeight();
     private boolean enabled;
     private int keyBind;
+    public String suffix;
 
     //RenderPosition
     public float renderX, renderY;
@@ -123,6 +124,15 @@ public abstract class Module implements GameInstance {
 
     public Module getModule(Class module) {
         return ModuleInstance.getModule(module);
+    }
+
+    public boolean hasSuffix() {
+        return suffix != null;
+    }
+
+    // Control the whole module elements
+    public boolean canBlur() {
+        return ModuleInstance.getBool("ClientSettings", "Blur").isEnabled();
     }
 
     public boolean toggleNoEvent() {

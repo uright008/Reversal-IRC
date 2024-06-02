@@ -33,6 +33,12 @@ public class StarXLogger {
         logger.warn(prefix + s);
     }
 
+    public static void warn(String s, Exception e) {
+        logger.warn(prefix + s, e);
+    }
+    public static void warn(String s, Throwable t) {
+        logger.warn(prefix + s, t);
+    }
     public static void error(String s) {
         logger.error(prefix + s);
     }

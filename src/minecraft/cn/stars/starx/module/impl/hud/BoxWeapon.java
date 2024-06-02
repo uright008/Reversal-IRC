@@ -7,6 +7,7 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.gui.Gui;
@@ -35,7 +36,13 @@ public class BoxWeapon extends Module {
     }
 
     @Override
+    public void onUpdateAlways() {
+        setSuffix(character.getMode());
+    }
+
+    @Override
     public void onRender2D(Render2DEvent event) {
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         sr = new ScaledResolution(mc);
         int x = getX() + 5;
         int y = getY() + 5;

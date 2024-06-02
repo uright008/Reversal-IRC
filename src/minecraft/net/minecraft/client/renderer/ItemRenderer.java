@@ -501,7 +501,7 @@ public class ItemRenderer
                         this.func_178098_a(partialTicks, entityplayersp);
                 }
                 float addY = ModuleInstance.getNumber("Animations", "Item Position Y").getFloat();
-                GlStateManager.translate(0.0f, addY, 0.0f);
+                GlStateManager.translate(-addY, addY, addY);
             }
             else
             {

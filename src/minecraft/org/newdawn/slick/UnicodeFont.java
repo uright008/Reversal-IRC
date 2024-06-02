@@ -77,7 +77,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	
 	/** The AWT font that is being rendered */
 	private Font font;
-	/** The reference to the True Type Font file that has kerning information */
+	/** The reference to the True Type MFont file that has kerning information */
 	private String ttfFileRef;
 	/** The ascent of the font */
 	private int ascent;
@@ -706,7 +706,7 @@ public class UnicodeFont implements org.newdawn.slick.Font {
 	/**
 	 * Returns the TrueTypeFont for this UnicodeFont.
 	 * 
-	 * @return The AWT Font being rendered 
+	 * @return The AWT MFont being rendered
 	 */
 	public Font getFont() {
 		return font;

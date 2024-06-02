@@ -1283,18 +1283,18 @@ public abstract class EntityLiving extends EntityLivingBase
 
             if (i < 0 || i >= this.equipment.length)
             {
-                return false;
+                return true;
             }
         }
 
         if (itemStackIn == null || getArmorPosition(itemStackIn) == i || i == 4 && itemStackIn.getItem() instanceof ItemBlock)
         {
             this.setCurrentItemOrArmor(i, itemStackIn);
-            return true;
+            return false;
         }
         else
         {
-            return false;
+            return true;
         }
     }
 

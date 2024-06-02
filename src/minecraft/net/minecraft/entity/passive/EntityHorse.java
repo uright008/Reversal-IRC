@@ -1824,14 +1824,14 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
             {
                 this.setChested(false);
                 this.initHorseChest();
-                return true;
+                return false;
             }
 
             if (itemStackIn != null && itemStackIn.getItem() == Item.getItemFromBlock(Blocks.chest) && !this.isChested())
             {
                 this.setChested(true);
                 this.initHorseChest();
-                return true;
+                return false;
             }
         }
 
@@ -1841,17 +1841,17 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
         {
             if (i == 0 && itemStackIn != null && itemStackIn.getItem() != Items.saddle)
             {
-                return false;
+                return true;
             }
             else if (i != 1 || (itemStackIn == null || isArmorItem(itemStackIn.getItem())) && this.canWearArmor())
             {
                 this.horseChest.setInventorySlotContents(i, itemStackIn);
                 this.updateHorseSlots();
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
         else
@@ -1861,11 +1861,11 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
             if (j >= 2 && j < this.horseChest.getSizeInventory())
             {
                 this.horseChest.setInventorySlotContents(j, itemStackIn);
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
     }

@@ -93,13 +93,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class EntityPlayerMP extends EntityPlayer implements ICrafting
 {
-    private static final Logger logger = LogManager.getLogger();
-    private String translator = "en_US";
 
     /**
      * The NetServerHandler assigned to this player by the ServerConfigurationManager.
@@ -139,7 +135,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     private int lastExperience = -99999999;
     private int respawnInvulnerabilityTicks = 60;
     private EntityPlayer.EnumChatVisibility chatVisibility;
-    private boolean chatColours = true;
     private long playerLastActiveTime = System.currentTimeMillis();
 
     /** The entity the player is currently spectating through. */
@@ -296,7 +291,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
             while (iterator.hasNext() && j < i)
             {
-                aint[j++] = ((Integer)iterator.next()).intValue();
+                aint[j++] = iterator.next().intValue();
                 iterator.remove();
             }
 
@@ -305,13 +300,13 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         if (!this.loadedChunks.isEmpty())
         {
-            List<Chunk> list = Lists.<Chunk>newArrayList();
+            List<Chunk> list = Lists.newArrayList();
             Iterator<ChunkCoordIntPair> iterator1 = this.loadedChunks.iterator();
-            List<TileEntity> list1 = Lists.<TileEntity>newArrayList();
+            List<TileEntity> list1 = Lists.newArrayList();
 
-            while (iterator1.hasNext() && ((List)list).size() < 10)
+            while (iterator1.hasNext() && list.size() < 10)
             {
-                ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator1.next();
+                ChunkCoordIntPair chunkcoordintpair = iterator1.next();
 
                 if (chunkcoordintpair != null)
                 {
@@ -412,7 +407,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
                 for (ScoreObjective scoreobjective : this.getWorldScoreboard().getObjectivesFromCriteria(IScoreObjectiveCriteria.health))
                 {
-                    this.getWorldScoreboard().getValueFromObjective(this.getName(), scoreobjective).func_96651_a(Arrays.<EntityPlayer>asList(new EntityPlayer[] {this}));
+                    this.getWorldScoreboard().getValueFromObjective(this.getName(), scoreobjective).func_96651_a(Arrays.<EntityPlayer>asList(this));
                 }
             }
 
@@ -524,7 +519,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
         if (entitylivingbase != null)
         {
-            EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
+            EntityList.EntityEggInfo entitylist$entityegginfo = EntityList.entityEggs.get(EntityList.getEntityID(entitylivingbase));
 
             if (entitylist$entityegginfo != null)
             {
@@ -585,7 +580,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public boolean canAttackPlayer(EntityPlayer other)
     {
-        return !this.canPlayersAttack() ? false : super.canAttackPlayer(other);
+        return this.canPlayersAttack() && super.canAttackPlayer(other);
     }
 
     /**
@@ -620,7 +615,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
                     this.playerNetServerHandler.setPlayerLocation((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), 0.0F, 0.0F);
                 }
 
-                dimensionId = 1;
             }
             else
             {
@@ -636,7 +630,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public boolean isSpectatedByPlayer(EntityPlayerMP player)
     {
-        return player.isSpectator() ? this.getSpectatingEntity() == this : (this.isSpectator() ? false : super.isSpectatedByPlayer(player));
+        return player.isSpectator() ? this.getSpectatingEntity() == this : (!this.isSpectator() && super.isSpectatedByPlayer(player));
     }
 
     private void sendTileEntityUpdate(TileEntity p_147097_1_)
@@ -777,7 +771,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
             if (ilockablecontainer.isLocked() && !this.canOpen(ilockablecontainer.getLockCode()) && !this.isSpectator())
             {
-                this.playerNetServerHandler.sendPacket(new S02PacketChat(new ChatComponentTranslation("container.isLocked", new Object[] {chestInventory.getDisplayName()}), (byte)2));
+                this.playerNetServerHandler.sendPacket(new S02PacketChat(new ChatComponentTranslation("container.isLocked", chestInventory.getDisplayName()), (byte)2));
                 this.playerNetServerHandler.sendPacket(new S29PacketSoundEffect("random.door_close", this.posX, this.posY, this.posZ, 1.0F, 1.0F));
                 return;
             }
@@ -1176,10 +1170,8 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
 
     public void handleClientSettings(C15PacketClientSettings packetIn)
     {
-        this.translator = packetIn.getLang();
         this.chatVisibility = packetIn.getChatVisibility();
-        this.chatColours = packetIn.isColorsEnabled();
-        this.getDataWatcher().updateObject(10, Byte.valueOf((byte)packetIn.getModelPartFlags()));
+        this.getDataWatcher().updateObject(10, (byte) packetIn.getModelPartFlags());
     }
 
     public EntityPlayer.EnumChatVisibility getChatVisibility()
@@ -1198,7 +1190,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
      */
     public BlockPos getPosition()
     {
-        return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
+        return super.getPosition();
     }
 
     public void markPlayerActive()
@@ -1221,11 +1213,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting
     {
         if (p_152339_1_ instanceof EntityPlayer)
         {
-            this.playerNetServerHandler.sendPacket(new S13PacketDestroyEntities(new int[] {p_152339_1_.getEntityId()}));
+            this.playerNetServerHandler.sendPacket(new S13PacketDestroyEntities(p_152339_1_.getEntityId()));
         }
         else
         {
-            this.destroyedItemsNetCache.add(Integer.valueOf(p_152339_1_.getEntityId()));
+            this.destroyedItemsNetCache.add(p_152339_1_.getEntityId());
         }
     }
 

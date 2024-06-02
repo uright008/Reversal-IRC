@@ -6,6 +6,8 @@ import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
 import com.ibm.icu.text.NumberFormat;
 import lombok.experimental.UtilityClass;
+import org.lwjgl.opengl.GL11;
+
 import java.awt.*;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,14 @@ public final class ColorUtil {
             new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F),
             new SimpleAnimation(0.0F), new SimpleAnimation(0.0F), new SimpleAnimation(0.0F)
     };
+
+    public static void glColor(final int hex) {
+        final float a = (hex >> 24 & 0xFF) / 255.0F;
+        final float r = (hex >> 16 & 0xFF) / 255.0F;
+        final float g = (hex >> 8 & 0xFF) / 255.0F;
+        final float b = (hex & 0xFF) / 255.0F;
+        GL11.glColor4f(r, g, b, a);
+    }
 
     public static int reAlpha(int color, float alpha) {
         Color c = new Color(color);
