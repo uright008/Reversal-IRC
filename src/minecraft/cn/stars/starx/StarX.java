@@ -61,7 +61,7 @@ public enum StarX implements GameInstance {
     public static final String VERSION = "v1.0.0";
     public static final String MINECRAFT_VERSION = "1.8.8";
     public static final String AUTHOR = "Stars";
-    public static final Branch BRANCH = Branch.DEVELOPMENT;
+    public static final Branch BRANCH = Branch.PRODUCTION;
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
