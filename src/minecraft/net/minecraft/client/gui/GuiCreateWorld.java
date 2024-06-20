@@ -191,7 +191,7 @@ public class GuiCreateWorld extends GuiScreen
             }
             else if (button.id == 0)
             {
-                this.mc.displayGuiScreen((GuiScreen)null);
+                this.mc.displayGuiScreen(null);
 
                 if (this.field_146345_x)
                 {

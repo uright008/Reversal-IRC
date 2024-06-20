@@ -460,6 +460,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
+        this.startTimerHackThread();
 
         if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0)
         {
@@ -468,9 +469,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
 
         logger.info("LWJGL 版本: " + Sys.getVersion());
-        this.setWindowIcon();
         this.setInitialDisplayMode();
         this.createDisplay();
+        this.setWindowIcon();
         OpenGlHelper.initializeTextures();
         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);
         this.framebufferMc.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
@@ -482,7 +483,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-        drawSplashScreen(getTextureManager());
         SplashProgress.drawSplash(getTextureManager());
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         SplashProgress.setProgress(1, "File");
@@ -604,7 +604,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private void createDisplay() throws LWJGLException
     {
         Display.setResizable(true);
-        Display.setTitle("Modern startup progress | StarX is loading...");
+        Display.setTitle("StarX is loading...");
 
         try
         {
@@ -1129,7 +1129,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         while (getSystemTime() >= this.debugUpdateTime + 1000L)
         {
             debugFPS = this.fpsCounter;
-            this.debug = String.format("%d fps (%d chunk update%s) T: %s%s%s%s%s", new Object[] {Integer.valueOf(debugFPS), Integer.valueOf(RenderChunk.renderChunksUpdated), RenderChunk.renderChunksUpdated != 1 ? "s" : "", (float)this.gameSettings.limitFramerate == GameSettings.Options.FRAMERATE_LIMIT.getValueMax() ? "inf" : Integer.valueOf(this.gameSettings.limitFramerate), this.gameSettings.enableVsync ? " vsync" : "", this.gameSettings.fancyGraphics ? "" : " fast", this.gameSettings.clouds == 0 ? "" : (this.gameSettings.clouds == 1 ? " fast-clouds" : " fancy-clouds"), OpenGlHelper.useVbo() ? " vbo" : ""});
+            this.debug = String.format("%d fps (%d chunk update%s) T: %s%s%s%s%s", debugFPS, RenderChunk.renderChunksUpdated, RenderChunk.renderChunksUpdated != 1 ? "s" : "", (float)this.gameSettings.limitFramerate == GameSettings.Options.FRAMERATE_LIMIT.getValueMax() ? "inf" : Integer.valueOf(this.gameSettings.limitFramerate), this.gameSettings.enableVsync ? " vsync" : "", this.gameSettings.fancyGraphics ? "" : " fast", this.gameSettings.clouds == 0 ? "" : (this.gameSettings.clouds == 1 ? " fast-clouds" : " fancy-clouds"), OpenGlHelper.useVbo() ? " vbo" : "");
             RenderChunk.renderChunksUpdated = 0;
             this.debugUpdateTime += 1000L;
             this.fpsCounter = 0;
@@ -1696,11 +1696,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         new TickEvent().call();
 
-        if (Display.isFullscreen()) {
-            big = true;
-        } else {
-            big = false;
-        }
+        big = Display.isFullscreen();
         if (this.rightClickDelayTimer > 0)
         {
             --this.rightClickDelayTimer;
@@ -1733,7 +1729,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             if (this.thePlayer.getHealth() <= 0.0F)
             {
-                this.displayGuiScreen((GuiScreen)null);
+                this.displayGuiScreen(null);
             }
             else if (this.thePlayer.isPlayerSleeping() && this.theWorld != null)
             {
@@ -1742,7 +1738,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
         else if (this.currentScreen != null && this.currentScreen instanceof GuiSleepMP && !this.thePlayer.isPlayerSleeping())
         {
-            this.displayGuiScreen((GuiScreen)null);
+            this.displayGuiScreen(null);
         }
 
         if (this.currentScreen != null)
@@ -1760,13 +1756,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Updating screen events");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected screen");
-                crashreportcategory.addCrashSectionCallable("Screen name", new Callable<String>()
-                {
-                    public String call() throws Exception
-                    {
-                        return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                 throw new ReportedException(crashreport);
             }
 
@@ -1780,13 +1770,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 {
                     CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Ticking screen");
                     CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Affected screen");
-                    crashreportcategory1.addCrashSectionCallable("Screen name", new Callable<String>()
-                    {
-                        public String call() throws Exception
-                        {
-                            return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                        }
-                    });
+                    crashreportcategory1.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                     throw new ReportedException(crashreport1);
                 }
             }
@@ -1848,8 +1832,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                             this.setIngameFocus();
                         }
                     }
-                    else if (this.currentScreen != null)
-                    {
+                    else {
                         this.currentScreen.handleMouseInput();
                     }
                 }
@@ -2300,7 +2283,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             } */
         }
 
-        this.displayGuiScreen(null);
+    //    this.displayGuiScreen(null);
         SocketAddress socketaddress = this.theIntegratedServer.getNetworkSystem().addLocalEndpoint();
         NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
         networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
@@ -2416,7 +2399,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.renderViewEntity = null;
         if (this.thePlayer == null) return;
         EntityPlayerSP entityplayersp = this.thePlayer;
-        this.thePlayer = this.playerController.func_178892_a(this.theWorld, this.thePlayer == null ? new StatFileWriter() : this.thePlayer.getStatFileWriter());
+        this.thePlayer = this.playerController.func_178892_a(this.theWorld, this.thePlayer.getStatFileWriter());
         this.thePlayer.getDataWatcher().updateWatchedObjectsFromList(entityplayersp.getDataWatcher().getAllWatched());
         this.thePlayer.dimension = dimension;
         this.renderViewEntity = this.thePlayer;
@@ -3139,7 +3122,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             try
             {
-                return Futures.<V>immediateFuture(callableToSchedule.call());
+                return Futures.immediateFuture(callableToSchedule.call());
             }
             catch (Exception exception)
             {
@@ -3151,7 +3134,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public ListenableFuture<Object> addScheduledTask(Runnable runnableToSchedule)
     {
         Validate.notNull(runnableToSchedule);
-        return this.<Object>addScheduledTask(Executors.callable(runnableToSchedule));
+        return this.addScheduledTask(Executors.callable(runnableToSchedule));
     }
 
     public boolean isCallingFromMinecraftThread()
@@ -3206,5 +3189,27 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void func_181537_a(boolean p_181537_1_)
     {
         this.field_181541_X = p_181537_1_;
+    }
+
+    private void startTimerHackThread()
+    {
+        Thread thread = new Thread("Timer hack thread")
+        {
+            public void run()
+            {
+                while (Minecraft.this.running)
+                {
+                    try
+                    {
+                        Thread.sleep(2147483647L);
+                    }
+                    catch (InterruptedException var2)
+                    {
+                    }
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
     }
 }

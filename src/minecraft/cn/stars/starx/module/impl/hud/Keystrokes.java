@@ -5,7 +5,8 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 
-@ModuleInfo(name = "Keystrokes", description = "Show the WASD operation on screen.", category = Category.HUD)
+@ModuleInfo(name = "Keystrokes", description = "Show the WASD operation on screen.",
+        chineseDescription = "显示你的按键操作", category = Category.HUD)
 public class Keystrokes extends Module {
     public final BoolValue rainbow = new BoolValue("Rainbow when key down", this,false);
     public final BoolValue shadow = new BoolValue("Shadow", this,false);

@@ -13,6 +13,7 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
@@ -23,8 +24,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModuleInfo(name = "CPSCounter", description = "Show your CPS on screen", category = Category.HUD)
+@ModuleInfo(name = "CPSCounter", description = "Show your CPS on screen",
+        chineseDescription = "显示你的点击速度", category = Category.HUD)
 public class CPSCounter extends Module {
+    private final BoolValue displayOnClick = new BoolValue("Display On Click", this, false);
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
     private final BoolValue outline = new BoolValue("Outline", this, true);
@@ -44,6 +47,7 @@ public class CPSCounter extends Module {
     public void onRender2D(Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
         if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
+        if (displayOnClick.isEnabled() && (Lclicks.isEmpty() && Rclicks.isEmpty())) return;
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
         Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250,250,250,200);
 
@@ -56,7 +60,7 @@ public class CPSCounter extends Module {
 
             if (shadow.isEnabled()) {
                 NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+                    RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, ColorUtil.withAlpha(color, 255));
                 });
             }
 

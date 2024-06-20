@@ -13,7 +13,8 @@ import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
-@ModuleInfo(name = "ClientSettings", description = "Some settings to change your hud.", category = Category.HUD)
+@ModuleInfo(name = "ClientSettings", description = "Some settings to change your hud.",
+        chineseDescription = "客户端的整体视觉效果设置", category = Category.HUD)
 public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Modern",
             "Rise Rainbow", "Rise", "Comfort",
@@ -26,10 +27,10 @@ public final class ClientSettings extends Module {
     private final BoolValue outLine = new BoolValue("Arraylist Outline", this, false);
     private final BoolValue customHotbar = new BoolValue("Custom Hotbar", this, false);
     private final BoolValue smoothHotbar = new BoolValue("Smooth Hotbar", this, false);
-    private final BoolValue armorHUD = new BoolValue("Armor HUD", this, false);
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     private final BoolValue blur = new BoolValue("Blur", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
+    private final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
 
     public static boolean customHotbarEnabled;
 

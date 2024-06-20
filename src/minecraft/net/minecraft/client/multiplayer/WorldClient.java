@@ -1,6 +1,6 @@
 package net.minecraft.client.multiplayer;
 
-import cn.stars.starx.module.impl.render.TimeTraveller;
+import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.module.impl.render.TrueSights;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Sets;

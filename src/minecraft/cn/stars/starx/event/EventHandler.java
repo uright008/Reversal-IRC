@@ -6,6 +6,8 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.AlwaysHandle;
 import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.ClickGUI;
+import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
+import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.util.player.PlayerUtil;
@@ -152,7 +154,7 @@ public final class EventHandler {
                 }
 
                 /* Calls events that are always used called whether the module is on or not*/
-                if (mc.currentScreen instanceof ClickGUI) {
+                if (mc.currentScreen instanceof ClickGUI || mc.currentScreen instanceof StrikeGUI || mc.currentScreen instanceof ModernClickGUI) {
                     module.onUpdateAlwaysInGui();
                 }
                 module.onUpdateAlways();

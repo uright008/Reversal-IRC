@@ -6,7 +6,8 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "GuiAnimation", description = "Gives Guis an animation", category = Category.RENDER)
+@ModuleInfo(name = "GuiAnimation", description = "Gives Guis an animation",
+        chineseDescription = "给部分Gui增加开启动画", category = Category.RENDER)
 public class GuiAnimation extends Module {
     private final BoolValue clickGui = new BoolValue("ClickGui", this, true);
     public static boolean clickGuiValue;

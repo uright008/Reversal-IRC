@@ -6,6 +6,8 @@ import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.util.animation.rise.Animation;
+import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.misc.ModuleInstance;
 import lombok.Getter;
@@ -26,11 +28,15 @@ public abstract class Module implements GameInstance {
     public int scaledWidth = sr.getScaledWidth();
     public int scaledHeight = sr.getScaledHeight();
     private boolean enabled;
-    private int keyBind;
+    public int keyBind;
     public String suffix;
 
-    //RenderPosition
+    // RenderPosition
     public float renderX, renderY;
+
+    // Modern ClickGUI
+    public float guiX, guiY;
+    public Animation alphaAnimation = new Animation(Easing.LINEAR, 100);
 
     public float sizeInGui;
     public boolean expanded;

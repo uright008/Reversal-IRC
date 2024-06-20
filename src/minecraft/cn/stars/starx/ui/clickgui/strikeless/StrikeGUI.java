@@ -58,7 +58,6 @@ public class StrikeGUI extends GuiScreen {
         RenderUtil.rect(0.0,0.0, sr.getScaledWidth_double(), sr.getScaledHeight_double(), new Color(0,0,0,100));
         frames.forEach(frame -> frame.draw(this, mouseX, mouseY));
         frames.forEach(frame -> frame.drawDescriptions(mouseX, mouseY, partialTicks));
-        super.drawScreen(mouseX, mouseY, partialTicks, true);
     }
 
     @Override
@@ -78,6 +77,5 @@ public class StrikeGUI extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getModule("ClickGui")).toggleModule();
     }
 }

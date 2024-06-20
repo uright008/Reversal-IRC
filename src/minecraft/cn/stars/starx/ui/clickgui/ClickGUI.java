@@ -569,7 +569,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             ((NumberValue) Objects.requireNonNull(Rise.INSTANCE.getModuleManager().getSetting("Radar", "Radar Y"))).setValue(y);
         } */
     //    GlUtils.stopScale();
-        super.drawScreen(mouseX, mouseY, partialTicks, true);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
 //    public void drawScript(final OnlineScriptHandler.OnlineScript script, final double x, final double y, final double width, final double height) {
@@ -854,7 +854,6 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         close = true;
         selectedSlider = null;
         holdingGui = resizingGui = false;
-        Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getModule("ClickGui")).toggleModule();
     }
 
     @Override

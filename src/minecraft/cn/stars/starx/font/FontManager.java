@@ -43,7 +43,7 @@ public final class FontManager {
                 this.fonts.put("GoogleSans " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
             }
 
-            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 20, 24, 36}) {
+            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 19, 20, 24, 36}) {
                 final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/ProductSansMedium.ttf");
 
                 Font myFont = Font.createFont(0, istream);

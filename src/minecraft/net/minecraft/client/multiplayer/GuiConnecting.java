@@ -1,15 +1,25 @@
 package net.minecraft.client.multiplayer;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
+import cn.stars.starx.util.animation.rise.Animation;
+import cn.stars.starx.util.animation.rise.Easing;
+import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.shader.RiseShaders;
+import cn.stars.starx.util.shader.base.ShaderRenderType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.EnumConnectionState;
@@ -18,8 +28,14 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
+
+import static cn.stars.starx.GameInstance.NORMAL_BLUR_RUNNABLES;
+import static cn.stars.starx.GameInstance.NORMAL_POST_BLOOM_RUNNABLES;
+import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
 
 public class GuiConnecting extends GuiScreen
 {
@@ -28,6 +44,8 @@ public class GuiConnecting extends GuiScreen
     private NetworkManager networkManager;
     private boolean cancel;
     private final GuiScreen previousGuiScreen;
+    private Animation animation = new Animation(Easing.EASE_OUT_QUINT, 600);
+    private MenuTextButton cancelButton;
 
     public GuiConnecting(GuiScreen p_i1181_1_, Minecraft mcIn, ServerData p_i1181_3_)
     {
@@ -125,6 +143,7 @@ public class GuiConnecting extends GuiScreen
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
+        if (keyCode == Keyboard.KEY_ESCAPE) action();
     }
 
     /**
@@ -133,25 +152,31 @@ public class GuiConnecting extends GuiScreen
      */
     public void initGui()
     {
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 120 + 12, I18n.format("gui.cancel", new Object[0])));
+        GameInstance.clearRunnables();
+        this.cancelButton = new MenuTextButton(width / 2 - 30, height / 2 + 100, 60, 30, this::action, "取消", "O", true, 5, 10);
+        this.animation = new Animation(Easing.EASE_OUT_QUINT, 600);
     }
 
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
-        if (button.id == 0)
-        {
-            this.cancel = true;
+    public void action() {
+        this.cancel = true;
 
-            if (this.networkManager != null)
-            {
-                this.networkManager.closeChannel(new ChatComponentText("Aborted"));
+        if (this.networkManager != null) {
+            this.networkManager.closeChannel(new ChatComponentText("Aborted"));
+        }
+
+        this.mc.displayGuiScreen(this.previousGuiScreen);
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (mouseButton == 0) {
+            if (RenderUtil.isHovered(cancelButton.x, cancelButton.y, cancelButton.width, cancelButton.height, mouseX, mouseY)){
+                mc.getSoundHandler().playButtonPress();
+                cancelButton.runAction();
             }
-
-            this.mc.displayGuiScreen(this.previousGuiScreen);
         }
     }
 
@@ -161,7 +186,24 @@ public class GuiConnecting extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         drawDefaultBackground();
-        RenderUtils.drawLoadingCircle(this.width / 2, this.height / 4 + 70);
+
+        // blur
+        RiseShaders.GAUSSIAN_BLUR_SHADER.update();
+        RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+
+        // bloom
+        RiseShaders.POST_BLOOM_SHADER.update();
+        RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+
+        GameInstance.clearRunnables();
+
+        final double destination = height / 2f - 160;
+        animation.run(destination);
+
+        cancelButton.draw(mouseX, mouseY, partialTicks);
+
+        RenderUtil.image(new ResourceLocation("starx/images/starx.png"), width / 2f - 110, (float) animation.getValue() - 50, 280, 190);
+        RenderUtils.drawLoadingCircle2(this.width / 2, this.height / 2 + 40, 6, Color.WHITE);
 
         String ip = "Unknown";
 
@@ -169,9 +211,11 @@ public class GuiConnecting extends GuiScreen
         if(serverData != null)
             ip = serverData.serverIP;
 
-        mc.fontRendererObj.drawCenteredString(I18n.format("connect.connecting", new Object[0]), this.width / 2, this.height / 4 + 110, 0xFFFFFF);
-        mc.fontRendererObj.drawCenteredString(ip, this.width / 2, this.height / 4 + 120, 0x5281FB);
+        FontManager.getRegular(20).drawCenteredString("正在连接至服务器... ", this.width / 2, this.height / 2 + 60, Color.WHITE.getRGB());
+        FontManager.getRegular(16).drawCenteredString(ip, this.width / 2, this.height / 2 + 75, Color.WHITE.getRGB());
 
+        UI_BLOOM_RUNNABLES.forEach(Runnable::run);
+        UI_BLOOM_RUNNABLES.clear();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

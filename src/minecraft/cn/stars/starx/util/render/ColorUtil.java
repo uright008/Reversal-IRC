@@ -254,6 +254,10 @@ public final class ColorUtil {
         return Color.HSBtoRGB(hue, 0.5f, 1);
     }
 
+    public static Color getClientColor() {
+        return ThemeUtil.getThemeColor(ThemeType.LOGO);
+    }
+
     public String stripColor(final String text) {
         return COLOR_PATTERN.matcher(text).replaceAll("");
     }

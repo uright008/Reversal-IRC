@@ -8,4 +8,7 @@ import lombok.Setter;
 public abstract class Setting {
     public String name;
     public boolean hidden;
+
+    public float guiX;
+    public float guiY;
 }

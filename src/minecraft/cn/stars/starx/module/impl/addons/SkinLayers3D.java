@@ -5,8 +5,15 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "SkinLayers3D", description = "Extend your skin with extra layers", category = Category.ADDONS)
+@ModuleInfo(name = "SkinLayers3D", description = "Extend your skin with extra layers",
+        chineseDescription = "3D渲染你的皮肤层", category = Category.ADDONS)
 public class SkinLayers3D extends Module {
+
+    @Override
+    public void onUpdateAlways() {
+        if (!isEnabled()) toggleModule();
+     }
+
     private final NumberValue baseVoxelSize = new NumberValue("Voxel Size", this, 1.15, 1.01, 1.4, 0.01);
     private final NumberValue bodyVoxelSize = new NumberValue("Torso Voxel Width", this, 1.05, 1.01, 1.4, 0.01);
     private final NumberValue headVoxelSize = new NumberValue("Head Voxel Size", this, 1.18, 1.01, 1.25, 0.01);

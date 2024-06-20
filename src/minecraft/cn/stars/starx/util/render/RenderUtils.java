@@ -36,6 +36,46 @@ public class RenderUtils {
         glEnable(GL_DEPTH_TEST);
     }
 
+    public static void drawShadow(float x, float y, float width, float height) {
+        drawTexturedRect(x - 9, y - 9, 9, 9, "paneltopleft");
+        drawTexturedRect(x - 9, y + height, 9, 9, "panelbottomleft");
+        drawTexturedRect(x + width, y + height, 9, 9, "panelbottomright");
+        drawTexturedRect(x + width, y - 9, 9, 9, "paneltopright");
+        drawTexturedRect(x - 9, y, 9, height, "panelleft");
+        drawTexturedRect(x + width, y, 9, height, "panelright");
+        drawTexturedRect(x, y - 9, width, 9, "paneltop");
+        drawTexturedRect(x, y + height, width, 9, "panelbottom");
+    }
+
+
+    public static void drawTexturedRect(float x, float y, float width, float height, String image) {
+        glPushMatrix();
+        final boolean enableBlend = glIsEnabled(GL_BLEND);
+        final boolean disableAlpha = !glIsEnabled(GL_ALPHA_TEST);
+        if (!enableBlend) glEnable(GL_BLEND);
+        if (!disableAlpha) glDisable(GL_ALPHA_TEST);
+        mc.getTextureManager().bindTexture(new ResourceLocation("starx/images/shadow/" + image + ".png"));
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+        if (!enableBlend) glDisable(GL_BLEND);
+        if (!disableAlpha) glEnable(GL_ALPHA_TEST);
+        glPopMatrix();
+    }
+
+    public static void drawModalRectWithCustomSizedTexture(float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight)
+    {
+        float f = 1.0F / textureWidth;
+        float f1 = 1.0F / textureHeight;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos(x, (y + height), 0.0D).tex((u * f), ((v + height) * f1)).endVertex();
+        worldrenderer.pos((x + width), (y + height), 0.0D).tex(((u + width) * f), ((v + height) * f1)).endVertex();
+        worldrenderer.pos((x + width), y, 0.0D).tex(((u + width) * f), (v * f1)).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex((u * f), (v * f1)).endVertex();
+        tessellator.draw();
+    }
+
     public static void drawFilledCircle(final float xx, final float yy, final float radius, final Color color) {
         int sections = 50;
         double dAngle = 2 * Math.PI / sections;
@@ -69,6 +109,10 @@ public class RenderUtils {
             int rot = (int) ((System.nanoTime() / 5000000 * i) % 360);
             drawCircle(x, y, i * 10, rot - 180, rot, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
         }
+    }
+    public static void drawLoadingCircle2(float x, float y, float radius, Color color) {
+        int rot = (int) ((System.nanoTime() / 2500000) % 360);
+        drawCircle(x, y, radius, rot - 180, rot, color.getRGB());
     }
 
     public static float smoothAnimation(float ani, float finalState, float speed, float scale) {

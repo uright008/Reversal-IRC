@@ -19,10 +19,11 @@ import cn.stars.starx.ui.clickgui.ClickGUI;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
-@ModuleInfo(name = "ClickGui", description = "Opens a Gui where you can toggle modules and change their settings", category = Category.RENDER, defaultKey = Keyboard.KEY_RSHIFT)
+@ModuleInfo(name = "ClickGui", description = "Opens a Gui where you can toggle modules and change their settings",
+        chineseDescription = "显示一个可以让你管理功能的界面", category = Category.RENDER, defaultKey = Keyboard.KEY_RSHIFT)
 public final class ClickGui extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this, "StarX", "StarX", "Dropdown");
+    private final ModeValue mode = new ModeValue("Mode", this, "Modern", "StarX", "Dropdown", "Modern");
 
     private final ModeValue theme = new ModeValue("Theme", this, "Deep Blue", "Deep Blue",
             "Rural Amethyst", "Rustic Desert", "Orchid Aqua", "Alyssum Pink", "Sweet Grape Vine", "Disco");
@@ -58,8 +59,14 @@ public final class ClickGui extends Module {
                 mc.displayGuiScreen(StarX.INSTANCE.getStrikeGUI());
                 break;
             }
+
+            case "Modern": {
+                mc.displayGuiScreen(StarX.INSTANCE.getModernClickGUI());
+                break;
+            }
         }
 
+        toggleModule();
         StarX.INSTANCE.saveAll();
     }
 

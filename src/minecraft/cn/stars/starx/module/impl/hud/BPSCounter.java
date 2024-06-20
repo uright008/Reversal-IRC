@@ -6,7 +6,8 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import net.minecraft.client.gui.ScaledResolution;
 
-@ModuleInfo(name = "BPSCounter", description = "Show your BPS on screen", category = Category.HUD)
+@ModuleInfo(name = "BPSCounter", description = "Show your BPS on screen",
+        chineseDescription = "显示你的移动速度", category = Category.HUD)
 public class BPSCounter extends Module {
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
     public BPSCounter() {

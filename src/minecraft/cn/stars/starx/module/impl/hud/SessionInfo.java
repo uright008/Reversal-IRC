@@ -16,6 +16,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
@@ -26,7 +27,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModuleInfo(name = "SessionInfo", description = "Show your game stats", category = Category.HUD)
+@ModuleInfo(name = "SessionInfo", description = "Show your game stats",
+        chineseDescription = "显示你的游戏数据", category = Category.HUD)
 public class SessionInfo extends Module {
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
@@ -106,7 +108,7 @@ public class SessionInfo extends Module {
 
         Runnable shadowRunnable = () -> {
             // 背景
-            RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
+            RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, ColorUtil.withAlpha(color, 255));
 
             // 顶部
             psb.drawString("Session Info", x + 15, y - 0.7f, color.getRGB());

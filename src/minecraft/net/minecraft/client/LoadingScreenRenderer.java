@@ -201,15 +201,6 @@ public class LoadingScreenRenderer implements IProgressUpdate
                 }
 
                 this.mc.updateDisplay();
-
-                try
-                {
-                    Thread.yield();
-                }
-                catch (Exception var15)
-                {
-                    ;
-                }
             }
         }
     }

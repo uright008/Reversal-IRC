@@ -569,6 +569,10 @@ public final class RenderUtil implements GameInstance {
         RiseShaders.RQ_SHADER.draw(x, y, width, height, radius, color);
     }
 
+    public void roundedGradientRectangle(double x, double y, double width, double height, double radius, Color color1, Color color2, boolean vertical) {
+        RiseShaders.RGQ_SHADER.draw(x, y, width, height, radius, color1, color2, vertical);
+    }
+
     public void roundedOutlineRectangle(double x, double y, double width, double height, double radius, double borderSize, Color color) {
         RiseShaders.ROQ_SHADER.draw(x, y, width, height, radius, borderSize, color);
     }

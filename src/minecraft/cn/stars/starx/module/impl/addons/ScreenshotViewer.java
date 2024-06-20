@@ -5,7 +5,8 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.ui.gui.GuiScreenshotViewer;
 
-@ModuleInfo(name = "ScreenshotViewer", description = "View your screenshot fast in game", category = Category.ADDONS)
+@ModuleInfo(name = "ScreenshotViewer", description = "View your screenshot fast in game",
+        chineseDescription = "在游戏内查看你的截图", category = Category.ADDONS)
 public class ScreenshotViewer extends Module {
     @Override
     public void onEnable() {

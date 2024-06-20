@@ -297,8 +297,8 @@ public class Hud implements GameInstance {
                     final int mC = moduleCount;
 
                     Runnable renderRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, psm17.getHeight() + offsetY - 1.5, new Color(0, 0, 0, 80));
-                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, psm17.getHeight() + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
+                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
                         psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
                         if (((Module) n).hasSuffix()) {
                             psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250,250,250,200).getRGB());
@@ -306,7 +306,8 @@ public class Hud implements GameInstance {
                     };
 
                     Runnable shadowRunnable = () -> {
-                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, psm17.getHeight() + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
+                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
                         psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
                         if (((Module) n).hasSuffix()) {
                             psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
@@ -314,7 +315,7 @@ public class Hud implements GameInstance {
                     };
 
                     Runnable blurRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, psm17.getHeight() + offsetY - 1.5, Color.BLACK);
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
                     };
 
                     NORMAL_RENDER_RUNNABLES.add(renderRunnable);

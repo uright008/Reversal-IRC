@@ -4,7 +4,8 @@ import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 
-@ModuleInfo(name = "ItemPhysics", description = "Make the item renderer 2D", category = Category.RENDER)
+@ModuleInfo(name = "ItemPhysics", description = "Make the item renderer 2D",
+        chineseDescription = "使掉落物被2D渲染", category = Category.RENDER)
 public class ItemPhysics extends Module {
 
 }

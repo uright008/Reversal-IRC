@@ -12,6 +12,7 @@ import net.minecraft.potion.Potion;
 
 import java.awt.*;
 
-@ModuleInfo(name = "Sprint", description = "Always sprint when you walking", category = Category.MOVEMENT)
+@ModuleInfo(name = "Sprint", description = "Always sprint when you walking forward.",
+        chineseDescription = "在你向前移动时总是疾跑", category = Category.MOVEMENT)
 public class Sprint extends Module {
 }

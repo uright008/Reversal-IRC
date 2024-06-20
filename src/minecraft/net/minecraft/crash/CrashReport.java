@@ -382,7 +382,7 @@ public class CrashReport
      */
     private static String getWittyComment()
     {
-        String[] astring = StarX.crashReport_wittyComment;
+        String[] astring = StarX.wittyCrashReport;
 
         try
         {

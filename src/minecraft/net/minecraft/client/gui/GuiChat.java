@@ -126,7 +126,7 @@ public class GuiChat extends GuiScreen
 
         if (keyCode == 1)
         {
-            mc.displayGuiScreen(null);
+            close = true;
         }
         else if (keyCode != 28 && keyCode != 156)
         {
@@ -160,7 +160,7 @@ public class GuiChat extends GuiScreen
                 this.sendChatMessage(s);
             }
 
-            mc.displayGuiScreen(null);
+            close = true;
         }
     }
 
@@ -344,8 +344,12 @@ public class GuiChat extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        RenderUtil.roundedRectangle(0, this.height - 15, this.width, 14, 4, new Color(0,0,0,120));
-        if (this.inputField.getText().isEmpty()) mc.fontRendererObj.drawString("Type something here...", 4, this.height - 12, new Color(160,160,160, 180).getRGB(), true);
+
+        if (close) {
+            mc.displayGuiScreen(null);
+        }
+
+        RenderUtil.roundedRect(1, this.height - 14, this.width - 2, this.height, 5, new Color(0,0,0,120));
         this.inputField.drawTextBox();
         IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 

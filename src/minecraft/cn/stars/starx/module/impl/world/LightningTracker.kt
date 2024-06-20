@@ -9,13 +9,14 @@ import cn.stars.starx.ui.notification.NotificationType
 import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity
 import java.text.DecimalFormat
 
-@ModuleInfo(name = "LightingTracker", description = "Detect the lightning in the world", category = Category.WORLD)
+@ModuleInfo(name = "LightingTracker", description = "Detect the lightning in the world",
+    chineseDescription = "检测世界雷电的位置", category = Category.WORLD)
 class LightningTracker : Module() {
 
     var decimalFormat = DecimalFormat("0.0")
 
     override fun onPacketReceive(event: PacketReceiveEvent) {
-        val p = event.packet as S2CPacketSpawnGlobalEntity
+        val p = event.packet
         if (p is S2CPacketSpawnGlobalEntity) {
             if (p.func_149053_g() != 1) return
             StarX.INSTANCE.showMsg("Lightning at X:${decimalFormat.format(p.func_149051_d() / 32.0)} Y:${decimalFormat.format(p.func_149050_e() / 32.0)} Z:${decimalFormat.format(p.func_149049_f() / 32.0)}")

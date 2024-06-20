@@ -8,7 +8,8 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "WaveyCapes", description = "ewarser", category = Category.ADDONS)
+@ModuleInfo(name = "WaveyCapes", description = "Make your cape waving look better",
+        chineseDescription = "使你的披风飘动更真实", category = Category.ADDONS)
 public class WaveyCapes extends Module {
     public static int abc = 1;
     private final BoolValue wind = new BoolValue("Wind", this, true);

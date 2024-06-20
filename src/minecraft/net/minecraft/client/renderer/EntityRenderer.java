@@ -4,10 +4,16 @@ import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
+import cn.stars.starx.module.impl.addons.FreeLook;
+import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.ui.hud.Hud;
+import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.wrapper.WrapperFreeLook;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
+
+import java.awt.*;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -132,6 +138,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private static final Logger logger = LogManager.getLogger();
     private static final ResourceLocation locationRainPng = new ResourceLocation("textures/environment/rain.png");
     private static final ResourceLocation locationSnowPng = new ResourceLocation("textures/environment/snow.png");
+    private static final ResourceLocation TEXTURE_SNOW_HEAVY = new ResourceLocation("textures/environment/snow.png");
+    private static final ResourceLocation TEXTURE_SNOW_LIGHT = new ResourceLocation("textures/environment/snow_light.png");
+    private static final ResourceLocation TEXTURE_NETHER_PARTICLES = new ResourceLocation("textures/environment/nether_particles.png");
     public static boolean anaglyphEnable;
 
     /** Anaglyph field (0=R, 1=GB) */
@@ -448,7 +457,10 @@ public class EntityRenderer implements IResourceManagerReloadListener
         this.fogColor1 += (f2 - this.fogColor1) * 0.1F;
         ++this.rendererUpdateCount;
         this.itemRenderer.updateEquippedItem();
-        this.addRainParticles();
+        TimeTraveller timeTraveller = (TimeTraveller) ModuleInstance.getModule(TimeTraveller.class);
+
+        String weather = ModuleInstance.getMode("TimeTraveller", "Weather").getMode();
+        if (!timeTraveller.isEnabled() || !(weather.equals("Snow") || weather.equals("Light Snow") || weather.equals("Nether"))) this.addRainParticles();
         this.bossColorModifierPrev = this.bossColorModifier;
 
         if (BossStatus.hasColorModifier)
@@ -772,8 +784,13 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     GlStateManager.rotate((float)(j * 90), 0.0F, 1.0F, 0.0F);
                 }
 
-                GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, -1.0F, 0.0F);
-                GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
+                if (FreeLook.using) {
+                    GlStateManager.rotate(FreeLook.getCameraPrevYaw() + (FreeLook.getCameraYaw() - FreeLook.getCameraPrevYaw()) * partialTicks + 180.0F, 0.0F, -1.0F, 0.0F);
+                    GlStateManager.rotate(FreeLook.getCameraPrevPitch() + (FreeLook.getCameraPitch() - FreeLook.getCameraPrevPitch()) * partialTicks, -1.0F, 0.0F, 0.0F);
+                } else {
+                    GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, -1.0F, 0.0F);
+                    GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
+                }
             }
         }
         else if (this.mc.gameSettings.thirdPersonView > 0)
@@ -844,6 +861,11 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
                 float f8 = 0.0F;
 
+                if (FreeLook.using) {
+                    f6 = FreeLook.getCameraPrevYaw() + (FreeLook.getCameraYaw() - FreeLook.getCameraPrevYaw()) * partialTicks + 180.0F;
+                    f7 = FreeLook.getCameraPrevPitch() + (FreeLook.getCameraPitch() - FreeLook.getCameraPrevPitch()) * partialTicks;
+                }
+
                 if (entity instanceof EntityAnimal)
                 {
                     EntityAnimal entityanimal = (EntityAnimal)entity;
@@ -863,17 +885,24 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
         else if (!this.mc.gameSettings.debugCamEnable)
         {
-            GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F, 0.0F, 0.0F);
+            float f6 = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F;
+            float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+            float f8 = 0.0F;
+
+            if (FreeLook.using) {
+                f6 = FreeLook.getCameraPrevYaw() + (FreeLook.getCameraYaw() - FreeLook.getCameraPrevYaw()) * partialTicks + 180.0F;
+                f7 = FreeLook.getCameraPrevPitch() + (FreeLook.getCameraPitch() - FreeLook.getCameraPrevPitch()) * partialTicks;
+            }
 
             if (entity instanceof EntityAnimal)
             {
-                EntityAnimal entityanimal1 = (EntityAnimal)entity;
-                GlStateManager.rotate(entityanimal1.prevRotationYawHead + (entityanimal1.rotationYawHead - entityanimal1.prevRotationYawHead) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
+                EntityAnimal entityanimal = (EntityAnimal)entity;
+                f6 = entityanimal.prevRotationYawHead + (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F;
             }
-            else
-            {
-                GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
-            }
+
+            GlStateManager.rotate(f8, 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(f7, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(f6, 0.0F, 1.0F, 0.0F);
         }
 
         GlStateManager.translate(0.0F, -f, 0.0F);
@@ -1282,6 +1311,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     public void func_181560_a(float p_181560_1_, long p_181560_2_)
     {
+        WrapperFreeLook.overrideMouse();
         Config.renderPartialTicks = p_181560_1_;
         this.frameInit();
         boolean flag = Display.isActive();
@@ -1988,7 +2018,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
         {
             f /= 2.0F;
         }
-
         if (f != 0.0F && Config.isRainSplash())
         {
             this.random.setSeed((long)this.rendererUpdateCount * 312987231L);
@@ -2160,8 +2189,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
                             this.random.setSeed(j1 * j1 * 3121 + j1 * 45238971 ^ i1 * i1 * 418711 + i1 * 13761);
                             blockpos$mutableblockpos.func_181079_c(j1, i2, i1);
                             float f1 = biomegenbase.getFloatTemperature(blockpos$mutableblockpos);
-
-                            if (worldclient.getWorldChunkManager().getTemperatureAtHeight(f1, l1) >= 0.15F)
+                            TimeTraveller timeTraveller = (TimeTraveller) ModuleInstance.getModule(TimeTraveller.class);
+                            String weather = ModuleInstance.getMode("TimeTraveller", "Weather").getMode();
+                            if (worldclient.getWorldChunkManager().getTemperatureAtHeight(f1, l1) >= 0.15F && (!timeTraveller.isEnabled() || !(weather.equals("Snow") || weather.equals("Light Snow") || weather.equals("Nether"))))
                             {
                                 if (b1 != 0)
                                 {
@@ -2191,6 +2221,22 @@ public class EntityRenderer implements IResourceManagerReloadListener
                             }
                             else
                             {
+                                Color color = Color.WHITE;
+                                ResourceLocation texture = TEXTURE_SNOW_HEAVY;
+
+                                // Determine what texture we want to draw with
+                                if (timeTraveller.isEnabled()) {
+                                    color = Color.WHITE;
+                                    if (weather.equals("Light Snow"))
+                                        texture = TEXTURE_SNOW_LIGHT;
+                                    else if (weather.equals("Nether")) {
+                                        texture = TEXTURE_NETHER_PARTICLES;
+                                        color = new Color(220, 200, 230);
+//                                        this.fogColorRed = 0.5F;
+//                                        this.fogColorBlue = 0.5F;
+                                    }
+                                }
+
                                 if (b1 != 1)
                                 {
                                     if (b1 >= 0)
@@ -2199,7 +2245,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                                     }
 
                                     b1 = 1;
-                                    this.mc.getTextureManager().bindTexture(locationSnowPng);
+                                    this.mc.getTextureManager().bindTexture(texture);
                                     worldrenderer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
                                 }
 
@@ -2214,10 +2260,11 @@ public class EntityRenderer implements IResourceManagerReloadListener
                                 int k3 = (worldclient.getCombinedLight(blockpos$mutableblockpos, 0) * 3 + 15728880) / 4;
                                 int l3 = k3 >> 16 & 65535;
                                 int i4 = k3 & 65535;
-                                worldrenderer.pos((double)j1 - d3 + 0.5D, (double)i2, (double)i1 - d4 + 0.5D).tex(0.0D + d9, (double)i2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f4).lightmap(l3, i4).endVertex();
-                                worldrenderer.pos((double)j1 + d3 + 0.5D, (double)i2, (double)i1 + d4 + 0.5D).tex(1.0D + d9, (double)i2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f4).lightmap(l3, i4).endVertex();
-                                worldrenderer.pos((double)j1 + d3 + 0.5D, (double)j2, (double)i1 + d4 + 0.5D).tex(1.0D + d9, (double)j2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f4).lightmap(l3, i4).endVertex();
-                                worldrenderer.pos((double)j1 - d3 + 0.5D, (double)j2, (double)i1 - d4 + 0.5D).tex(0.0D + d9, (double)j2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f4).lightmap(l3, i4).endVertex();
+
+                                worldrenderer.pos((double)j1 - d3 + 0.5D, (double)i2, (double)i1 - d4 + 0.5D).tex(0.0D + d9, (double)i2 * 0.25D + d8 + d10).color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, f4).lightmap(l3, i4).endVertex();
+                                worldrenderer.pos((double)j1 + d3 + 0.5D, (double)i2, (double)i1 + d4 + 0.5D).tex(1.0D + d9, (double)i2 * 0.25D + d8 + d10).color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, f4).lightmap(l3, i4).endVertex();
+                                worldrenderer.pos((double)j1 + d3 + 0.5D, (double)j2, (double)i1 + d4 + 0.5D).tex(1.0D + d9, (double)j2 * 0.25D + d8 + d10).color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, f4).lightmap(l3, i4).endVertex();
+                                worldrenderer.pos((double)j1 - d3 + 0.5D, (double)j2, (double)i1 - d4 + 0.5D).tex(0.0D + d9, (double)j2 * 0.25D + d8 + d10).color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, f4).lightmap(l3, i4).endVertex();
                             }
                         }
                     }
@@ -2660,7 +2707,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                         if (this.serverWaitTime > 0)
                         {
                             Lagometer.timerServer.start();
-                            Config.sleep((long)this.serverWaitTime);
+                            Config.sleep(this.serverWaitTime);
                             Lagometer.timerServer.end();
                             this.serverWaitTimeCurrent = this.serverWaitTime;
                         }
@@ -2685,7 +2732,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
                                 if (l < 0)
                                 {
-                                    this.lastServerTicks = k;
                                     l = 0;
                                 }
 

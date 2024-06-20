@@ -152,16 +152,12 @@ public class FontManager {
         return get(MOREICONS, size, "Moreicon", true, true);
     }
 
-    public static MFont getIconsThree(final int size) {
-        return get(ICONS_3, size, "Icon-3", true, true);
-    }
-
-    public static MFont getIconsTwo(final int size) {
-        return get(ICONS_2, size, "Icon-2", true, true);
+    public static MFont getIconFont(final int size) {
+        return get(ICONS_2, size, "Icon-Font", true, true);
     }
 
     public static MFont getBiko(final int size) {
-        return get(BIKO, size, "Biko_Regular", true, true);
+        return get(BIKO, size, "Biko_Regular", true, true, true, false);
     }
 
     public static MFont getPSB(final int size) {

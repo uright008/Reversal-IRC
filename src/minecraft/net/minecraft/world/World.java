@@ -3557,7 +3557,7 @@ public abstract class World implements IBlockAccess
         else
         {
             BiomeGenBase biomegenbase = this.getBiomeGenForCoords(strikePosition);
-            return biomegenbase.getEnableSnow() ? false : (this.canSnowAt(strikePosition, false) ? false : biomegenbase.canSpawnLightningBolt());
+            return !biomegenbase.getEnableSnow() && (this.canSnowAt(strikePosition, false) ? false : biomegenbase.canSpawnLightningBolt());
         }
     }
 

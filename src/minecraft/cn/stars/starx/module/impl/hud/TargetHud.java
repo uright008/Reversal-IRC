@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@ModuleInfo(name = "TargetHud", description = "Renders a Gui with your targets information", category = Category.HUD)
+@ModuleInfo(name = "TargetHud", description = "Renders a Gui with your targets information",
+        chineseDescription = "显示你攻击敌人的信息", category = Category.HUD)
 public final class TargetHud extends Module {
 
     private final TimeUtil timer = new TimeUtil();

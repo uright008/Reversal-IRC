@@ -1042,17 +1042,17 @@ public class Config
 
     public static boolean isSunTexture()
     {
-        return !isSunMoonEnabled() ? false : !isShaders() || Shaders.isSun();
+        return isSunMoonEnabled() && (!isShaders() || Shaders.isSun());
     }
 
     public static boolean isMoonTexture()
     {
-        return !isSunMoonEnabled() ? false : !isShaders() || Shaders.isMoon();
+        return isSunMoonEnabled() && (!isShaders() || Shaders.isMoon());
     }
 
     public static boolean isVignetteEnabled()
     {
-        return isShaders() && !Shaders.isVignette() ? false : (gameSettings.ofVignette == 0 ? gameSettings.fancyGraphics : gameSettings.ofVignette == 2);
+        return (!isShaders() || Shaders.isVignette()) && (gameSettings.ofVignette == 0 ? gameSettings.fancyGraphics : gameSettings.ofVignette == 2);
     }
 
     public static boolean isStarsEnabled()

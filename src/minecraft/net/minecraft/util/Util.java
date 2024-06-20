@@ -2,6 +2,8 @@ package net.minecraft.util;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
+import cn.stars.starx.util.misc.ModuleInstance;
 import org.apache.logging.log4j.Logger;
 
 public class Util

@@ -5,7 +5,8 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import net.minecraft.client.gui.ScaledResolution;
 
-@ModuleInfo(name = "Scoreboard", description = "Show the scoreboard", category = Category.HUD)
+@ModuleInfo(name = "Scoreboard", description = "Show the scoreboard",
+        chineseDescription = "显示计分板", category = Category.HUD)
 public class Scoreboard extends Module {
     public Scoreboard() {
         // TODO: Add editor

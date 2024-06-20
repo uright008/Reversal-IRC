@@ -24,7 +24,8 @@ import java.util.*
 
 @ModuleInfo(
     name = "DamageParticle",
-    description = "Show a particle of your damage.",
+    description = "Show a particle of your damage when you hit.",
+    chineseDescription = "当你攻击时生成显示攻击伤害的粒子",
     category = Category.RENDER
 )
 class DamageParticle : Module(){

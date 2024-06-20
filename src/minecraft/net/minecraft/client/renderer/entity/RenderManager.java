@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
+import cn.stars.starx.module.impl.addons.FreeLook;
 import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
@@ -277,10 +278,14 @@ public class RenderManager
                 this.playerViewX = 0.0F;
             }
         }
-        else
-        {
-            this.playerViewY = livingPlayerIn.prevRotationYaw + (livingPlayerIn.rotationYaw - livingPlayerIn.prevRotationYaw) * partialTicks;
-            this.playerViewX = livingPlayerIn.prevRotationPitch + (livingPlayerIn.rotationPitch - livingPlayerIn.prevRotationPitch) * partialTicks;
+        else {
+            if (FreeLook.using) {
+                this.playerViewY = FreeLook.getCameraPrevYaw() + (FreeLook.getCameraYaw() - FreeLook.getCameraPrevYaw()) * partialTicks;
+                this.playerViewX = FreeLook.getCameraPrevPitch() + (FreeLook.getCameraPitch() - FreeLook.getCameraPrevPitch()) * partialTicks;
+            } else {
+                this.playerViewY = livingPlayerIn.prevRotationYaw + (livingPlayerIn.rotationYaw - livingPlayerIn.prevRotationYaw) * partialTicks;
+                this.playerViewX = livingPlayerIn.prevRotationPitch + (livingPlayerIn.rotationPitch - livingPlayerIn.prevRotationPitch) * partialTicks;
+            }
         }
 
         if (optionsIn.thirdPersonView == 2)

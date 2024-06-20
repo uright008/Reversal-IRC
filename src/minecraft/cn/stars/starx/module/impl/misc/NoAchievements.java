@@ -6,7 +6,8 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import net.minecraft.network.play.server.S37PacketStatistics;
 
-@ModuleInfo(name = "NoAchievements", description = "Disable your achievements info", category = Category.MISC)
+@ModuleInfo(name = "NoAchievements", description = "Disable your achievements info",
+        chineseDescription = "阻止显示你的成就信息", category = Category.MISC)
 public class NoAchievements extends Module {
     @Override
     public void onPacketReceive(final PacketReceiveEvent event) {

@@ -22,7 +22,8 @@ import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 
-@ModuleInfo(name = "HitEffect", description = "Renders particle effect when you attack someone", category = Category.RENDER)
+@ModuleInfo(name = "HitEffect", description = "Renders particle effect when you attack someone",
+        chineseDescription = "当你攻击时生成粒子效果", category = Category.RENDER)
 public final class HitEffect extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this, "Blood", "None", "Blood", "Lightning", "Heart", "Flame", "Portal", "Explosion", "Lava",
@@ -64,7 +65,7 @@ public final class HitEffect extends Module {
                 }
                 switch (mode.getMode()) {
                     case "Blood":
-                        for (int i = 0; i < amount.getValue(); i++)
+                        for (int i = 0; i < amount.getValue() * 8; i++)
                             mc.theWorld.spawnParticle(EnumParticleTypes.BLOCK_CRACK, target.posX, target.posY + target.height - 0.75, target.posZ, 0, 0, 0, Block.getStateId(Blocks.redstone_block.getDefaultState()));
 
                         if (sound.isEnabled())

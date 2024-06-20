@@ -125,7 +125,6 @@ public abstract class GuiContainer extends GuiScreen
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-        super.drawScreen(mouseX, mouseY, partialTicks, false);
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.translate((float)i, (float)j, 0.0F);

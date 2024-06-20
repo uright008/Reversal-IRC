@@ -14,14 +14,17 @@ import cn.stars.starx.module.impl.misc.ClientSpoofer;
 import cn.stars.starx.module.impl.misc.NoAchievements;
 import cn.stars.starx.module.impl.misc.Plugins;
 import cn.stars.starx.module.impl.movement.Sprint;
+import cn.stars.starx.module.impl.player.AntiDisconnectEx;
 import cn.stars.starx.module.impl.player.HealthWarn;
 import cn.stars.starx.module.impl.render.*;
 import cn.stars.starx.module.impl.world.LightningTracker;
+import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.ui.clickgui.ClickGUI;
+import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
 import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
@@ -30,11 +33,13 @@ import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.render.ThemeUtil;
+import cn.stars.starx.util.starx.Branch;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
+import org.apache.commons.lang3.RandomUtils;
 import org.lwjgl.opengl.Display;
 
 import java.awt.*;
@@ -53,9 +58,10 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v0.5.2";
+    public static final String VERSION = "v1.0.0";
     public static final String MINECRAFT_VERSION = "1.8.8";
     public static final String AUTHOR = "Stars";
+    public static final Branch BRANCH = Branch.DEVELOPMENT;
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
@@ -63,11 +69,13 @@ public enum StarX implements GameInstance {
     public static boolean isDestructed = false;
 
     // Witty comments
-    public static final String[] crashReport_wittyComment = new String[]
+    public static final String[] wittyCrashReport = new String[]
             {"玩原神玩的", "粥批差不多得了", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
                     "闭嘴!我的父亲在mojang工作,他可以使你的mInEcRaFt崩溃", "纪狗气死我了", "致敬传奇耐崩王MiNeCrAfT", "你的客户端坠机了",
             "It's been a long day without you my friend", "回来吧牢端"};
 
+    public static final String[] wittyTitle = new String[]
+            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了,心理防线崩溃了,我要跳楼了", "How high is your priority?"};
 
 
     // Init
@@ -79,6 +87,7 @@ public enum StarX implements GameInstance {
     public ModuleManager moduleManager;
     public NotificationManager notificationManager;
     public CommandManager cmdManager;
+    public ModernClickGUI modernClickGUI;
     public ClickGUI clickGUI;
     public StrikeGUI strikeGUI;
     public GuiTheme guiTheme;
@@ -97,7 +106,7 @@ public enum StarX implements GameInstance {
     // Core
     public void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION + " | Java" + System.getProperty("java.version") + (mc.isJava64bit() ? "(64)" : "(32)"));
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + wittyTitle[RandomUtils.nextInt(0, wittyTitle.length)]);
 
             // ViaMCP init
             ViaMCP.create();
@@ -121,6 +130,11 @@ public enum StarX implements GameInstance {
 
     // Usages
     public void showMsg(String msg) {
+        if (Minecraft.getMinecraft().thePlayer != null) {
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
+        }
+    }
+    public void showMsg(Object msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
         }
@@ -329,6 +343,7 @@ public enum StarX implements GameInstance {
             CommandManager.COMMANDS = commands;
 
             guiTheme = new GuiTheme();
+            modernClickGUI = new ModernClickGUI();
             clickGUI = new ClickGUI();
             strikeGUI = new StrikeGUI();
 
@@ -379,7 +394,7 @@ public enum StarX implements GameInstance {
 
     public final Module[] modules = new Module[] {
             // Addons
-            new EditHUD(),
+            new FreeLook(),
             new MoBends(),
             new WaveyCapes(),
             new SkinLayers3D(),
@@ -397,8 +412,10 @@ public enum StarX implements GameInstance {
             new LightningTracker(),
             // Player
             new HealthWarn(),
+            new AntiDisconnectEx(),
             // Render
             new Animations(),
+            new BlockOverlay(),
             new Breadcrumbs(),
             new ChunkAnimator(),
             new ClickGui(),
@@ -406,9 +423,9 @@ public enum StarX implements GameInstance {
             new DamageParticle(),
             new Fullbright(),
             new GuiAnimation(),
-            new GuiClickEffect(),
             new HitEffect(),
             new ItemPhysics(),
+            new MotionBlur(),
             new NoBob(),
             new TNTTimer(),
             new TimeTraveller(),
@@ -418,7 +435,7 @@ public enum StarX implements GameInstance {
             new Wings(),
             // Hud
             new Arraylist(),
-            new BoxWeapon(),
+            new BASticker(),
             new BPSCounter(),
             new CPSCounter(),
             new ClientSettings(),

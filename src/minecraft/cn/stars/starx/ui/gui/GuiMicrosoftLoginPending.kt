@@ -33,20 +33,20 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
     override fun initGui() {
         GameInstance.clearRunnables()
         cancelButton =
-            MenuTextButton(width / 2 - 40.0, height / 2 + 20.0, 80.0, 30.0,
+            MenuTextButton(width / 2 - 30.0, height / 2 + 20.0, 60.0, 30.0,
                 {
                     server.stop(true)
                     mc.displayGuiScreen(prevGui);
 
-                }, "Cancel", "O", true, 5, 7)
+                }, "取消", "O", true, 7, 10)
         retryButton =
-            MenuTextButton(width / 2 - 40.0, height / 2 + 55.0, 80.0, 30.0,
+            MenuTextButton(width / 2 - 30.0, height / 2 + 55.0, 60.0, 30.0,
                 {
                     isError = false
                     server.stop(true)
                     server.start()
 
-                }, "Retry", "g", true, 5, 7)
+                }, "重试 ", "g", true, 7, 10)
         server = MicrosoftAccount.buildFromOpenBrowser(object : MicrosoftAccount.OAuthHandler {
             override fun openUrl(url: String) {
                 stage = "Check your browser to continue..."

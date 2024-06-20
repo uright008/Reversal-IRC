@@ -13,7 +13,8 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.EnumFacing;
 
-@ModuleInfo(name = "Animations", description = "Display special swing animations.", category = Category.RENDER)
+@ModuleInfo(name = "Animations", description = "Display special swing animations.",
+        chineseDescription = "修改你的挥手动画", category = Category.RENDER)
 public class Animations extends Module {
     private final NumberValue itemPositionY = new NumberValue("Item Position Y", this, 0.0, 0, 2, 0.1);
     private final BoolValue swordSwing = new BoolValue("Sword Swing", this, true);

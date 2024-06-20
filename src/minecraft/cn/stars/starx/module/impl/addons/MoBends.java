@@ -27,7 +27,8 @@ import org.lwjgl.compatibility.util.vector.ReadableVector3f;
 import org.lwjgl.compatibility.util.vector.Vector3f;
 
 
-@ModuleInfo(name = "MoBends", description = "Show more animations on entity", category = Category.ADDONS)
+@ModuleInfo(name = "MoBends", description = "Show more animations on entity",
+        chineseDescription = "在玩家和部分生物上渲染更真实的动作", category = Category.ADDONS)
 public class MoBends extends Module {
     public static boolean loaded = false;
     public static float partialTicks;

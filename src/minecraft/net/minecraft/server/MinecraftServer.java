@@ -571,13 +571,13 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
             }
             else
             {
-                this.finalTick((CrashReport)null);
+                this.finalTick(null);
             }
         }
         catch (Throwable throwable1)
         {
             logger.error("Encountered an unexpected exception", throwable1);
-            CrashReport crashreport = null;
+            CrashReport crashreport;
 
             if (throwable1 instanceof ReportedException)
             {

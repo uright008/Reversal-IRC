@@ -173,8 +173,6 @@ public class ModernFontRenderer extends MFont {
 
         // Store the completed character back into the provided character array
         internationalCharacters[character] = new FontCharacter(charTexture, width, height);
-
-        StarXLogger.info("Filled " + character);
     }
 
     public void setRenderHints(final Graphics2D graphics) {
@@ -231,13 +229,14 @@ public class ModernFontRenderer extends MFont {
     public int drawString(String text, double x, double y, final int color, final boolean shadow) {
 
         if (!this.international && this.requiresInternationalFont(text)) {
-            return FontManager.getInternational(this.font.getSize() - 1).drawString(text, x, y, color);
+            return FontManager.getRegular(this.font.getSize() - 1).drawString(text, x, y, color);
         }
 
         if (this.international) {
             for (int i = 0; i < text.length(); i++) {
                 final char character = text.charAt(i);
-                if (internationalCharacters[character] == null) fillCharacters(character, java.awt.Font.PLAIN);
+                if (internationalCharacters[character] == null)
+                    fillCharacters(character, java.awt.Font.PLAIN);
             }
         }
 
@@ -293,7 +292,15 @@ public class ModernFontRenderer extends MFont {
 
     public int width(String text) {
         if (!this.international && this.requiresInternationalFont(text)) {
-            return FontManager.getInternational(this.font.getSize()).width(text);
+            return FontManager.getRegular(this.font.getSize()).width(text);
+        }
+
+        if (this.international) {
+            for (int i = 0; i < text.length(); i++) {
+                final char character = text.charAt(i);
+                if (internationalCharacters[character] == null)
+                    fillCharacters(character, java.awt.Font.PLAIN);
+            }
         }
 
         final FontCharacter[] characterSet = this.international ? internationalCharacters : defaultCharacters;

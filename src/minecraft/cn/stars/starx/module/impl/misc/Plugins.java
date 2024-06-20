@@ -19,7 +19,8 @@ import net.minecraft.network.play.server.S3APacketTabComplete;
 
 import java.util.ArrayList;
 
-@ModuleInfo(name = "Plugins", description = "Try to detect the plugins on the server", category = Category.MISC)
+@ModuleInfo(name = "Plugins", description = "Try to detect the plugins on the server",
+        chineseDescription = "检测服务器插件", category = Category.MISC)
 public final class Plugins extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this, "Normal", "Normal", "Bypass");

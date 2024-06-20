@@ -6,11 +6,15 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.util.render.WingUtils;
 
-@ModuleInfo(name = "Wings", description = "Render a wing on your back", category = Category.RENDER)
+@ModuleInfo(name = "Wings", description = "Render a wing on your back",
+        chineseDescription = "在你的背上渲染一个翅膀", category = Category.RENDER)
 public class Wings extends Module {
+
     @Override
     public void onRender3D(Render3DEvent event) {
         WingUtils wingUtils = new WingUtils();
-        wingUtils.renderWings(event.getPartialTicks());
+        if (mc.thePlayer != null && !mc.thePlayer.isDead && !mc.thePlayer.isInvisible()) {
+            wingUtils.renderWings(event.getPartialTicks());
+        }
     }
 }

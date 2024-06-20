@@ -1,10 +1,7 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.module.impl.render.GuiClickEffect;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.ClickEffect;
 import cn.stars.starx.util.render.RenderUtil;
@@ -27,6 +24,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -59,9 +58,8 @@ import org.lwjgl.opengl.GL20;
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
+    private static final Set<String> PROTOCOLS = Sets.newHashSet("http", "https");
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
-    private List<ClickEffect> clickEffects = new ArrayList<>();
 
     /** Reference to the Minecraft object. */
     protected Minecraft mc;
@@ -76,8 +74,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
     /** The height of the screen object. */
     public int height;
-    protected List<GuiButton> buttonList = Lists.<GuiButton>newArrayList();
-    protected List<GuiLabel> labelList = Lists.<GuiLabel>newArrayList();
+    protected List<GuiButton> buttonList = Lists.newArrayList();
+    protected List<GuiLabel> labelList = Lists.newArrayList();
     public boolean allowUserInput;
 
     /** The FontRenderer used by GuiScreen */
@@ -125,16 +123,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks, canRunClickEffect
-     * TODO: Dangerous method rewrote. Expected crashes may happen.
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawScreen(mouseX, mouseY, partialTicks, true);
-    }
-    /**
-     * New: Draws the screen with the choice to run click effect
-     */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks, boolean canRunClickEffect)
-    {
         mc.timeScreen.reset();
         for (GuiButton guiButton : this.buttonList) {
             guiButton.drawButton(this.mc, mouseX, mouseY);
@@ -142,18 +132,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
         for (GuiLabel guiLabel : this.labelList) {
             guiLabel.drawLabel(this.mc, mouseX, mouseY);
-        }
-
-        GuiClickEffect guiClickEffect = (GuiClickEffect) ModuleInstance.getModule(GuiClickEffect.class);
-        if (guiClickEffect.isEnabled()) {
-            if (clickEffects.size() > 0 && canRunClickEffect) {
-                Iterator<ClickEffect> clickEffectIterator = clickEffects.iterator();
-                while (clickEffectIterator.hasNext()) {
-                    ClickEffect clickEffect = clickEffectIterator.next();
-                    clickEffect.draw();
-                    if (clickEffect.canRemove()) clickEffectIterator.remove();
-                }
-            }
         }
 
         this.screenPartialTicks = partialTicks;
@@ -370,7 +348,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
                         if (nbtbase1 instanceof NBTTagCompound)
                         {
-                            List<String> list1 = Lists.<String>newArrayList();
+                            List<String> list1 = Lists.newArrayList();
                             NBTTagCompound nbttagcompound = (NBTTagCompound)nbtbase1;
                             list1.add(nbttagcompound.getString("name"));
 
@@ -406,9 +384,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 {
                     IChatComponent ichatcomponent = statbase.getStatName();
                     IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"), new Object[0]);
-                    ichatcomponent1.getChatStyle().setItalic(Boolean.valueOf(true));
+                    ichatcomponent1.getChatStyle().setItalic(Boolean.TRUE);
                     String s1 = statbase instanceof Achievement ? ((Achievement)statbase).getDescription() : null;
-                    List<String> list = Lists.newArrayList(new String[] {ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText()});
+                    List<String> list = Lists.newArrayList(ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText());
 
                     if (s1 != null)
                     {
@@ -490,7 +468,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                     }
                     catch (URISyntaxException urisyntaxexception)
                     {
-                        LOGGER.error((String)("无法打开url: " + clickevent), (Throwable)urisyntaxexception);
+                        LOGGER.error("无法打开url: " + clickevent, urisyntaxexception);
                     }
                 }
                 else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE)
@@ -551,10 +529,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             } catch (Exception ignored) {
 
             }
-        }
-        if (ModuleInstance.getModule(GuiClickEffect.class).isEnabled()) {
-            ClickEffect clickEffect = new ClickEffect(mouseX, mouseY);
-            clickEffects.add(clickEffect);
         }
     }
 
@@ -625,10 +599,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         {
             while (Keyboard.next())
             {
-                if (this != this.mc.currentScreen) {
-                    StarXLogger.error(StarXLogger.mcl + "(GuiScreen) An error has occurred.");
-                    return;
-                }
                 this.handleKeyboardInput();
             }
         }
@@ -739,7 +709,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         this.mc.getTextureManager().bindTexture(optionsBackground);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         worldrenderer.pos(0.0D, (double)this.height, 0.0D).tex(0.0D, (double)((float)this.height / 32.0F + (float)tint)).color(64, 64, 64, 255).endVertex();
         worldrenderer.pos((double)this.width, (double)this.height, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)this.height / 32.0F + (float)tint)).color(64, 64, 64, 255).endVertex();
@@ -775,8 +744,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         try
         {
             Class<?> oclass = Class.forName("java.awt.Desktop");
-            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
-            oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {p_175282_1_});
+            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+            oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, p_175282_1_);
         }
         catch (Throwable throwable)
         {
@@ -876,6 +845,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
+        if (StarX.INSTANCE.backgroundId == 8) {
+            RenderUtil.image(new ResourceLocation("starx/images/background8.png"), 0, 0, this.width, this.height);
+            return;
+        }
         if (StarX.INSTANCE.isAMDShaderCompatibility) {
             drawBackground(0);
             return;

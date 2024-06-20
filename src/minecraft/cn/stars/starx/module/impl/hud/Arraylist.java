@@ -6,7 +6,8 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import net.minecraft.client.gui.ScaledResolution;
 
-@ModuleInfo(name = "Arraylist", description = "Show the modules you enabled", category = Category.HUD)
+@ModuleInfo(name = "Arraylist", description = "Show the modules you enabled",
+        chineseDescription = "显示你开启的功能", category = Category.HUD)
 public class Arraylist extends Module {
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
     final ScaledResolution SR = new ScaledResolution(mc);

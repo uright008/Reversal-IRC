@@ -14,6 +14,8 @@ public @interface ModuleInfo {
 
     String description();
 
+    String chineseDescription() default "";
+
     Category category();
 
     int defaultKey() default Keyboard.KEY_NONE;

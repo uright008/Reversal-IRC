@@ -138,25 +138,25 @@ public final class ConfigHandler {
 
             final Setting setting = StarX.INSTANCE.getModuleManager().getSetting(split[1], split[2]);
 
-            if (StarX.INSTANCE.getModuleManager().getModule(split[1]) == null)
-                continue;
+            if (StarX.INSTANCE.getModuleManager().getModule(split[1]) != null) {
 
-            if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
-                if (split[3].contains("true")) {
-                    ((BoolValue) setting).enabled = true;
+                if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
+                    if (split[3].contains("true")) {
+                        ((BoolValue) setting).enabled = true;
+                    }
+
+                    if (split[3].contains("false")) {
+                        ((BoolValue) setting).enabled = false;
+                    }
                 }
 
-                if (split[3].contains("false")) {
-                    ((BoolValue) setting).enabled = false;
+                if (split[0].contains("NumberValue") && setting instanceof NumberValue) {
+                    ((NumberValue) setting).setValue(Double.parseDouble(split[3]));
                 }
-            }
 
-            if (split[0].contains("NumberValue") && setting instanceof NumberValue) {
-                ((NumberValue) setting).setValue(Double.parseDouble(split[3]));
-            }
-
-            if (split[0].contains("ModeValue") && setting instanceof ModeValue) {
-                ((ModeValue) setting).set(split[3]);
+                if (split[0].contains("ModeValue") && setting instanceof ModeValue) {
+                    ((ModeValue) setting).set(split[3]);
+                }
             }
 
             if (split[0].contains("Bind")) {
