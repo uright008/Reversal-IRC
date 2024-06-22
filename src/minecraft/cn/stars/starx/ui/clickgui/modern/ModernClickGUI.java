@@ -57,7 +57,6 @@ public class ModernClickGUI extends GuiScreen {
     NumberValue selectedSlider;
     boolean hasEditedSliders = false;
     TimeUtil timer = new TimeUtil();
-    boolean isCtrlClicked = false;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -105,7 +104,7 @@ public class ModernClickGUI extends GuiScreen {
             FontManager.getPSR(26).drawString(searchString,x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
             RenderUtil.roundedRectangle(x + 5, y + 35, 105, 20, 4, new Color(60, 60, 60, 160));
         }  else {
-            FontManager.getPSR(26).drawString("Search...", x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
+            FontManager.getPSR(26).drawString("Ctrl+F", x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
             RenderUtil.roundedRectangle(x + 5, y + 35, 105, 20, 4, new Color(60, 60, 60, 160));
         }
 
@@ -250,7 +249,6 @@ public class ModernClickGUI extends GuiScreen {
 
         if (timer.hasReached(10)) {
             timer.reset();
-            isCtrlClicked = false;
             for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
                 m.alphaAnimation.run(m.isEnabled() ? 50 : 0);
                 for (final Setting s : m.getSettings()) {
@@ -281,8 +279,8 @@ public class ModernClickGUI extends GuiScreen {
 
         GlStateManager.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
     //    GlUtils.stopScale();
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -323,7 +321,7 @@ public class ModernClickGUI extends GuiScreen {
         float moduleX = x + 120;
         float moduleY = y + 5;
         for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
-            if (m.getModuleInfo().category() == selectedCategory) {
+            if ((m.getModuleInfo().category() == selectedCategory && searchString.isEmpty()) || getRelevantModules(searchString).contains(m)) {
                 if (RenderUtil.isHovered(moduleX, m.guiY, 520, 30, mouseX, mouseY)) {
                     if (m.guiY + FontManager.getPSR(20).height() < y || m.guiY + FontManager.getPSR(20).height() > y + 320) return;
                     if (mouseButton == 0) {
@@ -425,20 +423,21 @@ public class ModernClickGUI extends GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == Keyboard.KEY_LCONTROL || keyCode == Keyboard.KEY_RCONTROL) isCtrlClicked = true;
-        if (isCtrlClicked && keyCode == Keyboard.KEY_F) {
+        if (isCtrlKeyDown() && keyCode == Keyboard.KEY_F) {
             isSearching = true;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) mc.displayGuiScreen(null);
         if (isSearching) {
             // Paste
-            DataFlavor flavor = DataFlavor.stringFlavor;
-            if (Toolkit.getDefaultToolkit().getSystemClipboard().isDataFlavorAvailable(flavor))
-                try {
-                    searchString = searchString + Toolkit.getDefaultToolkit().getSystemClipboard().getData(flavor);
-                } catch (UnsupportedFlavorException e) {
-                    StarXLogger.error("(ClickGUI) Unable to retrieve system clipboard flavor" + e);
-                }
+            if (isKeyComboCtrlV(keyCode)) {
+                DataFlavor flavor = DataFlavor.stringFlavor;
+                if (Toolkit.getDefaultToolkit().getSystemClipboard().isDataFlavorAvailable(flavor))
+                    try {
+                        searchString = searchString + Toolkit.getDefaultToolkit().getSystemClipboard().getData(flavor);
+                    } catch (Exception e) {
+                        StarXLogger.error("(ClickGUI) Unable to retrieve system clipboard flavor" + e);
+                    }
+            }
             // Type
             if (Character.isDigit(typedChar) || Character.isLetter(typedChar) || Character.isIdeographic(typedChar)) {
                 if (FontManager.getPSR(26).getWidth(searchString) < 95) searchString = searchString + typedChar;
@@ -463,6 +462,8 @@ public class ModernClickGUI extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
+        searchString = "";
+        isSearching = false;
         Keyboard.enableRepeatEvents(false);
         selectedSlider = null;
     }
@@ -500,6 +501,4 @@ public class ModernClickGUI extends GuiScreen {
         }
         return false;
     }
-
-    public ModernClickGUI() {}
 }

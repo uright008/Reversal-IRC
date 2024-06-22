@@ -35,8 +35,8 @@ public class RenderBendsZombie extends RenderBiped
             private static final String __OBFID = "CL_00002429";
             
             protected void initArmor() {
-                this.field_177189_c = new ModelBendsZombie(0.5f, true);
-                this.field_177186_d = new ModelBendsZombie(1.0f, true);
+                this.modelLeggings = new ModelBendsZombie(0.5f, true);
+                this.modelArmor = new ModelBendsZombie(1.0f, true);
             }
         };
         this.addLayer((LayerRenderer)layerbipedarmor);

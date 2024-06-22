@@ -3,14 +3,12 @@ package net.minecraft.client.renderer.entity.layers;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
 
 public class LayerCape implements LayerRenderer<AbstractClientPlayer>
 {
     private final RenderPlayer playerRenderer;
-    private static final String __OBFID = "CL_00002425";
 
     public LayerCape(RenderPlayer playerRendererIn)
     {
@@ -44,6 +42,11 @@ public class LayerCape implements LayerRenderer<AbstractClientPlayer>
             if (f2 > 165.0F)
             {
                 f2 = 165.0F;
+            }
+
+            if (f1 < -5.0F)
+            {
+                f1 = -5.0F;
             }
 
             float f4 = entitylivingbaseIn.prevCameraYaw + (entitylivingbaseIn.cameraYaw - entitylivingbaseIn.prevCameraYaw) * partialTicks;

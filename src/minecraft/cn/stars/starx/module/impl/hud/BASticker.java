@@ -45,7 +45,7 @@ public class BASticker extends Module {
         int x = getX() + 5;
         int y = getY() + 5;
         switch (character.getMode()) {
-            case "ARIS": {
+            case "Aris": {
                 setRoundedWidth(160, scale.getValue());
                 setRoundedHeight(170, scale.getValue());
                 drawImage(new ResourceLocation("starx/images/box_weapon/aris.png"), x, y, 150, 160, scale.getValue());
@@ -113,7 +113,7 @@ public class BASticker extends Module {
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(image);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0,
-                Math.round(width * scale), Math.round(height * scale), Math.round(width * scale), Math.round(height * scale));
+                (int) Math.round(width * scale), (int) Math.round(height * scale), Math.round(width * scale), Math.round(height * scale));
         glDepthMask(true);
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);

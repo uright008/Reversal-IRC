@@ -18,17 +18,11 @@ public class GuiSlotRealmsProxy extends GuiSlot
         return this.selectionList.getItemCount();
     }
 
-    /**
-     * The element in the slot that was clicked, boolean for whether it was double clicked or not
-     */
     protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY)
     {
         this.selectionList.selectItem(slotIndex, isDoubleClick, mouseX, mouseY);
     }
 
-    /**
-     * Returns true if the element passed in is currently selected
-     */
     protected boolean isSelected(int slotIndex)
     {
         return this.selectionList.isSelectedItem(slotIndex);
@@ -44,24 +38,21 @@ public class GuiSlotRealmsProxy extends GuiSlot
         this.selectionList.renderItem(entryID, p_180791_2_, p_180791_3_, p_180791_4_, mouseXIn, mouseYIn);
     }
 
-    public int func_154338_k()
+    public int getWidth()
     {
         return super.width;
     }
 
-    public int func_154339_l()
+    public int getMouseY()
     {
         return super.mouseY;
     }
 
-    public int func_154337_m()
+    public int getMouseX()
     {
         return super.mouseX;
     }
 
-    /**
-     * Return the height of the content being scrolled
-     */
     protected int getContentHeight()
     {
         return this.selectionList.getMaxPosition();

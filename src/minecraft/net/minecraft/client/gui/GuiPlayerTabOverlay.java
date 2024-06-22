@@ -27,13 +27,7 @@ public class GuiPlayerTabOverlay extends Gui
     private final GuiIngame guiIngame;
     private IChatComponent footer;
     private IChatComponent header;
-
-    /**
-     * The last time the playerlist was opened (went from not being renderd, to being rendered)
-     */
     private long lastTimeOpened;
-
-    /** Weither or not the playerlist is currently being rendered */
     private boolean isBeingRendered;
 
     public GuiPlayerTabOverlay(Minecraft mcIn, GuiIngame guiIngameIn)
@@ -42,18 +36,11 @@ public class GuiPlayerTabOverlay extends Gui
         this.guiIngame = guiIngameIn;
     }
 
-    /**
-     * Returns the name that should be renderd for the player supplied
-     */
     public String getPlayerName(NetworkPlayerInfo networkPlayerInfoIn)
     {
         return networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
     }
 
-    /**
-     * Called by GuiIngame to update the information stored in the playerlist, does not actually render the list,
-     * however.
-     */
     public void updatePlayerList(boolean willBeRendered)
     {
         if (willBeRendered && !this.isBeingRendered)
@@ -64,9 +51,6 @@ public class GuiPlayerTabOverlay extends Gui
         this.isBeingRendered = willBeRendered;
     }
 
-    /**
-     * Renders the playerlist, its background, headers and footers.
-     */
     public void renderPlayerlist(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn)
     {
         NetHandlerPlayClient nethandlerplayclient = this.mc.thePlayer.sendQueue;
@@ -233,32 +217,8 @@ public class GuiPlayerTabOverlay extends Gui
             }
         }
     }
-    public static void drawPingStatic(final int p_175245_1_, final int p_175245_2_, final int p_175245_3_, final NetworkPlayerInfo networkPlayerInfoIn) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
-        final int i = 0;
-        int j = 0;
 
-        if (networkPlayerInfoIn.getResponseTime() < 0) {
-            j = 5;
-        } else if (networkPlayerInfoIn.getResponseTime() < 150) {
-            j = 0;
-        } else if (networkPlayerInfoIn.getResponseTime() < 300) {
-            j = 1;
-        } else if (networkPlayerInfoIn.getResponseTime() < 600) {
-            j = 2;
-        } else if (networkPlayerInfoIn.getResponseTime() < 1000) {
-            j = 3;
-        } else {
-            j = 4;
-        }
-
-        zLevel += 100.0F;
-        drawTexturedModalRectStatic(p_175245_2_ + p_175245_1_ - 11, p_175245_3_, 0 + i * 10, 176 + j * 8, 10, 8);
-        zLevel -= 100.0F;
-    }
-
-    public void drawPing(int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn)
+    protected void drawPing(int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(icons);
@@ -293,6 +253,43 @@ public class GuiPlayerTabOverlay extends Gui
         this.zLevel += 100.0F;
         this.drawTexturedModalRect(p_175245_2_ + p_175245_1_ - 11, p_175245_3_, 0 + i * 10, 176 + j * 8, 10, 8);
         this.zLevel -= 100.0F;
+    }
+
+    public static void drawPingStatic(int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn)
+    {
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
+        int i = 0;
+        int j = 0;
+
+        if (networkPlayerInfoIn.getResponseTime() < 0)
+        {
+            j = 5;
+        }
+        else if (networkPlayerInfoIn.getResponseTime() < 150)
+        {
+            j = 0;
+        }
+        else if (networkPlayerInfoIn.getResponseTime() < 300)
+        {
+            j = 1;
+        }
+        else if (networkPlayerInfoIn.getResponseTime() < 600)
+        {
+            j = 2;
+        }
+        else if (networkPlayerInfoIn.getResponseTime() < 1000)
+        {
+            j = 3;
+        }
+        else
+        {
+            j = 4;
+        }
+
+        zLevel += 100.0F;
+        drawTexturedModalRectStatic(p_175245_2_ + p_175245_1_ - 11, p_175245_3_, 0 + i * 10, 176 + j * 8, 10, 8);
+        zLevel -= 100.0F;
     }
 
     private void drawScoreboardValues(ScoreObjective p_175247_1_, int p_175247_2_, String p_175247_3_, int p_175247_4_, int p_175247_5_, NetworkPlayerInfo p_175247_6_)
@@ -401,7 +398,7 @@ public class GuiPlayerTabOverlay extends Gui
         this.header = headerIn;
     }
 
-    public void func_181030_a()
+    public void resetFooterHeader()
     {
         this.header = null;
         this.footer = null;

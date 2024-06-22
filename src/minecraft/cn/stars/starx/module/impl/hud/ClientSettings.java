@@ -24,15 +24,10 @@ public final class ClientSettings extends Module {
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);
     private final NumberValue blue = new NumberValue("Blue", this, 255, 0, 255, 1);
 
-    private final BoolValue outLine = new BoolValue("Arraylist Outline", this, false);
-    private final BoolValue customHotbar = new BoolValue("Custom Hotbar", this, false);
-    private final BoolValue smoothHotbar = new BoolValue("Smooth Hotbar", this, false);
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     private final BoolValue blur = new BoolValue("Blur", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
     private final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
-
-    public static boolean customHotbarEnabled;
 
     public static String theme;
 
@@ -47,8 +42,6 @@ public final class ClientSettings extends Module {
     @Override
     public void onUpdateAlways() {
         theme = mode.getMode();
-
-        customHotbarEnabled = customHotbar.isEnabled();
 
         red0 = (int) red.getValue();
         green0 = (int) green.getValue();

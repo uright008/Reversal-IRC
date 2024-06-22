@@ -1,9 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
-import java.util.Objects;
 import java.util.Random;
 
-import cn.stars.starx.StarX;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -30,16 +29,6 @@ public class RenderEntityItem extends Render<EntityItem>
         this.shadowOpaque = 0.75F;
     }
 
-    private static int getModelCount(final ItemStack stack) {
-        int i = 1;
-
-        if (stack.stackSize > 48) i = 5;
-        else if (stack.stackSize > 32) i = 4;
-        else if (stack.stackSize > 16) i = 3;
-        else if (stack.stackSize > 1) i = 2;
-        return i;
-    }
-
     private int func_177077_a(EntityItem itemIn, double p_177077_2_, double p_177077_4_, double p_177077_6_, float p_177077_8_, IBakedModel p_177077_9_)
     {
         ItemStack itemstack = itemIn.getEntityItem();
@@ -52,7 +41,7 @@ public class RenderEntityItem extends Render<EntityItem>
         else
         {
             boolean flag = p_177077_9_.isGui3d();
-            int i = this.func_177078_a(itemstack);
+            int i = this.getModelCount(itemstack);
             float f = 0.25F;
             float f1 = MathHelper.sin(((float)itemIn.getAge() + p_177077_8_) / 10.0F + itemIn.hoverStart) * 0.1F + 0.1F;
             float f2 = p_177077_9_.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GROUND).scale.y;
@@ -77,7 +66,7 @@ public class RenderEntityItem extends Render<EntityItem>
         }
     }
 
-    private int func_177078_a(ItemStack stack)
+    private int getModelCount(ItemStack stack)
     {
         int i = 1;
 
@@ -105,15 +94,9 @@ public class RenderEntityItem extends Render<EntityItem>
     private static double rotation = 0.0D;
     private static Random random = new Random();
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     */
     public void doRender(EntityItem entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        if (Objects.requireNonNull(StarX.INSTANCE.moduleManager.getModule("ItemPhysics")).isEnabled()) {
+        if (ModuleInstance.getModule("ItemPhysics").isEnabled()) {
             if (!entity.onGround) {
                 rotation *= 1.005f;
                 entity.rotationPitch += rotation;
@@ -198,7 +181,7 @@ public class RenderEntityItem extends Render<EntityItem>
             Minecraft.getMinecraft().getTextureManager().bindTexture(getEntityTexture(entity));
             Minecraft.getMinecraft().getTextureManager().getTexture(getEntityTexture(entity)).restoreLastBlurMipmap();
         } else {
-            final ItemStack itemstack = entity.getEntityItem();
+            ItemStack itemstack = entity.getEntityItem();
             this.field_177079_e.setSeed(187L);
             boolean flag = false;
 
@@ -212,17 +195,17 @@ public class RenderEntityItem extends Render<EntityItem>
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             GlStateManager.pushMatrix();
-            final IBakedModel ibakedmodel = this.itemRenderer.getItemModelMesher().getItemModel(itemstack);
-            final int i = this.func_177077_a(entity, x, y, z, partialTicks, ibakedmodel);
+            IBakedModel ibakedmodel = this.itemRenderer.getItemModelMesher().getItemModel(itemstack);
+            int i = this.func_177077_a(entity, x, y, z, partialTicks, ibakedmodel);
 
             for (int j = 0; j < i; ++j) {
                 if (ibakedmodel.isGui3d()) {
                     GlStateManager.pushMatrix();
 
                     if (j > 0) {
-                        final float f = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                        final float f1 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                        final float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        float f = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        float f1 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
                         GlStateManager.translate(f, f1, f2);
                     }
 
@@ -232,12 +215,12 @@ public class RenderEntityItem extends Render<EntityItem>
                     GlStateManager.popMatrix();
                 } else {
                     GlStateManager.pushMatrix();
-                    ibakedmodel.getItemCameraTransforms().applyTransform((ItemCameraTransforms.TransformType.GROUND));
+                    ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
                     this.itemRenderer.renderItem(itemstack, ibakedmodel);
                     GlStateManager.popMatrix();
-                    final float f3 = ibakedmodel.getItemCameraTransforms().thirdPerson.scale.x;
-                    final float f4 = ibakedmodel.getItemCameraTransforms().thirdPerson.scale.y;
-                    final float f5 = ibakedmodel.getItemCameraTransforms().thirdPerson.scale.z;
+                    float f3 = ibakedmodel.getItemCameraTransforms().ground.scale.x;
+                    float f4 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
+                    float f5 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
                     GlStateManager.translate(0.0F * f3, 0.0F * f4, 0.046875F * f5);
                 }
             }
@@ -255,9 +238,6 @@ public class RenderEntityItem extends Render<EntityItem>
         }
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(EntityItem entity)
     {
         return TextureMap.locationBlocksTexture;

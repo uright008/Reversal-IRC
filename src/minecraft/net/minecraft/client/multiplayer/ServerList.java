@@ -1,6 +1,5 @@
 package net.minecraft.client.multiplayer;
 
-import cn.stars.starx.util.StarXLogger;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
@@ -14,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 public class ServerList
 {
     private static final Logger logger = LogManager.getLogger();
-
-    /** The Minecraft instance. */
     private final Minecraft mc;
     private final List<ServerData> servers = Lists.<ServerData>newArrayList();
 
@@ -25,10 +22,6 @@ public class ServerList
         this.loadServerList();
     }
 
-    /**
-     * Loads a list of servers from servers.dat, by running ServerData.getServerDataFromNBTCompound on each NBT compound
-     * found in the "servers" tag list.
-     */
     public void loadServerList()
     {
         try
@@ -50,14 +43,10 @@ public class ServerList
         }
         catch (Exception exception)
         {
-            logger.error("Couldn't load server list", exception);
+            logger.error((String)"Couldn\'t load server list", (Throwable)exception);
         }
     }
 
-    /**
-     * Runs getNBTCompound on each ServerData instance, puts everything into a "servers" NBT list and writes it to
-     * servers.dat.
-     */
     public void saveServerList()
     {
         try
@@ -75,77 +64,41 @@ public class ServerList
         }
         catch (Exception exception)
         {
-            logger.error("Couldn't save server list", exception);
+            logger.error((String)"Couldn\'t save server list", (Throwable)exception);
         }
     }
 
-    /**
-     * Gets the ServerData instance stored for the given index in the list.
-     */
     public ServerData getServerData(int index)
     {
-        try {
-            return this.servers.get(index);
-        } catch (Exception e) {
-            StarXLogger.error(StarXLogger.mcl + "Failed to get server data.", e);
-            return null;
-        }
+        return (ServerData)this.servers.get(index);
     }
 
-    /**
-     * Removes the ServerData instance stored for the given index in the list.
-     */
     public void removeServerData(int index)
     {
-        try {
-            this.servers.remove(index);
-        } catch (Exception e) {
-            StarXLogger.error(StarXLogger.mcl + "Failed to remove server data.", e);
-        }
+        this.servers.remove(index);
     }
 
-    /**
-     * Adds the given ServerData instance to the list.
-     */
     public void addServerData(ServerData server)
     {
-        try {
-            this.servers.add(server);
-        } catch (Exception e) {
-            StarXLogger.error(StarXLogger.mcl + "Failed to add server data.", e);
-        }
+        this.servers.add(server);
     }
 
-    /**
-     * Counts the number of ServerData instances in the list.
-     */
     public int countServers()
     {
         return this.servers.size();
     }
 
-    /**
-     * Takes two list indexes, and swaps their order around.
-     */
     public void swapServers(int p_78857_1_, int p_78857_2_)
     {
-        try {
-            ServerData serverdata = this.getServerData(p_78857_1_);
-            this.servers.set(p_78857_1_, this.getServerData(p_78857_2_));
-            this.servers.set(p_78857_2_, serverdata);
-            this.saveServerList();
-        } catch (Exception e) {
-            StarXLogger.error(StarXLogger.mcl + "Failed to swap servers.", e);
-        }
+        ServerData serverdata = this.getServerData(p_78857_1_);
+        this.servers.set(p_78857_1_, this.getServerData(p_78857_2_));
+        this.servers.set(p_78857_2_, serverdata);
+        this.saveServerList();
     }
 
     public void func_147413_a(int index, ServerData server)
     {
-        try {
-            this.servers.set(index, server);
-        } catch (Exception e) {
-            StarXLogger.error(StarXLogger.mcl + "Failed to set server data.", e);
-        }
+        this.servers.set(index, server);
     }
 
     public static void func_147414_b(ServerData p_147414_0_)

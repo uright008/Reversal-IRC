@@ -70,9 +70,6 @@ public class StatisticsFile extends StatFileWriter
         }
     }
 
-    /**
-     * Triggers the logging of an achievement and attempts to announce to server
-     */
     public void unlockAchievement(EntityPlayer playerIn, StatBase statIn, int p_150873_3_)
     {
         int i = statIn.isAchievement() ? this.readStat(statIn) : 0;
@@ -85,7 +82,7 @@ public class StatisticsFile extends StatFileWriter
 
             if (this.mcServer.isAnnouncingPlayerAchievements())
             {
-                this.mcServer.getConfigurationManager().sendChatMsg(new ChatComponentTranslation("chat.type.achievement", new Object[] {playerIn.getDisplayName(), statIn.func_150955_j()}));
+                this.mcServer.getConfigurationManager().sendChatMsg(new ChatComponentTranslation("chat.type.achievement", new Object[] {playerIn.getDisplayName(), statIn.createChatComponent()}));
             }
         }
 
@@ -95,7 +92,7 @@ public class StatisticsFile extends StatFileWriter
 
             if (this.mcServer.isAnnouncingPlayerAchievements())
             {
-                this.mcServer.getConfigurationManager().sendChatMsg(new ChatComponentTranslation("chat.type.achievement.taken", new Object[] {playerIn.getDisplayName(), statIn.func_150955_j()}));
+                this.mcServer.getConfigurationManager().sendChatMsg(new ChatComponentTranslation("chat.type.achievement.taken", new Object[] {playerIn.getDisplayName(), statIn.createChatComponent()}));
             }
         }
     }

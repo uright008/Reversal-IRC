@@ -42,10 +42,6 @@ public class BlockRedstoneWire extends Block
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
     }
 
-    /**
-     * Get the actual Block state of this Block at the given position. This applies properties not visible in the
-     * metadata, such as fence connections.
-     */
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
         state = state.withProperty(WEST, this.getAttachPosition(worldIn, pos, EnumFacing.WEST));
@@ -76,9 +72,6 @@ public class BlockRedstoneWire extends Block
         return null;
     }
 
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks for render
-     */
     public boolean isOpaqueCube()
     {
         return false;
@@ -131,9 +124,8 @@ public class BlockRedstoneWire extends Block
 
         int l = 0;
 
-        for (Object a : EnumFacing.Plane.HORIZONTAL)
+        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
         {
-        	EnumFacing enumfacing = (EnumFacing) a;
             BlockPos blockpos = pos1.offset(enumfacing);
             boolean flag = blockpos.getX() != pos2.getX() || blockpos.getZ() != pos2.getZ();
 
@@ -193,10 +185,6 @@ public class BlockRedstoneWire extends Block
         return state;
     }
 
-    /**
-     * Calls World.notifyNeighborsOfStateChange() for all neighboring blocks, but only if the given block is a redstone
-     * wire.
-     */
     private void notifyWireNeighborsOfStateChange(World worldIn, BlockPos pos)
     {
         if (worldIn.getBlockState(pos).getBlock() == this)
@@ -216,21 +204,18 @@ public class BlockRedstoneWire extends Block
         {
             this.updateSurroundingRedstone(worldIn, pos, state);
 
-            for (Object a : EnumFacing.Plane.VERTICAL)
+            for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
             {
-            	EnumFacing enumfacing = (EnumFacing) a;
                 worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this);
             }
 
-            for (Object a : EnumFacing.Plane.HORIZONTAL)
+            for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
             {
-            	EnumFacing enumfacing1 = (EnumFacing) a;
                 this.notifyWireNeighborsOfStateChange(worldIn, pos.offset(enumfacing1));
             }
 
-            for (Object a : EnumFacing.Plane.HORIZONTAL)
+            for (EnumFacing enumfacing2 : EnumFacing.Plane.HORIZONTAL)
             {
-            	EnumFacing enumfacing2 = (EnumFacing) a;
                 BlockPos blockpos = pos.offset(enumfacing2);
 
                 if (worldIn.getBlockState(blockpos).getBlock().isNormalCube())
@@ -258,15 +243,13 @@ public class BlockRedstoneWire extends Block
 
             this.updateSurroundingRedstone(worldIn, pos, state);
 
-            for (Object a : EnumFacing.Plane.HORIZONTAL)
+            for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
             {
-            	EnumFacing enumfacing1 = (EnumFacing) a;
                 this.notifyWireNeighborsOfStateChange(worldIn, pos.offset(enumfacing1));
             }
 
-            for (Object a : EnumFacing.Plane.HORIZONTAL)
+            for (EnumFacing enumfacing2 : EnumFacing.Plane.HORIZONTAL)
             {
-            	EnumFacing enumfacing2 = (EnumFacing) a;
                 BlockPos blockpos = pos.offset(enumfacing2);
 
                 if (worldIn.getBlockState(blockpos).getBlock().isNormalCube())
@@ -294,9 +277,6 @@ public class BlockRedstoneWire extends Block
         }
     }
 
-    /**
-     * Called when a neighboring block changes.
-     */
     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
     {
         if (!worldIn.isRemote)
@@ -313,9 +293,6 @@ public class BlockRedstoneWire extends Block
         }
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Items.redstone;
@@ -348,9 +325,8 @@ public class BlockRedstoneWire extends Block
             {
                 EnumSet<EnumFacing> enumset = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
 
-                for (Object a : EnumFacing.Plane.HORIZONTAL)
+                for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
                 {
-                	EnumFacing enumfacing = (EnumFacing) a;
                     if (this.func_176339_d(worldIn, pos, enumfacing))
                     {
                         enumset.add(enumfacing);
@@ -412,9 +388,6 @@ public class BlockRedstoneWire extends Block
         }
     }
 
-    /**
-     * Can this block provide power. Only wire currently seems to have this change based on its state.
-     */
     public boolean canProvidePower()
     {
         return this.canProvidePower;
@@ -476,17 +449,11 @@ public class BlockRedstoneWire extends Block
         return EnumWorldBlockLayer.CUTOUT;
     }
 
-    /**
-     * Convert the given metadata into a BlockState for this Block
-     */
     public IBlockState getStateFromMeta(int meta)
     {
         return this.getDefaultState().withProperty(POWER, Integer.valueOf(meta));
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
     public int getMetaFromState(IBlockState state)
     {
         return ((Integer)state.getValue(POWER)).intValue();

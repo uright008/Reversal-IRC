@@ -1,14 +1,12 @@
 package net.minecraft.world;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GameRules
 {
-    private TreeMap theGameRules = new TreeMap();
-    private static final String __OBFID = "CL_00000136";
+    private TreeMap<String, GameRules.Value> theGameRules = new TreeMap();
 
     public GameRules()
     {
@@ -48,18 +46,12 @@ public class GameRules
         }
     }
 
-    /**
-     * Gets the string Game Rule value.
-     */
     public String getString(String name)
     {
         GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(name);
         return gamerules$value != null ? gamerules$value.getString() : "";
     }
 
-    /**
-     * Gets the boolean Game Rule value.
-     */
     public boolean getBoolean(String name)
     {
         GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(name);
@@ -72,16 +64,12 @@ public class GameRules
         return gamerules$value != null ? gamerules$value.getInt() : 0;
     }
 
-    /**
-     * Return the defined game rules as NBT.
-     */
     public NBTTagCompound writeToNBT()
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
 
-        for (Object a : this.theGameRules.keySet())
+        for (String s : this.theGameRules.keySet())
         {
-        	String s = (String)a;
             GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(s);
             nbttagcompound.setString(s, gamerules$value.getString());
         }
@@ -89,9 +77,6 @@ public class GameRules
         return nbttagcompound;
     }
 
-    /**
-     * Set defined game rules from NBT.
-     */
     public void readFromNBT(NBTTagCompound nbt)
     {
         for (String s : nbt.getKeySet())
@@ -101,18 +86,12 @@ public class GameRules
         }
     }
 
-    /**
-     * Return the defined game rules.
-     */
     public String[] getRules()
     {
-        Set set = this.theGameRules.keySet();
+        Set<String> set = this.theGameRules.keySet();
         return (String[])((String[])set.toArray(new String[set.size()]));
     }
 
-    /**
-     * Return whether the specified game rule is defined.
-     */
     public boolean hasRule(String name)
     {
         return this.theGameRules.containsKey(name);
@@ -131,7 +110,6 @@ public class GameRules
         private int valueInteger;
         private double valueDouble;
         private final GameRules.ValueType type;
-        private static final String __OBFID = "CL_00000137";
 
         public Value(String value, GameRules.ValueType type)
         {
@@ -141,7 +119,6 @@ public class GameRules
 
         public void setValue(String value)
         {
-            if (Objects.equals(this.valueString, value)) return;
             this.valueString = value;
 
             if (value != null)
@@ -204,15 +181,8 @@ public class GameRules
 
     public static enum ValueType
     {
-        ANY_VALUE("ANY_VALUE", 0),
-        BOOLEAN_VALUE("BOOLEAN_VALUE", 1),
-        NUMERICAL_VALUE("NUMERICAL_VALUE", 2);
-
-        private static final GameRules.ValueType[] $VALUES = new GameRules.ValueType[]{ANY_VALUE, BOOLEAN_VALUE, NUMERICAL_VALUE};
-        private static final String __OBFID = "CL_00002151";
-
-        private ValueType(String p_i20_3_, int p_i20_4_)
-        {
-        }
+        ANY_VALUE,
+        BOOLEAN_VALUE,
+        NUMERICAL_VALUE;
     }
 }

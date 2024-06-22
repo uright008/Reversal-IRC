@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.renderer.entity.layers.LayerDeadmau5Head;
 import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -25,7 +24,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> implements PlayerEntityModelAccessor
 {
-    /** this field is used to indicate the 3-pixel wide arms */
     private boolean smallArms;
     private HeadLayerFeatureRenderer headLayer;
     private BodyLayerFeatureRenderer bodyLayer;
@@ -55,27 +53,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> imp
         return (ModelPlayer)super.getMainModel();
     }
 
-    @Override
-    public boolean hasThinArms() {
-        return this.smallArms;
-    }
-
-    @Override
-    public HeadLayerFeatureRenderer getHeadLayer() {
-        return this.headLayer;
-    }
-
-    @Override
-    public BodyLayerFeatureRenderer getBodyLayer() {
-        return this.bodyLayer;
-    }
-
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     */
     public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         if (!entity.isUser() || this.renderManager.livingPlayer == entity)
@@ -141,9 +118,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> imp
         }
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(AbstractClientPlayer entity)
     {
         return entity.getLocationSkin();
@@ -154,10 +128,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> imp
         GlStateManager.translate(0.0F, 0.1875F, 0.0F);
     }
 
-    /**
-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
-     * entityLiving, partialTickTime
-     */
     protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime)
     {
         float f = 0.9375F;
@@ -206,9 +176,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> imp
         modelplayer.renderLeftArm();
     }
 
-    /**
-     * Sets a simple glTranslate on a LivingEntity.
-     */
     protected void renderLivingAt(AbstractClientPlayer entityLivingBaseIn, double x, double y, double z)
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isPlayerSleeping())
@@ -233,5 +200,20 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> imp
         {
             super.rotateCorpse(bat, p_77043_2_, p_77043_3_, partialTicks);
         }
+    }
+
+    @Override
+    public boolean hasThinArms() {
+        return this.smallArms;
+    }
+
+    @Override
+    public HeadLayerFeatureRenderer getHeadLayer() {
+        return this.headLayer;
+    }
+
+    @Override
+    public BodyLayerFeatureRenderer getBodyLayer() {
+        return this.bodyLayer;
     }
 }

@@ -1,15 +1,10 @@
 package net.minecraft.client.gui;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.FontManager;
-import cn.stars.starx.font.TTFFontRenderer;
-import cn.stars.starx.ui.gui.GuiMainMenuNew;
+import cn.stars.starx.ui.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 
@@ -24,69 +19,45 @@ public class GuiDisconnected extends GuiScreen
     public GuiDisconnected(GuiScreen screen, String reasonLocalizationKey, IChatComponent chatComp)
     {
         this.parentScreen = screen;
-        this.reason = I18n.format(reasonLocalizationKey, new Object[0]);
+        this.reason = I18n.format(reasonLocalizationKey);
         this.message = chatComp;
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
-     */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui()
     {
         this.buttonList.clear();
         this.multilineMessage = this.fontRendererObj.listFormattedStringToWidth(this.message.getFormattedText(), this.width - 50);
         this.field_175353_i = this.multilineMessage.size() * this.fontRendererObj.FONT_HEIGHT;
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT, I18n.format("gui.toMenu", new Object[0])));
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT + 25, I18n.format("Reconnect", new Object[0])));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT, I18n.format("gui.toMenu")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT + 25, "Reconnect"));
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
     protected void actionPerformed(GuiButton button) throws IOException
     {
-        if (button.id == 0)
-        {
-            this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenuNew()));
+        if (button.id == 0) {
+            this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
         }
-
         if (button.id == 1) {
-            this.mc.displayGuiScreen(new GuiConnecting(this, mc, mc.getCurrentServerData()));
+            this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new GuiMainMenu()), mc, mc.getCurrentServerData()));
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, this.reason, this.width / 2, this.height / 2 - this.field_175353_i / 2 - this.fontRendererObj.FONT_HEIGHT * 2, 11184810);
         int i = this.height / 2 - this.field_175353_i / 2;
 
-        if (this.multilineMessage != null)
-        {
-            for (String s : this.multilineMessage)
-            {
+        if (this.multilineMessage != null) {
+            for (String s : this.multilineMessage) {
                 this.drawCenteredString(this.fontRendererObj, s, this.width / 2, i, 16777215);
                 i += this.fontRendererObj.FONT_HEIGHT;
             }
         }
-     /*   ScaledResolution sr = new ScaledResolution(mc);
-        TTFFontRenderer fr = CustomFont.FONT_MANAGER.getFont("Regular 18");
-        final String message2 = "StarX Admin Notice: This is not a hack client! Just hack visual! Visit github.com/StarsHackerMC/StarX to learn more.";
-        final String message3 = "(This client is fully open-source! if you have any questions,view our code first.)";
-        fr.drawString(message3, sr.getScaledWidth() / 2 - CustomFont.getWidth(message3) / 2, sr.getScaledHeight() - 12.5f, new Color(255, 0,0, 180).hashCode());
-        fr.drawString(message2, sr.getScaledWidth() / 2 - CustomFont.getWidth(message2) / 2, sr.getScaledHeight() - 25, new Color(255, 0,0, 180).hashCode()); */
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

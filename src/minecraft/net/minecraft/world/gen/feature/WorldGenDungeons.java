@@ -112,9 +112,8 @@ public class WorldGenDungeons extends WorldGenerator
                     {
                         int j3 = 0;
 
-                        for (Object a : EnumFacing.Plane.HORIZONTAL)
+                        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
                         {
-                        	EnumFacing enumfacing = (EnumFacing)a;
                             if (worldIn.getBlockState(blockpos2.offset(enumfacing)).getBlock().getMaterial().isSolid())
                             {
                                 ++j3;
@@ -158,9 +157,6 @@ public class WorldGenDungeons extends WorldGenerator
         }
     }
 
-    /**
-     * Randomly decides which spawner to use in a dungeon
-     */
     private String pickMobSpawner(Random p_76543_1_)
     {
         return SPAWNERTYPES[p_76543_1_.nextInt(SPAWNERTYPES.length)];

@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer.entity;
 
-import cn.stars.starx.GameInstance;
 import cn.stars.starx.module.impl.render.TNTTimer;
 import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
@@ -20,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-public class RenderTNTPrimed extends Render<EntityTNTPrimed> implements GameInstance
+public class RenderTNTPrimed extends Render<EntityTNTPrimed>
 {
     private static DecimalFormat timeFormatter = new DecimalFormat("0.00");
     public RenderTNTPrimed(RenderManager renderManagerIn)
@@ -29,12 +28,6 @@ public class RenderTNTPrimed extends Render<EntityTNTPrimed> implements GameInst
         this.shadowSize = 0.5F;
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     */
     public void doRender(EntityTNTPrimed entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
@@ -76,7 +69,7 @@ public class RenderTNTPrimed extends Render<EntityTNTPrimed> implements GameInst
         }
 
         GlStateManager.popMatrix();
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+
         if (ModuleInstance.getModule(TNTTimer.class).isEnabled()) {
             int fuseTimer = entity.fuse;
 
@@ -132,11 +125,9 @@ public class RenderTNTPrimed extends Render<EntityTNTPrimed> implements GameInst
 
             }
         }
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
     protected ResourceLocation getEntityTexture(EntityTNTPrimed entity)
     {
         return TextureMap.locationBlocksTexture;

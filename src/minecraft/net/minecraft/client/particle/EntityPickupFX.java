@@ -8,7 +8,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.src.Config;
 import net.minecraft.world.World;
-import shadersmod.client.Shaders;
+import net.optifine.shaders.Program;
+import net.optifine.shaders.Shaders;
 
 public class EntityPickupFX extends EntityFX
 {
@@ -18,7 +19,6 @@ public class EntityPickupFX extends EntityFX
     private int maxAge;
     private float field_174841_aA;
     private RenderManager field_174842_aB = Minecraft.getMinecraft().getRenderManager();
-    private static final String __OBFID = "CL_00000930";
 
     public EntityPickupFX(World worldIn, Entity p_i1233_2_, Entity p_i1233_3_, float p_i1233_4_)
     {
@@ -29,16 +29,13 @@ public class EntityPickupFX extends EntityFX
         this.field_174841_aA = p_i1233_4_;
     }
 
-    /**
-     * Renders the particle
-     */
-    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
+    public void renderParticle(WorldRenderer worldRendererIn, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-        int i = 0;
+        Program program = null;
 
         if (Config.isShaders())
         {
-            i = Shaders.activeProgram;
+            program = Shaders.activeProgram;
             Shaders.nextEntity(this.field_174840_a);
         }
 
@@ -53,10 +50,10 @@ public class EntityPickupFX extends EntityFX
         double d6 = d0 + (d3 - d0) * (double)f;
         double d7 = d1 + (d4 - d1) * (double)f;
         double d8 = d2 + (d5 - d2) * (double)f;
-        int j = this.getBrightnessForRender(partialTicks);
-        int k = j % 65536;
-        int l = j / 65536;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)k / 1.0F, (float)l / 1.0F);
+        int i = this.getBrightnessForRender(partialTicks);
+        int j = i % 65536;
+        int k = i / 65536;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         d6 = d6 - interpPosX;
         d7 = d7 - interpPosY;
@@ -65,13 +62,11 @@ public class EntityPickupFX extends EntityFX
 
         if (Config.isShaders())
         {
-            Shaders.useProgram(i);
+            Shaders.setEntityId((Entity)null);
+            Shaders.useProgram(program);
         }
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         ++this.age;

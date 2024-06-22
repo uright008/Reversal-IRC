@@ -12,9 +12,7 @@ import cn.stars.starx.module.impl.combat.NoClickDelay;
 import cn.stars.starx.module.impl.hud.*;
 import cn.stars.starx.module.impl.misc.ClientSpoofer;
 import cn.stars.starx.module.impl.misc.NoAchievements;
-import cn.stars.starx.module.impl.misc.Plugins;
 import cn.stars.starx.module.impl.movement.Sprint;
-import cn.stars.starx.module.impl.player.AntiDisconnectEx;
 import cn.stars.starx.module.impl.player.HealthWarn;
 import cn.stars.starx.module.impl.render.*;
 import cn.stars.starx.module.impl.world.LightningTracker;
@@ -58,10 +56,10 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.0.0";
-    public static final String MINECRAFT_VERSION = "1.8.8";
+    public static final String VERSION = "v1.1.2";
+    public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
-    public static final Branch BRANCH = Branch.PRODUCTION;
+    public static final Branch BRANCH = Branch.DEVELOPMENT;
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
@@ -75,7 +73,7 @@ public enum StarX implements GameInstance {
             "It's been a long day without you my friend", "回来吧牢端"};
 
     public static final String[] wittyTitle = new String[]
-            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了,心理防线崩溃了,我要跳楼了", "How high is your priority?"};
+            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?"};
 
 
     // Init
@@ -121,7 +119,7 @@ public enum StarX implements GameInstance {
             StarXLogger.info("Client loaded successfully.");
             StarXLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
-            StarXLogger.error("An error has occurred while loading StarX." + e);
+            StarXLogger.error("An error has occurred while loading StarX: " + e);
         }
     }
     public void stop() {
@@ -351,7 +349,7 @@ public enum StarX implements GameInstance {
 
         }
         catch (final Exception e) {
-            StarXLogger.error("An error has occurred while loading StarX." + e);
+            StarXLogger.error("An error has occurred while loading StarX: " + e);
         }
 
         try {
@@ -369,7 +367,7 @@ public enum StarX implements GameInstance {
                 FileUtil.createDirectory("Script" + File.separator);
             }
         } catch (final Exception e) {
-            StarXLogger.error("An error has occurred while loading StarX." + e);
+            StarXLogger.error("An error has occurred while loading StarX: " + e);
         }
     }
 
@@ -407,22 +405,18 @@ public enum StarX implements GameInstance {
             // Misc
             new ClientSpoofer(),
             new NoAchievements(),
-            new Plugins(),
             // World
             new LightningTracker(),
             // Player
             new HealthWarn(),
-            new AntiDisconnectEx(),
             // Render
             new Animations(),
             new BlockOverlay(),
             new Breadcrumbs(),
-            new ChunkAnimator(),
             new ClickGui(),
             new ChinaHat(),
             new DamageParticle(),
             new Fullbright(),
-            new GuiAnimation(),
             new HitEffect(),
             new ItemPhysics(),
             new MotionBlur(),

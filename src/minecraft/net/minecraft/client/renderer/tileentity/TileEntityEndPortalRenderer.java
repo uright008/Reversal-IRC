@@ -10,18 +10,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.src.Config;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.ResourceLocation;
-import shadersmod.client.ShadersRender;
+import net.optifine.shaders.ShadersRender;
 
-public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer
+public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer<TileEntityEndPortal>
 {
     private static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation("textures/environment/end_sky.png");
     private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation("textures/entity/end_portal.png");
     private static final Random field_147527_e = new Random(31100L);
     FloatBuffer field_147528_b = GLAllocation.createDirectFloatBuffer(16);
-    private static final String __OBFID = "CL_00002467";
 
     public void renderTileEntityAt(TileEntityEndPortal te, double x, double y, double z, float partialTicks, int destroyStage)
     {
@@ -67,16 +65,16 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer
                 float f8 = f7 + (float)ActiveRenderInfo.getPosition().yCoord;
                 float f9 = f7 + f4 + (float)ActiveRenderInfo.getPosition().yCoord;
                 float f10 = f8 / f9;
-                f10 = f10 + (float)(y + (double)f3);
+                f10 = (float)(y + (double)f3) + f10;
                 GlStateManager.translate(f, f10, f2);
                 GlStateManager.texGen(GlStateManager.TexGen.S, 9217);
                 GlStateManager.texGen(GlStateManager.TexGen.T, 9217);
                 GlStateManager.texGen(GlStateManager.TexGen.R, 9217);
                 GlStateManager.texGen(GlStateManager.TexGen.Q, 9216);
-                GlStateManager.func_179105_a(GlStateManager.TexGen.S, 9473, this.func_147525_a(1.0F, 0.0F, 0.0F, 0.0F));
-                GlStateManager.func_179105_a(GlStateManager.TexGen.T, 9473, this.func_147525_a(0.0F, 0.0F, 1.0F, 0.0F));
-                GlStateManager.func_179105_a(GlStateManager.TexGen.R, 9473, this.func_147525_a(0.0F, 0.0F, 0.0F, 1.0F));
-                GlStateManager.func_179105_a(GlStateManager.TexGen.Q, 9474, this.func_147525_a(0.0F, 1.0F, 0.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.S, 9473, this.func_147525_a(1.0F, 0.0F, 0.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.T, 9473, this.func_147525_a(0.0F, 0.0F, 1.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.R, 9473, this.func_147525_a(0.0F, 0.0F, 0.0F, 1.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.Q, 9474, this.func_147525_a(0.0F, 1.0F, 0.0F, 0.0F));
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.S);
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.T);
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.R);
@@ -130,10 +128,5 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer
         this.field_147528_b.put(p_147525_1_).put(p_147525_2_).put(p_147525_3_).put(p_147525_4_);
         this.field_147528_b.flip();
         return this.field_147528_b;
-    }
-
-    public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage)
-    {
-        this.renderTileEntityAt((TileEntityEndPortal)te, x, y, z, partialTicks, destroyStage);
     }
 }

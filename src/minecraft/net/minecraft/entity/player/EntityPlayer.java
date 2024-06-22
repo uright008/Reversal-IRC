@@ -4,9 +4,8 @@ import cn.stars.addons.skinlayers3d.CustomizableModelPart;
 import cn.stars.addons.skinlayers3d.PlayerSettings;
 import cn.stars.addons.waveycapes.CapeHolder;
 import cn.stars.addons.waveycapes.StickSimulation;
-import cn.stars.starx.StarX;
+import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.impl.AttackEvent;
-import cn.stars.starx.module.Module;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
@@ -82,38 +81,20 @@ import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 
-@SuppressWarnings("all")
-public abstract class EntityPlayer extends EntityLivingBase implements CapeHolder,PlayerSettings
+@SuppressWarnings("incomplete-switch")
+public abstract class EntityPlayer extends EntityLivingBase implements CapeHolder, PlayerSettings
 {
     private CustomizableModelPart headLayer;
     private CustomizableModelPart[] skinLayer;
     public final StickSimulation stickSimulation;
-    /** Inventory of the player */
     public InventoryPlayer inventory = new InventoryPlayer(this);
     private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-
-    /**
-     * The Container for the player's inventory (which opens when they press E)
-     */
     public Container inventoryContainer;
-
-    /** The Container the player has open. */
     public Container openContainer;
-
-    /** The food object of the player, the general hunger logic. */
     protected FoodStats foodStats = new FoodStats();
-
-    /**
-     * Used to tell if the player pressed jump twice. If this is at 0 and it's pressed (And they are allowed to fly, as
-     * defined in the player's movementInput) it sets this to 7. If it's pressed and it's greater than 0 enable fly.
-     */
     protected int flyToggleTimer;
     public float prevCameraYaw;
     public float cameraYaw;
-
-    /**
-     * Used by EntityPlayer to prevent too many xp orbs from getting absorbed at once.
-     */
     public int xpCooldown;
     public double prevChasingPosX;
     public double prevChasingPosY;
@@ -121,70 +102,27 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     public double chasingPosX;
     public double chasingPosY;
     public double chasingPosZ;
-
-    /** Boolean value indicating weather a player is sleeping or not */
     protected boolean sleeping;
-
-    /** the current location of the player */
     public BlockPos playerLocation;
     private int sleepTimer;
     public float renderOffsetX;
     public float renderOffsetY;
     public float renderOffsetZ;
-
-    /** holds the spawn chunk of the player */
     private BlockPos spawnChunk;
-
-    /**
-     * Whether this player's spawn point is forced, preventing execution of bed checks.
-     */
     private boolean spawnForced;
-
-    /** Holds the coordinate of the player when enter a minecraft to ride. */
     private BlockPos startMinecartRidingCoordinate;
-
-    /** The player's capabilities. (See class PlayerCapabilities) */
     public PlayerCapabilities capabilities = new PlayerCapabilities();
-
-    /** The current experience level the player is on. */
     public int experienceLevel;
-
-    /**
-     * The total amount of experience the player has. This also includes the amount of experience within their
-     * Experience Bar.
-     */
     public int experienceTotal;
-
-    /**
-     * The current amount of experience the player has within their Experience Bar.
-     */
     public float experience;
     private int xpSeed;
-
-    /**
-     * This is the item that is in use when the player is holding down the useItemButton (e.g., bow, food, sword)
-     */
     private ItemStack itemInUse;
-
-    /**
-     * This field starts off equal to getMaxItemUseDuration and is decremented on each tick
-     */
     private int itemInUseCount;
     protected float speedOnGround = 0.1F;
     protected float speedInAir = 0.02F;
     private int lastXPSound;
-
-    /** The player's unique game profile */
     private final GameProfile gameProfile;
     private boolean hasReducedDebug = false;
-
-    @Override
-    public StickSimulation getSimulation() {
-        return this.stickSimulation;
-    }
-    /**
-     * An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different
-     */
     public EntityFishHook fishEntity;
 
     public EntityPlayer(World worldIn, GameProfile gameProfileIn)
@@ -197,8 +135,29 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.openContainer = this.inventoryContainer;
         BlockPos blockpos = worldIn.getSpawnPoint();
         this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
-        this.field_70741_aB = 180.0F;
+        this.unused180 = 180.0F;
         this.fireResistance = 20;
+    }
+
+    @Override
+    public StickSimulation getSimulation() {
+        return this.stickSimulation;
+    }
+
+    public CustomizableModelPart[] getSkinLayers() {
+        return this.skinLayer;
+    }
+
+    public void setupSkinLayers(CustomizableModelPart[] box) {
+        this.skinLayer = box;
+    }
+
+    public CustomizableModelPart getHeadLayers() {
+        return this.headLayer;
+    }
+
+    public void setupHeadLayers(CustomizableModelPart box) {
+        this.headLayer = box;
     }
 
     protected void applyEntityAttributes()
@@ -217,33 +176,21 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.dataWatcher.addObject(10, Byte.valueOf((byte)0));
     }
 
-    /**
-     * returns the ItemStack containing the itemInUse
-     */
     public ItemStack getItemInUse()
     {
         return this.itemInUse;
     }
 
-    /**
-     * Returns the item in use count
-     */
     public int getItemInUseCount()
     {
         return this.itemInUseCount;
     }
 
-    /**
-     * Checks if the entity is currently using an item (e.g., bow, food, sword) by holding down the useItemButton
-     */
     public boolean isUsingItem()
     {
         return this.itemInUse != null;
     }
 
-    /**
-     * gets the duration for how long the current itemInUse has been in use
-     */
     public int getItemInUseDuration()
     {
         return this.isUsingItem() ? this.itemInUse.getMaxItemUseDuration() - this.itemInUseCount : 0;
@@ -275,9 +222,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.isUsingItem() && this.itemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.BLOCK;
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         this.noClip = this.isSpectator();
@@ -426,26 +370,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-
-    public CustomizableModelPart[] getSkinLayers() {
-        return this.skinLayer;
-    }
-
-    public void setupSkinLayers(CustomizableModelPart[] box) {
-        this.skinLayer = box;
-    }
-
-    public CustomizableModelPart getHeadLayers() {
-        return this.headLayer;
-    }
-
-    public void setupHeadLayers(CustomizableModelPart box) {
-        this.headLayer = box;
-    }
-
-    /**
-     * Return the amount of time this entity should stay in a portal before being transported.
-     */
     public int getMaxInPortalTime()
     {
         return this.capabilities.disableDamage ? 0 : 80;
@@ -461,9 +385,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return "game.player.swim.splash";
     }
 
-    /**
-     * Return the amount of cooldown before this entity can use a portal again.
-     */
     public int getPortalCooldown()
     {
         return 10;
@@ -474,9 +395,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.worldObj.playSoundToNearExcept(this, name, volume, pitch);
     }
 
-    /**
-     * Plays sounds and makes particles for item in use state
-     */
     protected void updateItemUse(ItemStack itemStackIn, int p_71010_2_)
     {
         if (itemStackIn.getItemUseAction() == EnumAction.DRINK)
@@ -511,9 +429,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Used for when item use count runs out, ie: eating completed
-     */
     protected void onItemUseFinish()
     {
         if (this.itemInUse != null)
@@ -556,25 +471,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Dead and sleeping entities cannot move
-     */
     protected boolean isMovementBlocked()
     {
         return this.getHealth() <= 0.0F || this.isPlayerSleeping();
     }
 
-    /**
-     * set current crafting inventory back to the 2x2 square
-     */
     protected void closeScreen()
     {
         this.openContainer = this.inventoryContainer;
     }
 
-    /**
-     * Handles updating while being ridden by an entity
-     */
     public void updateRidden()
     {
         if (!this.worldObj.isRemote && this.isSneaking())
@@ -603,10 +509,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned
-     * (only actually used on players though its also on Entity)
-     */
     public void preparePlayerToSpawn()
     {
         this.setSize(0.6F, 1.8F);
@@ -622,10 +524,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.rotationYawHead = this.rotationYaw;
     }
 
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
     public void onLivingUpdate()
     {
         if (this.flyToggleTimer > 0)
@@ -722,26 +620,17 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.dataWatcher.getWatchableObjectInt(18);
     }
 
-    /**
-     * Set player's score
-     */
     public void setScore(int p_85040_1_)
     {
         this.dataWatcher.updateObject(18, Integer.valueOf(p_85040_1_));
     }
 
-    /**
-     * Add to player's score
-     */
     public void addScore(int p_85039_1_)
     {
         int i = this.getScore();
         this.dataWatcher.updateObject(18, Integer.valueOf(i + p_85039_1_));
     }
 
-    /**
-     * Called when the mob's health reaches 0.
-     */
     public void onDeath(DamageSource cause)
     {
         super.onDeath(cause);
@@ -773,26 +662,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.func_175145_a(StatList.timeSinceDeathStat);
     }
 
-    /**
-     * Returns the sound this mob makes when it is hurt.
-     */
     protected String getHurtSound()
     {
         return "game.player.hurt";
     }
 
-    /**
-     * Returns the sound this mob makes on death.
-     */
     protected String getDeathSound()
     {
         return "game.player.die";
     }
 
-    /**
-     * Adds a value to the player score. Currently not actually used and the entity passed in does nothing. Args:
-     * entity, scoreToAdd
-     */
     public void addToPlayerScore(Entity entityIn, int amount)
     {
         this.addScore(amount);
@@ -849,17 +728,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return Lists.<ScoreObjective>newArrayList();
     }
 
-    /**
-     * Called when player presses the drop item key
-     */
     public EntityItem dropOneItem(boolean dropAll)
     {
         return this.dropItem(this.inventory.decrStackSize(this.inventory.currentItem, dropAll && this.inventory.getCurrentItem() != null ? this.inventory.getCurrentItem().stackSize : 1), false, true);
     }
 
-    /**
-     * Args: itemstack, flag
-     */
     public EntityItem dropPlayerItemWithRandomChoice(ItemStack itemStackIn, boolean unused)
     {
         return this.dropItem(itemStackIn, false, false);
@@ -918,17 +791,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Joins the passed in entity item with the world. Args: entityItem
-     */
     protected void joinEntityItemWithWorld(EntityItem itemIn)
     {
         this.worldObj.spawnEntityInWorld(itemIn);
     }
 
-    /**
-     * Block hardness will be further counted in net/minecraft/block/Block.getPlayerRelativeBlockHardness
-     */
     public float getToolDigEfficiency(Block p_180471_1_)
     {
         float f = this.inventory.getStrVsBlock(p_180471_1_);
@@ -988,17 +855,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return f;
     }
 
-    /**
-     * Checks if the player has the ability to harvest a block (checks current inventory item for a tool if necessary)
-     */
     public boolean canHarvestBlock(Block blockToHarvest)
     {
         return this.inventory.canHeldItemHarvest(blockToHarvest);
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
     public void readEntityFromNBT(NBTTagCompound tagCompund)
     {
         super.readEntityFromNBT(tagCompund);
@@ -1042,9 +903,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
     public void writeEntityToNBT(NBTTagCompound tagCompound)
     {
         super.writeEntityToNBT(tagCompound);
@@ -1077,9 +935,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (this.isEntityInvulnerable(source))
@@ -1154,18 +1009,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.inventory.damageArmor(p_70675_1_);
     }
 
-    /**
-     * Returns the current armor value as determined by a call to InventoryPlayer.getTotalArmorValue
-     */
     public int getTotalArmorValue()
     {
         return this.inventory.getTotalArmorValue();
     }
 
-    /**
-     * When searching for vulnerable players, if a player is invisible, the return value of this is the chance of seeing
-     * them anyway.
-     */
     public float getArmorVisibility()
     {
         int i = 0;
@@ -1181,10 +1029,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return (float)i / (float)this.inventory.armorInventory.length;
     }
 
-    /**
-     * Deals damage to the entity. If its a EntityPlayer then will take damage from the armor first and then health
-     * second with the reduced value. Args: damageAmount
-     */
     protected void damageEntity(DamageSource damageSrc, float damageAmount)
     {
         if (!this.isEntityInvulnerable(damageSrc))
@@ -1227,9 +1071,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     {
     }
 
-    /**
-     * Displays the GUI for interacting with a chest inventory. Args: chestInventory
-     */
     public void displayGUIChest(IInventory chestInventory)
     {
     }
@@ -1242,20 +1083,17 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     {
     }
 
-    /**
-     * Displays the GUI for interacting with a book.
-     */
     public void displayGUIBook(ItemStack bookStack)
     {
     }
 
-    public boolean interactWith(Entity p_70998_1_)
+    public boolean interactWith(Entity targetEntity)
     {
         if (this.isSpectator())
         {
-            if (p_70998_1_ instanceof IInventory)
+            if (targetEntity instanceof IInventory)
             {
-                this.displayGUIChest((IInventory)p_70998_1_);
+                this.displayGUIChest((IInventory)targetEntity);
             }
 
             return false;
@@ -1265,16 +1103,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
             ItemStack itemstack = this.getCurrentEquippedItem();
             ItemStack itemstack1 = itemstack != null ? itemstack.copy() : null;
 
-            if (!p_70998_1_.interactFirst(this))
+            if (!targetEntity.interactFirst(this))
             {
-                if (itemstack != null && p_70998_1_ instanceof EntityLivingBase)
+                if (itemstack != null && targetEntity instanceof EntityLivingBase)
                 {
                     if (this.capabilities.isCreativeMode)
                     {
                         itemstack = itemstack1;
                     }
 
-                    if (itemstack.interactWithEntity(this, (EntityLivingBase)p_70998_1_))
+                    if (itemstack.interactWithEntity(this, (EntityLivingBase)targetEntity))
                     {
                         if (itemstack.stackSize <= 0 && !this.capabilities.isCreativeMode)
                         {
@@ -1306,34 +1144,21 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Returns the currently being used item by the player.
-     */
     public ItemStack getCurrentEquippedItem()
     {
         return this.inventory.getCurrentItem();
     }
 
-    /**
-     * Destroys the currently equipped item from the player's inventory.
-     */
     public void destroyCurrentEquippedItem()
     {
         this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
     }
 
-    /**
-     * Returns the Y Offset of this entity.
-     */
     public double getYOffset()
     {
         return -0.35D;
     }
 
-    /**
-     * Attacks for the player the targeted entity with the currently equipped item.  The equipped item has hitEntity
-     * called on it. Args: targetEntity
-     */
     public void attackTargetEntityWithCurrentItem(Entity targetEntity)
     {
         final AttackEvent event = new AttackEvent(targetEntity);
@@ -1353,11 +1178,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
 
                 if (targetEntity instanceof EntityLivingBase)
                 {
-                    f1 = EnchantmentHelper.func_152377_a(this.getHeldItem(), ((EntityLivingBase)targetEntity).getCreatureAttribute());
+                    f1 = EnchantmentHelper.getModifierForCreature(this.getHeldItem(), ((EntityLivingBase)targetEntity).getCreatureAttribute());
                 }
                 else
                 {
-                    f1 = EnchantmentHelper.func_152377_a(this.getHeldItem(), EnumCreatureAttribute.UNDEFINED);
+                    f1 = EnchantmentHelper.getModifierForCreature(this.getHeldItem(), EnumCreatureAttribute.UNDEFINED);
                 }
 
                 i = i + EnchantmentHelper.getKnockbackModifier(this);
@@ -1396,20 +1221,9 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
                         if (i > 0)
                         {
                             targetEntity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
-                            handle:
-                            {
-                                final Module keepSprint = StarX.INSTANCE.moduleManager.getModule("KeepSprint");
-
-                                if (keepSprint == null) break handle;
-                                if (keepSprint.isEnabled()) {
-                                    break handle;
-                                }
-
-                                this.motionX *= 0.6D;
-                                this.motionZ *= 0.6D;
-
-                                this.setSprinting(false);
-                            }
+                            this.motionX *= 0.6D;
+                            this.motionZ *= 0.6D;
+                            this.setSprinting(false);
                         }
 
                         if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged)
@@ -1488,9 +1302,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Called when the player performs a critical hit on the Entity. Args: entity that was hit critically
-     */
     public void onCriticalHit(Entity entityHit)
     {
     }
@@ -1503,9 +1314,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     {
     }
 
-    /**
-     * Will get destroyed next tick.
-     */
     public void setDead()
     {
         super.setDead();
@@ -1517,25 +1325,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Checks if this entity is inside of an opaque block
-     */
     public boolean isEntityInsideOpaqueBlock()
     {
         return !this.sleeping && super.isEntityInsideOpaqueBlock();
     }
 
-    /**
-     * returns true if this is an EntityPlayerSP, or the logged in player.
-     */
     public boolean isUser()
     {
         return false;
     }
 
-    /**
-     * Returns the GameProfile for this player
-     */
     public GameProfile getGameProfile()
     {
         return this.gameProfile;
@@ -1651,10 +1450,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Wake up the player if they're sleeping.
-     */
-    public void wakeUpPlayer(boolean p_70999_1_, boolean updateWorldFlag, boolean setSpawn)
+    public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
     {
         this.setSize(0.6F, 1.8F);
         IBlockState iblockstate = this.worldObj.getBlockState(this.playerLocation);
@@ -1679,7 +1475,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
             this.worldObj.updateAllPlayersSleepingFlag();
         }
 
-        this.sleepTimer = p_70999_1_ ? 0 : 100;
+        this.sleepTimer = immediately ? 0 : 100;
 
         if (setSpawn)
         {
@@ -1692,9 +1488,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.worldObj.getBlockState(this.playerLocation).getBlock() == Blocks.bed;
     }
 
-    /**
-     * Return null if bed is invalid
-     */
     public static BlockPos getBedSpawnLocation(World worldIn, BlockPos bedLocation, boolean forceSpawn)
     {
         Block block = worldIn.getBlockState(bedLocation).getBlock();
@@ -1707,8 +1500,8 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
             }
             else
             {
-                boolean flag = block.func_181623_g();
-                boolean flag1 = worldIn.getBlockState(bedLocation.up()).getBlock().func_181623_g();
+                boolean flag = block.canSpawnInBlock();
+                boolean flag1 = worldIn.getBlockState(bedLocation.up()).getBlock().canSpawnInBlock();
                 return flag && flag1 ? bedLocation : null;
             }
         }
@@ -1718,9 +1511,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Returns the orientation of the bed in degrees.
-     */
     public float getBedOrientationInDegrees()
     {
         if (this.playerLocation != null)
@@ -1746,17 +1536,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return 0.0F;
     }
 
-    /**
-     * Returns whether player is sleeping or not
-     */
     public boolean isPlayerSleeping()
     {
         return this.sleeping;
     }
 
-    /**
-     * Returns whether or not the player is asleep and the screen has fully faded.
-     */
     public boolean isPlayerFullyAsleep()
     {
         return this.sleeping && this.sleepTimer >= 100;
@@ -1795,17 +1579,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Will trigger the specified trigger.
-     */
     public void triggerAchievement(StatBase achievementIn)
     {
         this.addStat(achievementIn, 1);
     }
 
-    /**
-     * Adds a value to a statistic field.
-     */
     public void addStat(StatBase stat, int amount)
     {
     }
@@ -1814,9 +1592,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
     {
     }
 
-    /**
-     * Causes this entity to do an upwards motion (jumping).
-     */
     public void jump()
     {
         super.jump();
@@ -1832,9 +1607,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Moves the entity based on the specified heading.  Args: strafe, forward
-     */
     public void moveEntityWithHeading(float strafe, float forward)
     {
         double d0 = this.posX;
@@ -1858,17 +1630,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.addMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
     }
 
-    /**
-     * the movespeed used for the new AI system
-     */
     public float getAIMoveSpeed()
     {
         return (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
     }
 
-    /**
-     * Adds a value to a movement statistic field - like run, walk, swin or climb.
-     */
     public void addMovementStat(double p_71000_1_, double p_71000_3_, double p_71000_5_)
     {
         if (this.ridingEntity == null)
@@ -1936,9 +1702,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Adds a value to a mounted movement statistic field - by minecart, boat, or pig.
-     */
     private void addMountedMovementStat(double p_71015_1_, double p_71015_3_, double p_71015_5_)
     {
         if (this.ridingEntity != null)
@@ -1989,9 +1752,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * sets the players height back to normal after doing things like sleeping and dieing
-     */
     protected void resetHeight()
     {
         if (!this.isSpectator())
@@ -2005,9 +1765,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return damageValue > 4 ? "game.player.hurt.fall.big" : "game.player.hurt.fall.small";
     }
 
-    /**
-     * This method gets called when the entity kills another one.
-     */
     public void onKillEntity(EntityLivingBase entityLivingIn)
     {
         if (entityLivingIn instanceof IMob)
@@ -2023,9 +1780,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Sets the Entity inside a web block.
-     */
     public void setInWeb()
     {
         if (!this.capabilities.isFlying)
@@ -2039,9 +1793,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.inventory.armorItemInSlot(slotIn);
     }
 
-    /**
-     * Add experience points to player.
-     */
     public void addExperience(int amount)
     {
         this.addScore(amount);
@@ -2080,9 +1831,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.xpSeed = this.rand.nextInt();
     }
 
-    /**
-     * Add experience levels to this player.
-     */
     public void addExperienceLevel(int levels)
     {
         this.experienceLevel += levels;
@@ -2102,18 +1850,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * This method returns the cap amount of experience that the experience bar can hold. With each level, the
-     * experience cap on the player's experience bar is raised by 10.
-     */
     public int xpBarCap()
     {
         return this.experienceLevel >= 30 ? 112 + (this.experienceLevel - 30) * 9 : (this.experienceLevel >= 15 ? 37 + (this.experienceLevel - 15) * 5 : 7 + this.experienceLevel * 2);
     }
 
-    /**
-     * increases exhaustion level by supplied amount
-     */
     public void addExhaustion(float p_71020_1_)
     {
         if (!this.capabilities.disableDamage)
@@ -2125,9 +1866,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Returns the player's FoodStats object.
-     */
     public FoodStats getFoodStats()
     {
         return this.foodStats;
@@ -2138,17 +1876,11 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return (ignoreHunger || this.foodStats.needFood()) && !this.capabilities.disableDamage;
     }
 
-    /**
-     * Checks if the player's health is not full and not zero.
-     */
     public boolean shouldHeal()
     {
         return this.getHealth() > 0.0F && this.getHealth() < this.getMaxHealth();
     }
 
-    /**
-     * sets the itemInUse when the use item button is clicked. Args: itemstack, int maxItemUseDuration
-     */
     public void setItemInUse(ItemStack stack, int duration)
     {
         if (stack != this.itemInUse)
@@ -2186,9 +1918,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Get the experience points the entity currently has.
-     */
     protected int getExperiencePoints(EntityPlayer player)
     {
         if (this.worldObj.getGameRules().getBoolean("keepInventory"))
@@ -2202,9 +1931,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         }
     }
 
-    /**
-     * Only use is to identify if class is an instance of player for experience dropping
-     */
     protected boolean isPlayer()
     {
         return true;
@@ -2215,10 +1941,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return true;
     }
 
-    /**
-     * Copies the values from the given player into this player if boolean par2 is true. Always clones Ender Chest
-     * Inventory.
-     */
     public void clonePlayer(EntityPlayer oldPlayer, boolean respawnFromEnd)
     {
         if (respawnFromEnd)
@@ -2230,9 +1952,9 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
             this.experienceTotal = oldPlayer.experienceTotal;
             this.experience = oldPlayer.experience;
             this.setScore(oldPlayer.getScore());
-            this.field_181016_an = oldPlayer.field_181016_an;
-            this.field_181017_ao = oldPlayer.field_181017_ao;
-            this.field_181018_ap = oldPlayer.field_181018_ap;
+            this.lastPortalPos = oldPlayer.lastPortalPos;
+            this.lastPortalVec = oldPlayer.lastPortalVec;
+            this.teleportDirection = oldPlayer.teleportDirection;
         }
         else if (this.worldObj.getGameRules().getBoolean("keepInventory"))
         {
@@ -2248,99 +1970,63 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         this.getDataWatcher().updateObject(10, Byte.valueOf(oldPlayer.getDataWatcher().getWatchableObjectByte(10)));
     }
 
-    /**
-     * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to
-     * prevent them from trampling crops
-     */
     protected boolean canTriggerWalking()
     {
         return !this.capabilities.isFlying;
     }
 
-    /**
-     * Sends the player's abilities to the server (if there is one).
-     */
     public void sendPlayerAbilities()
     {
     }
 
-    /**
-     * Sets the player's game mode and sends it to them.
-     */
     public void setGameType(WorldSettings.GameType gameType)
     {
     }
 
-    /**
-     * Gets the name of this command sender (usually username, but possibly "Rcon")
-     */
     public String getName()
     {
         return this.gameProfile.getName();
     }
 
-    /**
-     * Returns the InventoryEnderChest of this player.
-     */
     public InventoryEnderChest getInventoryEnderChest()
     {
         return this.theInventoryEnderChest;
     }
 
-    /**
-     * 0: Tool in Hand; 1-4: Armor
-     */
     public ItemStack getEquipmentInSlot(int slotIn)
     {
         return slotIn == 0 ? this.inventory.getCurrentItem() : this.inventory.armorInventory[slotIn - 1];
     }
 
-    /**
-     * Returns the item that this EntityLiving is holding, if any.
-     */
     public ItemStack getHeldItem()
     {
         return this.inventory.getCurrentItem();
     }
 
-    /**
-     * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
-     */
     public void setCurrentItemOrArmor(int slotIn, ItemStack stack)
     {
         this.inventory.armorInventory[slotIn] = stack;
     }
 
-    /**
-     * Only used by renderer in EntityLivingBase subclasses.
-     * Determines if an entity is visible or not to a specfic player, if the entity is normally invisible.
-     * For EntityLivingBase subclasses, returning false when invisible will render the entity semitransparent.
-     */
     public boolean isInvisibleToPlayer(EntityPlayer player)
     {
         if (!this.isInvisible())
         {
-            return true;
+            return false;
         }
         else if (player.isSpectator())
         {
-            return true;
+            return false;
         }
         else
         {
             Team team = this.getTeam();
-            return team != null && player != null && player.getTeam() == team && team.getSeeFriendlyInvisiblesEnabled();
+            return team == null || player == null || player.getTeam() != team || !team.getSeeFriendlyInvisiblesEnabled();
         }
     }
 
-    /**
-     * Returns true if the player is in spectator mode.
-     */
     public abstract boolean isSpectator();
 
-    /**
-     * returns the inventory of this entity (only used in EntityPlayerMP it seems)
-     */
     public ItemStack[] getInventory()
     {
         return this.inventory.armorInventory;
@@ -2361,9 +2047,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.getWorldScoreboard().getPlayersTeam(this.getName());
     }
 
-    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
     public IChatComponent getDisplayName()
     {
         IChatComponent ichatcomponent = new ChatComponentText(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getName()));
@@ -2405,9 +2088,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return this.getDataWatcher().getWatchableObjectFloat(17);
     }
 
-    /**
-     * Gets a players UUID given their GameProfie
-     */
     public static UUID getUUID(GameProfile profile)
     {
         UUID uuid = profile.getId();
@@ -2425,9 +2105,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
 
-    /**
-     * Check whether this player can open an inventory locked with the given LockCode.
-     */
     public boolean canOpen(LockCode code)
     {
         if (code.isEmpty())
@@ -2446,9 +2123,6 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         return (this.getDataWatcher().getWatchableObjectByte(10) & p_175148_1_.getPartMask()) == p_175148_1_.getPartMask();
     }
 
-    /**
-     * Returns true if the command sender should be sent feedback about executed commands
-     */
     public boolean sendCommandFeedback()
     {
         return MinecraftServer.getServer().worldServers[0].getGameRules().getBoolean("sendCommandFeedback");
@@ -2459,7 +2133,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
         if (inventorySlot >= 0 && inventorySlot < this.inventory.mainInventory.length)
         {
             this.inventory.setInventorySlotContents(inventorySlot, itemStackIn);
-            return false;
+            return true;
         }
         else
         {
@@ -2475,17 +2149,17 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
                     {
                         if (EntityLiving.getArmorPosition(itemStackIn) != k)
                         {
-                            return true;
+                            return false;
                         }
                     }
                     else if (k != 4 || itemStackIn.getItem() != Items.skull && !(itemStackIn.getItem() instanceof ItemBlock))
                     {
-                        return true;
+                        return false;
                     }
                 }
 
                 this.inventory.setInventorySlotContents(i + this.inventory.mainInventory.length, itemStackIn);
-                return false;
+                return true;
             }
             else
             {
@@ -2494,19 +2168,16 @@ public abstract class EntityPlayer extends EntityLivingBase implements CapeHolde
                 if (j >= 0 && j < this.theInventoryEnderChest.getSizeInventory())
                 {
                     this.theInventoryEnderChest.setInventorySlotContents(j, itemStackIn);
-                    return false;
+                    return true;
                 }
                 else
                 {
-                    return true;
+                    return false;
                 }
             }
         }
     }
 
-    /**
-     * Whether the "reducedDebugInfo" option is active for this player.
-     */
     public boolean hasReducedDebug()
     {
         return this.hasReducedDebug;

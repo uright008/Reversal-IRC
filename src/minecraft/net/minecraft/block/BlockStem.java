@@ -41,17 +41,12 @@ public class BlockStem extends BlockBush implements IGrowable
         this.setCreativeTab((CreativeTabs)null);
     }
 
-    /**
-     * Get the actual Block state of this Block at the given position. This applies properties not visible in the
-     * metadata, such as fence connections.
-     */
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
         state = state.withProperty(FACING, EnumFacing.UP);
 
-        for (Object a : EnumFacing.Plane.HORIZONTAL)
+        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
         {
-        	EnumFacing enumfacing = (EnumFacing) a;
             if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock() == this.crop)
             {
                 state = state.withProperty(FACING, enumfacing);
@@ -62,9 +57,6 @@ public class BlockStem extends BlockBush implements IGrowable
         return state;
     }
 
-    /**
-     * is the block grass, dirt or farmland
-     */
     protected boolean canPlaceBlockOn(Block ground)
     {
         return ground == Blocks.farmland;
@@ -89,9 +81,8 @@ public class BlockStem extends BlockBush implements IGrowable
                 }
                 else
                 {
-                    for (Object a : EnumFacing.Plane.HORIZONTAL)
+                    for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
                     {
-                    	EnumFacing enumfacing = (EnumFacing) a;
                         if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock() == this.crop)
                         {
                             return;
@@ -137,9 +128,6 @@ public class BlockStem extends BlockBush implements IGrowable
         return this.getRenderColor(worldIn.getBlockState(pos));
     }
 
-    /**
-     * Sets the block's bounds for rendering it as an item
-     */
     public void setBlockBoundsForItemRender()
     {
         float f = 0.125F;
@@ -153,9 +141,6 @@ public class BlockStem extends BlockBush implements IGrowable
         this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, (float)this.maxY, 0.5F + f);
     }
 
-    /**
-     * Spawns this Block's drops into the World as EntityItems.
-     */
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
     {
         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
@@ -184,9 +169,6 @@ public class BlockStem extends BlockBush implements IGrowable
         return this.crop == Blocks.pumpkin ? Items.pumpkin_seeds : (this.crop == Blocks.melon_block ? Items.melon_seeds : null);
     }
 
-    /**
-     * Get the Item that this Block should drop when harvested.
-     */
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return null;
@@ -198,9 +180,6 @@ public class BlockStem extends BlockBush implements IGrowable
         return item != null ? item : null;
     }
 
-    /**
-     * Whether this IGrowable can grow
-     */
     public boolean canGrow(World worldIn, BlockPos pos, IBlockState state, boolean isClient)
     {
         return ((Integer)state.getValue(AGE)).intValue() != 7;
@@ -216,17 +195,11 @@ public class BlockStem extends BlockBush implements IGrowable
         this.growStem(worldIn, pos, state);
     }
 
-    /**
-     * Convert the given metadata into a BlockState for this Block
-     */
     public IBlockState getStateFromMeta(int meta)
     {
         return this.getDefaultState().withProperty(AGE, Integer.valueOf(meta));
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
     public int getMetaFromState(IBlockState state)
     {
         return ((Integer)state.getValue(AGE)).intValue();

@@ -36,25 +36,11 @@ import net.minecraft.world.WorldSettings;
 
 public class PlayerSelector
 {
-    /**
-     * This matches the at-tokens introduced for command blocks, including their arguments, if any.
-     */
     private static final Pattern tokenPattern = Pattern.compile("^@([pare])(?:\\[([\\w=,!-]*)\\])?$");
-
-    /**
-     * This matches things like "-1,,4", and is used for getting x,y,z,range from the token's argument list.
-     */
     private static final Pattern intListPattern = Pattern.compile("\\G([-!]?[\\w-]*)(?:$|,)");
-
-    /**
-     * This matches things like "rm=4,c=2" and is used for handling named token arguments.
-     */
     private static final Pattern keyValueListPattern = Pattern.compile("\\G(\\w+)=([-!]?[\\w-]*)(?:$|,)");
     private static final Set<String> WORLD_BINDING_ARGS = Sets.newHashSet(new String[] {"x", "y", "z", "dx", "dy", "dz", "rm", "r"});
 
-    /**
-     * Returns the one player that matches the given at-token.  Returns null if more than one player matches.
-     */
     public static EntityPlayerMP matchOnePlayer(ICommandSender sender, String token)
     {
         return (EntityPlayerMP)matchOneEntity(sender, token, EntityPlayerMP.class);
@@ -112,13 +98,13 @@ public class PlayerSelector
                     {
                         List<Predicate<Entity>> list2 = Lists.<Predicate<Entity>>newArrayList();
                         list2.addAll(func_179663_a(map, s));
-                        list2.addAll(func_179648_b(map));
-                        list2.addAll(func_179649_c(map));
-                        list2.addAll(func_179659_d(map));
-                        list2.addAll(func_179657_e(map));
-                        list2.addAll(func_179647_f(map));
+                        list2.addAll(getXpLevelPredicates(map));
+                        list2.addAll(getGamemodePredicates(map));
+                        list2.addAll(getTeamPredicates(map));
+                        list2.addAll(getScorePredicates(map));
+                        list2.addAll(getNamePredicates(map));
                         list2.addAll(func_180698_a(map, blockpos));
-                        list2.addAll(func_179662_g(map));
+                        list2.addAll(getRotationsPredicates(map));
                         list1.addAll(filterResults(map, targetClass, list2, s, world, blockpos));
                     }
                 }
@@ -208,7 +194,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179648_b(Map<String, String> p_179648_0_)
+    private static List<Predicate<Entity>> getXpLevelPredicates(Map<String, String> p_179648_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
         final int i = parseIntWithDefault(p_179648_0_, "lm", -1);
@@ -236,7 +222,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179649_c(Map<String, String> p_179649_0_)
+    private static List<Predicate<Entity>> getGamemodePredicates(Map<String, String> p_179649_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
         final int i = parseIntWithDefault(p_179649_0_, "m", WorldSettings.GameType.NOT_SET.getID());
@@ -263,7 +249,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179659_d(Map<String, String> p_179659_0_)
+    private static List<Predicate<Entity>> getTeamPredicates(Map<String, String> p_179659_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
         String s = func_179651_b(p_179659_0_, "team");
@@ -299,7 +285,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179657_e(Map<String, String> p_179657_0_)
+    private static List<Predicate<Entity>> getScorePredicates(Map<String, String> p_179657_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
         final Map<String, Integer> map = func_96560_a(p_179657_0_);
@@ -359,7 +345,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179647_f(Map<String, String> p_179647_0_)
+    private static List<Predicate<Entity>> getNamePredicates(Map<String, String> p_179647_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
         String s = func_179651_b(p_179647_0_, "name");
@@ -408,7 +394,7 @@ public class PlayerSelector
         return list;
     }
 
-    private static List<Predicate<Entity>> func_179662_g(Map<String, String> p_179662_0_)
+    private static List<Predicate<Entity>> getRotationsPredicates(Map<String, String> p_179662_0_)
     {
         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
 
@@ -644,9 +630,6 @@ public class PlayerSelector
         return map;
     }
 
-    /**
-     * Returns whether the given pattern can match more than one player.
-     */
     public static boolean matchesMultiplePlayers(String p_82377_0_)
     {
         Matcher matcher = tokenPattern.matcher(p_82377_0_);
@@ -664,9 +647,6 @@ public class PlayerSelector
         }
     }
 
-    /**
-     * Returns whether the given token has any arguments set.
-     */
     public static boolean hasArguments(String p_82378_0_)
     {
         return tokenPattern.matcher(p_82378_0_).matches();

@@ -69,7 +69,7 @@ public final class HitEffect extends Module {
                             mc.theWorld.spawnParticle(EnumParticleTypes.BLOCK_CRACK, target.posX, target.posY + target.height - 0.75, target.posZ, 0, 0, 0, Block.getStateId(Blocks.redstone_block.getDefaultState()));
 
                         if (sound.isEnabled())
-                            mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("dig.stone"), 1.2F, ((float) target.posX), ((float) target.posY), ((float) target.posZ)));
+                            mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("dig.stone"), ((float) target.posX), ((float) target.posY), ((float) target.posZ)));
                         break;
 
                     case "Lightning":

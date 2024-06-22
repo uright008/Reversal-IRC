@@ -24,10 +24,6 @@ public class PositionedSoundRecord extends PositionedSound
         this(soundResource, volume, pitch, false, 0, ISound.AttenuationType.LINEAR, xPosition, yPosition, zPosition);
     }
 
-    public static PositionedSoundRecord create(ResourceLocation soundResource, float pitch, float xPosition, float yPosition, float zPosition) {
-        return new PositionedSoundRecord(soundResource, 4.0F, pitch, false, 0, ISound.AttenuationType.LINEAR, xPosition, yPosition, zPosition);
-    }
-
     private PositionedSoundRecord(ResourceLocation soundResource, float volume, float pitch, boolean repeat, int repeatDelay, ISound.AttenuationType attenuationType, float xPosition, float yPosition, float zPosition)
     {
         super(soundResource);

@@ -223,7 +223,7 @@ public class GuiPageButtonList extends GuiListExtended
         guitextfield.setText(p_178068_3_.func_178936_c());
         guitextfield.func_175207_a(this.field_178076_z);
         guitextfield.setVisible(p_178068_3_.func_178934_d());
-        guitextfield.func_175205_a(p_178068_3_.func_178950_a());
+        guitextfield.setValidator(p_178068_3_.func_178950_a());
         return guitextfield;
     }
 
@@ -328,9 +328,6 @@ public class GuiPageButtonList extends GuiListExtended
         }
     }
 
-    /**
-     * Gets the IGuiListEntry object for the given index
-     */
     public GuiPageButtonList.GuiEntry getListEntry(int index)
     {
         return (GuiPageButtonList.GuiEntry)this.field_178074_u.get(index);
@@ -341,9 +338,6 @@ public class GuiPageButtonList extends GuiListExtended
         return this.field_178074_u.size();
     }
 
-    /**
-     * Gets the width of the list
-     */
     public int getListWidth()
     {
         return 400;

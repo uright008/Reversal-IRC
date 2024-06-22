@@ -19,7 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.EnumConnectionState;
@@ -31,10 +30,8 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
 
-import static cn.stars.starx.GameInstance.NORMAL_BLUR_RUNNABLES;
-import static cn.stars.starx.GameInstance.NORMAL_POST_BLOOM_RUNNABLES;
+import static cn.stars.starx.GameInstance.*;
 import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
 
 public class GuiConnecting extends GuiScreen
@@ -51,7 +48,7 @@ public class GuiConnecting extends GuiScreen
     {
         this.mc = mcIn;
         this.previousGuiScreen = p_i1181_1_;
-        ServerAddress serveraddress = ServerAddress.func_78860_a(p_i1181_3_.serverIP);
+        ServerAddress serveraddress = ServerAddress.fromString(p_i1181_3_.serverIP);
         mcIn.loadWorld((WorldClient)null);
         mcIn.setServerData(p_i1181_3_);
         this.connect(serveraddress.getIP(), serveraddress.getPort());
@@ -82,7 +79,7 @@ public class GuiConnecting extends GuiScreen
                     }
 
                     inetaddress = InetAddress.getByName(ip);
-                    GuiConnecting.this.networkManager = NetworkManager.func_181124_a(inetaddress, port, GuiConnecting.this.mc.gameSettings.func_181148_f());
+                    GuiConnecting.this.networkManager = NetworkManager.createNetworkManagerAndConnect(inetaddress, port, GuiConnecting.this.mc.gameSettings.isUsingNativeTransport());
                     GuiConnecting.this.networkManager.setNetHandler(new NetHandlerLoginClient(GuiConnecting.this.networkManager, GuiConnecting.this.mc, GuiConnecting.this.previousGuiScreen));
                     GuiConnecting.this.networkManager.sendPacket(new C00Handshake(47, ip, port, EnumConnectionState.LOGIN));
                     GuiConnecting.this.networkManager.sendPacket(new C00PacketLoginStart(GuiConnecting.this.mc.getSession().getProfile()));
@@ -110,7 +107,7 @@ public class GuiConnecting extends GuiScreen
                     if (inetaddress != null)
                     {
                         String s1 = inetaddress.toString() + ":" + port;
-                        s = "ERROR: " + s.replaceAll(s1, "");
+                        s = s.replaceAll(s1, "");
                     }
 
                     GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", new Object[] {s})));
@@ -119,9 +116,6 @@ public class GuiConnecting extends GuiScreen
         }).start();
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
     public void updateScreen()
     {
         if (this.networkManager != null)
@@ -137,13 +131,8 @@ public class GuiConnecting extends GuiScreen
         }
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
-     */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        if (keyCode == Keyboard.KEY_ESCAPE) action();
     }
 
     /**
@@ -170,13 +159,27 @@ public class GuiConnecting extends GuiScreen
         this.mc.displayGuiScreen(this.previousGuiScreen);
     }
 
-    @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if (mouseButton == 0) {
             if (RenderUtil.isHovered(cancelButton.x, cancelButton.y, cancelButton.width, cancelButton.height, mouseX, mouseY)){
                 mc.getSoundHandler().playButtonPress();
                 cancelButton.runAction();
             }
+        }
+    }
+
+    protected void actionPerformed(GuiButton button) throws IOException
+    {
+        if (button.id == 0)
+        {
+            this.cancel = true;
+
+            if (this.networkManager != null)
+            {
+                this.networkManager.closeChannel(new ChatComponentText("Aborted"));
+            }
+
+            this.mc.displayGuiScreen(this.previousGuiScreen);
         }
     }
 
@@ -211,7 +214,7 @@ public class GuiConnecting extends GuiScreen
         if(serverData != null)
             ip = serverData.serverIP;
 
-        FontManager.getRegular(20).drawCenteredString("正在连接至服务器... ", this.width / 2, this.height / 2 + 60, Color.WHITE.getRGB());
+        FontManager.getRegular(20).drawCenteredString(I18n.format("connect.connecting"), this.width / 2, this.height / 2 + 60, Color.WHITE.getRGB());
         FontManager.getRegular(16).drawCenteredString(ip, this.width / 2, this.height / 2 + 75, Color.WHITE.getRGB());
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);

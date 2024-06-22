@@ -117,7 +117,7 @@ public class SpeedGraph extends Module {
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        worldrenderer.begin(7, DefaultVertexFormats.field_181705_e);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
         worldrenderer.pos(left, bottom, 0.0D).endVertex();
         worldrenderer.pos(right, bottom, 0.0D).endVertex();
         worldrenderer.pos(right, top, 0.0D).endVertex();

@@ -26,6 +26,10 @@ public final class Notification implements GameInstance {
 
     private final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
+    TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Check 24");
+    TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 24");
+    TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 20");
+
     private float xVisual = sr.getScaledWidth();
     public float yVisual = sr.getScaledHeight() - 50;
     public float y = sr.getScaledHeight() - 50;
@@ -71,9 +75,6 @@ public final class Notification implements GameInstance {
     }
 
     public void render() {
-        TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Check 24");
-        TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 24");
-        TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 20");
         final String name = StringUtils.capitalize(type.name().toLowerCase());
         Color sideColor = new Color(-1);
         final float screenWidth = sr.getScaledWidth();
@@ -112,25 +113,24 @@ public final class Notification implements GameInstance {
 
         final Color c = ThemeUtil.getThemeColor(ThemeType.GENERAL);
 
-        RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
-     //   RenderUtil.roundedRect(xVisual - 5, yVisual - 3, 3, 25, 2, sideColor);
-     //   RenderUtils.drawImage2(new ResourceLocation("starx/images/info.png"), (int) (x - 27), (int) yVisual, 25,25);
-
-        RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
     //    RenderUtil.roundedRectangle(xVisual - 1, yVisual + 6, 2, 8, 2, sideColor);
 
         Color finalSideColor = sideColor;
-        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+        String finalIconString = iconString;
+        NORMAL_BLUR_RUNNABLES.add(() -> RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO)));
+
+        NORMAL_RENDER_RUNNABLES.add(() -> {
+            RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
+
             RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
-            RenderUtil.roundedRectangle(xVisual - 1, yVisual + 6, 2, 8, 2, finalSideColor);
+            icon.drawString(finalIconString, xVisual + 4, yVisual - 1, finalSideColor.getRGB());
+            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual - 2, new Color(255, 255, 255, 220).getRGB());
+            psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255, 255, 255, 220).getRGB());
         });
 
-        icon.drawString(iconString, xVisual + 4, yVisual - 1, sideColor.getRGB());
-        psb.drawString(title, xVisual + 4 + icon.getWidth(iconString), yVisual - 2, new Color(255,255,255,220).getRGB());
-        psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255,255,255,220).getRGB());
-
-        String finalIconString = iconString;
         NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+            RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
+            RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
             icon.drawString(finalIconString, xVisual + 4, yVisual - 1, finalSideColor.getRGB());
             psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual - 2, new Color(255,255,255,220).getRGB());
             psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255,255,255,220).getRGB());

@@ -6,17 +6,14 @@ import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.render.ClickGui;
-import cn.stars.starx.module.impl.render.GuiAnimation;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.*;
 import cn.stars.starx.util.animation.normal.Animation;
-import cn.stars.starx.util.animation.normal.Direction;
 import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -131,7 +128,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
     @Override
     public void initGui() {
         close = false;
-        size = GuiAnimation.startingSizeValue;
+        size = 1;
 
         holdingGui = false;
 

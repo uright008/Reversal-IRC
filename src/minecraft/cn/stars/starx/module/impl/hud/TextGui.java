@@ -8,6 +8,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 @ModuleInfo(name = "TextGui", description = "Display a text on your hud",
         chineseDescription = "显示客户端LOGO", category = Category.HUD)
 public class TextGui extends Module {
+    private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
     public final BoolValue custom = new BoolValue("Custom Name", this,false);
     public TextGui() {

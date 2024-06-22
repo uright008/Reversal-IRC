@@ -22,27 +22,18 @@ public class S19PacketEntityStatus implements Packet<INetHandlerPlayClient>
         this.logicOpcode = opCodeIn;
     }
 
-    /**
-     * Reads the raw packet data from the data stream.
-     */
     public void readPacketData(PacketBuffer buf) throws IOException
     {
         this.entityId = buf.readInt();
         this.logicOpcode = buf.readByte();
     }
 
-    /**
-     * Writes the raw packet data to the data stream.
-     */
     public void writePacketData(PacketBuffer buf) throws IOException
     {
         buf.writeInt(this.entityId);
         buf.writeByte(this.logicOpcode);
     }
 
-    /**
-     * Passes this Packet on to the NetHandler for processing.
-     */
     public void processPacket(INetHandlerPlayClient handler)
     {
         handler.handleEntityStatus(this);
@@ -50,7 +41,6 @@ public class S19PacketEntityStatus implements Packet<INetHandlerPlayClient>
 
     public Entity getEntity(World worldIn)
     {
-        if (worldIn == null) return null;
         return worldIn.getEntityByID(this.entityId);
     }
 

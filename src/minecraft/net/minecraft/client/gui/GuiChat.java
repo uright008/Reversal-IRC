@@ -1,12 +1,10 @@
 package net.minecraft.client.gui;
 
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.util.animation.normal.Animation;
-import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.shader.round.RoundedUtils;
@@ -14,9 +12,7 @@ import com.google.common.collect.Lists;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
@@ -32,30 +28,16 @@ import org.lwjgl.input.Mouse;
 
 public class GuiChat extends GuiScreen
 {
-    TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
-
+    MFont gs = FontManager.getPSR(18);
+    private static final Logger logger = LogManager.getLogger();
     private String historyBuffer = "";
-
-    /**
-     * keeps position of which chat message you will select when you press up, (does not increase for duplicated
-     * messages sent immediately after each other)
-     */
     private int sentHistoryCursor = -1;
     private boolean playerNamesFound;
     private boolean waitingOnAutocomplete;
     private int autocompleteIndex;
     private List<String> foundPlayerNames = Lists.<String>newArrayList();
-
-    /** Chat entry field */
     protected GuiTextField inputField;
-
-    /**
-     * is the text that appears when you press the chat key and the input box appears pre-filled
-     */
     private String defaultInputFieldText = "";
-
-    private Animation introAnimation;
-    private boolean close;
 
     public GuiChat()
     {
@@ -66,16 +48,8 @@ public class GuiChat extends GuiScreen
         this.defaultInputFieldText = defaultText;
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui()
     {
-        close = false;
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
-            m.setDragging(false);
-        }
         Keyboard.enableRepeatEvents(true);
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
         this.inputField = new GuiTextField(0, this.fontRendererObj, 4, this.height - 12, this.width - 4, 12);
@@ -84,12 +58,15 @@ public class GuiChat extends GuiScreen
         this.inputField.setFocused(true);
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
-        introAnimation = new EaseBackIn(100, 1, 0);
     }
 
-    /**
-     * Called when the screen is unloaded. Used to disable keyboard repeat events
-     */
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+            m.setDragging(false);
+        }
+    }
+
     public void onGuiClosed()
     {
         for(Module m : StarX.INSTANCE.moduleManager.moduleList){
@@ -99,18 +76,11 @@ public class GuiChat extends GuiScreen
         this.mc.ingameGUI.getChatGUI().resetScroll();
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
     public void updateScreen()
     {
         this.inputField.updateCursorCounter();
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
-     */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
         this.waitingOnAutocomplete = false;
@@ -126,7 +96,7 @@ public class GuiChat extends GuiScreen
 
         if (keyCode == 1)
         {
-            close = true;
+            this.mc.displayGuiScreen((GuiScreen)null);
         }
         else if (keyCode != 28 && keyCode != 156)
         {
@@ -160,13 +130,10 @@ public class GuiChat extends GuiScreen
                 this.sendChatMessage(s);
             }
 
-            close = true;
+            this.mc.displayGuiScreen((GuiScreen)null);
         }
     }
 
-    /**
-     * Handles mouse input.
-     */
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
@@ -193,14 +160,6 @@ public class GuiChat extends GuiScreen
         }
     }
 
-    public void mouseReleased(int mouseX, int mouseY, int state) {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
-            m.setDragging(false);
-        }
-    }
-    /**
-     * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
-     */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
         if (mouseButton == 0)
@@ -229,9 +188,6 @@ public class GuiChat extends GuiScreen
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    /**
-     * Sets the text of the chat
-     */
     protected void setText(String newChatText, boolean shouldOverwrite)
     {
         if (shouldOverwrite)
@@ -309,10 +265,6 @@ public class GuiChat extends GuiScreen
         }
     }
 
-    /**
-     * input is relative and is applied directly to the sentHistoryCursor so -1 is the previous message, 1 is the next
-     * message from the current cursor position
-     */
     public void getSentHistory(int msgPos)
     {
         int i = this.sentHistoryCursor + msgPos;
@@ -339,16 +291,8 @@ public class GuiChat extends GuiScreen
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-
-        if (close) {
-            mc.displayGuiScreen(null);
-        }
-
         RenderUtil.roundedRect(1, this.height - 14, this.width - 2, this.height, 5, new Color(0,0,0,120));
         this.inputField.drawTextBox();
         IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -376,8 +320,6 @@ public class GuiChat extends GuiScreen
                 }
             }
         }
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     public void onAutocompleteResponse(String[] p_146406_1_)
@@ -411,9 +353,6 @@ public class GuiChat extends GuiScreen
         }
     }
 
-    /**
-     * Returns true if this GUI should pause the game when it is displayed in single-player
-     */
     public boolean doesGuiPauseGame()
     {
         return false;

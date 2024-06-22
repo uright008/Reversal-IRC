@@ -41,9 +41,6 @@ public class ItemEditableBook extends Item
         }
     }
 
-    /**
-     * Gets the generation of the book (how many times it has been cloned)
-     */
     public static int getGeneration(ItemStack book)
     {
         return book.getTagCompound().getInteger("generation");
@@ -65,9 +62,6 @@ public class ItemEditableBook extends Item
         return super.getItemStackDisplayName(stack);
     }
 
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     */
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
         if (stack.hasTagCompound())
@@ -84,9 +78,6 @@ public class ItemEditableBook extends Item
         }
     }
 
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
     {
         if (!worldIn.isRemote)
@@ -116,19 +107,19 @@ public class ItemEditableBook extends Item
                     for (int i = 0; i < nbttaglist.tagCount(); ++i)
                     {
                         String s = nbttaglist.getStringTagAt(i);
-                        IChatComponent lvt_7_1_;
+                        IChatComponent ichatcomponent;
 
                         try
                         {
-                            lvt_7_1_ = IChatComponent.Serializer.jsonToComponent(s);
-                            lvt_7_1_ = ChatComponentProcessor.processComponent(player, lvt_7_1_, player);
+                            ichatcomponent = IChatComponent.Serializer.jsonToComponent(s);
+                            ichatcomponent = ChatComponentProcessor.processComponent(player, ichatcomponent, player);
                         }
                         catch (Exception var9)
                         {
-                            lvt_7_1_ = new ChatComponentText(s);
+                            ichatcomponent = new ChatComponentText(s);
                         }
 
-                        nbttaglist.set(i, new NBTTagString(IChatComponent.Serializer.componentToJson(lvt_7_1_)));
+                        nbttaglist.set(i, new NBTTagString(IChatComponent.Serializer.componentToJson(ichatcomponent)));
                     }
 
                     nbttagcompound.setTag("pages", nbttaglist);

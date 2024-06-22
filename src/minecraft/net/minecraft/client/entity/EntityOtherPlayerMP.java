@@ -1,6 +1,5 @@
 package net.minecraft.client.entity;
 
-import cn.stars.addons.waveycapes.StickSimulation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -20,10 +19,6 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
     private double otherPlayerMPYaw;
     private double otherPlayerMPPitch;
 
-    @Override
-    public StickSimulation getSimulation() {
-        return this.stickSimulation;
-    }
     public EntityOtherPlayerMP(World worldIn, GameProfile gameProfileIn)
     {
         super(worldIn, gameProfileIn);
@@ -33,9 +28,6 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         this.renderDistanceWeight = 10.0D;
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         return true;
@@ -51,9 +43,6 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         this.otherPlayerMPPosRotationIncrements = posRotationIncrements;
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     public void onUpdate()
     {
         this.renderOffsetY = 0.0F;
@@ -84,10 +73,6 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         }
     }
 
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
     public void onLivingUpdate()
     {
         if (this.otherPlayerMPPosRotationIncrements > 0)
@@ -138,9 +123,6 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         this.cameraPitch += (f - this.cameraPitch) * 0.8F;
     }
 
-    /**
-     * Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot
-     */
     public void setCurrentItemOrArmor(int slotIn, ItemStack stack)
     {
         if (slotIn == 0)
@@ -153,29 +135,18 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         }
     }
 
-    /**
-     * Send a chat message to the CommandSender
-     */
     public void addChatMessage(IChatComponent component)
     {
         Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(component);
     }
 
-    /**
-     * Returns {@code true} if the CommandSender is allowed to execute the command, {@code false} if not
-     */
     public boolean canCommandSenderUseCommand(int permLevel, String commandName)
     {
         return false;
     }
 
-    /**
-     * Get the position in the world. <b>{@code null} is not allowed!</b> If you are not an entity in the world, return
-     * the coordinates 0, 0, 0
-     */
     public BlockPos getPosition()
     {
         return new BlockPos(this.posX + 0.5D, this.posY + 0.5D, this.posZ + 0.5D);
     }
-
 }

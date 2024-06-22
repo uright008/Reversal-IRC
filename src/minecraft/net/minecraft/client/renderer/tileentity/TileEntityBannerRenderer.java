@@ -27,7 +27,7 @@ public class TileEntityBannerRenderer extends TileEntitySpecialRenderer<TileEnti
         boolean flag = te.getWorld() != null;
         boolean flag1 = !flag || te.getBlockType() == Blocks.standing_banner;
         int i = flag ? te.getBlockMetadata() : 0;
-        long j = flag ? te.getWorld().getTotalWorldTime() % 100L : 0L;
+        long j = flag ? te.getWorld().getTotalWorldTime() : 0L;
         GlStateManager.pushMatrix();
         float f = 0.6666667F;
 
@@ -84,7 +84,7 @@ public class TileEntityBannerRenderer extends TileEntitySpecialRenderer<TileEnti
 
     private ResourceLocation func_178463_a(TileEntityBanner bannerObj)
     {
-        String s = bannerObj.func_175116_e();
+        String s = bannerObj.getPatternResourceLocation();
 
         if (s.isEmpty())
         {

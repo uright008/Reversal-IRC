@@ -17,15 +17,15 @@ public class LayerBendsPlayerArmor extends LayerArmorBase<ModelBiped>
     }
     
     protected void initArmor() {
-        this.field_177189_c = new ModelBendsPlayerArmor(0.5f);
-        this.field_177186_d = new ModelBendsPlayerArmor(1.5f);
+        this.modelLeggings = new ModelBendsPlayerArmor(0.5f);
+        this.modelArmor = new ModelBendsPlayerArmor(1.5f);
     }
     
     public void doRenderLayer(final EntityLivingBase entitylivingbaseIn, final float p_177141_2_, final float p_177141_3_, final float partialTicks, final float p_177141_5_, final float p_177141_6_, final float p_177141_7_, final float scale) {
         super.doRenderLayer(entitylivingbaseIn, p_177141_2_, p_177141_3_, partialTicks, p_177141_5_, p_177141_6_, p_177141_7_, scale);
     }
     
-    protected void func_177179_a(final ModelBiped model, final int armorSlot) {
+    protected void setModelPartVisible(final ModelBiped model, final int armorSlot) {
         this.setModelVisible(model);
         switch (armorSlot) {
             case 1: {

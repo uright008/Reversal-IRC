@@ -1,7 +1,7 @@
 package cn.stars.starx.ui.gui.breakout;
 
 import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.ui.gui.GuiMainMenuNew;
+import cn.stars.starx.ui.gui.GuiMainMenu;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
@@ -9,7 +9,6 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -192,22 +191,16 @@ public class BreakoutGuiPauseMenu extends GuiScreen implements GuiYesNoCallback 
         if (mouseOver(65, 270, 300, 30, mouseX, mouseY)) {
             mc.getSoundHandler().playButtonPress();
             boolean flag = this.mc.isIntegratedServerRunning();
-            boolean flag1 = this.mc.func_181540_al();
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.loadWorld((WorldClient)null);
 
             if (flag)
             {
-                this.mc.displayGuiScreen(new GuiMainMenuNew());
-            }
-            else if (flag1)
-            {
-                RealmsBridge realmsbridge = new RealmsBridge();
-                realmsbridge.switchToRealms(new GuiMainMenuNew());
+                this.mc.displayGuiScreen(new GuiMainMenu());
             }
             else
             {
-                this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenuNew()));
+                this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
             }
         }
     }

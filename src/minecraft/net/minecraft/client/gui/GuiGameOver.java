@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cn.stars.starx.ui.gui.GuiMainMenuNew;
+import cn.stars.starx.ui.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -10,18 +10,11 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
 {
-    /**
-     * The integer value containing the number of ticks that have passed since the player's death
-     */
     private int enableButtonsTimer;
+    private boolean field_146346_f = false;
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui()
     {
-        this.enableButtonsTimer = 0;
         this.buttonList.clear();
 
         if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
@@ -52,17 +45,10 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
-     */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
     protected void actionPerformed(GuiButton button) throws IOException
     {
         switch (button.id)
@@ -75,7 +61,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
             case 1:
                 if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
                 {
-                    this.mc.displayGuiScreen(new GuiMainMenuNew());
+                    this.mc.displayGuiScreen(new GuiMainMenu());
                 }
                 else
                 {
@@ -92,7 +78,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.loadWorld((WorldClient)null);
-            this.mc.displayGuiScreen(new GuiMainMenuNew());
+            this.mc.displayGuiScreen(new GuiMainMenu());
         }
         else
         {
@@ -101,9 +87,6 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawGradientRect(0, 0, this.width, this.height, 1615855616, -1602211792);
@@ -123,17 +106,11 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    /**
-     * Returns true if this GUI should pause the game when it is displayed in single-player
-     */
     public boolean doesGuiPauseGame()
     {
         return false;
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
     public void updateScreen()
     {
         super.updateScreen();

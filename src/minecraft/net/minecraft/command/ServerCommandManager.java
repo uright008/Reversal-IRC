@@ -108,9 +108,6 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         CommandBase.setAdminCommander(this);
     }
 
-    /**
-     * Send an informative message to the server operators
-     */
     public void notifyOperators(ICommandSender sender, ICommand command, int flags, String msgFormat, Object... msgParams)
     {
         boolean flag = true;
@@ -127,12 +124,12 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
 
         if (flag)
         {
-            for (EntityPlayer entityplayer : minecraftserver.getConfigurationManager().func_181057_v())
+            for (EntityPlayer entityplayer : minecraftserver.getConfigurationManager().getPlayerList())
             {
                 if (entityplayer != sender && minecraftserver.getConfigurationManager().canSendCommands(entityplayer.getGameProfile()) && command.canCommandSenderUseCommand(sender))
                 {
-                    boolean flag1 = sender instanceof MinecraftServer && MinecraftServer.getServer().func_183002_r();
-                    boolean flag2 = sender instanceof RConConsoleSource && MinecraftServer.getServer().func_181034_q();
+                    boolean flag1 = sender instanceof MinecraftServer && MinecraftServer.getServer().shouldBroadcastConsoleToOps();
+                    boolean flag2 = sender instanceof RConConsoleSource && MinecraftServer.getServer().shouldBroadcastRconToOps();
 
                     if (flag1 || flag2 || !(sender instanceof RConConsoleSource) && !(sender instanceof MinecraftServer))
                     {

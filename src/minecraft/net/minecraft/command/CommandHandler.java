@@ -32,13 +32,13 @@ public class CommandHandler implements ICommandManager
         String[] astring = rawCommand.split(" ");
         String s = astring[0];
         astring = dropFirstString(astring);
-        ICommand icommand = this.commandMap.get(s.toLowerCase());
+        ICommand icommand = (ICommand)this.commandMap.get(s);
         int i = this.getUsernameIndex(icommand, astring);
         int j = 0;
 
         if (icommand == null)
         {
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.notFound");
+            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.notFound", new Object[0]);
             chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation);
         }
@@ -74,7 +74,7 @@ public class CommandHandler implements ICommandManager
         }
         else
         {
-            ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("commands.generic.permission");
+            ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("commands.generic.permission", new Object[0]);
             chatcomponenttranslation1.getChatStyle().setColor(EnumChatFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation1);
         }
@@ -92,7 +92,7 @@ public class CommandHandler implements ICommandManager
         }
         catch (WrongUsageException wrongusageexception)
         {
-            ChatComponentTranslation chatcomponenttranslation2 = new ChatComponentTranslation("commands.generic.usage", new ChatComponentTranslation(wrongusageexception.getMessage(), wrongusageexception.getErrorObjects()));
+            ChatComponentTranslation chatcomponenttranslation2 = new ChatComponentTranslation("commands.generic.usage", new Object[] {new ChatComponentTranslation(wrongusageexception.getMessage(), wrongusageexception.getErrorObjects())});
             chatcomponenttranslation2.getChatStyle().setColor(EnumChatFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation2);
         }
@@ -104,18 +104,15 @@ public class CommandHandler implements ICommandManager
         }
         catch (Throwable var9)
         {
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.exception");
+            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.exception", new Object[0]);
             chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation);
-            logger.warn("Couldn't process command: '" + input + "'");
+            logger.warn("Couldn\'t process command: \'" + input + "\'");
         }
 
         return false;
     }
 
-    /**
-     * adds the command and any aliases it has to the internal map of available commands
-     */
     public ICommand registerCommand(ICommand command)
     {
         this.commandMap.put(command.getCommandName(), command);
@@ -123,7 +120,7 @@ public class CommandHandler implements ICommandManager
 
         for (String s : command.getCommandAliases())
         {
-            ICommand icommand = this.commandMap.get(s.toLowerCase());
+            ICommand icommand = (ICommand)this.commandMap.get(s);
 
             if (icommand == null || !icommand.getCommandName().equals(s))
             {
@@ -134,9 +131,6 @@ public class CommandHandler implements ICommandManager
         return command;
     }
 
-    /**
-     * creates a new array and sets elements 0..n-2 to be 0..n-1 of the input (n elements)
-     */
     private static String[] dropFirstString(String[] input)
     {
         String[] astring = new String[input.length - 1];
@@ -147,7 +141,7 @@ public class CommandHandler implements ICommandManager
     public List<String> getTabCompletionOptions(ICommandSender sender, String input, BlockPos pos)
     {
         String[] astring = input.split(" ", -1);
-        String s = astring[0].toLowerCase();
+        String s = astring[0];
 
         if (astring.length == 1)
         {
@@ -167,7 +161,7 @@ public class CommandHandler implements ICommandManager
         {
             if (astring.length > 1)
             {
-                ICommand icommand = this.commandMap.get(s);
+                ICommand icommand = (ICommand)this.commandMap.get(s);
 
                 if (icommand != null && icommand.canCommandSenderUseCommand(sender))
                 {
@@ -199,9 +193,6 @@ public class CommandHandler implements ICommandManager
         return this.commandMap;
     }
 
-    /**
-     * Return a command's first parameter index containing a valid username.
-     */
     private int getUsernameIndex(ICommand command, String[] args)
     {
         if (command == null)

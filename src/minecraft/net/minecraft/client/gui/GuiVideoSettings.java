@@ -4,37 +4,25 @@ import java.io.IOException;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.src.Config;
-import net.minecraft.src.GuiAnimationSettingsOF;
-import net.minecraft.src.GuiDetailSettingsOF;
-import net.minecraft.src.GuiOptionButtonOF;
-import net.minecraft.src.GuiOptionSliderOF;
-import net.minecraft.src.GuiOtherSettingsOF;
-import net.minecraft.src.GuiPerformanceSettingsOF;
-import net.minecraft.src.GuiQualitySettingsOF;
-import net.minecraft.src.GuiScreenOF;
-import net.minecraft.src.Lang;
-import net.minecraft.src.TooltipManager;
-import net.minecraft.src.TooltipProviderOptions;
-import shadersmod.client.GuiShaders;
+import net.optifine.Lang;
+import net.optifine.gui.GuiAnimationSettingsOF;
+import net.optifine.gui.GuiDetailSettingsOF;
+import net.optifine.gui.GuiOptionButtonOF;
+import net.optifine.gui.GuiOptionSliderOF;
+import net.optifine.gui.GuiOtherSettingsOF;
+import net.optifine.gui.GuiPerformanceSettingsOF;
+import net.optifine.gui.GuiQualitySettingsOF;
+import net.optifine.gui.GuiScreenOF;
+import net.optifine.gui.TooltipManager;
+import net.optifine.gui.TooltipProviderOptions;
+import net.optifine.shaders.gui.GuiShaders;
 
 public class GuiVideoSettings extends GuiScreenOF
 {
-    public static boolean patcher$needsResourceRefresh;
-
-    public void patcher$onSettingsGuiClosed() {
-        if (patcher$needsResourceRefresh) {
-            mc.scheduleResourcesRefresh();
-            patcher$needsResourceRefresh = false;
-        }
-    }
-
     private GuiScreen parentGuiScreen;
     protected String screenTitle = "Video Settings";
     private GameSettings guiGameSettings;
-
-    /** An array of all of GameSettings.Options's video options. */
     private static GameSettings.Options[] videoOptions = new GameSettings.Options[] {GameSettings.Options.GRAPHICS, GameSettings.Options.RENDER_DISTANCE, GameSettings.Options.AMBIENT_OCCLUSION, GameSettings.Options.FRAMERATE_LIMIT, GameSettings.Options.AO_LEVEL, GameSettings.Options.VIEW_BOBBING, GameSettings.Options.GUI_SCALE, GameSettings.Options.USE_VBO, GameSettings.Options.GAMMA, GameSettings.Options.BLOCK_ALTERNATIVES, GameSettings.Options.DYNAMIC_LIGHTS, GameSettings.Options.DYNAMIC_FOV};
-    private static final String __OBFID = "CL_00000718";
     private TooltipManager tooltipManager = new TooltipManager(this, new TooltipProviderOptions());
 
     public GuiVideoSettings(GuiScreen parentScreenIn, GameSettings gameSettingsIn)
@@ -43,19 +31,9 @@ public class GuiVideoSettings extends GuiScreenOF
         this.guiGameSettings = gameSettingsIn;
     }
 
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        patcher$onSettingsGuiClosed();
-    }
-
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui()
     {
-        this.screenTitle = I18n.format("options.videoTitle");
+        this.screenTitle = I18n.format("options.videoTitle", new Object[0]);
         this.buttonList.clear();
 
         for (int i = 0; i < videoOptions.length; ++i)
@@ -98,9 +76,6 @@ public class GuiVideoSettings extends GuiScreenOF
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, I18n.format("gui.done", new Object[0])));
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
     protected void actionPerformed(GuiButton button) throws IOException
     {
         this.actionPerformed(button, 1);
@@ -208,9 +183,6 @@ public class GuiVideoSettings extends GuiScreenOF
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
@@ -220,21 +192,21 @@ public class GuiVideoSettings extends GuiScreenOF
 
         if (s1.equals("HD"))
         {
-            s = "OptiFine HD I7";
+            s = "OptiFine HD M6_pre2";
         }
 
         if (s1.equals("HD_U"))
         {
-            s = "OptiFine HD I7 Ultra";
+            s = "OptiFine HD M6_pre2 Ultra";
         }
 
         if (s1.equals("L"))
         {
-            s = "OptiFine I7 Light";
+            s = "OptiFine M6_pre2 Light";
         }
 
         this.drawString(this.fontRendererObj, s, 2, this.height - 10, 8421504);
-        String s2 = "Minecraft 1.8.8";
+        String s2 = "Minecraft 1.8.9";
         int i = this.fontRendererObj.getStringWidth(s2);
         this.drawString(this.fontRendererObj, s2, this.width - i - 2, this.height - 10, 8421504);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -254,5 +226,10 @@ public class GuiVideoSettings extends GuiScreenOF
     public static void drawGradientRect(GuiScreen p_drawGradientRect_0_, int p_drawGradientRect_1_, int p_drawGradientRect_2_, int p_drawGradientRect_3_, int p_drawGradientRect_4_, int p_drawGradientRect_5_, int p_drawGradientRect_6_)
     {
         p_drawGradientRect_0_.drawGradientRect(p_drawGradientRect_1_, p_drawGradientRect_2_, p_drawGradientRect_3_, p_drawGradientRect_4_, p_drawGradientRect_5_, p_drawGradientRect_6_);
+    }
+
+    public static String getGuiChatText(GuiChat p_getGuiChatText_0_)
+    {
+        return p_getGuiChatText_0_.inputField.getText();
     }
 }

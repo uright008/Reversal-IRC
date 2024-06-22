@@ -501,14 +501,16 @@ public class Hud implements GameInstance {
 
                 NORMAL_RENDER_RUNNABLES.add(() -> {
                     RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, new Color(0, 0, 0, 80));
-                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, ThemeUtil.getThemeColor(ThemeType.LOGO));
+                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
+                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
                     psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
                 });
 
                 if (ModuleInstance.getBool("TextGui", "Shadow").isEnabled()) {
                     NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
                         psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
-                        RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, ThemeUtil.getThemeColor(ThemeType.LOGO));
+                        RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
+                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
                     });
                 }
 
@@ -519,13 +521,9 @@ public class Hud implements GameInstance {
 
                     final float off1 = off;
                     final int i1 = i;
-                    if (ModuleInstance.getBool("TextGui", "Shadow").isEnabled()) {
-                        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                            psb20.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO));
-                        });
-                    }
                     NORMAL_RENDER_RUNNABLES.add(() -> {
-                        psb20.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO));
+                        psb20.drawString(character, x + 4 + off1, y + 3.5,
+                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
                     });
                     off += psb20.getWidth(character);
                 }

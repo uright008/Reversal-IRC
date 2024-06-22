@@ -57,7 +57,7 @@ public abstract class Module implements GameInstance {
     private ModuleInfo moduleInfo;
 
     public int getY() {
-        if (Minecraft.big) {
+        if (Minecraft.getMinecraft().isFullScreen()) {
             if (y > 270) return y + 35;
             else return y;
         }

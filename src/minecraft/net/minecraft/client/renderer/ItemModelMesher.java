@@ -9,6 +9,11 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.src.Config;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ISmartItemModel;
+import net.optifine.CustomItems;
+import net.optifine.reflect.Reflector;
 
 public class ItemModelMesher
 {
@@ -37,13 +42,9 @@ public class ItemModelMesher
         Item item = stack.getItem();
         IBakedModel ibakedmodel = this.getItemModel(item, this.getMetadata(stack));
 
-        if (item == null) {
-            return this.modelManager.getMissingModel();
-        }
-
         if (ibakedmodel == null)
         {
-            ItemMeshDefinition itemmeshdefinition = this.shapers.get(item);
+            ItemMeshDefinition itemmeshdefinition = (ItemMeshDefinition)this.shapers.get(item);
 
             if (itemmeshdefinition != null)
             {
@@ -51,9 +52,19 @@ public class ItemModelMesher
             }
         }
 
+        if (Reflector.ForgeHooksClient.exists() && ibakedmodel instanceof ISmartItemModel)
+        {
+            ibakedmodel = ((ISmartItemModel)ibakedmodel).handleItemState(stack);
+        }
+
         if (ibakedmodel == null)
         {
             ibakedmodel = this.modelManager.getMissingModel();
+        }
+
+        if (Config.isCustomItems())
+        {
+            ibakedmodel = CustomItems.getCustomItemModel(stack, ibakedmodel, (ResourceLocation)null, true);
         }
 
         return ibakedmodel;
