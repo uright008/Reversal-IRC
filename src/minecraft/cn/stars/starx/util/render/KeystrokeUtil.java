@@ -25,7 +25,7 @@ public class KeystrokeUtil implements GameInstance {
 
     public void drawButton(final double x, final double y, final double width) {
         final boolean rainbow = ModuleInstance.getBool("Keystrokes", "Rainbow when key down").isEnabled();
-        final boolean shadow = ModuleInstance.getBool("Keystrokes", "Shadow").isEnabled();
+        final boolean shadow = ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled();
         final String keyName = Keyboard.getKeyName(key.getKeyCode());
 
         float offset = -5;
@@ -44,19 +44,16 @@ public class KeystrokeUtil implements GameInstance {
             RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, new Color(255, 255, 255, 15 + ticksSinceLastPress));
             comfortaa.drawString(keyName, (float) (x - 2), (float) (y + 15 - 4), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
             if (shadow) {
-                NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, new Color(255, 255, 255, 15 + ticksSinceLastPress));
-                    comfortaa.drawString(keyName, (float) (x - 2), (float) (y + 15 - 4), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                MODERN_BLOOM_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
                 });
             }
         } else {
             RenderUtil.roundedRectangle(x, y, width, width, 2, new Color(255,255,255, 15 + ticksSinceLastPress));
             comfortaa.drawString(keyName, (float) (x + 13 + offset), (float) (y + 15 - 4.5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
             if (shadow) {
-                final float offset1 = offset;
-                NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(x, y, width, width, 2, new Color(255,255,255, 15 + ticksSinceLastPress));
-                    comfortaa.drawString(keyName, (float) (x + 13 + offset1), (float) (y + 15 - 4.5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                MODERN_BLOOM_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(x, y, width, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
                 });
             }
         }

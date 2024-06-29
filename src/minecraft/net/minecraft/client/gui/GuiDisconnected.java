@@ -42,7 +42,9 @@ public class GuiDisconnected extends GuiScreen
             this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
         }
         if (button.id == 1) {
-            this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new GuiMainMenu()), mc, mc.getCurrentServerData()));
+            if (mc.getCurrentServerData() != null) {
+                this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new GuiMainMenu()), mc, mc.getCurrentServerData()));
+            }
         }
     }
 

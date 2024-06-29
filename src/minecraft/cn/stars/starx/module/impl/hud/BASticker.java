@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
         chineseDescription = "哎,等等,爱丽丝怎么没有b~", category = Category.HUD)
 public class BASticker extends Module {
     private final ModeValue character = new ModeValue("Character", this, "Aris",
-            "Aris", "Shiroko", "Azusa", "Hina Swimsuit", "Ui", "Hoshino Swimsuit", "Mika", "Yuuka Track");
+            "Aris", "Shiroko", "Azusa", "Hina Swimsuit", "Ui", "Hoshino Swimsuit", "Mika", "Ibuki");
     private final NumberValue scale = new NumberValue("Scale", this, 1, 0.1, 2, 0.1);
     private final NoteValue note = new NoteValue("Add scale to make pictures look better,", this);
     private final NoteValue note2 = new NoteValue("which may HIDE the screen.", this);
@@ -87,15 +87,15 @@ public class BASticker extends Module {
                 drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 95, 160, scale.getValue());
                 break;
             }
-            case "Yuuka Track": {
-                setRoundedWidth(114, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/yuuka_track.png"), x, y, 105, 160, scale.getValue());
+            case "Ibuki": {
+                setRoundedWidth(110, scale.getValue());
+                setRoundedHeight(180, scale.getValue());
+                drawImage(new ResourceLocation("starx/images/box_weapon/ibuki.png"), x, y, 100, 170, scale.getValue());
                 break;
             }
         }
     }
-    
+
     public void setRoundedWidth(int width, double scale) {
         setWidth(Math.round(width * (float)scale));
     }

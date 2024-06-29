@@ -2,14 +2,21 @@ package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
+import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.blur.KawaseBloom;
+import cn.stars.starx.util.render.blur.KawaseBlur;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.shader.Framebuffer;
 
 import java.awt.*;
 
@@ -25,11 +32,12 @@ public final class ClientSettings extends Module {
     private final NumberValue blue = new NumberValue("Blue", this, 255, 0, 255, 1);
 
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
-    private final BoolValue blur = new BoolValue("Blur", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
     private final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
+    private final BoolValue blur = new BoolValue("Blur", this, false);
 
     public static String theme;
+    ScaledResolution sr = new ScaledResolution(mc);
 
     public static int red0, green0, blue0;
 
@@ -59,16 +67,4 @@ public final class ClientSettings extends Module {
 
 
     }
-
- //   @Override
- //   public void onBlur(final BlurEvent event) {
- //       IngameGUI.onBlur();
- //   }
-
- //   @Override
- //   public void onFadingOutline(final FadingOutlineEvent event) {
- //       if (outLine.isEnabled()) {
- //           IngameGUI.onFadeOutline();
- //       }
- //   }
 }

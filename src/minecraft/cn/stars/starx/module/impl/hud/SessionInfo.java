@@ -31,7 +31,6 @@ import java.util.List;
         chineseDescription = "显示你的游戏数据", category = Category.HUD)
 public class SessionInfo extends Module {
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
-    private final BoolValue shadow = new BoolValue("Shadow", this, true);
     private final TimeUtil timer = new TimeUtil();
     int second = 0;
     int minute = 0;
@@ -55,10 +54,11 @@ public class SessionInfo extends Module {
     @Override
     public void onRender2D(Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
+            return;
         int x = getX() + 4;
         int y = getY() + 4;
-        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250,250,250,200);
+        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200);
 
         updatePlayTime();
         String playtime = hour + "h " + minute + "m " + second + "s";
@@ -67,87 +67,53 @@ public class SessionInfo extends Module {
         String speed = String.valueOf(MathUtil.round(mc.thePlayer.getSpeed(), 1));
         String health = String.valueOf(MathUtil.round(mc.thePlayer.getHealth(), 1));
 
-        Runnable renderRunnable = () -> {
-            // 背景
-            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 80));
-            RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
+        // 背景
+        RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 80));
+        RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
 
-            // 顶部
-            psb.drawString("Session Info", x + 15, y - 0.7f, color.getRGB());
-            icon.drawString("I", x, y - 0.3f, color.getRGB());
+        // 顶部
+        psb.drawString("Session Info", x + 15, y - 0.7f, color.getRGB());
+        icon.drawString("I", x, y - 0.3f, color.getRGB());
 
-            // 第一行 游玩时间
-            iconSmall.drawString("e", x, y + 12, color.getRGB());
-            psm.drawString("Play Time", x + 12, y + 11, color.getRGB());
-            psm.drawString(playtime, x + 145 - psm.getWidth(playtime), y + 11, color.getRGB());
+        // 第一行 游玩时间
+        iconSmall.drawString("e", x, y + 12, color.getRGB());
+        psm.drawString("Play Time", x + 12, y + 11, color.getRGB());
+        psm.drawString(playtime, x + 145 - psm.getWidth(playtime), y + 11, color.getRGB());
 
-            // 第二行 击杀数量
-            iconSmall.drawString("a", x, y + 22, color.getRGB());
-            psm.drawString("Killed", x + 12, y + 21, color.getRGB());
-            psm.drawString(kills, x + 145 - psm.getWidth(kills), y + 21, color.getRGB());
+        // 第二行 击杀数量
+        iconSmall.drawString("a", x, y + 22, color.getRGB());
+        psm.drawString("Killed", x + 12, y + 21, color.getRGB());
+        psm.drawString(kills, x + 145 - psm.getWidth(kills), y + 21, color.getRGB());
 
-            // 第三行 HurtTime
-            iconSmall.drawString("c", x, y + 32, color.getRGB());
-            psm.drawString("HurtTime", x + 12, y + 31, color.getRGB());
-            psm.drawString(hurtTime, x + 145 - psm.getWidth(hurtTime), y + 31, color.getRGB());
+        // 第三行 HurtTime
+        iconSmall.drawString("c", x, y + 32, color.getRGB());
+        psm.drawString("HurtTime", x + 12, y + 31, color.getRGB());
+        psm.drawString(hurtTime, x + 145 - psm.getWidth(hurtTime), y + 31, color.getRGB());
 
-            // 第四行 速度
-            iconSmall.drawString("b", x, y + 42, color.getRGB());
-            psm.drawString("Speed", x + 12, y + 41, color.getRGB());
-            psm.drawString(speed, x + 145 - psm.getWidth(speed), y + 41, color.getRGB());
+        // 第四行 速度
+        iconSmall.drawString("b", x, y + 42, color.getRGB());
+        psm.drawString("Speed", x + 12, y + 41, color.getRGB());
+        psm.drawString(speed, x + 145 - psm.getWidth(speed), y + 41, color.getRGB());
 
-            // 第五行 血量
-            iconSmall.drawString("s", x, y + 52, color.getRGB());
-            psm.drawString("HP", x + 12, y + 51, color.getRGB());
-            psm.drawString(health, x + 145 - psm.getWidth(health), y + 51, color.getRGB());
-        };
+        // 第五行 血量
+        iconSmall.drawString("s", x, y + 52, color.getRGB());
+        psm.drawString("HP", x + 12, y + 51, color.getRGB());
+        psm.drawString(health, x + 145 - psm.getWidth(health), y + 51, color.getRGB());
 
         Runnable blurRunnable = () -> {
-            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 4, Color.BLACK);
+            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 65, 4, Color.BLACK);
         };
 
         Runnable shadowRunnable = () -> {
-            // 背景
-            RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, ColorUtil.withAlpha(color, 255));
-
-            // 顶部
-            psb.drawString("Session Info", x + 15, y - 0.7f, color.getRGB());
-            icon.drawString("I", x, y - 0.3f, color.getRGB());
-
-            // 第一行 游玩时间
-            iconSmall.drawString("e", x, y + 12, color.getRGB());
-            psm.drawString("Play Time", x + 12, y + 11, color.getRGB());
-            psm.drawString(playtime, x + 145 - psm.getWidth(playtime), y + 11, color.getRGB());
-
-            // 第二行 击杀数量
-            iconSmall.drawString("a", x, y + 22, color.getRGB());
-            psm.drawString("Killed", x + 12, y + 21, color.getRGB());
-            psm.drawString(kills, x + 145 - psm.getWidth(kills), y + 21, color.getRGB());
-
-            // 第三行 HurtTime
-            iconSmall.drawString("c", x, y + 32, color.getRGB());
-            psm.drawString("HurtTime", x + 12, y + 31, color.getRGB());
-            psm.drawString(hurtTime, x + 145 - psm.getWidth(hurtTime), y + 31, color.getRGB());
-
-            // 第四行 速度
-            iconSmall.drawString("b", x, y + 42, color.getRGB());
-            psm.drawString("Speed", x + 12, y + 41, color.getRGB());
-            psm.drawString(speed, x + 145 - psm.getWidth(speed), y + 41, color.getRGB());
-
-            // 第五行 血量
-            iconSmall.drawString("s", x, y + 52, color.getRGB());
-            psm.drawString("HP", x + 12, y + 51, color.getRGB());
-            psm.drawString(health, x + 145 - psm.getWidth(health), y + 51, color.getRGB());
+            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 3, ColorUtil.withAlpha(color, 255));
         };
 
-        NORMAL_RENDER_RUNNABLES.add(renderRunnable);
-
         if (canBlur()) {
-            NORMAL_BLUR_RUNNABLES.add(blurRunnable);
+            MODERN_BLUR_RUNNABLES.add(blurRunnable);
         }
 
-        if (shadow.isEnabled()) {
-            NORMAL_POST_BLOOM_RUNNABLES.add(shadowRunnable);
+        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+            MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
         }
     }
 

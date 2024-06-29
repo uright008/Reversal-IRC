@@ -129,11 +129,8 @@ public final class Notification implements GameInstance {
         });
 
         NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-            RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
+        //    RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
             RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
-            icon.drawString(finalIconString, xVisual + 4, yVisual - 1, finalSideColor.getRGB());
-            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual - 2, new Color(255,255,255,220).getRGB());
-            psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255,255,255,220).getRGB());
         });
     }
 

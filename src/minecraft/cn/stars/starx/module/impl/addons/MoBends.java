@@ -38,7 +38,7 @@ public class MoBends extends Module {
 
     @Override
     public void onUpdateAlways() {
-        if (ModuleInstance.getModule(WaveyCapes.class).isEnabled()) {
+        if (ModuleInstance.getModule(WaveyCapes.class).isEnabled() && this.isEnabled()) {
             StarX.INSTANCE.showMsg("WaveyCapes and SkinLayers3D are not supported by MoBends.");
             ModuleInstance.getModule(WaveyCapes.class).toggleModule();
         }

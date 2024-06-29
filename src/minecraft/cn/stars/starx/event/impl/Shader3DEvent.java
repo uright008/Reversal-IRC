@@ -7,5 +7,4 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public final class Shader3DEvent extends Event {
-    private final float partialTicks;
 }

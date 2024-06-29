@@ -3,6 +3,9 @@ package cn.stars.starx.util.render;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
@@ -13,6 +16,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -20,14 +24,21 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.item.*;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.glu.Sphere;
 
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4d;
 import java.awt.*;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -79,8 +90,145 @@ public final class RenderUtil implements GameInstance {
         color(Color.white);
     }
 
+    public static void setAlphaLimit(float limit) {
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(GL_GREATER, (float) (limit * .01));
+    }
+
+    public static void resetColor() {
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    public static Framebuffer createFrameBuffer(Framebuffer framebuffer) {
+        return createFrameBuffer(framebuffer, false);
+    }
+
+    public static Framebuffer createFrameBuffer(Framebuffer framebuffer, boolean depth) {
+        if (needsNewFramebuffer(framebuffer)) {
+            if (framebuffer != null) {
+                framebuffer.deleteFramebuffer();
+            }
+            return new Framebuffer(mc.displayWidth, mc.displayHeight, depth);
+        }
+        return framebuffer;
+    }
+
+    public static boolean needsNewFramebuffer(Framebuffer framebuffer) {
+        return framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight;
+    }
+
+    public static void bindTexture(int texture) {
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
+
     public boolean isHovered(final double x, final double y, final double width, final double height, final int mouseX, final int mouseY) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    }
+
+    private Vector3d project2D(int scaleFactor, double x, double y, double z) {
+        IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
+        FloatBuffer modelView = GLAllocation.createDirectFloatBuffer(16);
+        FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
+        FloatBuffer vector = GLAllocation.createDirectFloatBuffer(4);
+        GL11.glGetFloatv(2982, modelView);
+        GL11.glGetFloatv(2983, projection);
+        GL11.glGetIntegerv(2978, viewport);
+        return GLU.gluProject((float)x, (float)y, (float)z, modelView, projection, viewport, vector) ? new Vector3d(vector.get(0) / (float)scaleFactor, ((float) Display.getHeight() - vector.get(1)) / (float)scaleFactor, vector.get(2)) : null;
+    }
+
+    public static void drawTargetESP2D(float x, float y, Color color, Color color2, Color color3, Color color4, float scale, int index) {
+        long millis = System.currentTimeMillis() + (long) index * 400L;
+        double angle = MathHelper.clamp_double((Math.sin((double) millis / 150.0) + 1.0) / 2.0 * 30.0, 0.0, 30.0);
+        double scaled = MathHelper.clamp_double((Math.sin((double) millis / 500.0) + 1.0) / 2.0, 0.8, 1.0);
+        double rotate = MathHelper.clamp_double((Math.sin((double) millis / 1000.0) + 1.0) / 2.0 * 360.0, 0.0, 360.0);
+        rotate = (double) 45 - (angle - 15.0) + rotate;
+        float size = 128.0f * scale * (float) scaled;
+        float x2 = (x -= size / 2.0f) + size;
+        float y2 = (y -= size / 2.0f) + size;
+        GlStateManager.pushMatrix();
+        RenderUtil.customRotatedObject2D(x, y, size, size, (float) rotate);
+        GL11.glDisable(3008);
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.shadeModel(7425);
+        GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+        drawESPImage(getESPImage(), x, y, x2, y2, color, color2, color3, color4);
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.resetColor();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.depthMask(true);
+        GL11.glEnable(3008);
+        GlStateManager.popMatrix();
+    }
+
+    private void drawESPImage(ResourceLocation resource, double x, double y, double x2, double y2, Color c, Color c2, Color c3, Color c4) {
+        mc.getTextureManager().bindTexture(resource);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
+        bufferbuilder.begin(9, DefaultVertexFormats.POSITION_TEX_COLOR);
+        bufferbuilder.pos(x, y2, 0.0).tex(0.0, 1.0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+        bufferbuilder.pos(x2, y2, 0.0).tex(1.0, 1.0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+        bufferbuilder.pos(x2, y, 0.0).tex(1.0, 0.0).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
+        bufferbuilder.pos(x, y, 0.0).tex(0.0, 0.0).color(c4.getRed(), c4.getGreen(), c4.getBlue(), c4.getAlpha()).endVertex();
+        GL11.glShadeModel(7425);
+        GL11.glDepthMask(false);
+        tessellator.draw();
+        GL11.glDepthMask(true);
+        GL11.glShadeModel(7424);
+    }
+
+    private ResourceLocation getESPImage() {
+        switch (ModuleInstance.getMode("TargetESP", "Mode").getMode()) {
+            case "Round":
+                return new ResourceLocation("starx/images/round.png");
+            case "Rectangle":
+                return new ResourceLocation("starx/images/rectangle.png");
+        }
+        return null;
+    }
+
+    public static Vector2f targetESPSPos(EntityLivingBase entity) {
+        EntityRenderer entityRenderer = mc.entityRenderer;
+        float partialTicks = mc.timer.renderPartialTicks;
+        int scaleFactor = new ScaledResolution(mc).getScaleFactor();
+        double x = interpolate(entity.posX, entity.prevPosX, partialTicks);
+        double y = interpolate(entity.posY, entity.prevPosY, partialTicks);
+        double z = interpolate(entity.posZ, entity.prevPosZ, partialTicks);
+        double height = entity.height / (entity.isChild() ? 1.75f : 1.0f) / 2.0f;
+        double width = 0.0;
+        AxisAlignedBB aabb = new AxisAlignedBB(x - 0.0, y, z - 0.0, x + 0.0, y + height, z + 0.0);
+        Vector3d[] vectors = new Vector3d[]{new Vector3d(aabb.minX, aabb.minY, aabb.minZ), new Vector3d(aabb.minX, aabb.maxY, aabb.minZ), new Vector3d(aabb.maxX, aabb.minY, aabb.minZ), new Vector3d(aabb.maxX, aabb.maxY, aabb.minZ), new Vector3d(aabb.minX, aabb.minY, aabb.maxZ), new Vector3d(aabb.minX, aabb.maxY, aabb.maxZ), new Vector3d(aabb.maxX, aabb.minY, aabb.maxZ), new Vector3d(aabb.maxX, aabb.maxY, aabb.maxZ)};
+        entityRenderer.setupCameraTransform(partialTicks, 0);
+        Vector4d position = null;
+        Vector3d[] vecs3 = vectors;
+        int vecLength = vectors.length;
+        for (int vecI = 0; vecI < vecLength; ++vecI) {
+            Vector3d vector = vecs3[vecI];
+            vector = project2D(scaleFactor, vector.x - mc.getRenderManager().viewerPosX, vector.y - mc.getRenderManager().viewerPosY, vector.z - mc.getRenderManager().viewerPosZ);
+            if (vector == null || !(vector.z >= 0.0) || !(vector.z < 1.0)) continue;
+            if (position == null) {
+                position = new Vector4d(vector.x, vector.y, vector.z, 0.0);
+            }
+            position.x = Math.min(vector.x, position.x);
+            position.y = Math.min(vector.y, position.y);
+            position.z = Math.max(vector.x, position.z);
+            position.w = Math.max(vector.y, position.w);
+        }
+        entityRenderer.setupOverlayRendering();
+        if (position != null) {
+            return new Vector2f((float)position.x, (float)position.y);
+        }
+        return null;
+    }
+
+    public static void customRotatedObject2D(float oXpos, float oYpos, float oWidth, float oHeight, float rotate) {
+        GL11.glTranslated(oXpos + oWidth / 2.0f, oYpos + oHeight / 2.0f, 0.0);
+        GL11.glRotated(rotate, 0.0, 0.0, 1.0);
+        GL11.glTranslated(-oXpos - oWidth / 2.0f, -oYpos - oHeight / 2.0f, 0.0);
+    }
+
+    public static double interpolate(double current, double old, double scale) {
+        return old + (current - old) * scale;
     }
 
     public void startSmooth() {
@@ -1583,19 +1731,6 @@ public final class RenderUtil implements GameInstance {
         }
 
         GL11.glEnd();
-    }
-
-    public static void drawSphere(final double red, final double green, final double blue, final double alpha, final double x, final double y, final double z,
-                                  final float size, final int slices, final int stacks, final float lWidth) {
-        final Sphere sphere = new Sphere();
-
-        enableDefaults();
-        GL11.glColor4d(red, green, blue, alpha);
-        GL11.glTranslated(x, y, z);
-        GL11.glLineWidth(lWidth);
-        sphere.setDrawStyle(GLU.GLU_SILHOUETTE);
-        sphere.draw(size, slices, stacks);
-        disableDefaults();
     }
 
     public static void enableDefaults() {

@@ -177,14 +177,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ContextCapabilities;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.OpenGLException;
-import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.glu.GLU;
 
 public class Minecraft implements IThreadListener, IPlayerUsage
@@ -550,35 +543,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private void createDisplay() throws LWJGLException
     {
         Display.setResizable(true);
-        Display.setTitle("StarX is loading...");
+        Display.setTitle("StarX正在启动！ (别点窗口不然会卡住)");
 
-        try
-        {
-            Display.create((new PixelFormat()).withDepthBits(24));
-        }
-        catch (LWJGLException lwjglexception)
-        {
-            logger.error((String)"Couldn\'t set pixel format", (Throwable)lwjglexception);
-
-            try
-            {
-                Thread.sleep(1000L);
-            }
-            catch (InterruptedException var3)
-            {
-                ;
-            }
-
-            if (this.fullscreen)
-            {
-                this.updateDisplayMode();
-            }
-
-            Display.create();
-        }
+        Display.create((new PixelFormat()).withDepthBits(24));
     }
 
-    private void setInitialDisplayMode() throws LWJGLException
+    private void setInitialDisplayMode()
     {
         if (this.fullscreen)
         {
@@ -2275,7 +2245,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             this.mcResourcePackRepository.clearResourcePack();
             this.ingameGUI.resetPlayersOverlayFooterHeader();
-            this.setServerData((ServerData)null);
+        //    this.setServerData((ServerData)null);
             this.integratedServerIsRunning = false;
         }
 

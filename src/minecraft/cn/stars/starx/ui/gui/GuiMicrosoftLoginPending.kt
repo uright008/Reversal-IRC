@@ -104,8 +104,6 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
 
     override fun onGuiClosed() {
         server.stop(true)
-        BackgroundShader.BACKGROUND_SHADER.stopShader()
-        RiseShaders.MAIN_MENU_SHADER.active = false
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {

@@ -17,7 +17,7 @@ class WingUtils : ModelBase() {
 
     init {
         this.mc = Minecraft.getMinecraft()
-        this.location = ResourceLocation("starx/image/wings.png")
+        this.location = ResourceLocation("starx/images/wings.png")
         this.playerUsesFullHeight = false //Loader.isModLoaded("animations");
 
         // Set texture offsets.

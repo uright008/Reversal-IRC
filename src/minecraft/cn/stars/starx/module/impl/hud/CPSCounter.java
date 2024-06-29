@@ -3,6 +3,7 @@ package cn.stars.starx.module.impl.hud;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.ClickEvent;
 import cn.stars.starx.event.impl.Render2DEvent;
+import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.event.impl.TickEvent;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
@@ -29,8 +30,7 @@ import java.util.List;
 public class CPSCounter extends Module {
     private final BoolValue displayOnClick = new BoolValue("Display On Click", this, false);
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
-    private final BoolValue shadow = new BoolValue("Shadow", this, true);
-    private final BoolValue outline = new BoolValue("Outline", this, true);
+    private final BoolValue outline = new BoolValue("Background", this, true);
     public CPSCounter() {
         setCanBeEdited(true);
         setWidth(100);
@@ -53,34 +53,23 @@ public class CPSCounter extends Module {
 
 
         if (outline.isEnabled()) {
-            NORMAL_RENDER_RUNNABLES.add(() -> {
-                RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 80));
-                RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
-            });
+            RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 80));
+            RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
 
-            if (shadow.isEnabled()) {
-                NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, ColorUtil.withAlpha(color, 255));
+            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                MODERN_BLOOM_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, ColorUtil.withAlpha(color, 255));
                 });
             }
 
             if (canBlur()) {
-                NORMAL_BLUR_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, Color.BLACK);
+                MODERN_BLUR_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 4, 4, Color.BLACK);
                 });
             }
         }
-        NORMAL_RENDER_RUNNABLES.add(() -> {
-            icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
-            psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
-        });
-        if (shadow.isEnabled()) {
-            NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
-                psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
-            });
-        }
-
+        icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
+        psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
     }
 
     @Override

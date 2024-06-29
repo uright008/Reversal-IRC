@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class Module implements GameInstance {
 
     private ScaledResolution sr = new ScaledResolution(mc);
+    public boolean shouldCallNotification = true;
     public int scaledWidth = sr.getScaledWidth();
     public int scaledHeight = sr.getScaledHeight();
     private boolean enabled;
@@ -55,14 +56,6 @@ public abstract class Module implements GameInstance {
     //Module Settings
     public List<Setting> settings = new ArrayList<>();
     private ModuleInfo moduleInfo;
-
-    public int getY() {
-        if (Minecraft.getMinecraft().isFullScreen()) {
-            if (y > 270) return y + 35;
-            else return y;
-        }
-        else return y;
-    }
 
     public Module() {
         if (this.getClass().isAnnotationPresent(ModuleInfo.class)) {
@@ -99,8 +92,7 @@ public abstract class Module implements GameInstance {
 
     public boolean toggleModule() {
         if (StarX.isDestructed) return false;
-        boolean canNoti = ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().
-                getSetting("ClientSettings", "Show Notifications"))).isEnabled();
+        boolean canNoti = ModuleInstance.getBool("ClientSettings", "Show Notifications").isEnabled() && shouldCallNotification;
         enabled = !enabled;
 
         if (enabled) {
@@ -138,7 +130,7 @@ public abstract class Module implements GameInstance {
 
     // Control the whole module elements
     public boolean canBlur() {
-        return ModuleInstance.getBool("ClientSettings", "Blur").isEnabled();
+        return ModuleInstance.getBool("PostProcessing", "Blur").isEnabled();
     }
 
     public boolean toggleNoEvent() {

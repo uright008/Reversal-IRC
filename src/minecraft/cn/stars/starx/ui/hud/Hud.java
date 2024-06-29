@@ -112,16 +112,14 @@ public class Hud implements GameInstance {
             }
 
             case "Modern": {
-                if (ModuleInstance.getBool("BPSCounter", "Shadow").isEnabled()) {
+                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                     NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
                         psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                         psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                     });
                 }
-                NORMAL_RENDER_RUNNABLES.add(() -> {
-                    psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                    psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                });
+                psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
@@ -208,7 +206,6 @@ public class Hud implements GameInstance {
     private static void renderArrayList() {
         if (!arraylist.isEnabled()) return;
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
-        boolean canBlur = ModuleInstance.getBool("ClientSettings", "Blur").isEnabled();
 
         final float offset = 6;
 
@@ -296,36 +293,29 @@ public class Hud implements GameInstance {
                     final double stringWidth = psm17.getWidth((((Module) n).hasSuffix() ? name + "  " + ((Module) n).getSuffix() : name));
                     final int mC = moduleCount;
 
-                    Runnable renderRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
-                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
-                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
-                        if (((Module) n).hasSuffix()) {
-                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250,250,250,200).getRGB());
-                        }
-                    };
-
                     Runnable shadowRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
+                                ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
                         RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
-                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
-                        if (((Module) n).hasSuffix()) {
-                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
-                        }
                     };
 
                     Runnable blurRunnable = () -> {
                         RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
                     };
 
-                    NORMAL_RENDER_RUNNABLES.add(renderRunnable);
-
-                    if (ModuleInstance.getBool("Arraylist", "Shadow").isEnabled()) {
-                        NORMAL_POST_BLOOM_RUNNABLES.add(shadowRunnable);
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
                     }
 
-                    if (canBlur) {
-                        NORMAL_BLUR_RUNNABLES.add(blurRunnable);
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(blurRunnable);
+                    }
+
+                    RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
+                    RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
+                    psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
+                    if (((Module) n).hasSuffix()) {
+                        psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250,250,250,200).getRGB());
                     }
 
                     finalX = arraylistX - psm17.getWidth(name);
@@ -398,7 +388,6 @@ public class Hud implements GameInstance {
         if (!textGui.isEnabled()) return;
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
         final boolean useDefaultName = !ModuleInstance.getBool("TextGui", "Custom Name").isEnabled();
-        boolean canBlur = ModuleInstance.getBool("ClientSettings", "Blur").isEnabled();
 
         final float offset;
         String name = StarX.NAME, customName = ThemeUtil.getCustomClientName();
@@ -494,22 +483,21 @@ public class Hud implements GameInstance {
                 String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
-                if (canBlur)
-                    NORMAL_BLUR_RUNNABLES.add(() -> {
-                        RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, Color.BLACK);
-                });
+                if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    MODERN_BLUR_RUNNABLES.add(() -> {
+                        RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 13, 4, Color.BLACK);
+                    });
+                }
+                
+                RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, new Color(0, 0, 0, 80));
+                RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, 
+                        ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
 
-                NORMAL_RENDER_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, new Color(0, 0, 0, 80));
-                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
-                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
-                    psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
-                });
-
-                if (ModuleInstance.getBool("TextGui", "Shadow").isEnabled()) {
-                    NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                        psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
-                        RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
+                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    MODERN_BLOOM_RUNNABLES.add(() -> {
+                        psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 255).getRGB());
+                        RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 3,
                                 ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
                     });
                 }
@@ -521,10 +509,8 @@ public class Hud implements GameInstance {
 
                     final float off1 = off;
                     final int i1 = i;
-                    NORMAL_RENDER_RUNNABLES.add(() -> {
-                        psb20.drawString(character, x + 4 + off1, y + 3.5,
-                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
-                    });
+                    psb20.drawString(character, x + 4 + off1, y + 3.5,
+                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
                     off += psb20.getWidth(character);
                 }
 

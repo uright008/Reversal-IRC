@@ -100,7 +100,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         this.exitButton.draw(mouseX, mouseY, partialTicks);
 
 
-        if (StarX.INSTANCE.isAMDShaderCompatibility && StarX.INSTANCE.backgroundId >= 8) {
+        if (StarX.INSTANCE.isAMDShaderCompatibility && StarX.INSTANCE.backgroundId <= 8) {
             psr.drawCenteredString("警告: 检测到Shader兼容性错误,背景已强制关闭. (AMD CPU?)", width / 2f, height / 2f + 100, new Color(250,50,50, 250).getRGB());
         }
 
@@ -175,13 +175,13 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         RiseShaders.MAIN_MENU_SHADER.setActive(false);
         GL20.glUseProgram(0);
         if (!previous) {
-            if (StarX.INSTANCE.backgroundId < 8) StarX.INSTANCE.backgroundId++;
-            else StarX.INSTANCE.backgroundId = 0;
+            if (StarX.backgroundId < 9) StarX.backgroundId++;
+            else StarX.backgroundId = 0;
         } else {
-            if (StarX.INSTANCE.backgroundId > 0) StarX.INSTANCE.backgroundId--;
-            else StarX.INSTANCE.backgroundId = 8;
+            if (StarX.backgroundId > 0) StarX.backgroundId--;
+            else StarX.backgroundId = 9;
         }
-        StarXLogger.info("(GuiMainMenuNew) Current background id: " + StarX.INSTANCE.backgroundId);
+        StarXLogger.info("(GuiMainMenuNew) Current background id: " + StarX.backgroundId);
     }
 
 

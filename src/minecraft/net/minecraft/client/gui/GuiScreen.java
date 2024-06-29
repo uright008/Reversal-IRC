@@ -2,7 +2,9 @@ package net.minecraft.client.gui;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.misc.VideoPlayer;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
@@ -764,15 +766,18 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
-        if (StarX.INSTANCE.backgroundId == 8) {
+        if (StarX.backgroundId == 8) {
             RenderUtil.image(new ResourceLocation("starx/images/background8.png"), 0, 0, this.width, this.height);
             return;
+        } else if (StarX.backgroundId == 9) {
+            VideoPlayer.INSTANCE.draw(width, height);
+            return;
         }
-        if (StarX.INSTANCE.isAMDShaderCompatibility) {
+        if (StarX.isAMDShaderCompatibility) {
             drawBackground(0);
             return;
         }
-        if (StarX.INSTANCE.backgroundId == 0) {
+        if (StarX.backgroundId == 0) {
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
             BackgroundShader.BACKGROUND_SHADER.startShader();
@@ -785,19 +790,19 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             worldRenderer.pos(0, 0, 0.0D).endVertex();
             instance.draw();
             BackgroundShader.BACKGROUND_SHADER.stopShader();
-        } else if (StarX.INSTANCE.backgroundId == 1) {
+        } else if (StarX.backgroundId == 1) {
             RiseShaders.MAIN_MENU_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, null);
-        } else if (StarX.INSTANCE.backgroundId == 2) {
+        } else if (StarX.backgroundId == 2) {
             useShaderToyBackground(mario, 2);
-        } else if (StarX.INSTANCE.backgroundId == 3) {
+        } else if (StarX.backgroundId == 3) {
             useShaderToyBackground(redround, 2);
-        } else if (StarX.INSTANCE.backgroundId == 4) {
+        } else if (StarX.backgroundId == 4) {
             useShaderToyBackground(water, 1);
-        } else if (StarX.INSTANCE.backgroundId == 5) {
+        } else if (StarX.backgroundId == 5) {
             useShaderToyBackground(blackhole, 2);
-        } else if (StarX.INSTANCE.backgroundId == 6) {
+        } else if (StarX.backgroundId == 6) {
             useShaderToyBackground(octagrams, 2);
-        } else if (StarX.INSTANCE.backgroundId == 7) {
+        } else if (StarX.backgroundId == 7) {
             useShaderToyBackground(tokyo, 2);
         }
     }

@@ -29,15 +29,20 @@ import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.FileUtil;
+import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeUtil;
 import cn.stars.starx.util.starx.Branch;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.RandomUtils;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 
 import java.awt.*;
@@ -56,7 +61,7 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.1.2";
+    public static final String VERSION = "v1.2.1";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -73,14 +78,14 @@ public enum StarX implements GameInstance {
             "It's been a long day without you my friend", "回来吧牢端"};
 
     public static final String[] wittyTitle = new String[]
-            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?"};
+            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?", "起星鱼了", "你是玩什么游戏玩的?"};
 
 
     // Init
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public boolean isAMDShaderCompatibility = false;
-    public int backgroundId = 0;
+    public static boolean isAMDShaderCompatibility = false;
+    public static int backgroundId = 0;
 
     public ModuleManager moduleManager;
     public NotificationManager notificationManager;
@@ -104,13 +109,12 @@ public enum StarX implements GameInstance {
     // Core
     public void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + wittyTitle[RandomUtils.nextInt(0, wittyTitle.length)]);
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | LWJGL " + Sys.getVersion() + " | " + wittyTitle[RandomUtils.nextInt(0, wittyTitle.length)]);
 
             // ViaMCP init
             ViaMCP.create();
             ViaMCP.INSTANCE.initAsyncSlider();
 
-            // Client
             StarXLogger.info("Loading client...");
             initialize();
             loadConfigs();
@@ -394,6 +398,7 @@ public enum StarX implements GameInstance {
             // Addons
             new FreeLook(),
             new MoBends(),
+            new PostProcessing(),
             new WaveyCapes(),
             new SkinLayers3D(),
             new SpecialGuis(),
@@ -421,6 +426,7 @@ public enum StarX implements GameInstance {
             new ItemPhysics(),
             new MotionBlur(),
             new NoBob(),
+            new TargetESP(),
             new TNTTimer(),
             new TimeTraveller(),
             new TrueSights(),
@@ -441,6 +447,4 @@ public enum StarX implements GameInstance {
             new TextGui(),
             new TestElement()
     };
-
-
 }

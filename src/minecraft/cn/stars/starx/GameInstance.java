@@ -43,6 +43,9 @@ public interface GameInstance {
     List<Runnable> NORMAL_RENDER_RUNNABLES = new ArrayList<>();
     List<Runnable> NORMAL_POST_RENDER_RUNNABLES = new ArrayList<>();
 
+    List<Runnable> MODERN_BLUR_RUNNABLES = new ArrayList<>();
+    List<Runnable> MODERN_BLOOM_RUNNABLES = new ArrayList<>();
+
     static void render2DRunnables(float partialTicks, boolean shaders) {
 
         NORMAL_PRE_RENDER_RUNNABLES.forEach(Runnable::run);

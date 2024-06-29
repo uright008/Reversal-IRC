@@ -138,12 +138,15 @@ public final class TargetHud extends Module {
 
                 //Background
                 if (backGround.isEnabled()) {
-                    NORMAL_RENDER_RUNNABLES.add(() -> {
-                        RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 48, 8, new Color(0, 0, 0, 110));
-                    });
-                    if (canBlur()) {
-                        NORMAL_BLUR_RUNNABLES.add(() -> {
+                    RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 48, 8, new Color(0, 0, 0, 110));
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 48, 8, Color.BLACK);
+                        });
+                    }
+                    if (canBlur()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 47, 8, Color.BLACK);
                         });
                     }
                 }
@@ -163,32 +166,28 @@ public final class TargetHud extends Module {
                 if (target instanceof AbstractClientPlayer) {
                     //offset other colors aside from red, so the face turns red
                     final double offset = -(((AbstractClientPlayer) target).hurtTime * 23);
-                    NORMAL_RENDER_RUNNABLES.add(() -> {
-                        //sets color to red
-                        RenderUtil.color(new Color(255, (int) (255 + offset), (int) (255 + offset)));
-                        //renders face
-                        renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 3, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
-                        //renders top layer of face
-                        renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 15, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
-                        //resets color to white
-                        RenderUtil.color(Color.WHITE);
-                    });
+                    //sets color to red
+                    RenderUtil.color(new Color(255, (int) (255 + offset), (int) (255 + offset)));
+                    //renders face
+                    renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 3, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
+                    //renders top layer of face
+                    renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 15, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
+                    //resets color to white
+                    RenderUtil.color(Color.WHITE);
                 }
 
                 final double fontHeight = CustomFont.getHeight();
 
-                NORMAL_RENDER_RUNNABLES.add(() -> {
-                    CustomFont.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
+                CustomFont.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
 
-                    GlStateManager.pushMatrix();
-                    GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                    RenderUtil.scissor(posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, 91, 30);
+                GlStateManager.pushMatrix();
+                GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                RenderUtil.scissor(posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, 91, 30);
 
-                    CustomFont.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, Color.WHITE.hashCode());
+                CustomFont.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, Color.WHITE.hashCode());
 
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                    GlStateManager.popMatrix();
-                });
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                GlStateManager.popMatrix();
 
                 if (!String.valueOf(((EntityPlayer) target).getHealth()).equals("NaN"))
                     health = Math.min(20, ((EntityPlayer) target).getHealth());
@@ -249,12 +248,10 @@ public final class TargetHud extends Module {
 
                         float finalOffset = offset;
                         int finalColor = color;
-                        NORMAL_RENDER_RUNNABLES.add(() -> {
-                            Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
-                        });
+                        Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
 
-                        if (shadow.isEnabled()) {
-                            NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
+                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                            MODERN_BLOOM_RUNNABLES.add(() -> {
                                 Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
                             });
                         }
@@ -300,9 +297,7 @@ public final class TargetHud extends Module {
 
                 if (!((dist > 20 || target.isDead))) {
                     float finalOffset1 = offset;
-                    NORMAL_RENDER_RUNNABLES.add(() -> {
-                        CustomFont.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 2.5f, -1);
-                    });
+                    CustomFont.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 2.5f, -1);
                 }
 
                 if (lastTarget != target) {
@@ -767,10 +762,10 @@ public final class TargetHud extends Module {
 
                         Gui.drawRect(drawBarPosX + offset, posY, drawBarPosX + 1 + offset, posY + 10, color);
 
-                        if (shadow.isEnabled()) {
+                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                             float finalOffset = offset;
                             int finalColor = color;
-                            NORMAL_POST_BLOOM_RUNNABLES.add(() -> Gui.drawRect(drawBarPosX + finalOffset, posY, drawBarPosX + 1 + finalOffset, posY + 10, finalColor));
+                            MODERN_BLOOM_RUNNABLES.add(() -> Gui.drawRect(drawBarPosX + finalOffset, posY, drawBarPosX + 1 + finalOffset, posY + 10, finalColor));
                         }
 
                         offset += 1;

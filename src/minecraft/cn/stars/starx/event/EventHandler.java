@@ -3,7 +3,6 @@ package cn.stars.starx.event;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.AlwaysHandle;
 import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.ClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
@@ -145,8 +144,6 @@ public final class EventHandler {
                 PlayerUtil.serverResponses.clear();
                 PlayerUtil.sentEmail = false;
             }
-
-            AlwaysHandle.onPreMotion(event);
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {

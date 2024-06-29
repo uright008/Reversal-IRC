@@ -168,10 +168,6 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         final boolean blur = ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Blur"))).isEnabled();
 
-        if (blur) {
-            InGameBlurUtil.postBlur(5,2);
-        }
-
         final ScaledResolution sr = new ScaledResolution(mc);
         RenderUtil.rect(0.0,0.0, sr.getScaledWidth_double(), sr.getScaledHeight_double(), new Color(0,0,0,100));
 

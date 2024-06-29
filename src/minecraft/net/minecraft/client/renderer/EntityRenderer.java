@@ -5,6 +5,8 @@ import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.impl.addons.FreeLook;
+import cn.stars.starx.module.impl.addons.PostProcessing;
+import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.util.misc.ModuleInstance;
@@ -1306,10 +1308,14 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 {
                     GlStateManager.alphaFunc(516, 0.1F);
                     this.mc.ingameGUI.renderGameOverlay(partialTicks);
-                    Hud.renderGameOverlay();
+
+                    PostProcessing postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
+                    postProcessing.blurScreen();
 
                     final Render2DEvent render2DEvent = new Render2DEvent(partialTicks, scaledresolution);
                     render2DEvent.call();
+
+                    Hud.renderGameOverlay();
 
                     GameInstance.render2DRunnables(partialTicks, true);
                     GameInstance.clearRunnables();
@@ -1884,10 +1890,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
         {
             Shaders.endRender();
         }
-
-
-        final Shader3DEvent shader3DEvent = new Shader3DEvent(partialTicks);
-        shader3DEvent.call();
 
         GameInstance.render3DRunnables(partialTicks);
         GameInstance.clearRunnables();

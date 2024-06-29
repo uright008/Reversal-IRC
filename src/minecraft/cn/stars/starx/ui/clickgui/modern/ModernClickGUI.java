@@ -1,13 +1,9 @@
 package cn.stars.starx.ui.clickgui.modern;
 
-import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.hud.TestElement;
-import cn.stars.starx.module.impl.render.ClickGui;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
@@ -16,7 +12,6 @@ import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.*;
@@ -30,14 +25,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static cn.stars.starx.GameInstance.*;
 
@@ -67,13 +58,10 @@ public class ModernClickGUI extends GuiScreen {
     //    GlUtils.startScale(x, y, (float) scaleAnimation.getValue());
 
         // Background
-        if (ModuleInstance.getBool("ClientSettings", "Blur").isEnabled()) {
-            NORMAL_BLUR_RUNNABLES.add(() -> {
+        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+            MODERN_BLUR_RUNNABLES.add(() -> {
                 RenderUtil.roundedRectangle(x, y, 520, 320, 8, Color.BLACK);
             });
-
-            RiseShaders.GAUSSIAN_BLUR_SHADER.update();
-            RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
         }
         RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
 
@@ -85,11 +73,11 @@ public class ModernClickGUI extends GuiScreen {
         RenderUtil.rectangle(x + 5, y + 62, 105, 0.7, new Color(200,200,200,100));
 
         // Shadow
-        NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-            RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
-        });
-        RiseShaders.POST_BLOOM_SHADER.update();
-        RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+            MODERN_BLOOM_RUNNABLES.add(() -> {
+                RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
+            });
+        }
 
         // Search
         if (isSearching) {
@@ -154,7 +142,6 @@ public class ModernClickGUI extends GuiScreen {
                     for (final Setting setting : m.getSettings()) {
 
                         if (!setting.isHidden()) {
-
                             if (setting instanceof NoteValue) {
                                 FontManager.getPSR(18).drawString(setting.name, setting.guiX, setting.guiY - 15, new Color(200,200,200,200).getRGB());
                                 settingY += 12;
@@ -413,7 +400,7 @@ public class ModernClickGUI extends GuiScreen {
 
         final float wheel = Mouse.getDWheel();
 
-        scrollAmount += wheel / (10f - ModuleInstance.getNumber("ClickGui", "Scroll Speed").getValue());
+        scrollAmount += wheel / (11f - ModuleInstance.getNumber("ClickGui", "Scroll Speed").getValue()) * 100;
 
         if (wheel == 0) {
             scrollAmount -= (lastLastScrollAmount - scrollAmount) * 0.6;
