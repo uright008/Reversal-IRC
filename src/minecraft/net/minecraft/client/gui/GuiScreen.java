@@ -2,9 +2,7 @@ package net.minecraft.client.gui;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.misc.VideoPlayer;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
@@ -108,12 +106,12 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         for (int i = 0; i < this.buttonList.size(); ++i)
         {
-            ((GuiButton)this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY);
+            this.buttonList.get(i).drawButton(this.mc, mouseX, mouseY);
         }
 
         for (int j = 0; j < this.labelList.size(); ++j)
         {
-            ((GuiLabel)this.labelList.get(j)).drawLabel(this.mc, mouseX, mouseY);
+            this.labelList.get(j).drawLabel(this.mc, mouseX, mouseY);
         }
     }
 
@@ -770,7 +768,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             RenderUtil.image(new ResourceLocation("starx/images/background8.png"), 0, 0, this.width, this.height);
             return;
         } else if (StarX.backgroundId == 9) {
-            VideoPlayer.INSTANCE.draw(width, height);
             return;
         }
         if (StarX.isAMDShaderCompatibility) {

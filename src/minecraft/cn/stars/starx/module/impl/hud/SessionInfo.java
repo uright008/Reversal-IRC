@@ -16,10 +16,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.ColorUtil;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.ThemeType;
-import cn.stars.starx.util.render.ThemeUtil;
+import cn.stars.starx.util.render.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
@@ -68,53 +65,80 @@ public class SessionInfo extends Module {
         String health = String.valueOf(MathUtil.round(mc.thePlayer.getHealth(), 1));
 
         // 背景
-        RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 80));
-        RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
+        if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+            RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, new Color(0, 0, 0, 80));
+            RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
+
+            if (canBlur()) {
+                MODERN_BLUR_RUNNABLES.add(() -> {
+                    RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, Color.BLACK);
+                });
+            }
+
+            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                MODERN_BLOOM_RUNNABLES.add(() -> {
+                    RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, ColorUtil.withAlpha(color, 255));
+                });
+            }
+
+        } else {
+            RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+            RoundedUtil.drawRound(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 220));
+
+            if (canBlur()) {
+                MODERN_BLUR_RUNNABLES.add(() -> {
+                    RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                });
+            }
+
+            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                MODERN_BLOOM_RUNNABLES.add(() -> {
+                    RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                });
+            }
+        }
 
         // 顶部
-        psb.drawString("Session Info", x + 15, y - 0.7f, color.getRGB());
-        icon.drawString("I", x, y - 0.3f, color.getRGB());
+        psb.drawString("Session Info", x + 15, y - 0.7f, new Color(250, 250, 250, 200).getRGB());
+        icon.drawString("I", x, y - 0.3f, new Color(250, 250, 250, 200).getRGB());
 
         // 第一行 游玩时间
-        iconSmall.drawString("e", x, y + 12, color.getRGB());
-        psm.drawString("Play Time", x + 12, y + 11, color.getRGB());
-        psm.drawString(playtime, x + 145 - psm.getWidth(playtime), y + 11, color.getRGB());
+        iconSmall.drawString("e", x, y + 12, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString("Play Time", x + 12, y + 11, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString(playtime, x + 145 - psm.getWidth(playtime), y + 11, new Color(250, 250, 250, 200).getRGB());
 
         // 第二行 击杀数量
-        iconSmall.drawString("a", x, y + 22, color.getRGB());
-        psm.drawString("Killed", x + 12, y + 21, color.getRGB());
-        psm.drawString(kills, x + 145 - psm.getWidth(kills), y + 21, color.getRGB());
+        iconSmall.drawString("a", x, y + 22, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString("Killed", x + 12, y + 21, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString(kills, x + 145 - psm.getWidth(kills), y + 21, new Color(250, 250, 250, 200).getRGB());
 
         // 第三行 HurtTime
-        iconSmall.drawString("c", x, y + 32, color.getRGB());
-        psm.drawString("HurtTime", x + 12, y + 31, color.getRGB());
-        psm.drawString(hurtTime, x + 145 - psm.getWidth(hurtTime), y + 31, color.getRGB());
+        iconSmall.drawString("c", x, y + 32, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString("HurtTime", x + 12, y + 31, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString(hurtTime, x + 145 - psm.getWidth(hurtTime), y + 31, new Color(250, 250, 250, 200).getRGB());
 
         // 第四行 速度
-        iconSmall.drawString("b", x, y + 42, color.getRGB());
-        psm.drawString("Speed", x + 12, y + 41, color.getRGB());
-        psm.drawString(speed, x + 145 - psm.getWidth(speed), y + 41, color.getRGB());
+        iconSmall.drawString("b", x, y + 42, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString("Speed", x + 12, y + 41, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString(speed, x + 145 - psm.getWidth(speed), y + 41, new Color(250, 250, 250, 200).getRGB());
 
         // 第五行 血量
-        iconSmall.drawString("s", x, y + 52, color.getRGB());
-        psm.drawString("HP", x + 12, y + 51, color.getRGB());
-        psm.drawString(health, x + 145 - psm.getWidth(health), y + 51, color.getRGB());
+        iconSmall.drawString("s", x, y + 52, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString("HP", x + 12, y + 51, new Color(250, 250, 250, 200).getRGB());
+        psm.drawString(health, x + 145 - psm.getWidth(health), y + 51, new Color(250, 250, 250, 200).getRGB());
 
-        Runnable blurRunnable = () -> {
-            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 65, 4, Color.BLACK);
-        };
-
-        Runnable shadowRunnable = () -> {
-            RenderUtil.roundedRectangle(x - 3, y - 5, 150, 66, 3, ColorUtil.withAlpha(color, 255));
-        };
-
-        if (canBlur()) {
-            MODERN_BLUR_RUNNABLES.add(blurRunnable);
-        }
-
-        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-            MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
-        }
     }
 
     // 计时器

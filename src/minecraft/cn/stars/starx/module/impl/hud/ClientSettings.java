@@ -26,6 +26,7 @@ public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Modern",
             "Rise Rainbow", "Rise", "Comfort",
             "Minecraft", "Minecraft Rainbow", "Never Lose", "Skeet", "StarX", "Modern");
+    private final ModeValue modernColorStyle = new ModeValue("Color Style", this, "Rainbow", "Rainbow", "Double");
     private final ModeValue list = new ModeValue("List Animation", this, "StarX", "StarX", "Slide");
     private final NumberValue red = new NumberValue("Red", this, 19, 0, 255, 1);
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);
@@ -34,7 +35,6 @@ public final class ClientSettings extends Module {
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
     private final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
-    private final BoolValue blur = new BoolValue("Blur", this, false);
 
     public static String theme;
     ScaledResolution sr = new ScaledResolution(mc);

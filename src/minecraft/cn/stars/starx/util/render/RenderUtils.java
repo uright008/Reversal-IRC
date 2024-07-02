@@ -24,16 +24,16 @@ public class RenderUtils {
     private final static Minecraft mc = Minecraft.getMinecraft();
     public static int deltaTime;
     public static void drawImage(ResourceLocation image, int x, int y, int width, int height) {
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glDepthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.depthMask(false);
         OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(image);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-        glDepthMask(true);
-        glDisable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.enableDepth();
     }
 
     public static void drawShadow(float x, float y, float width, float height) {

@@ -64,13 +64,13 @@ public class SpeedGraph extends Module {
         final ScaledResolution sr = new ScaledResolution(mc);
 
         GL11.glPushMatrix();
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_BLEND);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glLineWidth(2);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableDepth();
+        GlStateManager.depthMask(false);
         GL11.glBegin(GL11.GL_LINES);
 
         if (speeds.size() > 3) {
@@ -88,11 +88,11 @@ public class SpeedGraph extends Module {
         }
         GL11.glEnd();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableTexture2D();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
         RenderUtil.color(Color.WHITE);
         GlStateManager.resetColor();
         GL11.glPopMatrix();

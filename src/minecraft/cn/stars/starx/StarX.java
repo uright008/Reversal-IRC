@@ -61,10 +61,10 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.2.1";
+    public static final String VERSION = "v1.3.1";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
-    public static final Branch BRANCH = Branch.DEVELOPMENT;
+    public static final Branch BRANCH = Branch.PRODUCTION;
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
@@ -78,7 +78,8 @@ public enum StarX implements GameInstance {
             "It's been a long day without you my friend", "回来吧牢端"};
 
     public static final String[] wittyTitle = new String[]
-            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?", "起星鱼了", "你是玩什么游戏玩的?"};
+            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?", "起星鱼了", "你是玩什么游戏玩的?",
+                    "Hey shitass wanna see me open source?", "即使被全世界抛弃"};
 
 
     // Init

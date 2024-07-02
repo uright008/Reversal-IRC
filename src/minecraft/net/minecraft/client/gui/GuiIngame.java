@@ -1,6 +1,10 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.impl.PreBlurEvent;
+import cn.stars.starx.event.impl.Render2DEvent;
+import cn.stars.starx.module.impl.addons.PostProcessing;
+import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -339,6 +343,17 @@ public class GuiIngame extends Gui
 
         final PreBlurEvent eventPreBlur = new PreBlurEvent();
         eventPreBlur.call();
+
+        PostProcessing postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
+        postProcessing.blurScreen();
+
+        final Render2DEvent render2DEvent = new Render2DEvent(partialTicks, scaledresolution);
+        render2DEvent.call();
+
+        Hud.renderGameOverlay();
+
+        GameInstance.render2DRunnables(partialTicks, true);
+        GameInstance.clearRunnables();
     }
 
     protected void renderTooltip(ScaledResolution sr, float partialTicks)

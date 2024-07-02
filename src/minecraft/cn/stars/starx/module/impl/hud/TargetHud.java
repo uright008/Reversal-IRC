@@ -247,7 +247,8 @@ public final class TargetHud extends Module {
                         }
 
                         float finalOffset = offset;
-                        int finalColor = color;
+                        int finalColor = ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow") ?
+                                color : ColorUtils.INSTANCE.interpolateColorsBackAndForth(8, 1000, Color.WHITE, Color.BLACK, true).getRGB();
                         Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
 
                         if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {

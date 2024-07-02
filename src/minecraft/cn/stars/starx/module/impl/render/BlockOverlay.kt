@@ -42,13 +42,13 @@ class BlockOverlay : Module() {
                 GL11.glPushMatrix()
                 GlStateManager.enableAlpha()
                 GlStateManager.enableBlend()
-                GL11.glBlendFunc(770, 771)
+                GlStateManager.blendFunc(770, 771)
                 GL11.glDisable(3553)
                 GL11.glEnable(2848)
                 if (throughBlock.enabled) {
                     GL11.glDisable(2929)
                 }
-                GL11.glDepthMask(false)
+                GlStateManager.depthMask(false)
                 val blockBoundingBox = getBlockBoundingBox(pos, state)
                 val minX: Double = if (block is BlockStairs) 0.0 else blockBoundingBox.minX()
                 val minY: Double = if (block is BlockStairs) 0.0 else blockBoundingBox.minY()
@@ -101,7 +101,7 @@ class BlockOverlay : Module() {
                 if (throughBlock.enabled) {
                     GL11.glEnable(2929)
                 }
-                GL11.glDepthMask(true)
+                GlStateManager.depthMask(true)
                 GL11.glLineWidth(1.0f)
                 GL11.glPopMatrix()
             }

@@ -175,11 +175,11 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         RiseShaders.MAIN_MENU_SHADER.setActive(false);
         GL20.glUseProgram(0);
         if (!previous) {
-            if (StarX.backgroundId < 9) StarX.backgroundId++;
+            if (StarX.backgroundId < 8) StarX.backgroundId++;
             else StarX.backgroundId = 0;
         } else {
             if (StarX.backgroundId > 0) StarX.backgroundId--;
-            else StarX.backgroundId = 9;
+            else StarX.backgroundId = 8;
         }
         StarXLogger.info("(GuiMainMenuNew) Current background id: " + StarX.backgroundId);
     }

@@ -14,10 +14,7 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.ColorUtil;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.ThemeType;
-import cn.stars.starx.util.render.ThemeUtil;
+import cn.stars.starx.util.render.*;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 
@@ -46,30 +43,60 @@ public class CPSCounter extends Module {
     @Override
     public void onRender2D(Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
+            return;
         if (displayOnClick.isEnabled() && (Lclicks.isEmpty() && Rclicks.isEmpty())) return;
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
-        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250,250,250,200);
+        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200);
 
 
         if (outline.isEnabled()) {
-            RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 80));
-            RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
+            if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+                RoundedUtil.drawRound(getX() + 2, getY() - 1, 19 + psm.getWidth(cpsString), psm.getHeight() + 3, 4, new Color(0, 0, 0, 80));
+                RenderUtil.roundedOutlineRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 3, 1, color);
 
-            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                MODERN_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, ColorUtil.withAlpha(color, 255));
-                });
-            }
+                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    MODERN_BLOOM_RUNNABLES.add(() -> {
+                        RoundedUtil.drawRound(getX() + 2, getY() - 1, 19 + psm.getWidth(cpsString), psm.getHeight() + 3, 4, ColorUtil.withAlpha(color, 255));
+                    });
+                }
 
-            if (canBlur()) {
-                MODERN_BLUR_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 4, 4, Color.BLACK);
-                });
+                if (canBlur()) {
+                    MODERN_BLUR_RUNNABLES.add(() -> {
+                        RoundedUtil.drawRound(getX() + 2, getY() - 1, 19 + psm.getWidth(cpsString), psm.getHeight() + 3, 4, Color.BLACK);
+                    });
+                }
+            } else {
+                RoundedUtil.drawGradientRound(getX() + 0.5f, getY() - 2.5f, 22 + psm.getWidth(cpsString), psm.getHeight() + 6, 4,
+                        ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                        ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                        ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                        ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                RoundedUtil.drawRound(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 220));
+
+                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    MODERN_BLOOM_RUNNABLES.add(() -> {
+                        RoundedUtil.drawGradientRound(getX() + 0.5f, getY() - 2.5f, 22 + psm.getWidth(cpsString), psm.getHeight() + 6, 4,
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                    });
+                }
+
+                if (canBlur()) {
+                    MODERN_BLUR_RUNNABLES.add(() -> {
+                        RoundedUtil.drawGradientRound(getX() + 0.5f, getY() - 2.5f, 22 + psm.getWidth(cpsString), psm.getHeight() + 6, 4,
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                    });
+                }
             }
+            icon.drawString("P", getX() + 4, getY() + 2, new Color(250, 250, 250, 200).getRGB());
+            psm.drawString(cpsString, getX() + 17, getY() + 2.5f, new Color(250, 250, 250, 200).getRGB());
         }
-        icon.drawString("P", getX() + 4, getY() + 2, color.getRGB());
-        psm.drawString(cpsString, getX() + 17, getY() + 2.5f, color.getRGB());
     }
 
     @Override

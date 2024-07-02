@@ -23,6 +23,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Vec3;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -232,6 +233,9 @@ public class Hud implements GameInstance {
             final float renderX = ((Module) n).getRenderX();
             final float renderY = arraylist.getY() + ((Module) n).getRenderY();
 
+            if (((Module) n).getModuleInfo().category().equals(Category.RENDER) && ModuleInstance.getBool("Arraylist", "No Render Modules").isEnabled())
+                continue;
+
             switch (mode) {
                 case "Rise":
                 case "Rise Rainbow": {
@@ -293,29 +297,57 @@ public class Hud implements GameInstance {
                     final double stringWidth = psm17.getWidth((((Module) n).hasSuffix() ? name + "  " + ((Module) n).getSuffix() : name));
                     final int mC = moduleCount;
 
-                    Runnable shadowRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
-                                ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
+                    if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+                        Runnable shadowRunnable = () -> {
+                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
+                                    ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
+                            RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
+                        };
+
+                        Runnable blurRunnable = () -> {
+                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
+                        };
+
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
                         RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
-                    };
 
-                    Runnable blurRunnable = () -> {
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
-                    };
+                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                            MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
+                        }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                        MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
-                    }
+                        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                            MODERN_BLUR_RUNNABLES.add(blurRunnable);
+                        }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
-                        MODERN_BLUR_RUNNABLES.add(blurRunnable);
-                    }
+                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
+                        if (((Module) n).hasSuffix()) {
+                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
+                        }
+                    } else {
+                        Runnable shadowRunnable = () -> {
+                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, mC * 25, Color.WHITE, Color.BLACK, true));
+                            RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, mC * 25, Color.WHITE, Color.BLACK, true));
+                        };
 
-                    RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
-                    RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
-                    psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
-                    if (((Module) n).hasSuffix()) {
-                        psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250,250,250,200).getRGB());
+                        Runnable blurRunnable = () -> {
+                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
+                        };
+
+                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                            MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
+                        }
+
+                        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                            MODERN_BLUR_RUNNABLES.add(blurRunnable);
+                        }
+
+                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 150));
+                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true));
+                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true).getRGB());
+                        if (((Module) n).hasSuffix()) {
+                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
+                        }
                     }
 
                     finalX = arraylistX - psm17.getWidth(name);
@@ -483,37 +515,82 @@ public class Hud implements GameInstance {
                 String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
-                if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
-                    MODERN_BLUR_RUNNABLES.add(() -> {
-                        RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 13, 4, Color.BLACK);
-                    });
+                if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, Color.BLACK);
+                        });
+                    }
+
+                    RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, new Color(0, 0, 0, 80));
+                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
+                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                //    RoundedUtil.drawRoundOutline(x, y, 35 + extraWidth, 14, 3, 0.1f, new Color(0, 0, 0, 80),
+                //            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                    psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            psm18.drawString(extraText, x + 30.5, y + 4f, ThemeUtil.getThemeColor(ThemeType.LOGO).getRGB());
+                            RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4,
+                                    ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                        });
+                    }
+
+                    textGui.setWidth((int) (44 + extraWidth));
+                    for (int i = 0; i < name.length(); i++) {
+                        final String character = String.valueOf(name.charAt(i));
+
+                        final float off1 = off;
+                        psb20.drawString(character, x + 4 + off1, y + 3.5,
+                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
+                        off += psb20.getWidth(character);
+                    }
+                } else {
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RoundedUtil.drawGradientRound(x - 0.5f, y - 0.5f, 76 + extraWidth, 15, 3,
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                            RoundedUtil.drawRound(x, y, 75 + extraWidth, 14, 3, new Color(0, 0, 0, 220));
+                        });
+                    }
+
+                    //    RoundedUtil.drawRound(x, y, 35 + extraWidth, 14, 4, new Color(0, 0, 0, 80));
+                    RoundedUtil.drawGradientRound(x - 0.5f, y - 0.5f, 76 + extraWidth, 15, 3,
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                    RoundedUtil.drawRound(x, y, 75 + extraWidth, 14, 3, new Color(0, 0, 0, 220));
+
+                    psm18.drawString(extraText, x + 72, y + 4f, new Color(200, 200, 200, 240).getRGB());
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RoundedUtil.drawGradientRound(x - 0.5f, y - 0.5f, 76 + extraWidth, 15, 3,
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+                        });
+                    }
+
+                    textGui.setWidth((int) (84 + extraWidth));
+                    name = "STARX CLIENT";
+
+                    for (int i = 0; i < name.length(); i++) {
+                        final String character = String.valueOf(name.charAt(i));
+
+                        final float off1 = off;
+                        psb20.drawString(character, x + 4 + off1, y + 3.5,
+                                ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, i * 10, Color.WHITE, Color.BLACK, true).getRGB());
+                        off += psb20.getWidth(character);
+                    }
                 }
-                
-                RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 4, new Color(0, 0, 0, 80));
-                RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, 
-                        ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
-                psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
-
-                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                    MODERN_BLOOM_RUNNABLES.add(() -> {
-                        psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 255).getRGB());
-                        RenderUtil.roundedRectangle(x, y, 35 + extraWidth, 14, 3,
-                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
-                    });
-                }
-
-                textGui.setWidth((int) (44 + extraWidth));
-
-                for (int i = 0; i < name.length(); i++) {
-                    final String character = String.valueOf(name.charAt(i));
-
-                    final float off1 = off;
-                    final int i1 = i;
-                    psb20.drawString(character, x + 4 + off1, y + 3.5,
-                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i1, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
-                    off += psb20.getWidth(character);
-                }
-
                 break;
             }
 

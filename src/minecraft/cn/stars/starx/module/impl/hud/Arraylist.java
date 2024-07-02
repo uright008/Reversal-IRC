@@ -10,6 +10,7 @@ import net.minecraft.client.gui.ScaledResolution;
         chineseDescription = "显示你开启的功能", category = Category.HUD)
 public class Arraylist extends Module {
     private final BoolValue glowShadow = new BoolValue("Glow Shadow", this, false);
+    private final BoolValue noRenderModules = new BoolValue("No Render Modules", this, false);
     final ScaledResolution SR = new ScaledResolution(mc);
     final float offset = 6;
     final float arraylistX = SR.getScaledWidth() - offset;

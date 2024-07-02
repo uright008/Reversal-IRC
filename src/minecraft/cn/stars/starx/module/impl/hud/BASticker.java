@@ -10,6 +10,7 @@ import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 
@@ -106,16 +107,16 @@ public class BASticker extends Module {
 
 
     public static void drawImage(ResourceLocation image, int x, int y, int width, int height, double scale) {
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glDepthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.depthMask(false);
         OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(image);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0,
                 (int) Math.round(width * scale), (int) Math.round(height * scale), Math.round(width * scale), Math.round(height * scale));
-        glDepthMask(true);
-        glDisable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.enableDepth();
     }
 }

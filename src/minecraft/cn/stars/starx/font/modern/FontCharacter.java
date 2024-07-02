@@ -15,7 +15,7 @@ public class FontCharacter {
 
     public void render(final float x, final float y) {
         GlStateManager.bindTexture(texture);
-        GL11.glBegin(GL11.GL_QUADS);
+        GlStateManager.glBegin(GL11.GL_QUADS);
         GL11.glTexCoord2f(0, 0);
         GL11.glVertex2f(x, y);
         GL11.glTexCoord2f(0, 1);

@@ -1309,17 +1309,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     GlStateManager.alphaFunc(516, 0.1F);
                     this.mc.ingameGUI.renderGameOverlay(partialTicks);
 
-                    PostProcessing postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
-                    postProcessing.blurScreen();
-
-                    final Render2DEvent render2DEvent = new Render2DEvent(partialTicks, scaledresolution);
-                    render2DEvent.call();
-
-                    Hud.renderGameOverlay();
-
-                    GameInstance.render2DRunnables(partialTicks, true);
-                    GameInstance.clearRunnables();
-
                     if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo)
                     {
                         Config.drawFps();

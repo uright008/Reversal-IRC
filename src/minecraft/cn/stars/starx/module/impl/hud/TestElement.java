@@ -35,14 +35,24 @@ public class TestElement extends Module {
     public void onShader3D(Shader3DEvent event) {
         int x = getX() + 2;
         int y = getY() + 2;
-        RoundedUtil.drawRound(x, y, 100, 50, 4, Color.BLACK);
+        RoundedUtil.drawGradientRound(x, y, 124, 84, 4,
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 2000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 4000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 3000, new Color(0, 200, 200, 255), Color.BLACK, true));
+        RoundedUtil.drawRound(x + 1, y + 1, 122, 82, 4, new Color(0,0,0, 200));
     }
 
     @Override
     public void onRender2D(Render2DEvent event) {
         int x = getX() + 2;
         int y = getY() + 2;
-        RoundedUtil.drawRound(x, y, 100, 50, 4, new Color(10,10,10,150));
+        RoundedUtil.drawGradientRound(x, y, 124, 84, 4,
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 2000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 4000, new Color(0, 200, 200, 255), Color.BLACK, true),
+                ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 3000, new Color(0, 200, 200, 255), Color.BLACK, true));
+        RoundedUtil.drawRound(x + 1, y + 1, 122, 82, 4, new Color(0,0,0, 200));
 
     }
 

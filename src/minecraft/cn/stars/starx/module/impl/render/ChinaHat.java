@@ -73,7 +73,7 @@ public class ChinaHat extends Module {
         GL11.glEnable(2848);
         GL11.glEnable(2832);
         GL11.glEnable(3042);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.disableCull();
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 
@@ -149,8 +149,8 @@ public class ChinaHat extends Module {
         }
 
         GL11.glEnd();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDepthMask(true);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.depthMask(true);
         GL11.glEnable(2929);
         GlStateManager.enableCull();
         GL11.glDisable(2848);

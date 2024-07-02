@@ -73,10 +73,10 @@ public final class RenderUtil implements GameInstance {
     }
 
     public void start() {
-        enable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        disable(GL11.GL_TEXTURE_2D);
-        disable(GL11.GL_CULL_FACE);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
         GlStateManager.disableAlpha();
         GlStateManager.disableDepth();
     }
@@ -84,9 +84,9 @@ public final class RenderUtil implements GameInstance {
     public void stop() {
         GlStateManager.enableAlpha();
         GlStateManager.enableDepth();
-        enable(GL11.GL_CULL_FACE);
-        enable(GL11.GL_TEXTURE_2D);
-        disable(GL11.GL_BLEND);
+        GlStateManager.enableCull();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
         color(Color.white);
     }
 
@@ -170,11 +170,11 @@ public final class RenderUtil implements GameInstance {
         bufferbuilder.pos(x2, y2, 0.0).tex(1.0, 1.0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
         bufferbuilder.pos(x2, y, 0.0).tex(1.0, 0.0).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
         bufferbuilder.pos(x, y, 0.0).tex(0.0, 0.0).color(c4.getRed(), c4.getGreen(), c4.getBlue(), c4.getAlpha()).endVertex();
-        GL11.glShadeModel(7425);
-        GL11.glDepthMask(false);
+        GlStateManager.shadeModel(7425);
+        GlStateManager.depthMask(false);
         tessellator.draw();
-        GL11.glDepthMask(true);
-        GL11.glShadeModel(7424);
+        GlStateManager.depthMask(true);
+        GlStateManager.shadeModel(7424);
     }
 
     private ResourceLocation getESPImage() {
@@ -244,11 +244,11 @@ public final class RenderUtil implements GameInstance {
     }
 
     public void begin(final int glMode) {
-        GL11.glBegin(glMode);
+        GlStateManager.glBegin(glMode);
     }
 
     public void end() {
-        GL11.glEnd();
+        GlStateManager.glEnd();
     }
 
     public void vertex(final double x, final double y) {
@@ -293,10 +293,10 @@ public final class RenderUtil implements GameInstance {
 
 
     public void renderParticles(final List<HitParticleUtils> particles) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         int i = 0;
         try {
@@ -352,8 +352,8 @@ public final class RenderUtil implements GameInstance {
         }
 
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
 
         GL11.glColor3d(255, 255, 255);
     }
@@ -1285,10 +1285,10 @@ public final class RenderUtil implements GameInstance {
     public void renderBreadCrumbs(final List<Vec3> vec3s) {
 
         GlStateManager.disableDepth();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         int i = 0;
         try {
@@ -1348,8 +1348,8 @@ public final class RenderUtil implements GameInstance {
         }
 
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
         GlStateManager.enableDepth();
 
         GL11.glColor3d(255, 255, 255);
