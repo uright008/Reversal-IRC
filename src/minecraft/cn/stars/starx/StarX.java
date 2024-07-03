@@ -12,6 +12,7 @@ import cn.stars.starx.module.impl.combat.NoClickDelay;
 import cn.stars.starx.module.impl.hud.*;
 import cn.stars.starx.module.impl.misc.ClientSpoofer;
 import cn.stars.starx.module.impl.misc.NoAchievements;
+import cn.stars.starx.module.impl.misc.Protocol;
 import cn.stars.starx.module.impl.movement.Sprint;
 import cn.stars.starx.module.impl.player.HealthWarn;
 import cn.stars.starx.module.impl.render.*;
@@ -61,7 +62,7 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.3.1";
+    public static final String VERSION = "v1.3.2";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.PRODUCTION;
@@ -411,6 +412,7 @@ public enum StarX implements GameInstance {
             // Misc
             new ClientSpoofer(),
             new NoAchievements(),
+            new Protocol(),
             // World
             new LightningTracker(),
             // Player

@@ -1,5 +1,7 @@
 package net.minecraft.entity;
 
+import cn.stars.starx.module.impl.misc.Protocol;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
@@ -1707,17 +1709,20 @@ public abstract class EntityLivingBase extends Entity
             this.motionZ *= 0.98D;
         }
 
-        if (Math.abs(this.motionX) < 0.005D)
+        Protocol protocol = (Protocol) ModuleInstance.getModule(Protocol.class);
+        double minimumMotion = protocol.getMinimumMotion(this);
+
+        if (Math.abs(this.motionX) < minimumMotion)
         {
             this.motionX = 0.0D;
         }
 
-        if (Math.abs(this.motionY) < 0.005D)
+        if (Math.abs(this.motionY) < minimumMotion)
         {
             this.motionY = 0.0D;
         }
 
-        if (Math.abs(this.motionZ) < 0.005D)
+        if (Math.abs(this.motionZ) < minimumMotion)
         {
             this.motionZ = 0.0D;
         }

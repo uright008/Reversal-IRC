@@ -60,7 +60,6 @@ public class GuiProtocolSelector extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
         list.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.pushMatrix();
         GlStateManager.scale(2.0, 2.0, 2.0);
@@ -73,16 +72,8 @@ public class GuiProtocolSelector extends GuiScreen {
 
         final ProtocolInfo protocolInfo = ProtocolInfo.fromProtocolVersion(ViaLoadingBase.getInstance().getTargetVersion());
 
-        final String versionTitle;
-        final String versionReleased;
-
-        if (protocolInfo != null) {
-            versionTitle = "Version: " + ViaLoadingBase.getInstance().getTargetVersion().getName() + " - " + protocolInfo.getName();
-            versionReleased = "Released: " + protocolInfo.getReleaseDate();
-        } else {
-            versionTitle = "Version: Unknown";
-            versionReleased = "Released: Unknown";
-        }
+        final String versionTitle = "Version: " + ViaLoadingBase.getInstance().getTargetVersion().getName() + " - " + protocolInfo.getName();
+        final String versionReleased = "Released: " + protocolInfo.getReleaseDate();
 
         final int fixedHeight = ((5 + this.fontRendererObj.FONT_HEIGHT) * 2) + 2;
 
