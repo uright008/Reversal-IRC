@@ -4,6 +4,8 @@ import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
@@ -26,9 +28,9 @@ public final class Notification implements GameInstance {
 
     private final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
-    TTFFontRenderer icon = CustomFont.FONT_MANAGER.getFont("Check 24");
-    TTFFontRenderer psb = CustomFont.FONT_MANAGER.getFont("PSB 24");
-    TTFFontRenderer psm = CustomFont.FONT_MANAGER.getFont("PSM 20");
+    MFont icon = FontManager.getCheck(24);
+    MFont psb = FontManager.getPSB(24);
+    MFont psm = FontManager.getPSM(20);
 
     private float xVisual = sr.getScaledWidth();
     public float yVisual = sr.getScaledHeight() - 50;
@@ -123,9 +125,9 @@ public final class Notification implements GameInstance {
             RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
 
             RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
-            icon.drawString(finalIconString, xVisual + 4, yVisual - 1, finalSideColor.getRGB());
-            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual - 2, new Color(255, 255, 255, 220).getRGB());
-            psm.drawString(description, xVisual + 4, yVisual + 10, new Color(255, 255, 255, 220).getRGB());
+            icon.drawString(finalIconString, xVisual + 4, yVisual + 2, finalSideColor.getRGB());
+            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual + 1, new Color(255, 255, 255, 220).getRGB());
+            psm.drawString(description, xVisual + 4, yVisual + 12, new Color(255, 255, 255, 220).getRGB());
         });
 
         NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
@@ -134,7 +136,7 @@ public final class Notification implements GameInstance {
         });
     }
 
-    public final float lerp(final float a, final float b, final float c) {
+    public float lerp(final float a, final float b, final float c) {
         return a + c * (b - a);
     }
 }

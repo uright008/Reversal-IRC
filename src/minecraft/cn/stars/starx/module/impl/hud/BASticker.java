@@ -1,6 +1,7 @@
 package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.event.impl.Render2DEvent;
+import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
@@ -45,56 +46,61 @@ public class BASticker extends Module {
         sr = new ScaledResolution(mc);
         int x = getX() + 5;
         int y = getY() + 5;
-        switch (character.getMode()) {
-            case "Aris": {
-                setRoundedWidth(160, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/aris.png"), x, y, 150, 160, scale.getValue());
-                break;
+        Runnable runnable = () -> {
+            switch (character.getMode()) {
+                case "Aris": {
+                    setRoundedWidth(160, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/aris.png"), x, y, 150, 160, scale.getValue());
+                    break;
+                }
+                case "Shiroko": {
+                    setRoundedWidth(95, scale.getValue());
+                    setRoundedHeight(165, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/shiroko.png"), x, y, 85, 160, scale.getValue());
+                    break;
+                }
+                case "Azusa": {
+                    setRoundedWidth(130, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/azusa.png"), x, y, 120, 160, scale.getValue());
+                    break;
+                }
+                case "Hina Swimsuit": {
+                    setRoundedWidth(110, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/hina_swimsuit.png"), x, y, 100, 160, scale.getValue());
+                    break;
+                }
+                case "Ui": {
+                    setRoundedWidth(110, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/ui.png"), x, y, 100, 160, scale.getValue());
+                    break;
+                }
+                case "Hoshino Swimsuit": {
+                    setRoundedWidth(135, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/hoshino_swimsuit.png"), x, y, 125, 160, scale.getValue());
+                    break;
+                }
+                case "Mika": {
+                    setRoundedWidth(110, scale.getValue());
+                    setRoundedHeight(170, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 95, 160, scale.getValue());
+                    break;
+                }
+                case "Ibuki": {
+                    setRoundedWidth(110, scale.getValue());
+                    setRoundedHeight(180, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/ibuki.png"), x, y, 100, 170, scale.getValue());
+                    break;
+                }
             }
-            case "Shiroko": {
-                setRoundedWidth(95, scale.getValue());
-                setRoundedHeight(165, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/shiroko.png"), x, y, 85, 160, scale.getValue());
-                break;
-            }
-            case "Azusa": {
-                setRoundedWidth(130, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/azusa.png"), x, y, 120, 160, scale.getValue());
-                break;
-            }
-            case "Hina Swimsuit": {
-                setRoundedWidth(110, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/hina_swimsuit.png"), x, y, 100, 160, scale.getValue());
-                break;
-            }
-            case "Ui": {
-                setRoundedWidth(110, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/ui.png"), x, y, 100, 160, scale.getValue());
-                break;
-            }
-            case "Hoshino Swimsuit": {
-                setRoundedWidth(135, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/hoshino_swimsuit.png"), x, y, 125, 160, scale.getValue());
-                break;
-            }
-            case "Mika": {
-                setRoundedWidth(110, scale.getValue());
-                setRoundedHeight(170, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/mika.png"), x, y, 95, 160, scale.getValue());
-                break;
-            }
-            case "Ibuki": {
-                setRoundedWidth(110, scale.getValue());
-                setRoundedHeight(180, scale.getValue());
-                drawImage(new ResourceLocation("starx/images/box_weapon/ibuki.png"), x, y, 100, 170, scale.getValue());
-                break;
-            }
-        }
+        };
+
+        NORMAL_RENDER_RUNNABLES.add(runnable);
+        MODERN_BLOOM_RUNNABLES.add(runnable);
     }
 
     public void setRoundedWidth(int width, double scale) {

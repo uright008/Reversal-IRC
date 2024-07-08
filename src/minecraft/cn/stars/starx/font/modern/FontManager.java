@@ -54,6 +54,7 @@ public class FontManager {
     private static final HashMap<Integer, ModernFontRenderer> SF_UI_PRO = new HashMap<>();
 
     private static final HashMap<Integer, ModernFontRenderer> HACK = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> CHECK = new HashMap<>();
 
     // COPY THIS METHOD FOR EACH METHOD AND REPLACE FONTNAME WITH THE USED FONT FILE NAME
     public static MFont getMontserratMedium(final int size) {
@@ -90,6 +91,10 @@ public class FontManager {
 
     public static MFont getPoppinsSemiBold(final int size) {
         return get(POPPINS_SEMI_BOLD, size, "Poppins-SemiBold", true, true);
+    }
+
+    public static MFont getCheck(final int size) {
+        return get(CHECK, size, "check", true, true);
     }
 
     public static MFont getPoppinsMedium(final int size) {

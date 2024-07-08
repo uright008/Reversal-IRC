@@ -30,18 +30,14 @@ import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.FileUtil;
-import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeUtil;
 import cn.stars.starx.util.starx.Branch;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.RandomUtils;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -62,10 +58,10 @@ public enum StarX implements GameInstance {
     INSTANCE;
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.3.2";
+    public static final String VERSION = "v1.3.3";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
-    public static final Branch BRANCH = Branch.PRODUCTION;
+    public static final Branch BRANCH = Branch.DEVELOPMENT;
     public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
@@ -80,7 +76,7 @@ public enum StarX implements GameInstance {
 
     public static final String[] wittyTitle = new String[]
             {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?", "起星鱼了", "你是玩什么游戏玩的?",
-                    "Hey shitass wanna see me open source?", "即使被全世界抛弃"};
+                    "Hey shitass wanna see me open source?", "即使被全世界抛弃", "感谢马克思开源"};
 
 
     // Init
