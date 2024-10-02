@@ -14,7 +14,7 @@ import net.minecraft.util.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModuleInfo(name = "Breadcrumbs", description = "Shows a trail on your feet",
+@ModuleInfo(name = "Breadcrumbs", chineseName = "足迹", description = "Shows a trail on your feet",
         chineseDescription = "在你走过的地方渲染足迹", category = Category.RENDER)
 public final class Breadcrumbs extends Module {
 

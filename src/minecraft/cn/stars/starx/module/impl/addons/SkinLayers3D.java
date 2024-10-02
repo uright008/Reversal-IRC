@@ -5,7 +5,7 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "SkinLayers3D", description = "Extend your skin with extra layers",
+@ModuleInfo(name = "SkinLayers3D", chineseName = "3D皮肤层", description = "Extend your skin with extra layers",
         chineseDescription = "3D渲染你的皮肤层", category = Category.ADDONS)
 public class SkinLayers3D extends Module {
 

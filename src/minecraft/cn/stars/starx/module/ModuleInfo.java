@@ -14,6 +14,8 @@ public @interface ModuleInfo {
 
     String description();
 
+    String chineseName() default "";
+
     String chineseDescription() default "";
 
     Category category();

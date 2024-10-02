@@ -634,15 +634,18 @@ public class GuiContainerCreative extends InventoryEffectRenderer
         {
             this.mc.getTextureManager().bindTexture(creativeInventoryTabs);
 
-            if (creativetabs1.getTabIndex() != selectedTabIndex)
-            {
-                this.func_147051_a(creativetabs1);
+            try {
+                if (creativetabs1.getTabIndex() != selectedTabIndex) {
+                    this.func_147051_a(creativetabs1);
+                }
+            } catch (Exception e) {
+
             }
         }
 
         this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.getBackgroundImageName()));
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        this.searchField.drawTextBox();
+        this.searchField.drawTextBox(mouseX, mouseY);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         int i = this.guiLeft + 175;
         int j = this.guiTop + 18;

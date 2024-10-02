@@ -10,20 +10,16 @@ import cn.stars.starx.module.ModuleInfo
 import cn.stars.starx.setting.impl.BoolValue
 import cn.stars.starx.setting.impl.NumberValue
 import cn.stars.starx.util.render.ColorUtil
-import cn.stars.starx.util.render.ColorUtils
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 import org.lwjgl.opengl.GL11
 import java.awt.Color
-import java.lang.Math.abs
-import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
 @ModuleInfo(
     name = "DamageParticle",
+    chineseName = "伤害粒子",
     description = "Show a particle of your damage when you hit.",
     chineseDescription = "当你攻击时生成显示攻击伤害的粒子",
     category = Category.RENDER
@@ -71,7 +67,7 @@ class DamageParticle : Module(){
                             )
                         )
                     } catch (e: NumberFormatException) {
-                        StarX.INSTANCE.showMsg("java.lang.NumberFormatException: Infinite or NaN")
+                        StarX.showMsg("当前服务器不支持DamageParticle! 请关闭功能。")
                     }
                 }
             }

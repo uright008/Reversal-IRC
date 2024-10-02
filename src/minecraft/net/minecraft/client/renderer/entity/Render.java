@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
+import cn.stars.addons.optimization.entityculling.EntityRendererInter;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,7 +26,7 @@ import net.optifine.entity.model.IEntityRenderer;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
 
-public abstract class Render<T extends Entity> implements IEntityRenderer
+public abstract class Render<T extends Entity> implements IEntityRenderer, EntityRendererInter<T>
 {
     private static final ResourceLocation shadowTextures = new ResourceLocation("textures/misc/shadow.png");
     protected final RenderManager renderManager;
@@ -38,6 +39,17 @@ public abstract class Render<T extends Entity> implements IEntityRenderer
     {
         this.renderManager = renderManager;
     }
+
+    @Override
+    public boolean shadowShouldShowName(T entity) {
+        return canRenderName(entity);
+    }
+
+    @Override
+    public void shadowRenderNameTag(T p_renderName_1_, double p_renderName_2_, double d1, double d2) {
+        renderName(p_renderName_1_, p_renderName_2_, d1, d2);
+    }
+
 
     public boolean shouldRender(T livingEntity, ICamera camera, double camX, double camY, double camZ)
     {

@@ -1,6 +1,5 @@
 package cn.stars.starx.ui.clickgui.strikeless;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -12,7 +11,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class StrikeGUI extends GuiScreen {
 

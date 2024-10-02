@@ -24,7 +24,7 @@ public class StickSimulation
     }
 
     public void simulate() {
-        this.gravity = (float) ((NumberValue) StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Gravity")).getValue();
+        this.gravity = (float) ((NumberValue) StarX.moduleManager.getSetting("WaveyCapes", "Gravity")).getValue();
         final float deltaTime = 0.05f;
         final Vector2 down = new Vector2(0.0f, this.gravity * deltaTime);
         final Vector2 tmp = new Vector2(0.0f, 0.0f);

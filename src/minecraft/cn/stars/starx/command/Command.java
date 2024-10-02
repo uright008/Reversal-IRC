@@ -23,6 +23,6 @@ public abstract class Command {
     public abstract void onCommand(final String command, final String[] args) throws Exception;
 
     protected final void sendMessage(final Object object) {
-        StarX.INSTANCE.showMsg((String) object);
+        StarX.showMsg((String) object);
     }
 }

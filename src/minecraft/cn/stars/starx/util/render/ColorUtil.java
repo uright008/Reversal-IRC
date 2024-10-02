@@ -46,6 +46,17 @@ public final class ColorUtil {
 
     private final Pattern COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]");
 
+    public static int applyOpacity(int color, float opacity) {
+        Color old = new Color(color);
+        return applyOpacity(old, opacity).getRGB();
+    }
+
+    //Opacity value ranges from 0-1
+    public static Color applyOpacity(Color color, float opacity) {
+        opacity = Math.min(1, Math.max(0, opacity));
+        return new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, opacity);
+    }
+
     public Color liveColorBrighter(final Color c, final float factor) {
         return brighter(c, factor);
     }
@@ -106,7 +117,7 @@ public final class ColorUtil {
 
     private static Color getRawFontColor(int id) {
         Color color = new Color(0, 0, 255);
-        boolean dark = StarX.INSTANCE.getGuiTheme().currentTheme == Theme.DARKMODE;
+        boolean dark = StarX.guiTheme.currentTheme == Theme.DARKMODE;
 
         switch(id) {
             case 1:
@@ -134,7 +145,7 @@ public final class ColorUtil {
 
     private static Color getRawBackgroundColor(int id) {
         Color color = new Color(255, 0, 0);
-        boolean dark = StarX.INSTANCE.getGuiTheme().currentTheme == Theme.DARKMODE;
+        boolean dark = StarX.guiTheme.currentTheme == Theme.DARKMODE;
 
         switch(id) {
             case 1:

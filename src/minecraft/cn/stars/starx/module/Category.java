@@ -9,6 +9,4 @@ public enum Category {
     WORLD,
     HUD,
     ADDONS;
-
-    public int moduleIndex;
 }

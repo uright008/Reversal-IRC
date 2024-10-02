@@ -1,50 +1,58 @@
 package cn.stars.starx;
 
 import cn.stars.addons.creativetab.StarXTab;
+import cn.stars.addons.optimization.entityculling.EntityCullingMod;
+import cn.stars.addons.optimization.util.FastTrig;
 import cn.stars.starx.command.Command;
 import cn.stars.starx.command.CommandManager;
 import cn.stars.starx.command.impl.*;
-import cn.stars.starx.module.Category;
+import cn.stars.starx.config.DefaultHandler;
+import cn.stars.starx.config.MusicHandler;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleManager;
 import cn.stars.starx.module.impl.addons.*;
+import cn.stars.starx.module.impl.combat.ClickSound;
+import cn.stars.starx.module.impl.combat.ExperimentReachDistanceChecker;
 import cn.stars.starx.module.impl.combat.NoClickDelay;
 import cn.stars.starx.module.impl.hud.*;
 import cn.stars.starx.module.impl.misc.ClientSpoofer;
+import cn.stars.starx.module.impl.misc.CustomName;
 import cn.stars.starx.module.impl.misc.NoAchievements;
 import cn.stars.starx.module.impl.misc.Protocol;
 import cn.stars.starx.module.impl.movement.Sprint;
 import cn.stars.starx.module.impl.player.HealthWarn;
+import cn.stars.starx.module.impl.player.IRC;
 import cn.stars.starx.module.impl.render.*;
-import cn.stars.starx.module.impl.world.LightningTracker;
 import cn.stars.starx.module.impl.world.TimeTraveller;
-import cn.stars.starx.setting.Setting;
-import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.setting.impl.ModeValue;
-import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.music.MusicManager;
 import cn.stars.starx.ui.clickgui.ClickGUI;
+import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
 import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
-import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.math.RandomUtil;
 import cn.stars.starx.util.misc.FileUtil;
-import cn.stars.starx.util.render.ThemeUtil;
+import cn.stars.starx.util.irc.User;
+import cn.stars.starx.util.misc.VideoUtils;
 import cn.stars.starx.util.starx.Branch;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
-import org.apache.commons.lang3.RandomUtils;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
+import tech.skidonion.obfuscator.annotations.StringEncryption;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,46 +61,55 @@ import java.util.concurrent.Executors;
  *
  * Assets are missing because of optifine. We fixed it.
  */
+@NativeObfuscation
+@StringEncryption
 @Getter
-public enum StarX implements GameInstance {
-    INSTANCE;
+public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v1.3.3";
+    public static final String VERSION = "v3.0.0+beta.2";
     public static final String MINECRAFT_VERSION = "1.8.9";
-    public static final String AUTHOR = "Stars";
+    public static final String AUTHOR = "Starlight Team";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
-    public static int CLIENT_THEME_COLOR_DEFAULT = new Color(159, 24, 242).hashCode();
-    public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
-    public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
-    public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR = new Color(185, 69, 255);
-    public static boolean isDestructed = false;
 
     // Witty comments
     public static final String[] wittyCrashReport = new String[]
             {"玩原神玩的", "粥批差不多得了", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
                     "闭嘴!我的父亲在mojang工作,他可以使你的mInEcRaFt崩溃", "纪狗气死我了", "致敬传奇耐崩王MiNeCrAfT", "你的客户端坠机了",
-            "It's been a long day without you my friend", "回来吧牢端"};
+            "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
 
+    // maybe
     public static final String[] wittyTitle = new String[]
-            {"沙勒味精怎么那么喜欢白洲梓? #(疑问)", "为什么删我的帖子,流小珍珠了", "How high is your priority?", "起星鱼了", "你是玩什么游戏玩的?",
-                    "Hey shitass wanna see me open source?", "即使被全世界抛弃", "感谢马克思开源"};
+            {"乌云再厚也遮不住阳光,风雨过后总会有彩虹", "与你的日常,就是奇迹", "虚假的真实是真实吗?", "未来仍有无限可能", "在那灿烂的群星中,总有一颗代表我正与你对视", "王女手握钥匙,方舟恭候多时",
+            "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?"};
+//    public static final String[] wittyTitle = new String[] { "你所珍视的那个人,是否也同样珍视你?", "虚空的虚空,凡事都是虚空"};
 
 
     // Init
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    public static EntityCullingMod entityCullingMod;
+
+    public static User user = null;
+    public static boolean hasJavaFX = true;
     public static boolean isAMDShaderCompatibility = false;
-    public static int backgroundId = 0;
+    public static boolean isViaCompatibility = false;
 
-    public ModuleManager moduleManager;
-    public NotificationManager notificationManager;
-    public CommandManager cmdManager;
-    public ModernClickGUI modernClickGUI;
-    public ClickGUI clickGUI;
-    public StrikeGUI strikeGUI;
-    public GuiTheme guiTheme;
-    public CreativeTabs creativeTab;
+    public static int backgroundId = 9; // ?
+    public static String customName = "";
+    public static String customText = ".setText <text>";
+
+    public static ModuleManager moduleManager;
+    public static NotificationManager notificationManager;
+    public static CommandManager cmdManager;
+    public static MusicManager musicManager;
+    public static ModernClickGUI modernClickGUI;
+    public static MMTClickGUI mmtClickGUI;
+    public static ClickGUI clickGUI;
+    public static StrikeGUI strikeGUI;
+    public static GuiTheme guiTheme;
+    public static CreativeTabs creativeTab;
     public static String ip;
     public static int totalKills;
     public static int totalDeaths;
@@ -105,245 +122,90 @@ public enum StarX implements GameInstance {
     public static boolean firstBoot;
 
     // Core
-    public void start() {
+    public static void start() {
         try {
-            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | LWJGL " + Sys.getVersion() + " | " + wittyTitle[RandomUtils.nextInt(0, wittyTitle.length)]);
+            StarXLogger.info("Loading client...");
+
+            DefaultHandler.loadClientMod();
 
             // ViaMCP init
-            ViaMCP.create();
-            ViaMCP.INSTANCE.initAsyncSlider();
+            Minecraft.setStage(4);
+            if (!isViaCompatibility) {
+                ViaMCP.create();
+                ViaMCP.INSTANCE.initAsyncSlider();
+            }
 
-            StarXLogger.info("Loading client...");
             initialize();
-            loadConfigs();
-            loadStatistics();
 
+            Minecraft.setStage(7);
+            DefaultHandler.loadConfigs();
+
+            Minecraft.setStage(8);
+            DefaultHandler.loadStatistics();
+
+            Minecraft.setStage(9);
+            postInitialize();
+
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)]);
             StarXLogger.info("Client loaded successfully.");
             StarXLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
             StarXLogger.error("An error has occurred while loading StarX: " + e);
         }
     }
-    public void stop() {
+    public static void stop() {
         saveAll();
     }
 
     // Usages
-    public void showMsg(String msg) {
+    public static void showMsg(String msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
         }
     }
-    public void showMsg(Object msg) {
+    public static void showMsg(Object msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
         }
     }
 
     // run required
-    public void saveAll() {
-        saveConfig();
-        saveStatistics();
-    }
-    public void loadConfigs() {
-        final String config = FileUtil.loadFile("settings.txt");
-        if (config == null) return;
-        final String[] configLines = config.split("\r\n");
-
-        for (final Module m : getModuleManager().getModuleList()) {
-            if (m.isEnabled()) {
-                m.toggleNoEvent();
-            }
-        }
-
-        for (final Module m : getModuleManager().getModuleList()) {
-            if (m.isEnabled()) {
-                m.toggleNoEvent();
-            }
-        }
-
-        boolean gotConfigVersion = false;
-        for (final String line : configLines) {
-            if (line == null) return;
-
-            final String[] split = line.split("_");
-            if (split[0].contains("StarX")) {
-                if (split[1].contains("Version")) {
-                    gotConfigVersion = true;
-
-                    final String configVersion = split[2];
-
-                    if (!VERSION.equalsIgnoreCase(configVersion)) {
-                        showMsg("This config was made in a different version of StarX.");
-                        getNotificationManager().registerNotification(
-                                "This config was made in a different version of StarX.", NotificationType.WARNING
-                        );
-                    }
-                }
-            }
-
-
-            if (split[0].contains("ClientName")) {
-                ThemeUtil.setCustomClientName(split.length > 1 ? split[1] : "");
-                continue;
-            }
-
-            if (split[0].contains("MainMenuBackground")) {
-                backgroundId = Integer.parseInt(split[1]);
-                continue;
-            }
-
-        //    if (split[0].contains("PlayMusic")) {
-        //        Minecraft.getMinecraft().riseMusicTicker.shouldKeepPlaying = Boolean.parseBoolean(split[1]);
-        //        continue;
-        //    }
-
-            if (split[0].contains("Toggle")) {
-                if (split[2].contains("true")) {
-                    if (getModuleManager().getModule(split[1]) != null) {
-                        final Module module = Objects.requireNonNull(getModuleManager().getModule(split[1]));
-
-                        if (!module.isEnabled()) {
-                            module.toggleNoEvent();
-                        }
-                    }
-                }
-            }
-
-            if (split[0].contains("PositionX")) {
-                Objects.requireNonNull(getModuleManager().getModule(split[1])).setX(Integer.parseInt(split[2]));
-            }
-            if (split[0].contains("PositionY")) {
-                Objects.requireNonNull(getModuleManager().getModule(split[1])).setY(Integer.parseInt(split[2]));
-            }
-
-            final Setting setting = getModuleManager().getSetting(split[1], split[2]);
-
-            if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
-                if (split[3].contains("true")) {
-                    ((BoolValue) setting).enabled = true;
-                }
-
-                if (split[3].contains("false")) {
-                    ((BoolValue) setting).enabled = false;
-                }
-            }
-
-            if (split[0].contains("NumberValue") && setting instanceof NumberValue)
-                ((NumberValue) setting).setValue(Double.parseDouble(split[3]));
-
-            if (split[0].contains("ModeValue") && setting instanceof ModeValue)
-                ((ModeValue) setting).set(split[3]);
-
-            if (split[0].contains("Bind")) {
-                final Module m = getModuleManager().getModule(split[1]);
-
-                if (m != null)
-                    Objects.requireNonNull(m).setKeyBind(Integer.parseInt(split[2]));
-            }
-        }
-        if (!gotConfigVersion) {
-            showMsg("This config was made in a different version of StarX.");
-            getNotificationManager().registerNotification(
-                    "This config was made in a different version of StarX.", NotificationType.WARNING
-            );
-        }
+    public static void saveAll() {
+        DefaultHandler.saveConfig(false);
+        DefaultHandler.saveStatistics();
+        DefaultHandler.saveClientMod();
     }
 
-    public void loadStatistics() {
-        final String statistics = FileUtil.loadFile("statistics.txt");
-        if (statistics == null) return;
 
-        final String[] statisticsLines = statistics.split("\r\n");
-
-        for (final String line : statisticsLines) {
-            if (line == null) return;
-
-            final String[] split = line.split("_");
-
-            if (split[0].contains("Kills"))
-                totalKills = Integer.parseInt(split[1]);
-
-            if (split[0].contains("Deaths"))
-                totalDeaths = Integer.parseInt(split[1]);
-
-            if (split[0].contains("DistanceRan"))
-                distanceRan = Float.parseFloat(split[1]);
-
-            if (split[0].contains("DistanceFlew"))
-                distanceFlew = Float.parseFloat(split[1]);
-
-            if (split[0].contains("DistanceJumped"))
-                distanceJumped = Float.parseFloat(split[1]);
-
-            if (split[0].contains("VoidSaves"))
-                amountOfVoidSaves = Integer.parseInt(split[1]);
-
-            if (split[0].contains("ConfigsLoaded"))
-                amountOfConfigsLoaded = Integer.parseInt(split[1]);
-        }
-    }
-    private void saveConfig() {
-        final StringBuilder configBuilder = new StringBuilder();
-        configBuilder.append("StarX_Version_").append(VERSION).append("\r\n");
-      //  configBuilder.append("PlayMusic_").append(Minecraft.getMinecraft().riseMusicTicker.shouldKeepPlaying).append("\r\n");
-        configBuilder.append("ClientName_").append(ThemeUtil.getCustomClientName()).append("\r\n");
-        configBuilder.append("MainMenuBackground_").append(backgroundId).append("\r\n");
-
-        for (final Module m : getModuleManager().getModuleList()) {
-            final String moduleName = m.getModuleInfo().name();
-            configBuilder.append("Toggle_").append(moduleName).append("_").append(m.isEnabled()).append("\r\n");
-
-            if (m.getModuleInfo().category().equals(Category.HUD)) {
-                configBuilder.append("PositionX_").append(moduleName).append("_").append(m.getX()).append("\r\n");
-                configBuilder.append("PositionY_").append(moduleName).append("_").append(m.getY()).append("\r\n");
-            }
-            for (final Setting s : m.getSettings()) {
-                if (s instanceof BoolValue) {
-                    configBuilder.append("BoolValue_").append(moduleName).append("_").append(s.name).append("_").append(((BoolValue) s).enabled).append("\r\n");
-                }
-                if (s instanceof NumberValue) {
-                    configBuilder.append("NumberValue_").append(moduleName).append("_").append(s.name).append("_").append(((NumberValue) s).value).append("\r\n");
-                }
-                if (s instanceof ModeValue) {
-                    configBuilder.append("ModeValue_").append(moduleName).append("_").append(s.name).append("_").append(((ModeValue) s).getMode()).append("\r\n");
-                }
-            }
-            configBuilder.append("Bind_").append(moduleName).append("_").append(m.getKeyBind()).append("\r\n");
-        }
-
-        FileUtil.saveFile("settings.txt", true, configBuilder.toString());
-    }
-    private void saveStatistics() {
-        final String statisticsBuilder = "Kills_" + totalKills + "\r\n" +
-                "Deaths_" + totalDeaths + "\r\n" +
-                "DistanceRan_" + distanceRan + "\r\n" +
-                "DistanceFlew_" + distanceFlew + "\r\n" +
-                "DistanceJumped_" + distanceJumped + "\r\n" +
-                "VoidSaves_" + amountOfVoidSaves + "\r\n" +
-                "ConfigsLoaded_" + amountOfConfigsLoaded + "\r\n";
-        FileUtil.saveFile("statistics.txt", true, statisticsBuilder);
-    }
-
-    public void initialize() {
+    public static void initialize() {
         try {
+            Minecraft.setStage(5);
+
             // Minecraft Pre-Initialize
             // Shut the fuck fast render off
-            mc.gameSettings.ofFastRender = false;
+            Minecraft.getMinecraft().gameSettings.ofFastRender = false;
 
             // StarX Initialize
             moduleManager = new ModuleManager();
             moduleManager.registerModules(modules);
-
-            Hud.initializeModules();
 
             notificationManager = new NotificationManager();
 
             cmdManager = new CommandManager();
             CommandManager.COMMANDS = commands;
 
+            try {
+                musicManager = new MusicManager();
+                musicManager.initGUI();
+            } catch (NoClassDefFoundError e) {
+                hasJavaFX = false;
+                StarXLogger.warn("No JavaFX found in the current java version! Music player is disabled.");
+            }
+
+            Minecraft.setStage(6);
             guiTheme = new GuiTheme();
             modernClickGUI = new ModernClickGUI();
+            mmtClickGUI = new MMTClickGUI();
             clickGUI = new ClickGUI();
             strikeGUI = new StrikeGUI();
 
@@ -368,13 +230,60 @@ public enum StarX implements GameInstance {
             if (!FileUtil.exists("Script" + File.separator)) {
                 FileUtil.createDirectory("Script" + File.separator);
             }
+
+            if (!FileUtil.exists("Background" + File.separator)) {
+                FileUtil.createDirectory("Background" + File.separator);
+            }
+
+            if (!FileUtil.exists("Cache" + File.separator)) {
+                FileUtil.createDirectory("Cache" + File.separator);
+            }
         } catch (final Exception e) {
             StarXLogger.error("An error has occurred while loading StarX: " + e);
         }
     }
 
-    public boolean onSendChatMessage(final String s) {
-        if (s.startsWith(".") && !s.startsWith("./") && !isDestructed) {
+    public static void postInitialize() {
+        try {
+            Hud.initializeModules();
+            if (!isAMDShaderCompatibility) GuiScreen.initializeShaderToy();
+
+            FastTrig.init();
+
+            entityCullingMod = new EntityCullingMod();
+            entityCullingMod.onInitialize();
+
+            if (hasJavaFX) MusicHandler.load();
+
+            if (!FileUtil.exists("Background" + File.separator)) {
+                FileUtil.createDirectory("Background" + File.separator);
+            }
+
+            File tempFile = new File(Minecraft.getMinecraft().mcDataDir, "StarX/Background");
+            File videoFile = new File(tempFile, "background.mp4");
+            if (!tempFile.exists() || !videoFile.exists()) {
+                tempFile.mkdir();
+                try {
+                    FileUtil.unpackFile(videoFile, "assets/minecraft/starx/background.mp4");
+                } catch (IOException e) {
+                    StarXLogger.error("Failed to unpack background file. Are there any Chinese characters in the booting dir?");
+                    throw new RuntimeException(e);
+                }
+            }
+            try {
+                VideoUtils.init(videoFile);
+            } catch (IOException e) {
+                StarXLogger.error("Failed to load background file.");
+                throw new RuntimeException(e);
+            }
+
+        } catch (final Exception e) {
+            StarXLogger.error("An error has occurred while loading StarX: " + e);
+        }
+    }
+
+    public static boolean onSendChatMessage(final String s) {
+        if (s.startsWith(".") && !s.startsWith("./")) {
             cmdManager.callCommand(s.substring(1));
             return false;
         }
@@ -383,67 +292,94 @@ public enum StarX implements GameInstance {
         // 我操你妈的irc
     }
 
-    private final Command[] commands = new Command[] {
+    private static final Command[] commands = new Command[] {
             new Bind(),
+            new Chat(),
             new ClientName(),
             new ClientTitle(),
             new Config(),
             new Help(),
-            new SelfDestruct()
+            new Name(),
+            new Say(),
+            new SelfDestruct(),
+            new SetText()
     };
 
-    public final Module[] modules = new Module[] {
+    public static final Module[] modules = new Module[] {
             // Addons
+            new GuiSettings(), // Special Module
+            new Optimization(), // Special Module
             new FreeLook(),
             new MoBends(),
-            new PostProcessing(),
+            new MusicPlayer(),
             new WaveyCapes(),
-            new SkinLayers3D(),
-            new SpecialGuis(),
-            new ScreenshotViewer(),
+            new SkinLayers3D(), // Special Module
             // Combat
+            new ClickSound(),
+            new ExperimentReachDistanceChecker(),
             new NoClickDelay(),
             // Movement
             new Sprint(),
             // Misc
             new ClientSpoofer(),
+            new CustomName(),
             new NoAchievements(),
             new Protocol(),
             // World
-            new LightningTracker(),
             // Player
             new HealthWarn(),
+            new IRC(),
             // Render
             new Animations(),
+            new BAHalo(),
+            new BetterFont(),
             new BlockOverlay(),
             new Breadcrumbs(),
-            new ClickGui(),
             new ChinaHat(),
+            new ClickGui(), // Special Module
+            new Crosshair(),
             new DamageParticle(),
             new Fullbright(),
             new HitEffect(),
+            new HurtCam(), // Special Module
             new ItemPhysics(),
+            new JumpCircle(),
             new MotionBlur(),
             new NoBob(),
+            new ReachDisplay(),
             new TargetESP(),
             new TNTTimer(),
             new TimeTraveller(),
             new TrueSights(),
             new Particles(),
             new SpeedGraph(),
+            new SuperHeroFX(),
             new Wings(),
             // Hud
+            new ClientSettings(), // Special Module
+            new PostProcessing(), // Special Module
             new Arraylist(),
             new BASticker(),
             new BPSCounter(),
             new CPSCounter(),
-            new ClientSettings(),
             new HUD(),
             new Keystrokes(),
+            new MusicInfo(),
+            new MusicVisualizer(),
+    //        new PotionEffects(),
             new Scoreboard(),
             new SessionInfo(),
             new TargetHud(),
             new TextGui(),
-            new TestElement()
+            new CustomText()
     };
+
+    public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
+    public static int CLIENT_THEME_COLOR_2 = new Color(159, 24, 242).hashCode();
+    public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
+    public static int CLIENT_THEME_COLOR_BRIGHT_2 = new Color(185, 69, 255).hashCode();
+    public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR = new Color(185, 69, 255);
+    public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR_2 = new Color(185, 69, 255);
+    public static boolean isDestructed = false;
+
 }

@@ -7,13 +7,13 @@ import net.minecraft.util.MathHelper;
 
 public class EntityLookHelper
 {
-    private EntityLiving entity;
-    private float deltaLookYaw;
-    private float deltaLookPitch;
-    private boolean isLooking;
-    private double posX;
-    private double posY;
-    private double posZ;
+    public EntityLiving entity;
+    public float deltaLookYaw;
+    public float deltaLookPitch;
+    public boolean isLooking;
+    public double posX;
+    public double posY;
+    public double posZ;
 
     public EntityLookHelper(EntityLiving entitylivingIn)
     {
@@ -86,7 +86,7 @@ public class EntityLookHelper
         }
     }
 
-    private float updateRotation(float p_75652_1_, float p_75652_2_, float p_75652_3_)
+    public float updateRotation(float p_75652_1_, float p_75652_2_, float p_75652_3_)
     {
         float f = MathHelper.wrapAngleTo180_float(p_75652_2_ - p_75652_1_);
 

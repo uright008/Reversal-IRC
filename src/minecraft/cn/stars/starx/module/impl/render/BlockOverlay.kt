@@ -8,6 +8,7 @@ import cn.stars.starx.setting.impl.BoolValue
 import cn.stars.starx.setting.impl.NumberValue
 import cn.stars.starx.util.render.ColorUtil
 import cn.stars.starx.util.render.ThemeType
+import cn.stars.starx.util.render.ThemeUtil
 import cn.stars.starx.util.wrapper.WrapperAxisAlignedBB
 import cn.stars.starx.util.wrapper.WrapperBlockPos
 import cn.stars.starx.util.wrapper.WrapperBufferBuilder
@@ -22,7 +23,7 @@ import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.MovingObjectPosition
 import org.lwjgl.opengl.GL11
 
-@ModuleInfo(name = "BlockOverlay", description = "Render a overlay around blocks", chineseDescription = "在方块周围渲染边框", category = Category.RENDER)
+@ModuleInfo(name = "BlockOverlay", chineseName = "方块描边", description = "Render a overlay around blocks", chineseDescription = "在方块周围渲染边框", category = Category.RENDER)
 class BlockOverlay : Module() {
     private var fill = BoolValue("Fill", this, false)
     private var outline = BoolValue("Outline", this, true)
@@ -30,7 +31,7 @@ class BlockOverlay : Module() {
     private var lineWidth = NumberValue("Width", this,  1.0, 0.1, 10.0, 0.1)
 
     override fun onRender3D(event: Render3DEvent?) {
-        val color = ColorUtil.getClientColor()
+        val color = ThemeUtil.getThemeColor(ThemeType.ARRAYLIST, 0f)
         if (mc.objectMouseOver != null) {
             if (isHoveringOverBlock()) {
                 val pos = WrapperBlockPos(mc.objectMouseOver.blockPos)
@@ -54,7 +55,6 @@ class BlockOverlay : Module() {
                 val minY: Double = if (block is BlockStairs) 0.0 else blockBoundingBox.minY()
                 val minZ: Double = if (block is BlockStairs) 0.0 else blockBoundingBox.minZ()
                 if (fill.enabled) {
-                    val color = ColorUtil.withAlpha(color, 100)
                     GL11.glPushMatrix()
                     GlStateManager.color(
                         color.red / 255.0f,
@@ -75,7 +75,6 @@ class BlockOverlay : Module() {
                     GL11.glPopMatrix()
                 }
                 if (outline.enabled) {
-                    val color = color
                     GL11.glPushMatrix()
                     GlStateManager.color(
                         color.red / 255.0f,

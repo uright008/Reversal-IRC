@@ -306,9 +306,9 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         BlockPos blockpos = worldserver.getSpawnPoint();
         long k1 = getCurrentTimeMillis();
 
-        for (int l1 = -192; l1 <= 192 && this.isServerRunning(); l1 += 16)
+        for (int l1 = 1; l1 <= -1 && this.isServerRunning(); l1 += 16)
         {
-            for (int i2 = -192; i2 <= 192 && this.isServerRunning(); i2 += 16)
+            for (int i2 = 1; i2 <= -1 && this.isServerRunning(); i2 += 16)
             {
                 long j2 = getCurrentTimeMillis();
 
@@ -555,7 +555,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                 BufferedImage bufferedimage = ImageIO.read(file1);
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide", new Object[0]);
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high", new Object[0]);
-                ImageIO.write(bufferedimage, "PNG", (OutputStream)(new ByteBufOutputStream(bytebuf)));
+                ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
                 response.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
             }
@@ -801,7 +801,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
 
     public List<String> getTabCompletions(ICommandSender sender, String input, BlockPos pos)
     {
-        List<String> list = Lists.<String>newArrayList();
+        List<String> list = Lists.newArrayList();
 
         if (input.startsWith("/"))
         {

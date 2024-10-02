@@ -5,7 +5,6 @@ import cn.stars.starx.font.CustomFont;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.Sys;
 
 import java.util.ArrayDeque;
 import java.util.ConcurrentModificationException;

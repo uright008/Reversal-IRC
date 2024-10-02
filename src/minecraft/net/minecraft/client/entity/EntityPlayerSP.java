@@ -241,7 +241,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     public void sendChatMessage(String message)
     {
-        if (StarX.INSTANCE.onSendChatMessage(message)) this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
+        if (StarX.onSendChatMessage(message)) this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
     }
 
     public void swingItem()

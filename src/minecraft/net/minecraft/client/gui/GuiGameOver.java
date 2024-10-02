@@ -1,52 +1,90 @@
 package net.minecraft.client.gui;
 
+import java.awt.*;
 import java.io.IOException;
 
-import cn.stars.starx.ui.gui.GuiMainMenu;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GlStateManager;
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.util.Transformer;
+import cn.stars.starx.ui.curiosity.CuriosityTextButton;
+import cn.stars.starx.util.render.UIUtil;
+import cn.stars.starx.util.shader.RiseShaders;
+import cn.stars.starx.util.shader.base.ShaderRenderType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 
+import static cn.stars.starx.GameInstance.*;
+
 public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
 {
-    private int enableButtonsTimer;
-    private boolean field_146346_f = false;
+    private CuriosityTextButton firstButton, secondButton;
+    private CuriosityTextButton[] buttons;
 
     public void initGui()
     {
-        this.buttonList.clear();
-
         if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
         {
             if (this.mc.isIntegratedServerRunning())
             {
-                this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96, I18n.format("deathScreen.deleteWorld", new Object[0])));
+                firstButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96, 200, 20, () -> {
+                    if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
+                    {
+                        this.mc.displayGuiScreen(Transformer.transformMainMenu());
+                    }
+                    else
+                    {
+                        GuiYesNo guiyesno = new GuiYesNo(this, I18n.format("deathScreen.quit.confirm", new Object[0]), "", I18n.format("deathScreen.titleScreen", new Object[0]), I18n.format("deathScreen.respawn", new Object[0]), 0);
+                        this.mc.displayGuiScreen(guiyesno);
+                        guiyesno.setButtonDelay(20);
+                    }
+                }, "删除世界", "", true, 1, 80, 5, 20);
             }
             else
             {
-                this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96, I18n.format("deathScreen.leaveServer", new Object[0])));
+                firstButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96, 200, 20, () -> {
+                    if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
+                    {
+                        this.mc.displayGuiScreen(Transformer.transformMainMenu());
+                    }
+                    else
+                    {
+                        GuiYesNo guiyesno = new GuiYesNo(this, I18n.format("deathScreen.quit.confirm", new Object[0]), "", I18n.format("deathScreen.titleScreen", new Object[0]), I18n.format("deathScreen.respawn", new Object[0]), 0);
+                        this.mc.displayGuiScreen(guiyesno);
+                        guiyesno.setButtonDelay(20);
+                    }
+                }, "离开服务器", "", true, 1, 75, 5, 20);
             }
+            buttons = new CuriosityTextButton[] { firstButton };
         }
         else
         {
-            this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 72, I18n.format("deathScreen.respawn", new Object[0])));
-            this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 96, I18n.format("deathScreen.titleScreen", new Object[0])));
-
-            if (this.mc.getSession() == null)
-            {
-                ((GuiButton)this.buttonList.get(1)).enabled = false;
-            }
-        }
-
-        for (GuiButton guibutton : this.buttonList)
-        {
-            guibutton.enabled = false;
+            firstButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 72, 200, 20, () -> {
+                this.mc.thePlayer.respawnPlayer();
+                this.mc.displayGuiScreen(null);
+            }, "重生", "", true, 1, 90, 5, 20);
+            secondButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96, 200, 20, () -> {
+                if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
+                {
+                    this.mc.displayGuiScreen(Transformer.transformMainMenu());
+                }
+                else
+                {
+                    GuiYesNo guiyesno = new GuiYesNo(this, I18n.format("deathScreen.quit.confirm", new Object[0]), "", I18n.format("deathScreen.titleScreen", new Object[0]), I18n.format("deathScreen.respawn", new Object[0]), 0);
+                    this.mc.displayGuiScreen(guiyesno);
+                    guiyesno.setButtonDelay(20);
+                }
+            }, "主菜单", "", true, 1, 85, 5, 20);
+            buttons = new CuriosityTextButton[] { firstButton, secondButton };
         }
     }
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        UIUtil.onButtonClick(buttons, mouseX, mouseY, mouseButton);
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
@@ -61,7 +99,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
             case 1:
                 if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled())
                 {
-                    this.mc.displayGuiScreen(new GuiMainMenu());
+                    this.mc.displayGuiScreen(Transformer.transformMainMenu());
                 }
                 else
                 {
@@ -77,32 +115,38 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
         if (result)
         {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
-            this.mc.loadWorld((WorldClient)null);
-            this.mc.displayGuiScreen(new GuiMainMenu());
+            this.mc.loadWorld(null);
+            this.mc.displayGuiScreen(Transformer.transformMainMenu());
         }
         else
         {
             this.mc.thePlayer.respawnPlayer();
-            this.mc.displayGuiScreen((GuiScreen)null);
+            this.mc.displayGuiScreen(null);
         }
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawGradientRect(0, 0, this.width, this.height, 1615855616, -1602211792);
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(2.0F, 2.0F, 2.0F);
-        boolean flag = this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled();
-        String s = flag ? I18n.format("deathScreen.title.hardcore", new Object[0]) : I18n.format("deathScreen.title", new Object[0]);
-        this.drawCenteredString(this.fontRendererObj, s, this.width / 2 / 2, 30, 16777215);
-        GlStateManager.popMatrix();
+        // blur
+        RiseShaders.GAUSSIAN_BLUR_SHADER.update();
+        RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+        // bloom
+        RiseShaders.POST_BLOOM_SHADER.update();
+        RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
 
-        if (flag)
-        {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("deathScreen.hardcoreInfo", new Object[0]), this.width / 2, 144, 16777215);
+        GameInstance.clearRunnables();
+
+        for (CuriosityTextButton button : buttons) {
+            button.draw(mouseX, mouseY, partialTicks);
         }
 
-        this.drawCenteredString(this.fontRendererObj, I18n.format("deathScreen.score", new Object[0]) + ": " + EnumChatFormatting.YELLOW + this.mc.thePlayer.getScore(), this.width / 2, 100, 16777215);
+        FontManager.getRegularBold(32).drawCenteredString("你死了！", this.width / 2, 60, new Color(220, 220, 220, 240).getRGB());
+
+        regular20.drawCenteredString("分数: " + EnumChatFormatting.YELLOW + this.mc.thePlayer.getScore(), this.width / 2, 100, new Color(220, 220, 220, 240).getRGB());
+
+        UI_BLOOM_RUNNABLES.forEach(Runnable::run);
+        UI_BLOOM_RUNNABLES.clear();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -114,14 +158,5 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
     public void updateScreen()
     {
         super.updateScreen();
-        ++this.enableButtonsTimer;
-
-        if (this.enableButtonsTimer == 20)
-        {
-            for (GuiButton guibutton : this.buttonList)
-            {
-                guibutton.enabled = true;
-            }
-        }
     }
 }

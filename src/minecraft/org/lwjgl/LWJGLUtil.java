@@ -15,6 +15,8 @@
  */
 package org.lwjgl;
 
+import org.lwjgl.system.Platform;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -25,8 +27,6 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
-
-import org.lwjgl.system.Platform;
 
 /**
  * <p>

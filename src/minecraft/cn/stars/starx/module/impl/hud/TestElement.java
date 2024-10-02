@@ -1,22 +1,20 @@
 package cn.stars.starx.module.impl.hud;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
-import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
-import cn.stars.starx.util.render.*;
+import cn.stars.starx.util.render.ColorUtils;
+import cn.stars.starx.util.render.RoundedUtil;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModuleInfo(name = "TestElement", description = "Only for test",
+@ModuleInfo(name = "TestElement", chineseName = "测试功能", description = "Only for test",
         chineseDescription = "仅供测试,别开", category = Category.HUD)
 public class TestElement extends Module {
     private final NoteValue note = new NoteValue("Only for test purpose. DO NOT enable this.", this);

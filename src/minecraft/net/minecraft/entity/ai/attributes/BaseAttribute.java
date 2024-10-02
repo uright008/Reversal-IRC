@@ -6,12 +6,14 @@ public abstract class BaseAttribute implements IAttribute
     private final String unlocalizedName;
     private final double defaultValue;
     private boolean shouldWatch;
+    private int microoptimizations$cachedHashcode;
 
     protected BaseAttribute(IAttribute p_i45892_1_, String unlocalizedNameIn, double defaultValueIn)
     {
         this.field_180373_a = p_i45892_1_;
         this.unlocalizedName = unlocalizedNameIn;
         this.defaultValue = defaultValueIn;
+        this.microoptimizations$cachedHashcode = this.hashCode();
 
         if (unlocalizedNameIn == null)
         {
@@ -47,7 +49,7 @@ public abstract class BaseAttribute implements IAttribute
 
     public int hashCode()
     {
-        return this.unlocalizedName.hashCode();
+        return this.microoptimizations$cachedHashcode;
     }
 
     public boolean equals(Object p_equals_1_)

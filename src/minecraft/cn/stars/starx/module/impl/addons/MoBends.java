@@ -27,7 +27,7 @@ import org.lwjgl.compatibility.util.vector.ReadableVector3f;
 import org.lwjgl.compatibility.util.vector.Vector3f;
 
 
-@ModuleInfo(name = "MoBends", description = "Show more animations on entity",
+@ModuleInfo(name = "MoBends", chineseName = "更多动作", description = "Show more animations on entity",
         chineseDescription = "在玩家和部分生物上渲染更真实的动作", category = Category.ADDONS)
 public class MoBends extends Module {
     public static boolean loaded = false;
@@ -39,7 +39,7 @@ public class MoBends extends Module {
     @Override
     public void onUpdateAlways() {
         if (ModuleInstance.getModule(WaveyCapes.class).isEnabled() && this.isEnabled()) {
-            StarX.INSTANCE.showMsg("WaveyCapes and SkinLayers3D are not supported by MoBends.");
+            StarX.showMsg("WaveyCapes and SkinLayers3D are not supported by MoBends.");
             ModuleInstance.getModule(WaveyCapes.class).toggleModule();
         }
     }

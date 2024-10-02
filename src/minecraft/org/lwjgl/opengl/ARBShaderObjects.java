@@ -5,16 +5,19 @@
  */
 package org.lwjgl.opengl;
 
-import java.nio.*;
-
-import org.lwjgl.*;
-
-import org.lwjgl.system.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.APIUtil;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.NativeType;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackGet;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**

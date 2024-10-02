@@ -15,14 +15,14 @@
  */
 package org.lwjgl.opengl;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.PointerBuffer;
+
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.PointerBuffer;
 
 public class AWTGLCanvas extends Canvas implements Drawable, ComponentListener, HierarchyListener {
 

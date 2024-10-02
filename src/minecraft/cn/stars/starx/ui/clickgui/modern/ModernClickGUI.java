@@ -4,19 +4,26 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
+import cn.stars.starx.module.impl.addons.GuiSettings;
+import cn.stars.starx.module.impl.addons.Optimization;
+import cn.stars.starx.module.impl.addons.SkinLayers3D;
+import cn.stars.starx.module.impl.hud.ClientSettings;
+import cn.stars.starx.module.impl.hud.PostProcessing;
+import cn.stars.starx.module.impl.render.ClickGui;
+import cn.stars.starx.module.impl.render.HurtCam;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.animation.advanced.Direction;
+import cn.stars.starx.util.animation.advanced.impl.DecelerateAnimation;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.*;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,13 +31,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static cn.stars.starx.GameInstance.*;
+import static cn.stars.starx.GameInstance.MODERN_BLOOM_RUNNABLES;
+import static cn.stars.starx.GameInstance.MODERN_BLUR_RUNNABLES;
 
 public class ModernClickGUI extends GuiScreen {
     public Color backgroundColor = new Color(30,30,30, 220);
@@ -48,17 +57,22 @@ public class ModernClickGUI extends GuiScreen {
     NumberValue selectedSlider;
     boolean hasEditedSliders = false;
     TimeUtil timer = new TimeUtil();
+    private cn.stars.starx.util.animation.advanced.Animation windowAnim;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        if (windowAnim.finished(Direction.BACKWARDS)) mc.displayGuiScreen(null);
+
         sr = new ScaledResolution(mc);
         int x = width / 2 - 260;
         int y = height / 2 - 160;
     //    scaleAnimation.run(1);
     //    GlUtils.startScale(x, y, (float) scaleAnimation.getValue());
 
+        RenderUtil.scaleStart(x + 260, y + 160, windowAnim.getOutput().floatValue());
+
         // Background
-        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled() && windowAnim.finished(Direction.FORWARDS)) {
             MODERN_BLUR_RUNNABLES.add(() -> {
                 RenderUtil.roundedRectangle(x, y, 520, 320, 8, Color.BLACK);
             });
@@ -66,14 +80,14 @@ public class ModernClickGUI extends GuiScreen {
         RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
 
         // Client Name
-        FontManager.getBiko(48).drawString("STARX", x + 18, y + 12, new Color(200,200,200,200).getRGB());
+        FontManager.getEaves(54).drawString("STARX", x + 18, y + 12, new Color(200,200,200,200).getRGB());
 
         // Line
         RenderUtil.rectangle(x + 115, y, 0.7, 320, new Color(200,200,200,100));
         RenderUtil.rectangle(x + 5, y + 62, 105, 0.7, new Color(200,200,200,100));
 
         // Shadow
-        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled() && windowAnim.finished(Direction.FORWARDS)) {
             MODERN_BLOOM_RUNNABLES.add(() -> {
                 RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
             });
@@ -103,11 +117,11 @@ public class ModernClickGUI extends GuiScreen {
                 animation.run(255);
                 RenderUtil.roundedGradientRectangle(x + 5, renderSelectY, 105, 20, 4,
                         new Color(100, 200, 255, 120), new Color(0,0,0,0), false);
-                FontManager.getIconFont(26).drawString(getCategoryIcon(category), x + 8 + animation.getValue() / 80f, renderSelectY + 7, new Color(200,200,200, 250).getRGB());
+                FontManager.getCur(26).drawString(getCategoryIcon(category), x + 8 + animation.getValue() / 80f, renderSelectY + 7, new Color(200,200,200, 250).getRGB());
                 FontManager.getPSB(26).drawString(StringUtils.capitalize(category.name().toLowerCase()), x + 24 + animation.getValue() / 80f, renderSelectY + 6, new Color(200,200,200, 250).getRGB());
             } else {
             //    RenderUtil.roundedRectangle(x + 5, renderSelectY, 105, 20, 4, new Color(80, 80, 80, 180));
-                FontManager.getIconFont(26).drawString(getCategoryIcon(category), x + 8, renderSelectY + 7, new Color(160, 160, 160, 200).getRGB());
+                FontManager.getCur(26).drawString(getCategoryIcon(category), x + 8, renderSelectY + 7, new Color(160, 160, 160, 200).getRGB());
                 FontManager.getPSB(22).drawString(StringUtils.capitalize(category.name().toLowerCase()), x + 24, renderSelectY + 6.5, new Color(160, 160, 160, 200).getRGB());
             }
             renderSelectY += 25;
@@ -123,7 +137,7 @@ public class ModernClickGUI extends GuiScreen {
         float moduleY = y + 10 + renderScrollAmount;
         float settingX = x + 125;
         float settingY = y + 25 + renderScrollAmount;
-        for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module m : StarX.moduleManager.getModuleList()) {
             if ((m.getModuleInfo().category() == selectedCategory && searchString.isEmpty()) || getRelevantModules(searchString).contains(m)) {
                 m.guiX = moduleX;
                 m.guiY = moduleY;
@@ -131,9 +145,9 @@ public class ModernClickGUI extends GuiScreen {
                     firstModule = m;
                 }
                 lastModuleY = Math.max(lastModuleY, m.guiY + m.sizeInGui);
-                FontManager.getPSB(24).drawString(m.getModuleInfo().name(), m.guiX + 20, m.guiY + 6, m.isEnabled() ? new Color(240,240,240,250).getRGB() : new Color(160, 160, 160, 200).getRGB());
-                FontManager.getPSR(16).drawString(canUseChinese(m) ? m.getModuleInfo().chineseDescription() : m.getModuleInfo().description(),
-                        m.guiX + 20, m.guiY + 20 + (canUseChinese(m) ? 1 : 0), new Color(160, 160, 160, 160).getRGB());
+                FontManager.getPSB(24).drawString(m.getModuleInfo().name(), m.guiX + 20, m.guiY + 6, isSpecialModule(m) ? new Color(240,240,10,250).getRGB() : m.isEnabled() ? new Color(240,240,240,250).getRGB() : new Color(160, 160, 160, 200).getRGB());
+                FontManager.getPSR(16).drawString(m.getModuleInfo().chineseDescription().isEmpty() ? m.getModuleInfo().description() : m.getModuleInfo().chineseDescription(),
+                        m.guiX + 20, m.guiY + 20 + (m.getModuleInfo().chineseDescription().isEmpty() ? 0 : 1), new Color(160, 160, 160, 160).getRGB());
                 if (m.expanded) {
                     m.sizeInGui = 20;
                     settingY += m.sizeInGui;
@@ -143,7 +157,7 @@ public class ModernClickGUI extends GuiScreen {
 
                         if (!setting.isHidden()) {
                             if (setting instanceof NoteValue) {
-                                FontManager.getPSR(18).drawString(setting.name, setting.guiX, setting.guiY - 15, new Color(200,200,200,200).getRGB());
+                                FontManager.getPSR(18).drawString(setting.name, setting.guiX, setting.guiY - 15, new Color(150,150,150,150).getRGB());
                                 settingY += 12;
                                 m.sizeInGui += 12;
                             }
@@ -236,7 +250,7 @@ public class ModernClickGUI extends GuiScreen {
 
         if (timer.hasReached(10)) {
             timer.reset();
-            for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+            for (final Module m : StarX.moduleManager.getModuleList()) {
                 m.alphaAnimation.run(m.isEnabled() ? 50 : 0);
                 for (final Setting s : m.getSettings()) {
                     if (s instanceof NumberValue) {
@@ -267,6 +281,9 @@ public class ModernClickGUI extends GuiScreen {
         GlStateManager.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     //    GlUtils.stopScale();
+
+        RenderUtil.scaleEnd();
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -307,7 +324,7 @@ public class ModernClickGUI extends GuiScreen {
 
         float moduleX = x + 120;
         float moduleY = y + 5;
-        for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module m : StarX.moduleManager.getModuleList()) {
             if ((m.getModuleInfo().category() == selectedCategory && searchString.isEmpty()) || getRelevantModules(searchString).contains(m)) {
                 if (RenderUtil.isHovered(moduleX, m.guiY, 520, 30, mouseX, mouseY)) {
                     if (m.guiY + FontManager.getPSR(20).height() < y || m.guiY + FontManager.getPSR(20).height() > y + 320) return;
@@ -358,27 +375,31 @@ public class ModernClickGUI extends GuiScreen {
     private String getCategoryIcon(Category c) {
         switch (c) {
             case COMBAT: {
-                return "a";
+                return "A";
             }
             case MOVEMENT: {
-                return "b";
+                return "B";
             }
             case PLAYER: {
-                return "c";
+                return "C";
             }
-            case RENDER:
-            case HUD: {
-                return "g";
+            case RENDER: {
+                return "D";
+            }
+            case MISC: {
+                return "E";
             }
             case WORLD: {
-                return "f";
+                return "F";
             }
-            case ADDONS:
-            case MISC: {
-                return "e";
+            case HUD: {
+                return "G";
+            }
+            case ADDONS: {
+                return "H";
             }
         }
-        return "a";
+        return "A";
     }
 
     @Override
@@ -405,7 +426,7 @@ public class ModernClickGUI extends GuiScreen {
         if (wheel == 0) {
             scrollAmount -= (lastLastScrollAmount - scrollAmount) * 0.6;
         }
-    //    StarX.INSTANCE.showMsg(Mouse.getDWheel() / 5);
+    //    StarX.showMsg(Mouse.getDWheel() / 5);
     }
 
     @Override
@@ -413,7 +434,10 @@ public class ModernClickGUI extends GuiScreen {
         if (isCtrlKeyDown() && keyCode == Keyboard.KEY_F) {
             isSearching = true;
         }
-        if (keyCode == Keyboard.KEY_ESCAPE) mc.displayGuiScreen(null);
+        if (keyCode == Keyboard.KEY_ESCAPE && windowAnim.getDirection() == Direction.FORWARDS) {
+            windowAnim.changeDirection();
+            Keyboard.enableRepeatEvents(false);
+        }
         if (isSearching) {
             // Paste
             if (isKeyComboCtrlV(keyCode)) {
@@ -442,6 +466,7 @@ public class ModernClickGUI extends GuiScreen {
     @Override
     public void initGui() {
         Keyboard.enableRepeatEvents(true);
+        windowAnim = new DecelerateAnimation(100, 1d);
         hasEditedSliders = false;
         animation.reset();
         scaleAnimation.reset();
@@ -472,7 +497,7 @@ public class ModernClickGUI extends GuiScreen {
 
         if (search.isEmpty()) return relevantModules;
 
-        for (final Module module : StarX.INSTANCE.moduleManager.moduleList) {
+        for (final Module module : StarX.moduleManager.moduleList) {
             if (module.getModuleInfo().name().toLowerCase().replaceAll(" ", "")
                     .contains(search.toLowerCase().replaceAll(" ", ""))) {
                 relevantModules.add(module);
@@ -482,9 +507,9 @@ public class ModernClickGUI extends GuiScreen {
         return relevantModules;
     }
 
-    public boolean canUseChinese(Module module) {
-        if (ModuleInstance.getBool("ClientSettings", "Chinese Description").isEnabled()) {
-            return !module.getModuleInfo().chineseDescription().isEmpty();
+    public boolean isSpecialModule(Module module) {
+        if (module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof GuiSettings || module instanceof HurtCam || module instanceof Optimization) {
+            return true;
         }
         return false;
     }

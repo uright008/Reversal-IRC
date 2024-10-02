@@ -144,7 +144,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
         super.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
-        this.nameField.drawTextBox();
+        this.nameField.drawTextBox(mouseX, mouseY);
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)

@@ -12,7 +12,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 
-@ModuleInfo(name = "ClientSpoofer", description = "Makes servers think you're on other clients",
+@ModuleInfo(name = "ClientSpoofer", chineseName = "客户端欺骗", description = "Makes servers think you're on other clients",
         chineseDescription = "让服务器认为你在使用别的端", category = Category.MISC)
 public final class ClientSpoofer extends Module {
     private final ModeValue mode = new ModeValue("Mode", this, "Forge", "Forge", "Lunar", "LabyMod", "PvP Lounge", "CheatBreaker", "Geyser");
@@ -20,8 +20,8 @@ public final class ClientSpoofer extends Module {
     @Override
     protected void onEnable() {
         ScaledResolution sr = new ScaledResolution(mc);
-        StarX.INSTANCE.notificationManager.registerNotification("Rejoin for " + this.getModuleInfo().name() + " to work.", NotificationType.NOTIFICATION);
-        StarX.INSTANCE.showMsg("W:"+sr.getScaledWidth() + " ,H:"+sr.getScaledHeight());
+        StarX.notificationManager.registerNotification("Rejoin for " + this.getModuleInfo().name() + " to work.", NotificationType.NOTIFICATION);
+        StarX.showMsg("W:"+sr.getScaledWidth() + " ,H:"+sr.getScaledHeight());
     }
 
     @Override

@@ -8,7 +8,7 @@ import cn.stars.starx.setting.impl.ModeValue;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-@ModuleInfo(name = "Fullbright", description = "Gives your game full brightness",
+@ModuleInfo(name = "Fullbright", chineseName = "夜视", description = "Gives your game full brightness",
         chineseDescription = "夜视效果", category = Category.RENDER)
 public final class Fullbright extends Module {
 

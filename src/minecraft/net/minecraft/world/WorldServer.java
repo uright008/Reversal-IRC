@@ -1,5 +1,6 @@
 package net.minecraft.world;
 
+import cn.stars.starx.StarX;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -155,6 +156,7 @@ public class WorldServer extends World implements IThreadListener
     public void tick()
     {
         super.tick();
+        StarX.entityCullingMod.doWorldTick();
 
         if (this.getWorldInfo().isHardcoreModeEnabled() && this.getDifficulty() != EnumDifficulty.HARD)
         {
@@ -537,7 +539,7 @@ public class WorldServer extends World implements IThreadListener
 
             if (i != this.pendingTickListEntriesHashSet.size())
             {
-                throw new IllegalStateException("TickNextTick list out of synch");
+                return false;
             }
             else
             {
@@ -550,7 +552,7 @@ public class WorldServer extends World implements IThreadListener
 
                 for (int j = 0; j < i; ++j)
                 {
-                    NextTickListEntry nextticklistentry = (NextTickListEntry)this.pendingTickListEntriesTreeSet.first();
+                    NextTickListEntry nextticklistentry = this.pendingTickListEntriesTreeSet.first();
 
                     if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime())
                     {

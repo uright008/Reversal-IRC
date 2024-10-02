@@ -15,10 +15,9 @@
  */
 package org.lwjgl.opengl;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * <p/>

@@ -1,7 +1,6 @@
 package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
@@ -17,14 +16,13 @@ import net.minecraft.util.ResourceLocation;
 
 import static org.lwjgl.opengl.GL11.*;
 
-@ModuleInfo(name = "BASticker", description = "ARIS doesn't have a b",
+@ModuleInfo(name = "BASticker", chineseName = "蔚蓝档案贴纸", description = "ARIS doesn't have a b",
         chineseDescription = "哎,等等,爱丽丝怎么没有b~", category = Category.HUD)
 public class BASticker extends Module {
     private final ModeValue character = new ModeValue("Character", this, "Aris",
             "Aris", "Shiroko", "Azusa", "Hina Swimsuit", "Ui", "Hoshino Swimsuit", "Mika", "Ibuki");
     private final NumberValue scale = new NumberValue("Scale", this, 1, 0.1, 2, 0.1);
-    private final NoteValue note = new NoteValue("Add scale to make pictures look better,", this);
-    private final NoteValue note2 = new NoteValue("which may HIDE the screen.", this);
+    private final NoteValue note = new NoteValue("Add scale to make pictures look better, which may HIDE the screen.", this);
     ScaledResolution sr;
 
     public BASticker() {
@@ -79,9 +77,9 @@ public class BASticker extends Module {
                     break;
                 }
                 case "Hoshino Swimsuit": {
-                    setRoundedWidth(135, scale.getValue());
+                    setRoundedWidth(140, scale.getValue());
                     setRoundedHeight(170, scale.getValue());
-                    drawImage(new ResourceLocation("starx/images/box_weapon/hoshino_swimsuit.png"), x, y, 125, 160, scale.getValue());
+                    drawImage(new ResourceLocation("starx/images/box_weapon/hoshino_swimsuit.png"), x, y, 130, 160, scale.getValue());
                     break;
                 }
                 case "Mika": {
@@ -101,6 +99,7 @@ public class BASticker extends Module {
 
         NORMAL_RENDER_RUNNABLES.add(runnable);
         MODERN_BLOOM_RUNNABLES.add(runnable);
+        MODERN_BLUR_RUNNABLES.add(runnable);
     }
 
     public void setRoundedWidth(int width, double scale) {

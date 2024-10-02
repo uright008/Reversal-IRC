@@ -163,8 +163,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
                 if (event.isCancelled()) return;
 
                 event.getPacket().processPacket(this.packetListener);
-            } catch (ThreadQuickExitException var4) {
-                ;
+            } catch (ThreadQuickExitException ignored) {
             }
         }
     }
@@ -202,7 +201,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
         if (this.isChannelOpen())
         {
             this.flushOutboundQueue();
-            this.dispatchPacket(event.getPacket(), (GenericFutureListener <? extends Future <? super Void >> [])null);
+            this.dispatchPacket(event.getPacket(), null);
         }
         else
         {

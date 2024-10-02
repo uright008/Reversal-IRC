@@ -1,21 +1,27 @@
 package cn.stars.starx.font.modern;
 
 public abstract class MFont {
-    public abstract int drawString(String text, double x, double y, int color, boolean dropShadow);
+    public abstract float drawString(String text, double x, double y, int color, boolean dropShadow);
 
-    public abstract int drawString(final String text, final double x, final double y, final int color);
+    public abstract float drawString(final String text, final double x, final double y, final int color);
 
-    public abstract int drawStringWithShadow(final String text, final double x, final double y, final int color);
+    public abstract float drawStringWithShadow(final String text, final double x, final double y, final int color);
 
-    public abstract int width(String text);
+    public abstract float width(String text);
 
-    public int getWidth(String text) { return width(text); }
+    public float getWidth(String text) { return width(text); }
 
-    public int getStringWidth(String text) { return width(text); }
+    public float getStringWidth(String text) { return width(text); }
 
-    public abstract int drawCenteredString(final String text, final double x, final double y, final int color);
+    public abstract float drawCenteredString(final String text, final double x, final double y, final int color);
 
-    public abstract int drawRightString(final String text, final double x, final double y, final int color);
+    public abstract float drawRightString(final String text, final double x, final double y, final int color);
+
+    public abstract String trimStringToWidth(String text, float width, boolean reverse, boolean more);
+
+    public abstract String autoReturn(String text, float returnWidth, int maxReturns);
+
+    public abstract int autoReturnCount(String text, float returnWidth, int maxReturns);
 
     public abstract float height();
 

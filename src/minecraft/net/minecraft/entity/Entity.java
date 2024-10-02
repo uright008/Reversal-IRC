@@ -5,6 +5,9 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import cn.stars.addons.optimization.entityculling.Cullable;
+import cn.stars.addons.optimization.entityculling.EntityCullingModBase;
+import cn.stars.addons.optimization.normal.PooledMutableBlockPos;
 import cn.stars.starx.event.impl.StrafeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -50,7 +53,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-public abstract class Entity implements ICommandSender
+public abstract class Entity implements ICommandSender, Cullable
 {
     private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     private static int nextEntityID;
@@ -126,6 +129,49 @@ public abstract class Entity implements ICommandSender
     private boolean invulnerable;
     protected UUID entityUniqueID;
     private final CommandResultStats cmdResultStats;
+    private long patcher$displayNameCachedAt;
+    private IChatComponent patcher$cachedDisplayName;
+    private PooledMutableBlockPos microoptimizations$opaqueCheck$blockPos;
+    private PooledMutableBlockPos microoptimizations$blockPosTemp;
+    private PooledMutableBlockPos microoptimizations$blockPos1;
+    private PooledMutableBlockPos microoptimizations$blockPos2;
+    private long lasttime = 0;
+    private boolean culled = false;
+    private boolean outOfCamera = false;
+
+    @Override
+    public void setTimeout() {
+        lasttime = System.currentTimeMillis() + 1000;
+    }
+
+    @Override
+    public boolean isForcedVisible() {
+        return lasttime > System.currentTimeMillis();
+    }
+
+    @Override
+    public void setCulled(boolean value) {
+        this.culled = value;
+        if(!value) {
+            setTimeout();
+        }
+    }
+    @Override
+    public boolean isCulled() {
+        if(!EntityCullingModBase.enabled)return false;
+        return culled;
+    }
+
+    @Override
+    public void setOutOfCamera(boolean value) {
+        this.outOfCamera = value;
+    }
+
+    @Override
+    public boolean isOutOfCamera() {
+        if(!EntityCullingModBase.enabled)return false;
+        return outOfCamera;
+    }
 
     public int getEntityId()
     {
@@ -780,8 +826,12 @@ public abstract class Entity implements ICommandSender
 
     protected void doBlockCollisions()
     {
-        BlockPos blockpos = new BlockPos(this.getEntityBoundingBox().minX + 0.001D, this.getEntityBoundingBox().minY + 0.001D, this.getEntityBoundingBox().minZ + 0.001D);
-        BlockPos blockpos1 = new BlockPos(this.getEntityBoundingBox().maxX - 0.001D, this.getEntityBoundingBox().maxY - 0.001D, this.getEntityBoundingBox().maxZ - 0.001D);
+        this.microoptimizations$blockPos1 = PooledMutableBlockPos.get();
+        this.microoptimizations$blockPosTemp = PooledMutableBlockPos.get();
+        this.microoptimizations$blockPos1 = PooledMutableBlockPos.get(this.getEntityBoundingBox().minX + 0.001D, this.getEntityBoundingBox().minY + 0.001D, this.getEntityBoundingBox().minZ + 0.001D);
+        this.microoptimizations$blockPos2 = PooledMutableBlockPos.get(this.getEntityBoundingBox().maxX - 0.001D, this.getEntityBoundingBox().maxY - 0.001D, this.getEntityBoundingBox().maxZ - 0.001D);
+        BlockPos blockpos = this.microoptimizations$blockPos1;
+        BlockPos blockpos1 = this.microoptimizations$blockPos2;
 
         if (this.worldObj.isAreaLoaded(blockpos, blockpos1))
         {
@@ -791,7 +841,7 @@ public abstract class Entity implements ICommandSender
                 {
                     for (int k = blockpos.getZ(); k <= blockpos1.getZ(); ++k)
                     {
-                        BlockPos blockpos2 = new BlockPos(i, j, k);
+                        BlockPos blockpos2 = this.microoptimizations$blockPosTemp.set(i, j, k);
                         IBlockState iblockstate = this.worldObj.getBlockState(blockpos2);
 
                         try
@@ -809,6 +859,10 @@ public abstract class Entity implements ICommandSender
                 }
             }
         }
+
+        this.microoptimizations$blockPos1.release();
+        this.microoptimizations$blockPos2.release();
+        this.microoptimizations$blockPosTemp.release();
     }
 
     protected void playStepSound(BlockPos pos, Block blockIn)
@@ -901,7 +955,9 @@ public abstract class Entity implements ICommandSender
 
     public boolean isWet()
     {
-        return this.inWater || this.worldObj.isRainingAt(new BlockPos(this.posX, this.posY, this.posZ)) || this.worldObj.isRainingAt(new BlockPos(this.posX, this.posY + (double)this.height, this.posZ));
+        try (PooledMutableBlockPos blockPos = PooledMutableBlockPos.get(this.posX, this.posY, this.posZ)) {
+            return this.inWater || this.worldObj.isRainingAt(blockPos) || this.worldObj.isRainingAt(blockPos.set(this.posX, this.posY + (double) this.height, this.posZ));
+        }
     }
 
     public boolean isInWater()
@@ -1552,11 +1608,12 @@ public abstract class Entity implements ICommandSender
         }
         else
         {
-            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+            this.microoptimizations$opaqueCheck$blockPos = PooledMutableBlockPos.get(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = microoptimizations$opaqueCheck$blockPos;
 
             for (int i = 0; i < 8; ++i)
             {
-                int j = MathHelper.floor_double(this.posY + (double)(((float)((i >> 0) % 2) - 0.5F) * 0.1F) + (double)this.getEyeHeight());
+                int j = MathHelper.floor_double(this.posY + (double)(((float)((i) % 2) - 0.5F) * 0.1F) + (double)this.getEyeHeight());
                 int k = MathHelper.floor_double(this.posX + (double)(((float)((i >> 1) % 2) - 0.5F) * this.width * 0.8F));
                 int l = MathHelper.floor_double(this.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * this.width * 0.8F));
 
@@ -1571,6 +1628,7 @@ public abstract class Entity implements ICommandSender
                 }
             }
 
+            this.microoptimizations$opaqueCheck$blockPos.release();
             return false;
         }
     }
@@ -2185,9 +2243,13 @@ public abstract class Entity implements ICommandSender
 
     public IChatComponent getDisplayName()
     {
+        if (System.currentTimeMillis() - patcher$displayNameCachedAt < 50L) {
+            return patcher$cachedDisplayName;
+        }
         ChatComponentText chatcomponenttext = new ChatComponentText(this.getName());
-        chatcomponenttext.getChatStyle().setChatHoverEvent(this.getHoverEvent());
         chatcomponenttext.getChatStyle().setInsertion(this.getUniqueID().toString());
+        patcher$cachedDisplayName = chatcomponenttext;
+        patcher$displayNameCachedAt = System.currentTimeMillis();
         return chatcomponenttext;
     }
 

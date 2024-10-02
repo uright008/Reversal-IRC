@@ -8,7 +8,7 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.util.wrapper.WrapperFreeLook
 import org.lwjgl.input.Keyboard
 
-@ModuleInfo(name = "FreeLook", description = "Move around freely", chineseDescription = "自由地移动你的视角", category = Category.ADDONS)
+@ModuleInfo(name = "FreeLook", chineseName = "自由视角", description = "Move around freely", chineseDescription = "自由地移动你的视角", category = Category.ADDONS)
 class FreeLook : Module() {
 
     init {
@@ -17,7 +17,7 @@ class FreeLook : Module() {
 
     override fun onEnable() {
         if (this.keyBind == Keyboard.KEY_NONE) {
-            StarX.INSTANCE.showMsg("Bind FreeLook to a key to use!")
+            StarX.showMsg("Bind FreeLook to a key to use!")
             toggleModule()
             return
         }

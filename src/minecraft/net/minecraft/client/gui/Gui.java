@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.util.render.GlUtils;
+import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -36,6 +38,22 @@ public class Gui
         }
 
         drawRect(x, startY + 1, x + 1, endY, color);
+    }
+
+    public static void drawNewRect(double x, double y, double width, double height, int color) {
+        RenderUtil.resetColor();
+        RenderUtil.setAlphaLimit(0.0F);
+        GlUtils.setup2DRendering(true);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(x, y, 0.0D).color(color).endVertex();
+        worldrenderer.pos(x, y + height, 0.0D).color(color).endVertex();
+        worldrenderer.pos(x + width, y + height, 0.0D).color(color).endVertex();
+        worldrenderer.pos(x + width, y, 0.0D).color(color).endVertex();
+        tessellator.draw();
+        worldrenderer.reset();
+        GlUtils.end2DRendering();
     }
 
     public static void drawRect(int left, int top, int right, int bottom, int color)

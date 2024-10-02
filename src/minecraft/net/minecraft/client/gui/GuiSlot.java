@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.util.animation.SmoothScrolling;
 import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,6 +35,9 @@ public abstract class GuiSlot
     protected boolean hasListHeader;
     protected int headerPadding;
     private boolean enabled = true;
+    protected float target;
+    protected long start;
+    protected long duration;
 
     public GuiSlot(Minecraft mcIn, int width, int height, int topIn, int bottomIn, int slotHeightIn)
     {
@@ -88,6 +92,14 @@ public abstract class GuiSlot
 
     protected void func_178040_a(int p_178040_1_, int p_178040_2_, int p_178040_3_)
     {
+    }
+
+    protected boolean shouldRenderOverlay() {
+        return true;
+    }
+
+    protected boolean shouldRenderContainer() {
+        return !ModuleInstance.getBool("GuiSettings", "Shader In All Guis").isEnabled();
     }
 
     protected abstract void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn);
@@ -167,6 +179,9 @@ public abstract class GuiSlot
 
     public void drawScreen(int mouseXIn, int mouseYIn, float p_148128_3_)
     {
+        float[] target2 = new float[]{this.target};
+        this.amountScrolled = SmoothScrolling.handleScrollingPosition(target2, this.amountScrolled, this.func_148135_f(), 20.0f / (float)Minecraft.getDebugFPS(), this.start, this.duration);
+        this.target = target2[0];
         if (this.field_178041_q)
         {
             this.mouseX = mouseXIn;
@@ -175,11 +190,13 @@ public abstract class GuiSlot
             int i = this.getScrollBarX();
             int j = i + 6;
             this.bindAmountScrolled();
+            this.amountScrolled = SmoothScrolling.clamp(this.amountScrolled, this.func_148135_f());
+            this.target = SmoothScrolling.clamp(this.target, this.func_148135_f());
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            if (!ModuleInstance.getBool("SpecialGuis", "Shader In All Guis").isEnabled()) {
+            if (shouldRenderContainer()) {
                 this.drawContainerBackground(tessellator);
             }
             int k = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
@@ -193,25 +210,29 @@ public abstract class GuiSlot
             this.drawSelectionBox(k, l, mouseXIn, mouseYIn);
             GlStateManager.disableDepth();
             int i1 = 4;
-            this.overlayBackground(0, this.top, 255, 255);
-            this.overlayBackground(this.bottom, this.height, 255, 255);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
-            GlStateManager.disableAlpha();
-            GlStateManager.shadeModel(7425);
+            if (shouldRenderOverlay()) {
+                this.overlayBackground(0, this.top, 255, 255);
+                this.overlayBackground(this.bottom, this.height, 255, 255);
+
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
+                GlStateManager.disableAlpha();
+                GlStateManager.shadeModel(7425);
+                GlStateManager.disableTexture2D();
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                worldrenderer.pos((double) this.left, (double) (this.top + i1), 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 0).endVertex();
+                worldrenderer.pos((double) this.right, (double) (this.top + i1), 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 0).endVertex();
+                worldrenderer.pos((double) this.right, (double) this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+                worldrenderer.pos((double) this.left, (double) this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+                tessellator.draw();
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                worldrenderer.pos((double) this.left, (double) this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+                worldrenderer.pos((double) this.right, (double) this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+                worldrenderer.pos((double) this.right, (double) (this.bottom - i1), 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 0).endVertex();
+                worldrenderer.pos((double) this.left, (double) (this.bottom - i1), 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 0).endVertex();
+                tessellator.draw();
+            }
             GlStateManager.disableTexture2D();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldrenderer.pos((double)this.left, (double)(this.top + i1), 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 0).endVertex();
-            worldrenderer.pos((double)this.right, (double)(this.top + i1), 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 0).endVertex();
-            worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-            tessellator.draw();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos((double)this.right, (double)(this.bottom - i1), 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 0).endVertex();
-            worldrenderer.pos((double)this.left, (double)(this.bottom - i1), 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 0).endVertex();
-            tessellator.draw();
             int j1 = this.func_148135_f();
 
             if (j1 > 0)
@@ -350,22 +371,37 @@ public abstract class GuiSlot
             {
                 this.initialClickY = -1;
             }
-
-            int i2 = Mouse.getEventDWheel();
-
-            if (i2 != 0)
-            {
-                if (i2 > 0)
-                {
-                    i2 = -1;
+            if (Mouse.isButtonDown((int)0) && this.getEnabled()) {
+                this.target = this.amountScrolled = SmoothScrolling.clamp(this.amountScrolled, this.func_148135_f(), 0.0f);
+            } else {
+                int wheel = Mouse.getEventDWheel();
+                if (wheel != 0) {
+                    if (wheel > 0) {
+                        wheel = -1;
+                    } else if (wheel < 0) {
+                        wheel = 1;
+                    }
+                    this.offset(SmoothScrolling.getScrollStep() * (float)wheel, true);
                 }
-                else if (i2 < 0)
-                {
-                    i2 = 1;
-                }
-
-                this.amountScrolled += (float)(i2 * this.slotHeight / 2);
             }
+        }
+    }
+
+    public void offset(float value, boolean animated) {
+        this.scrollTo(this.target + value, animated);
+    }
+
+    public void scrollTo(float value, boolean animated) {
+        this.scrollTo(value, animated, SmoothScrolling.getScrollDuration());
+    }
+
+    public void scrollTo(float value, boolean animated, long duration) {
+        this.target = SmoothScrolling.clamp(value, this.func_148135_f());
+        if (animated) {
+            this.start = System.currentTimeMillis();
+            this.duration = duration;
+        } else {
+            this.amountScrolled = this.target;
         }
     }
 

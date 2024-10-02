@@ -2,6 +2,8 @@ package cn.stars.starx;
 
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
@@ -9,7 +11,6 @@ import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
 
 public interface GameInstance {
     Minecraft mc = Minecraft.getMinecraft();
-    StarX instance = StarX.INSTANCE;
 
     TTFFontRenderer comfortaa = CustomFont.FONT_MANAGER.getFont("Comfortaa 18");
     TTFFontRenderer comfortaaNigger = CustomFont.FONT_MANAGER.getFont("Comfortaa 26");
@@ -31,6 +31,18 @@ public interface GameInstance {
     TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
     TTFFontRenderer gsTitle = CustomFont.FONT_MANAGER.getFont("GoogleSans 24");
     TTFFontRenderer gsBig = CustomFont.FONT_MANAGER.getFont("GoogleSans 36");
+
+    MFont psm16 = FontManager.getPSM(16);
+    MFont psm17 = FontManager.getPSM(17);
+    MFont psb20 = FontManager.getPSB(20);
+    MFont psm18 = FontManager.getPSM(18);
+    MFont regular16 = FontManager.getRegular(16);
+    MFont regular18 = FontManager.getRegular(18);
+    MFont regular20 = FontManager.getRegular(20);
+    MFont regular20Bold = FontManager.getRegularBold(20);
+    MFont regular24Bold = FontManager.getRegularBold(24);
+    MFont regular32 = FontManager.getRegular(32);
+    MFont eaves64 = FontManager.getEaves(64);
 
     List<Runnable> UI_BLOOM_RUNNABLES = new ArrayList<>();
     List<Runnable> UI_POST_BLOOM_RUNNABLES = new ArrayList<>();
@@ -94,7 +106,7 @@ public interface GameInstance {
     }
 
     default Module getModule(final Class<? extends Module> clazz) {
-        for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module module : StarX.moduleManager.getModuleList()) {
             if (module.getClass() == clazz) {
                 return module;
             }
@@ -104,7 +116,7 @@ public interface GameInstance {
     }
 
     public static Module getModuleS(final Class<? extends Module> clazz) {
-        for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module module : StarX.moduleManager.getModuleList()) {
             if (module.getClass() == clazz) {
                 return module;
             }

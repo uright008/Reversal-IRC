@@ -22,14 +22,34 @@ public abstract class GuiListExtended extends GuiSlot
     {
     }
 
-    protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
-    {
-        this.getListEntry(entryID).drawEntry(entryID, p_180791_2_, p_180791_3_, this.getListWidth(), p_180791_4_, mouseXIn, mouseYIn, this.getSlotIndexFromScreenCoords(mouseXIn, mouseYIn) == entryID);
-    }
-
     protected void func_178040_a(int p_178040_1_, int p_178040_2_, int p_178040_3_)
     {
-        this.getListEntry(p_178040_1_).setSelected(p_178040_1_, p_178040_2_, p_178040_3_);
+        IGuiListEntry entry = this.getListEntry(p_178040_1_);
+        if (entry != null) {
+            entry.setSelected(p_178040_1_, p_178040_2_, p_178040_3_);
+        } else {
+            // 处理 entry 为 null 的情况
+        }
+    }
+
+    @Override
+    protected boolean shouldRenderOverlay() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldRenderContainer() {
+        return false;
+    }
+
+    protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
+    {
+        IGuiListEntry entry = this.getListEntry(entryID);
+        if (entry != null) {
+            entry.drawEntry(entryID, p_180791_2_, p_180791_3_, this.getListWidth(), p_180791_4_, mouseXIn, mouseYIn, this.getSlotIndexFromScreenCoords(mouseXIn, mouseYIn) == entryID);
+        } else {
+            // 处理 entry 为 null 的情况
+        }
     }
 
     public boolean mouseClicked(int mouseX, int mouseY, int mouseEvent)
@@ -64,7 +84,12 @@ public abstract class GuiListExtended extends GuiSlot
             int k = this.top + 4 - this.getAmountScrolled() + i * this.slotHeight + this.headerPadding;
             int l = p_148181_1_ - j;
             int i1 = p_148181_2_ - k;
-            this.getListEntry(i).mouseReleased(i, p_148181_1_, p_148181_2_, p_148181_3_, l, i1);
+            IGuiListEntry entry = this.getListEntry(i);
+            if (entry != null) {
+                entry.mouseReleased(i, p_148181_1_, p_148181_2_, p_148181_3_, l, i1);
+            } else {
+
+            }
         }
 
         this.setEnabled(true);

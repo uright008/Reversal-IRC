@@ -22,12 +22,12 @@ import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 
-@ModuleInfo(name = "HitEffect", description = "Renders particle effect when you attack someone",
+@ModuleInfo(name = "HitEffect", chineseName = "攻击粒子", description = "Renders particle effect when you attack someone",
         chineseDescription = "当你攻击时生成粒子效果", category = Category.RENDER)
 public final class HitEffect extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this, "Blood", "None", "Blood", "Lightning", "Heart", "Flame", "Portal", "Explosion", "Lava",
-            "Smoke", "Note", "Slime", "Enchant");
+    private final ModeValue mode = new ModeValue("Mode", this, "Blood", "None", "Blood", "Lightning", "Flame", "Explosion",
+            "Smoke");
     private final BoolValue sharp = new BoolValue("Sharpness", this ,false);
     private final BoolValue crit = new BoolValue("Critical", this ,false);
     private final NumberValue amount = new NumberValue("Amount", this, 5, 1, 10, 1);
@@ -80,42 +80,17 @@ public final class HitEffect extends Module {
                             mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.explode"), 1.0f));
                             mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("ambient.weather.thunder"), 1.0f));
                         }
-
-                    case "Heart":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.HEART);
-                        break;
                     case "Flame":
                         for (int i = 0; i < amount.getValue(); i++)
                             mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.FLAME);
-                        break;
-                    case "Portal":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.PORTAL);
                         break;
                     case "Explosion":
                         for (int i = 0; i < amount.getValue(); i++)
                             mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.EXPLOSION_NORMAL);
                         break;
-                    case "Lava":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.DRIP_LAVA);
-                        break;
-                    case "Note":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.NOTE);
-                        break;
-                    case "Slime":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.SLIME);
-                        break;
                     case "Smoke":
                         for (int i = 0; i < amount.getValue(); i++)
                             mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.SMOKE_NORMAL);
-                        break;
-                    case "Enchant":
-                        for (int i = 0; i < amount.getValue(); i++)
-                            mc.effectRenderer.emitParticleAtEntity(target, EnumParticleTypes.ENCHANTMENT_TABLE);
                         break;
                 }
             }

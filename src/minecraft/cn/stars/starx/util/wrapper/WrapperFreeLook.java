@@ -2,6 +2,7 @@ package cn.stars.starx.util.wrapper;
 
 import cn.stars.starx.GameInstance;
 import org.lwjgl.opengl.Display;
+
 import static cn.stars.starx.module.impl.addons.FreeLook.*;
 
 public class WrapperFreeLook implements GameInstance {

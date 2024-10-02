@@ -2,13 +2,14 @@ package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
+import cn.stars.starx.util.misc.WebUtil;
 import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
@@ -19,12 +20,12 @@ import de.florianmichael.viamcp.gui.GuiProtocolSelector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL20;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 
+@NativeObfuscation
 public class GuiMainMenu extends GuiScreen implements GameInstance {
     ScaledResolution sr;
     Minecraft mc = Minecraft.getMinecraft();
@@ -80,7 +81,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
 
 
         // 字
-        String s1 = "© Aerolite Production 2024, 保留所有权利.";
+        String s1 = "© Starlight 2024, 保留所有权利.";
         // 动画
         textHoverAnimation.run(RenderUtil.isHovered(0, height - 37, 140, 37, mouseX, mouseY) ? 255 : 155);
         textHoverAnimation2.run(RenderUtil.isHovered(width - psr.getWidth(s1) - 1, height - 13, psr.getWidth(s1), 13, mouseX, mouseY) ? 255 : 155);
@@ -89,7 +90,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         psr.drawString(s1, width - psr.getWidth(s1) - 1, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
         psr.drawString("Minecraft 1.8.9 (StarX/mcp/vanilla)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
         psr.drawString("OptiFine_1.8.9_HD_U_M6_pre2", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        psr.drawString("当前背景ID: " + StarX.INSTANCE.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psr.drawString("当前背景ID: " + StarX.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
 
 
         // 主要按钮
@@ -100,7 +101,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         this.exitButton.draw(mouseX, mouseY, partialTicks);
 
 
-        if (StarX.INSTANCE.isAMDShaderCompatibility && StarX.INSTANCE.backgroundId <= 8) {
+        if (StarX.isAMDShaderCompatibility && StarX.backgroundId <= 8) {
             psr.drawCenteredString("警告: 检测到Shader兼容性错误,背景已强制关闭. (AMD CPU?)", width / 2f, height / 2f + 100, new Color(250,50,50, 250).getRGB());
         }
 
@@ -153,7 +154,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         this.exitButton = new MenuTextButton(centerX + 120, centerY - 25, 75, 75, () -> mc.shutdown(), "退出游戏", "O");
         this.cbButton = new MenuTextButton(4, 4, 85, 25, () -> changeMenuBackground(false), "更换背景", "q", true, 10, 8);
         this.msLoginButton = new MenuTextButton(4, 34, 80, 25, () -> mc.displayGuiScreen(new GuiMicrosoftLoginPending(this)), "微软登录", "M", true, 6, 8);
-        this.authorButton = new MenuTextButton(4, 64, 80, 25, this::openBiliBili, "作者B站", "e", true, 6, 8);
+        this.authorButton = new MenuTextButton(4, 64, 80, 25, () -> WebUtil.openWebPage("https://space.bilibili.com/670866766"), "作者B站", "e", true, 6, 8);
 
         // 简化MouseClicked方法
         this.menuButtons = new MenuButton[]{this.singlePlayerButton, this.multiPlayerButton, this.settingsButton, this.viaVersionButton, this.exitButton
@@ -167,34 +168,5 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         BackgroundShader.BACKGROUND_SHADER.stopShader();
         RiseShaders.MAIN_MENU_SHADER.setActive(false);
         super.onGuiClosed();
-    }
-
-    public void changeMenuBackground(boolean previous) {
-        RenderUtil.initTime = System.currentTimeMillis();
-        BackgroundShader.BACKGROUND_SHADER.stopShader();
-        RiseShaders.MAIN_MENU_SHADER.setActive(false);
-        GL20.glUseProgram(0);
-        if (!previous) {
-            if (StarX.backgroundId < 8) StarX.backgroundId++;
-            else StarX.backgroundId = 0;
-        } else {
-            if (StarX.backgroundId > 0) StarX.backgroundId--;
-            else StarX.backgroundId = 8;
-        }
-        StarXLogger.info("(GuiMainMenuNew) Current background id: " + StarX.backgroundId);
-    }
-
-
-    public void openBiliBili() {
-        final Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-            try {
-                URI uri = new URI("https://space.bilibili.com/670866766");
-                desktop.browse(uri);
-                StarXLogger.info("(GuiMainMenuNew) Opened web page: " + uri);
-            } catch (final Exception e) {
-                StarXLogger.error("(GuiMainMenuNew) Error while opening web page.", e);
-            }
-        }
     }
 }

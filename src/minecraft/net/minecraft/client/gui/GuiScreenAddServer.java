@@ -134,8 +134,8 @@ public class GuiScreenAddServer extends GuiScreen
         this.drawCenteredString(this.fontRendererObj, I18n.format("addServer.title", new Object[0]), this.width / 2, 17, 16777215);
         this.drawString(this.fontRendererObj, I18n.format("addServer.enterName", new Object[0]), this.width / 2 - 100, 53, 10526880);
         this.drawString(this.fontRendererObj, I18n.format("addServer.enterIp", new Object[0]), this.width / 2 - 100, 94, 10526880);
-        this.serverNameField.drawTextBox();
-        this.serverIPField.drawTextBox();
+        this.serverNameField.drawTextBox(mouseX, mouseY);
+        this.serverIPField.drawTextBox(mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

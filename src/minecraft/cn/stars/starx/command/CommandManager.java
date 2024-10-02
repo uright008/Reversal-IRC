@@ -24,10 +24,10 @@ public final class CommandManager {
                         c.onCommand(args, args.split(" "));
                     } catch (final Exception e) {
                         e.printStackTrace();
-                        StarX.INSTANCE.getNotificationManager().registerNotification(
+                        StarX.notificationManager.registerNotification(
                                 "Invalid command usage \"" + c.getCommandInfo().syntax() + "\"."
                                 , "Command", NotificationType.ERROR);
-                        StarX.INSTANCE.showMsg("Invalid command usage \"" + c.getCommandInfo().syntax() + "\".");
+                        StarX.showMsg("Invalid command usage \"" + c.getCommandInfo().syntax() + "\".");
                     }
 
                     return;
@@ -35,7 +35,7 @@ public final class CommandManager {
             }
         }
 
-        for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module module : StarX.moduleManager.getModuleList()) {
             if (module.getModuleInfo().name().equalsIgnoreCase(command)) {
                 if (spit.length > 1) {
 
@@ -54,26 +54,26 @@ public final class CommandManager {
 
 
                             } catch (final NumberFormatException ignored) {
-                                StarX.INSTANCE.getNotificationManager().registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
-                                StarX.INSTANCE.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
+                                StarX.notificationManager.registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
+                                StarX.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
                                 return;
                             }
                         } catch (final ArrayIndexOutOfBoundsException ignored) {
-                            StarX.INSTANCE.getNotificationManager().registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
-                            StarX.INSTANCE.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
+                            StarX.notificationManager.registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
+                            StarX.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
                         }
 
                         return;
                     }
 
-                    StarX.INSTANCE.getNotificationManager().registerNotification("Settings " + spit[1].toLowerCase() + " in " + command.toLowerCase() + " doesn't exist!", "Command", NotificationType.ERROR);
-                    StarX.INSTANCE.showMsg("Settings \" + spit[1].toLowerCase() + \" in \" + command.toLowerCase() + \" doesn't exist!");
+                    StarX.notificationManager.registerNotification("Settings " + spit[1].toLowerCase() + " in " + command.toLowerCase() + " doesn't exist!", "Command", NotificationType.ERROR);
+                    StarX.showMsg("Settings \" + spit[1].toLowerCase() + \" in \" + command.toLowerCase() + \" doesn't exist!");
                     return;
                 }
             }
         }
 
-        StarX.INSTANCE.getNotificationManager().registerNotification("Module or command " + command.toLowerCase() + " doesn't exist.", "Command", NotificationType.ERROR);
-        StarX.INSTANCE.showMsg("Module or command " + command.toLowerCase() + " doesn't exist.");
+        StarX.notificationManager.registerNotification("Module or command " + command.toLowerCase() + " doesn't exist.", "Command", NotificationType.ERROR);
+        StarX.showMsg("Module or command " + command.toLowerCase() + " doesn't exist.");
     }
 }

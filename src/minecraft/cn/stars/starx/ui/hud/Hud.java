@@ -3,14 +3,11 @@ package cn.stars.starx.ui.hud;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.*;
-import cn.stars.starx.setting.Setting;
-import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.math.MathUtil;
@@ -19,11 +16,8 @@ import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.Vec3;
-import org.apache.commons.lang3.RandomUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,19 +37,14 @@ public class Hud implements GameInstance {
     public static final KeystrokeUtil left = new KeystrokeUtil();
     public static final KeystrokeUtil right = new KeystrokeUtil();
     public static final KeystrokeUtil space = new KeystrokeUtil();
-    public static MFont psm16 = FontManager.getPSM(16);
-    public static MFont psm17 = FontManager.getPSM(17);
-    public static MFont psb20 = FontManager.getPSB(20);
-    public static MFont psm18 = FontManager.getPSM(18);
     static Keystrokes keystrokes;
     static BPSCounter bpsCounter;
     static Arraylist arraylist;
     static TextGui textGui;
+    static ModuleComparator moduleComparator = new ModuleComparator();
 
     public static void renderKeyStrokes() {
         if (keystrokes.isEnabled()) {
-
-            final Minecraft mc = Minecraft.getMinecraft();
 
             final int x = keystrokes.getX() + 35;
             final int y = keystrokes.getY();
@@ -113,14 +102,14 @@ public class Hud implements GameInstance {
             }
 
             case "Modern": {
-                if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                    NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
-                        psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                        psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                    });
-                }
                 psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                break;
+            }
+
+            case "Simple": {
+                regular16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                regular16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
@@ -168,8 +157,8 @@ public class Hud implements GameInstance {
 //            final String name = o1 instanceof Module ? ((Module) o1).getModuleInfo().name() : ((Script) o1).getName();
 //            final String name2 = o2 instanceof Module ? ((Module) o2).getModuleInfo().name() : ((Script) o2).getName();
 
-            final String name = ((Module) o1).getModuleInfo().name();
-            final String name2 = ((Module) o2).getModuleInfo().name();
+            final String name = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) o1).getModuleInfo().chineseName().isEmpty() ? ((Module) o1).getModuleInfo().chineseName() : ((Module) o1).getModuleInfo().name();
+            final String name2 = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) o2).getModuleInfo().chineseName().isEmpty() ? ((Module) o2).getModuleInfo().chineseName() : ((Module) o2).getModuleInfo().name();
 
             switch (mode) {
                 case "Minecraft Rainbow":
@@ -190,11 +179,12 @@ public class Hud implements GameInstance {
                     return Float.compare(gs.getWidth(name2), gs.getWidth(name));
                 }
 
+                case "Simple": {
+                    return Float.compare(regular16.getWidth(name2), regular16.getWidth(name));
+                }
+
                 case "Modern": {
-                    String nameWithSuffix = ((Module) o1).hasSuffix() ? name + "  " + ((Module) o1).getSuffix() : name;
-                    String nameWithSuffix2 = ((Module) o2).hasSuffix() ? name2 + "  " + ((Module) o2).getSuffix() : name2;
-                    MFont psm = FontManager.getPSM(17);
-                    return Float.compare(psm.getWidth(nameWithSuffix2), psm.getWidth(nameWithSuffix));
+                    return Float.compare(psm17.getWidth(name2), psm17.getWidth(name));
                 }
 
                 default: {
@@ -214,9 +204,9 @@ public class Hud implements GameInstance {
 
         modules = new ArrayList<>();
 
-        modules.addAll(StarX.INSTANCE.getModuleManager().getEnabledModules());
+        modules.addAll(StarX.moduleManager.getEnabledModules());
 
-        modules.sort(new ModuleComparator());
+        modules.sort(moduleComparator);
 
         int moduleCount = 0;
 
@@ -225,7 +215,7 @@ public class Hud implements GameInstance {
             final float posOnArraylist = offset + moduleCount * CustomFont.getHeight() * 1.2f;
 
             assert n instanceof Module;
-            final String name = ((Module) n).getModuleInfo().name();
+            final String name = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) n).getModuleInfo().chineseName().isEmpty() ? ((Module) n).getModuleInfo().chineseName() : ((Module) n).getModuleInfo().name();
 
             float finalX = 0;
             final float speed = 6;
@@ -274,11 +264,42 @@ public class Hud implements GameInstance {
                 }
                 break;
 
+                case "Simple": {
+                    final int offsetY = 2;
+                    final int offsetX = 1;
+
+                    final double stringWidth = regular16.getWidth(name);
+
+                    RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, new Color(0, 0, 0, 60));
+                    RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 + 1, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(moduleCount, ThemeType.ARRAYLIST));
+
+                    finalX = arraylistX - regular16.getWidth(name);
+
+                    regular16.drawString(name, renderX, renderY + 2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+
+                    final int mC = moduleCount;
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
+                            RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 + 1, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
+                        });
+
+                    }
+                }
+                break;
+
                 case "StarX": {
                     final int offsetY = 2;
                     final int offsetX = 1;
 
                     final double stringWidth = gs.getWidth(name);
+
                     RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, gs.getHeight() + offsetY - 0.7, new Color(0, 0, 0, 60));
                     RenderUtil.roundedRect(renderX + stringWidth, renderY - offsetY + 0.5, 2, gs.getHeight() + offsetY - 0.6, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
 
@@ -292,24 +313,22 @@ public class Hud implements GameInstance {
                     final int offsetY = 2;
                     final int offsetX = 1;
 
-                    float fixedRenderX = renderX - (((Module) n).hasSuffix() ? psm17.getWidth("  " + ((Module) n).getSuffix()) : 0);
-
-                    final double stringWidth = psm17.getWidth((((Module) n).hasSuffix() ? name + "  " + ((Module) n).getSuffix() : name));
+                    final double stringWidth = psm17.getWidth(name);
                     final int mC = moduleCount;
 
-                    if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+                    if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
                         Runnable shadowRunnable = () -> {
-                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
+                            RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
                                     ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
-                            RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
+                            RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
                         };
 
                         Runnable blurRunnable = () -> {
-                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
+                            RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
                         };
 
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
-                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
+                        RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
+                        RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
 
                         if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                             MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
@@ -319,19 +338,16 @@ public class Hud implements GameInstance {
                             MODERN_BLUR_RUNNABLES.add(blurRunnable);
                         }
 
-                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
-                        if (((Module) n).hasSuffix()) {
-                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
-                        }
+                        psm17.drawString(name, renderX - 1, renderY + 0.6, ThemeUtil.getThemeColorInt(mC, ThemeType.ARRAYLIST));
                     } else {
                         Runnable shadowRunnable = () -> {
-                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
+                            RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
                                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, mC * 25, Color.WHITE, Color.BLACK, true));
-                            RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, mC * 25, Color.WHITE, Color.BLACK, true));
+                            RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, mC * 25, Color.WHITE, Color.BLACK, true));
                         };
 
                         Runnable blurRunnable = () -> {
-                            RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
+                            RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
                         };
 
                         if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
@@ -342,12 +358,9 @@ public class Hud implements GameInstance {
                             MODERN_BLUR_RUNNABLES.add(blurRunnable);
                         }
 
-                        RenderUtil.rect(fixedRenderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 150));
-                        RenderUtil.roundedRectangle(fixedRenderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true));
-                        psm17.drawString(name, fixedRenderX - 1, renderY + 0.6, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true).getRGB());
-                        if (((Module) n).hasSuffix()) {
-                            psm17.drawString(((Module) n).getSuffix(), fixedRenderX + psm17.getWidth("  " + name) - 2, renderY + 0.6, new Color(250, 250, 250, 200).getRGB());
-                        }
+                        RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 150));
+                        RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true));
+                        psm17.drawString(name, renderX - 1, renderY + 0.6, ColorUtils.INSTANCE.interpolateColorsBackAndForth(5, moduleCount * 25, Color.WHITE, Color.BLACK, true).getRGB());
                     }
 
                     finalX = arraylistX - psm17.getWidth(name);
@@ -364,7 +377,7 @@ public class Hud implements GameInstance {
 
             moduleCount++;
 
-            final String animationMode = ((ModeValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "List Animation"))).getMode();
+            final String animationMode = ((ModeValue) Objects.requireNonNull(StarX.moduleManager.getSetting("ClientSettings", "List Animation"))).getMode();
 
             final Module m = ((Module) n);
             if (timer2.hasReached(1000 / 100)) {
@@ -508,6 +521,84 @@ public class Hud implements GameInstance {
                 break;
             }
 
+            case "Simple": {
+                String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
+
+                if (useDefaultName) {
+                    final String clientName = "STARX CLIENT";
+
+                    textGui.setWidth((int) (100 + regular18.width(extraText)));
+                    int x = textGui.getX() + 5;
+                    int y = textGui.getY();
+                    float off = 0;
+
+                    RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, new Color(0, 0, 0, 80));
+
+                    for (int i = 0; i < clientName.length(); i++) {
+                        final String character = String.valueOf(clientName.charAt(i));
+
+                        final float off1 = off;
+                        regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i / 2, ThemeType.ARRAYLIST));
+                        int finalI = i;
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(finalI / 2, ThemeType.ARRAYLIST));
+                        });
+                        off += regular20Bold.width(character);
+                    }
+                    
+                    regular18.drawString(extraText, x + 4 + regular20Bold.width(clientName), y + 4,  new Color(250, 250, 250, 200).getRGB());
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
+                        });
+                    }
+
+                } else {
+                    final String clientName = customName;
+
+                    textGui.setWidth((int) (20 + regular20Bold.width(clientName) + regular18.width(extraText)));
+                    int x = textGui.getX() + 5;
+                    int y = textGui.getY();
+                    float off = 0;
+
+                    RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, new Color(0, 0, 0, 80));
+
+                    for (int i = 0; i < clientName.length(); i++) {
+                        final String character = String.valueOf(clientName.charAt(i));
+
+                        final float off1 = off;
+                        regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i / 2, ThemeType.ARRAYLIST));
+                        int finalI = i;
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(finalI / 2, ThemeType.ARRAYLIST));
+                        });
+                        off += regular20Bold.width(character);
+                    }
+
+                    regular18.drawString(extraText, x + 4 + off, y + 4, new Color(250, 250, 250, 200).getRGB());
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
+                        });
+                    }
+                }
+                break;
+            }
+
             case "Modern": {
                 int x = textGui.getX() + 5;
                 int y = textGui.getY();
@@ -515,7 +606,7 @@ public class Hud implements GameInstance {
                 String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
-                if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+                if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
                     if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, Color.BLACK);
@@ -544,6 +635,11 @@ public class Hud implements GameInstance {
                         final float off1 = off;
                         psb20.drawString(character, x + 4 + off1, y + 3.5,
                                 ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
+                        int finalI = i;
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            psb20.drawString(character, x + 4 + off1, y + 3.5,
+                                    ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(finalI, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
+                        });
                         off += psb20.getWidth(character);
                     }
                 } else {
@@ -611,7 +707,7 @@ public class Hud implements GameInstance {
                     }
 
                     off = CustomFont.getWidthBig(name);
-                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, off + 20, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, textGui.getX() + off + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
                 } else {
                     textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
                     float off = 0;
@@ -622,6 +718,7 @@ public class Hud implements GameInstance {
                         GlStateManager.pushMatrix();
                         GlStateManager.scale(1.5F, 1.5F, 1.5F);
                         mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+
                         GlStateManager.popMatrix();
 
                         off += mc.fontRendererObj.getStringWidth(character);

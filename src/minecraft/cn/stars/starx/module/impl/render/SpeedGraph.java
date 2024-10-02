@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 
-@ModuleInfo(name = "SpeedGraph", description = "Show your speed on a graph",
+@ModuleInfo(name = "SpeedGraph", chineseName = "速度线", description = "Show your speed on a graph",
         chineseDescription = "在一个图像上渲染你的速度线", category = Category.RENDER)
 public class SpeedGraph extends Module {
     private final NumberValue width = new NumberValue("Width", this, 180, 100, 300, 1);

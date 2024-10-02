@@ -76,6 +76,14 @@ public class GlStateManager
         }
     }
 
+    public static void enableLineSmooth() {
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+    }
+
+    public static void disableLineSmooth() {
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+    }
+
     public static void alphaFunc(int func, float ref)
     {
         if (alphaLock.isLocked())

@@ -5,6 +5,7 @@ import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
+import cn.stars.starx.module.impl.hud.TargetHud;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.shader.round.RoundedUtils;
@@ -50,6 +51,7 @@ public class GuiChat extends GuiScreen
 
     public void initGui()
     {
+        TargetHud.target = mc.thePlayer;
         Keyboard.enableRepeatEvents(true);
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
         this.inputField = new GuiTextField(0, this.fontRendererObj, 4, this.height - 12, this.width - 4, 12);
@@ -62,14 +64,15 @@ public class GuiChat extends GuiScreen
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+        for(Module m : StarX.moduleManager.moduleList){
             m.setDragging(false);
         }
     }
 
     public void onGuiClosed()
     {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+        TargetHud.target = null;
+        for(Module m : StarX.moduleManager.moduleList){
             m.setDragging(false);
         }
         Keyboard.enableRepeatEvents(false);
@@ -171,11 +174,11 @@ public class GuiChat extends GuiScreen
                 return;
             }
         }
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+        for(Module m : StarX.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
 
                 if(isInside) {
                     m.setDragging(true);
@@ -285,7 +288,7 @@ public class GuiChat extends GuiScreen
                     this.historyBuffer = this.inputField.getText();
                 }
 
-                this.inputField.setText((String)this.mc.ingameGUI.getChatGUI().getSentMessages().get(i));
+                this.inputField.setText(this.mc.ingameGUI.getChatGUI().getSentMessages().get(i));
                 this.sentHistoryCursor = i;
             }
         }
@@ -301,11 +304,11 @@ public class GuiChat extends GuiScreen
         {
             this.handleComponentHover(ichatcomponent, mouseX, mouseY);
         }
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+        for(Module m : StarX.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
                 m.editOpacityAnimation.setAnimation(isInside ?  255 : 0, 10);
 
                 RoundedUtils.drawRoundOutline(m.getX() - 4, m.getY() - 4, (m.getWidth()) + 8, (m.getHeight()) + 8, 6, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()));
@@ -331,7 +334,7 @@ public class GuiChat extends GuiScreen
 
             for (String s : p_146406_1_)
             {
-                if (s.length() > 0)
+                if (!s.isEmpty())
                 {
                     this.foundPlayerNames.add(s);
                 }
@@ -340,12 +343,12 @@ public class GuiChat extends GuiScreen
             String s1 = this.inputField.getText().substring(this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false));
             String s2 = StringUtils.getCommonPrefix(p_146406_1_);
 
-            if (s2.length() > 0 && !s1.equalsIgnoreCase(s2))
+            if (!s2.isEmpty() && !s1.equalsIgnoreCase(s2))
             {
                 this.inputField.deleteFromCursor(this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
                 this.inputField.writeText(s2);
             }
-            else if (this.foundPlayerNames.size() > 0)
+            else if (!this.foundPlayerNames.isEmpty())
             {
                 this.playerNamesFound = true;
                 this.autocompletePlayerNames();

@@ -13,9 +13,11 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 import static java.lang.Math.*;
-import static java.lang.Math.PI;
 import static net.minecraft.client.renderer.GlStateManager.disableBlend;
 import static net.minecraft.client.renderer.GlStateManager.enableTexture2D;
 import static org.lwjgl.opengl.GL11.*;
@@ -45,6 +47,73 @@ public class RenderUtils {
         drawTexturedRect(x + width, y, 9, height, "panelright");
         drawTexturedRect(x, y - 9, width, 9, "paneltop");
         drawTexturedRect(x, y + height, width, 9, "panelbottom");
+    }
+
+    public static void color(Color color) {
+        GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+    }
+
+    public static int loadGlTexture(BufferedImage bufferedImage){
+        int textureId = GL11.glGenTextures();
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, bufferedImage.getWidth(), bufferedImage.getHeight(),
+                0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, readImageToBuffer(bufferedImage));
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+        return textureId;
+    }
+
+    public static ByteBuffer readImageToBuffer(BufferedImage bufferedImage){
+        try {
+            int[] rgbArray = bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null, 0, bufferedImage.getWidth());
+
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * rgbArray.length);
+            for (int rgb : rgbArray) {
+                byteBuffer.putInt(rgb << 8 | rgb >> 24 & 255);
+            }
+            // ByteBuffer.flip() crashes on java8!
+            ((Buffer) byteBuffer).flip();
+            return byteBuffer;
+        } catch (NoSuchMethodError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void drawGradientSidewaysV(double left, double top, double right, double bottom, int col1, int col2) {
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glShadeModel(GL_SMOOTH);
+
+        quickDrawGradientSidewaysV(left, top, right, bottom, col1, col2);
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glShadeModel(GL_FLAT);
+    }
+
+    public static void quickDrawGradientSidewaysV(double left, double top, double right, double bottom, int col1, int col2) {
+        glBegin(GL_QUADS);
+
+        glColor(col1);
+        glVertex2d(left, top);
+        glVertex2d(right, top);
+        glColor(col2);
+        glVertex2d(right, bottom);
+        glVertex2d(left, bottom);
+
+        glEnd();
     }
 
 
@@ -365,10 +434,10 @@ public class RenderUtils {
     }
     public static void drawBorderedRect(final float x, final float y, final float x2, final float y2, final float width, final int color1, final int color2) {
         drawRect(x, y, x2, y2, color2);
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableLineSmooth();
 
         glColor(color1);
         glLineWidth(width);
@@ -383,9 +452,9 @@ public class RenderUtils {
         glVertex2d(x2, y2);
         glEnd();
 
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.disableLineSmooth();
     }
     public static void quickDrawRect(final float x, final float y, final float x2, final float y2) {
         glBegin(GL_QUADS);
@@ -408,17 +477,17 @@ public class RenderUtils {
     }
 
     public static void drawRect(final float x, final float y, final float x2, final float y2, final int color) {
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableLineSmooth();
 
         glColor(color);
         quickDrawRect(x, y, x2, y2);
 
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.disableLineSmooth();
     }
 
     public static void drawRect(final float x, final float y, final float x2, final float y2, final Color color) {

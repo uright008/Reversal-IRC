@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import cn.stars.addons.optimization.entityculling.EntityCullingModBase;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import java.util.Collection;
@@ -252,6 +253,16 @@ public class GuiOverlayDebug extends Gui
                 BlockPos blockpos1 = this.mc.objectMouseOver.getBlockPos();
                 list.add(String.format("Looking at: %d %d %d", new Object[] {Integer.valueOf(blockpos1.getX()), Integer.valueOf(blockpos1.getY()), Integer.valueOf(blockpos1.getZ())}));
             }
+
+            list.add("[Culling] Last pass: " + EntityCullingModBase.instance.cullTask.lastTime + "ms");
+            list.add("[Culling] Rendered Block Entities: " + EntityCullingModBase.instance.renderedBlockEntities + " Skipped: " + EntityCullingModBase.instance.skippedBlockEntities);
+            list.add("[Culling] Rendered Entities: " + EntityCullingModBase.instance.renderedEntities + " Skipped: " + EntityCullingModBase.instance.skippedEntities);
+            //list.add("[Culling] Ticked Entities: " + lastTickedEntities + " Skipped: " + lastSkippedEntityTicks);
+
+            EntityCullingModBase.instance.renderedBlockEntities = 0;
+            EntityCullingModBase.instance.skippedBlockEntities = 0;
+            EntityCullingModBase.instance.renderedEntities = 0;
+            EntityCullingModBase.instance.skippedEntities = 0;
 
             return list;
         }

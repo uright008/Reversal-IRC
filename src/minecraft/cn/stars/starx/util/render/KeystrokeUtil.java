@@ -7,7 +7,6 @@ import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 

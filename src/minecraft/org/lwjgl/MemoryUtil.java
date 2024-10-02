@@ -16,7 +16,6 @@
 package org.lwjgl;
 
 import java.nio.*;
-import java.nio.charset.*;
 
 /**
  * [INTERNAL USE ONLY]

@@ -159,19 +159,9 @@ public class GuiNewChat extends Gui
             this.drawnChatLines.add(0, new ChatLine(updateCounter, ichatcomponent, chatLineId));
         }
 
-        while (this.drawnChatLines.size() > 100)
-        {
-            this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
-        }
-
         if (!displayOnly)
         {
             this.chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
-
-            while (this.chatLines.size() > 100)
-            {
-                this.chatLines.remove(this.chatLines.size() - 1);
-            }
         }
     }
 

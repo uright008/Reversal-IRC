@@ -21,12 +21,13 @@ package org.lwjgl.opengl;
  * 
  * @author elias_naur
  */
-import java.awt.Canvas;
+
+import org.lwjgl.LWJGLException;
+
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-
-import org.lwjgl.LWJGLException;
 
 interface DisplayImplementation extends InputImplementation {
 

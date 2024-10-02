@@ -5,15 +5,15 @@ import net.minecraft.client.Minecraft;
 import java.util.HashMap;
 
 public class FontManager {
-
-    // FOR ANYONE WHO VISITS THIS CLASS: CREATE A HASHMAP FOR EACH FONT AND BASICALLY COPY THE GIVEN METHOD
-
     private static final HashMap<Integer, ModernFontRenderer> REGULAR = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> REGULARBOLD = new HashMap<>();
+
     private static final HashMap<Integer, ModernFontRenderer> INTERNATIONAL = new HashMap<>();
     private static final HashMap<Integer, ModernFontRenderer> MONTSERRAT_MAP = new HashMap<>();
     private static final HashMap<Integer, ModernFontRenderer> ROBOTO_MAP = new HashMap<>();
 
     private static final HashMap<Integer, ModernFontRenderer> LIGHT_MAP = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> RAINBOW_PARTY = new HashMap<>();
 
     private static final HashMap<Integer, ModernFontRenderer> NUNITO = new HashMap<>();
     private static final HashMap<Integer, ModernFontRenderer> NUNITO_BOLD = new HashMap<>();
@@ -55,6 +55,8 @@ public class FontManager {
 
     private static final HashMap<Integer, ModernFontRenderer> HACK = new HashMap<>();
     private static final HashMap<Integer, ModernFontRenderer> CHECK = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> EAVES = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> CUR = new HashMap<>();
 
     // COPY THIS METHOD FOR EACH METHOD AND REPLACE FONTNAME WITH THE USED FONT FILE NAME
     public static MFont getMontserratMedium(final int size) {
@@ -69,8 +71,20 @@ public class FontManager {
         return get(INTERNATIONAL, size, "NotoSans-Regular", true, true, false, true);
     }
 
+    public static MFont getRainbowParty(int size) {
+        return get(RAINBOW_PARTY,  size, "RainbowParty", true, true, false, false);
+    }
+
     public static MFont getRegular(int size) {
         return get(REGULAR,  size, "regular", true, true, false, true);
+    }
+
+    public static MFont getRegularBold(int size) {
+        return get(REGULARBOLD,  size, "regularBold", true, true, false, true);
+    }
+
+    public static MFont getCur(int size) {
+        return get(CUR,  size, "curiosity", true, true);
     }
 
     public static MFont getRobotoLight(final int size) {
@@ -163,6 +177,10 @@ public class FontManager {
 
     public static MFont getBiko(final int size) {
         return get(BIKO, size, "Biko_Regular", true, true, true, false);
+    }
+
+    public static MFont getEaves(final int size) {
+        return get(EAVES, size, "Eaves", true, true);
     }
 
     public static MFont getPSB(final int size) {

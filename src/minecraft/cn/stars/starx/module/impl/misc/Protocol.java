@@ -20,7 +20,7 @@ import net.minecraft.util.BlockPos;
 
 import static net.minecraft.util.EnumFacing.*;
 
-@ModuleInfo(name = "Protocol", description = "Fix something when you enter specified servers",
+@ModuleInfo(name = "Protocol", chineseName = "跨版本协议", description = "Fix something when you enter specified servers",
         chineseDescription = "在你进入特定服务器时修复一些东西", category = Category.MISC)
 public class Protocol extends Module {
     private final BoolValue fix1_9_plusAttackDistance = new BoolValue("1.9+ Attack Distance", this, true);

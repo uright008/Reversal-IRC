@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@ModuleInfo(name = "TargetHud", description = "Renders a Gui with your targets information",
+@ModuleInfo(name = "TargetHud", chineseName = "敌人信息", description = "Renders a Gui with your targets information",
         chineseDescription = "显示你攻击敌人的信息", category = Category.HUD)
 public final class TargetHud extends Module {
 
@@ -46,7 +46,7 @@ public final class TargetHud extends Module {
     private final BoolValue backGround = new BoolValue("Background", this, true);
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
 
-    private Entity target;
+    public static Entity target;
     private Entity lastTarget;
     private float displayHealth;
     private float health;
@@ -88,7 +88,7 @@ public final class TargetHud extends Module {
 
     @Override
     public void onAttack(final AttackEvent event) {
-        target = event.getTarget();
+        if (event.getTarget() instanceof EntityPlayer) target = event.getTarget();
     }
 
 
@@ -96,6 +96,7 @@ public final class TargetHud extends Module {
     public void onRender2D(final Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
         if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
+        if (target == null || target.isDead || mc.thePlayer.getDistanceToEntity(target) > 10) return;
 
         sr = new ScaledResolution(mc);
         final float nameWidth = 38;
@@ -110,12 +111,6 @@ public final class TargetHud extends Module {
             } else {
                 scale = Math.min(1, scale + timeUtil.getElapsedTime() / 4E+14 + (1 - scale) / 10);
             }
-        }
-
-        if (mc.currentScreen instanceof GuiChat || mc.currentScreen instanceof GuiEditHUD) {
-            target = mc.thePlayer;
-        } else {
-            target = null;
         }
 
         switch (mode.getMode()) {
@@ -216,7 +211,7 @@ public final class TargetHud extends Module {
                 }
 
                 // Get the current theme of the client.
-                final ModeValue setting = ((ModeValue) StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "Theme"));
+                final ModeValue setting = ((ModeValue) StarX.moduleManager.getSetting("ClientSettings", "Theme"));
 
                 // If the setting was null return to prevent crashes bc shit setting system.
                 if (setting == null) return;
@@ -247,8 +242,7 @@ public final class TargetHud extends Module {
                         }
 
                         float finalOffset = offset;
-                        int finalColor = ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow") ?
-                                color : ColorUtils.INSTANCE.interpolateColorsBackAndForth(8, 1000, Color.WHITE, Color.BLACK, true).getRGB();
+                        int finalColor = color;
                         Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
 
                         if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
@@ -408,7 +402,7 @@ public final class TargetHud extends Module {
                 }
 
                 // Get the current theme of the client.
-                final ModeValue setting = ((ModeValue) StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "Theme"));
+                final ModeValue setting = ((ModeValue) StarX.moduleManager.getSetting("ClientSettings", "Theme"));
 
                 // If the setting was null return to prevent crashes bc shit setting system.
                 if (setting == null) return;
@@ -738,7 +732,7 @@ public final class TargetHud extends Module {
                         final float o = (float) (Math.abs(Math.sin((ticks * 0.006 + i * 0.005) * (((EntityPlayer) target).hurtTime / 8.0F + 2))) / 2) + 1;
 
                         // Get the current theme of the client.
-                        final ModeValue setting = ((ModeValue) StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "Theme"));
+                        final ModeValue setting = ((ModeValue) StarX.moduleManager.getSetting("ClientSettings", "Theme"));
 
                         // If the setting was null return to prevent crashes bc shit setting system.
                         if (setting == null) return;

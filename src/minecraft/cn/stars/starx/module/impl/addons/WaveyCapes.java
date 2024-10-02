@@ -1,6 +1,5 @@
 package cn.stars.starx.module.impl.addons;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
@@ -8,7 +7,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "WaveyCapes", description = "Make your cape waving look better",
+@ModuleInfo(name = "WaveyCapes", chineseName = "飘扬披风", description = "Make your cape waving look better",
         chineseDescription = "使你的披风飘动更真实", category = Category.ADDONS)
 public class WaveyCapes extends Module {
     public static int abc = 1;

@@ -178,7 +178,7 @@ public class ModelRenderer
                     {
                         for (int l = 0; l < this.childModels.size(); ++l)
                         {
-                            ((ModelRenderer)this.childModels.get(l)).render(p_78785_1_);
+                            this.childModels.get(l).render(p_78785_1_);
                         }
                     }
 
@@ -320,7 +320,7 @@ public class ModelRenderer
             {
                 for (int j = 0; j < this.childModels.size(); ++j)
                 {
-                    ((ModelRenderer)this.childModels.get(j)).render(p_78791_1_);
+                    this.childModels.get(j).render(p_78791_1_);
                 }
             }
 

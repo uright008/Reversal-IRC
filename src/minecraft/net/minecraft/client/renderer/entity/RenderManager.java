@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
+import cn.stars.addons.optimization.entityculling.Cullable;
+import cn.stars.addons.optimization.entityculling.EntityCullingModBase;
+import cn.stars.addons.optimization.entityculling.EntityRendererInter;
 import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
@@ -368,6 +371,19 @@ public class RenderManager
 
     public boolean doRenderEntity(Entity entity, double x, double y, double z, float entityYaw, float partialTicks, boolean hideDebugBox)
     {
+        Cullable cullable = entity;
+        if (!cullable.isForcedVisible() && cullable.isCulled()) {
+            EntityRendererInter<Entity> entityRenderer = getEntityRenderObject(entity);
+            if (entityRenderer.shadowShouldShowName(entity)) {
+                entityRenderer.shadowRenderNameTag(entity, x, y, z);
+                //entityRenderer.doRender(entity, entity.posX, entity.posY, entity.posZ, tickDelta, tickDelta);
+            }
+            EntityCullingModBase.instance.skippedEntities++;
+            return false;
+        }
+        EntityCullingModBase.instance.renderedEntities++;
+        cullable.setOutOfCamera(false);
+
         Render<Entity> render = null;
 
         try

@@ -1,14 +1,14 @@
 package org.lwjgl.input;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.Display;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 public class Mouse {
 
     // Fields for reflection compatibility with lwjgl2

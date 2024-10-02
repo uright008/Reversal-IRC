@@ -98,7 +98,7 @@ public class GuiFlatPresets extends GuiScreen
         this.drawCenteredString(this.fontRendererObj, this.presetsTitle, this.width / 2, 8, 16777215);
         this.drawString(this.fontRendererObj, this.presetsShare, 50, 30, 10526880);
         this.drawString(this.fontRendererObj, this.field_146436_r, 50, 70, 10526880);
-        this.field_146433_u.drawTextBox();
+        this.field_146433_u.drawTextBox(mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 

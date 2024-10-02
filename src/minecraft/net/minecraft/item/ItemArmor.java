@@ -17,8 +17,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.world.World;
 
-public class ItemArmor extends Item
-{
+public class ItemArmor extends Item {
     private static final int[] maxDamageArray = new int[] {11, 16, 15, 13};
     public static final String[] EMPTY_SLOT_NAMES = new String[] {"minecraft:items/empty_armor_slot_helmet", "minecraft:items/empty_armor_slot_chestplate", "minecraft:items/empty_armor_slot_leggings", "minecraft:items/empty_armor_slot_boots"};
     private static final IBehaviorDispenseItem dispenserBehavior = new BehaviorDefaultDispenseItem()

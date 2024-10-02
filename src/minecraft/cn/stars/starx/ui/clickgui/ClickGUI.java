@@ -13,7 +13,9 @@ import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
-import cn.stars.starx.util.render.*;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.ThemeType;
+import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -23,14 +25,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.time.Year;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
 
 public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
@@ -134,7 +139,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
         resizingGui = false;
 
-        for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+        for (final Module m : StarX.moduleManager.getModuleList()) {
             for (final Setting s : m.getSettings()) {
                 if (s instanceof NumberValue) {
                     final NumberValue NumberValue = ((NumberValue) s);
@@ -166,7 +171,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        final boolean blur = ((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Blur"))).isEnabled();
+        final boolean blur = ((BoolValue) Objects.requireNonNull(StarX.moduleManager.getSetting("ClickGui", "Blur"))).isEnabled();
 
         final ScaledResolution sr = new ScaledResolution(mc);
         RenderUtil.rect(0.0,0.0, sr.getScaledWidth_double(), sr.getScaledHeight_double(), new Color(0,0,0,100));
@@ -204,7 +209,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         settingColor3 = new Color(70, 100, 145, 255);
         opacityColor = new Color(38, 39, 44, 220);
 
-        final ModeValue theme = (ModeValue) StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Theme");
+        final ModeValue theme = (ModeValue) StarX.moduleManager.getSetting("ClickGui", "Theme");
 
         customHue = 0;
 
@@ -243,7 +248,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
             opacityColor = changeHue(opacityColor, customHue / 360f);
         }
 
-        if (((BoolValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Transparency"))).isEnabled()) {
+        if (((BoolValue) Objects.requireNonNull(StarX.moduleManager.getSetting("ClickGui", "Transparency"))).isEnabled()) {
             colorCategory = new Color(opacityColor.getRed(), opacityColor.getGreen(), opacityColor.getBlue(), 220);
         }
 
@@ -337,7 +342,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         switch (selectedCat) {
 
             default:
-                for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+                for (final Module m : StarX.moduleManager.getModuleList()) {
                     if (m.isHidden()) continue;
                     m.sizeInGui = moduleHeight;
 
@@ -463,7 +468,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         if (timer.hasReached(1000 / 100)) {
             timer.reset();
 
-            for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+            for (final Module m : StarX.moduleManager.getModuleList()) {
                 for (final Setting s : m.getSettings()) {
                     if (s instanceof NumberValue) {
                         final NumberValue NumberValue = ((NumberValue) s);
@@ -494,7 +499,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
                 heightOffset = 0;
                 amount = 0;
-                for (final Module module : StarX.INSTANCE.getModuleManager().getModuleList()) {
+                for (final Module module : StarX.moduleManager.getModuleList()) {
 
                     if (module.getModuleInfo().category() == selectedCat) {
                         if (mouseOver(x + categoryWidth, y + categoryHeight + heightOffset + offset * amount + renderScrollAmount, moduleWidth, moduleHeight, mouseX, mouseY)) {
@@ -718,7 +723,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
 
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
-                for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+                for (final Module m : StarX.moduleManager.getModuleList()) {
                     for (final Setting s : m.getSettings()) {
                         if (s instanceof NumberValue) {
                             final NumberValue NumberValue = ((NumberValue) s);
@@ -737,7 +742,7 @@ public final class ClickGUI extends GuiScreen /*implements ClickGUIType */ {
         amount = 0;
 
         if (mouseOver(x + categoryWidth, y + categoryHeight, width - categoryWidth, height - categoryHeight, mouseX, mouseY)) {
-            for (final Module m : StarX.INSTANCE.getModuleManager().getModuleList()) {
+            for (final Module m : StarX.moduleManager.getModuleList()) {
                 if (m.isHidden()) continue;
                 m.sizeInGui = moduleHeight;
 

@@ -11,14 +11,14 @@ public final class Help extends Command {
 
     @Override
     public void onCommand(final String command, final String[] args) throws Exception {
-        StarX.INSTANCE.showMsg(EnumChatFormatting.WHITE + "All available commands:");
+        StarX.showMsg(EnumChatFormatting.WHITE + "All available commands:");
 
         for (final Command cmd : CommandManager.COMMANDS) {
             final String description = cmd.getCommandInfo().description();
             final String alias = cmd.getCommandInfo().aliases()[0];
 
             if (!alias.contains("help")) {
-                StarX.INSTANCE.showMsg(alias + ": " + description);
+                StarX.showMsg(alias + ": " + description);
             }
         }
     }

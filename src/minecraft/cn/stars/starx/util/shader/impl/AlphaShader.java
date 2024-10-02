@@ -1,6 +1,5 @@
 package cn.stars.starx.util.shader.impl;
 
-import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.EventHandler;
 import cn.stars.starx.event.impl.AlphaEvent;
 import cn.stars.starx.util.shader.base.RiseShader;

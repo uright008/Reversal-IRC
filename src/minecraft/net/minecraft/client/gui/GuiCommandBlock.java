@@ -121,7 +121,7 @@ public class GuiCommandBlock extends GuiScreen
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, I18n.format("advMode.setCommand", new Object[0]), this.width / 2, 20, 16777215);
         this.drawString(this.fontRendererObj, I18n.format("advMode.command", new Object[0]), this.width / 2 - 150, 37, 10526880);
-        this.commandTextField.drawTextBox();
+        this.commandTextField.drawTextBox(mouseX, mouseY);
         int i = 75;
         int j = 0;
         this.drawString(this.fontRendererObj, I18n.format("advMode.nearestPlayer", new Object[0]), this.width / 2 - 150, i + j++ * this.fontRendererObj.FONT_HEIGHT, 10526880);
@@ -134,7 +134,7 @@ public class GuiCommandBlock extends GuiScreen
         {
             i = i + j * this.fontRendererObj.FONT_HEIGHT + 16;
             this.drawString(this.fontRendererObj, I18n.format("advMode.previousOutput", new Object[0]), this.width / 2 - 150, i, 10526880);
-            this.previousOutputTextField.drawTextBox();
+            this.previousOutputTextField.drawTextBox(mouseX, mouseY);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

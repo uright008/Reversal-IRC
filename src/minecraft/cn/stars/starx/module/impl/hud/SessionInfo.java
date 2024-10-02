@@ -1,18 +1,13 @@
 package cn.stars.starx.module.impl.hud;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.event.impl.AttackEvent;
-import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.event.impl.UpdateEvent;
-import cn.stars.starx.event.impl.WorldEvent;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
+import cn.stars.starx.event.impl.*;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
@@ -22,11 +17,11 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
-@ModuleInfo(name = "SessionInfo", description = "Show your game stats",
+@ModuleInfo(name = "SessionInfo", chineseName = "游戏数据", description = "Show your game stats",
         chineseDescription = "显示你的游戏数据", category = Category.HUD)
 public class SessionInfo extends Module {
+    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Modern", "ThunderHack");
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final TimeUtil timer = new TimeUtil();
     int second = 0;
@@ -49,10 +44,35 @@ public class SessionInfo extends Module {
     }
 
     @Override
+    public void onShader3D(Shader3DEvent event) {
+        if (!getModule("HUD").isEnabled()) return;
+        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
+            return;
+
+        int x = getX() + 4;
+        int y = getY() + 4;
+        Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200);
+
+        if (mode.getMode().equals("Modern")) {
+            if (event.isBloom()) RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, ColorUtil.withAlpha(color, 255));
+            else RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, Color.BLACK);
+        } else if (mode.getMode().equals("ThunderHack")) {
+            RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
+                    ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
+        } else if (mode.getMode().equals("Simple")) {
+            RenderUtil.rect(x - 2, y - 4, 148, 64, Color.BLACK);
+        }
+    }
+
+    @Override
     public void onRender2D(Render2DEvent event) {
         if (!getModule("HUD").isEnabled()) return;
         if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
             return;
+
         int x = getX() + 4;
         int y = getY() + 4;
         Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200);
@@ -65,49 +85,18 @@ public class SessionInfo extends Module {
         String health = String.valueOf(MathUtil.round(mc.thePlayer.getHealth(), 1));
 
         // 背景
-        if (ModuleInstance.getMode("ClientSettings", "Color Style").getMode().equals("Rainbow")) {
+        if (mode.getMode().equals("Modern")) {
             RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, new Color(0, 0, 0, 80));
             RenderUtil.roundedOutlineRectangle(x - 3, y - 5, 150, 66, 3, 1, color);
-
-            if (canBlur()) {
-                MODERN_BLUR_RUNNABLES.add(() -> {
-                    RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, Color.BLACK);
-                });
-            }
-
-            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                MODERN_BLOOM_RUNNABLES.add(() -> {
-                    RoundedUtil.drawRound(x - 2, y - 4, 148, 64, 4, ColorUtil.withAlpha(color, 255));
-                });
-            }
-
-        } else {
+        } else if (mode.getMode().equals("ThunderHack")) {
             RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
             RoundedUtil.drawRound(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 220));
-
-            if (canBlur()) {
-                MODERN_BLUR_RUNNABLES.add(() -> {
-                    RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
-                });
-            }
-
-            if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
-                MODERN_BLOOM_RUNNABLES.add(() -> {
-                    RoundedUtil.drawGradientRound(x - 3.5f, y - 5.5f, 151, 67, 4,
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 2000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 4000, Color.WHITE, Color.BLACK, true),
-                            ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
-                });
-            }
+        } else if (mode.getMode().equals("Simple")) {
+            RenderUtil.rect(x - 2, y - 4, 148, 64, new Color(0, 0, 0, 80));
         }
 
         // 顶部

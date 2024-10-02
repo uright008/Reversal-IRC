@@ -2,22 +2,19 @@ package cn.stars.starx.module;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.setting.Setting;
-import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.setting.Setting;
+import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.misc.ModuleInstance;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
@@ -28,7 +25,7 @@ public abstract class Module implements GameInstance {
     public boolean shouldCallNotification = true;
     public int scaledWidth = sr.getScaledWidth();
     public int scaledHeight = sr.getScaledHeight();
-    private boolean enabled;
+    public boolean enabled;
     public int keyBind;
     public String suffix;
 
@@ -71,23 +68,23 @@ public abstract class Module implements GameInstance {
     }
 
     public void registerNotification(String s) {
-        StarX.INSTANCE.notificationManager.registerNotification(s);
+        StarX.notificationManager.registerNotification(s);
     }
 
     public void registerNotification(String s, NotificationType t) {
-        StarX.INSTANCE.notificationManager.registerNotification(s, t);
+        StarX.notificationManager.registerNotification(s, t);
     }
 
     public void registerNotification(String s, NotificationType t, long d) {
-        StarX.INSTANCE.notificationManager.registerNotification(s,d,t);
+        StarX.notificationManager.registerNotification(s,d,t);
     }
 
     public void registerNotification(String s, String ti, NotificationType t, long d) {
-        StarX.INSTANCE.notificationManager.registerNotification(s, ti, d, t);
+        StarX.notificationManager.registerNotification(s, ti, d, t);
     }
 
     public void addChatMessage(String s) {
-        StarX.INSTANCE.showMsg(s);
+        StarX.showMsg(s);
     }
 
     public boolean toggleModule() {
@@ -98,20 +95,20 @@ public abstract class Module implements GameInstance {
         if (enabled) {
             onEnable();
             mc.getSoundHandler().playButtonPress();
-            if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
+            if (canNoti) StarX.notificationManager.registerNotification(
                     "Enabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.SUCCESS);
         }
         else {
             onDisable();
             mc.getSoundHandler().playButtonPress();
-            if (canNoti) StarX.INSTANCE.getNotificationManager().registerNotification(
+            if (canNoti) StarX.notificationManager.registerNotification(
                     "Disabled" + " " + getModuleInfo().name(), "Module", 2000, NotificationType.ERROR);
         }
 
         renderX = mc.displayWidth;
         renderY = -mc.displayHeight;
 
-        StarX.INSTANCE.getModuleManager().setEdited(true);
+        StarX.moduleManager.setEdited(true);
 
         return enabled;
     }
@@ -261,5 +258,8 @@ public abstract class Module implements GameInstance {
     }
 
     public void onClick(final ClickEvent event) {
+    }
+
+    public void onLoad() {
     }
 }

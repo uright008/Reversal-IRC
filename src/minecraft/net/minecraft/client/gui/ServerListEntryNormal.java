@@ -1,11 +1,14 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
 import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.base64.Base64;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -78,17 +81,17 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
         boolean flag = this.server.version > 47;
         boolean flag1 = this.server.version < 47;
         boolean flag2 = flag || flag1;
-        this.mc.fontRendererObj.drawString(this.server.serverName, x + 32 + 3, y + 1, 16777215);
-        List<String> list = this.mc.fontRendererObj.listFormattedStringToWidth(this.server.serverMOTD, listWidth - 32 - 2);
+        GameInstance.regular20Bold.drawString(this.server.serverName, x + 32 + 3, y + 2, new Color(220, 220, 220, 240).getRGB());
+        List<String> list = mc.fontRendererObj.listFormattedStringToWidth(this.server.serverMOTD, listWidth - 32 - 2);
 
         for (int i = 0; i < Math.min(list.size(), 2); ++i)
         {
-            this.mc.fontRendererObj.drawString((String)list.get(i), x + 32 + 3, y + 12 + this.mc.fontRendererObj.FONT_HEIGHT * i, 8421504);
+            GameInstance.regular16.drawString(list.get(i), x + 35, y + 14 + GameInstance.regular16.height() * i,  new Color(220, 220, 220, 240).getRGB());
         }
 
         String s2 = flag2 ? EnumChatFormatting.DARK_RED + this.server.gameVersion : this.server.populationInfo;
-        int j = this.mc.fontRendererObj.getStringWidth(s2);
-        this.mc.fontRendererObj.drawString(s2, x + listWidth - j - 15 - 2, y + 1, 8421504);
+        int j = (int) GameInstance.regular16.getStringWidth(s2);
+        GameInstance.regular16.drawString(s2, x + listWidth - j + 12, y + 3,  new Color(220, 220, 220, 240).getRGB());
         int k = 0;
         String s = null;
         int l;
@@ -97,7 +100,7 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
         if (flag2)
         {
             l = 5;
-            s1 = flag ? "Client out of date!" : "Server out of date!";
+            s1 = flag ? "客户端过老!" : "服务器过老!";
             s = this.server.playerList;
         }
         else if (this.server.field_78841_f && this.server.pingToServer != -2L)

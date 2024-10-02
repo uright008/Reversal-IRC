@@ -5,7 +5,6 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.awt.Font;
 import java.io.IOException;
 
 public class FontUtil implements GameInstance {

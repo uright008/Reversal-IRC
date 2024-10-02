@@ -15,9 +15,8 @@
  */
 package org.lwjgl.opengl;
 
-import static org.lwjgl.opengl.ARBImaging.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
+import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 /**
  * Simple utility class.

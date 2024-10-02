@@ -108,11 +108,13 @@ public class BlockState
         private final Block block;
         private final ImmutableMap<IProperty, Comparable> properties;
         private ImmutableTable<IProperty, Comparable, IBlockState> propertyValueTable;
+        private int microoptimizations$cachedHashcode;
 
         private StateImplementation(Block blockIn, ImmutableMap<IProperty, Comparable> propertiesIn)
         {
             this.block = blockIn;
             this.properties = propertiesIn;
+            this.microoptimizations$cachedHashcode = this.hashCode();
         }
 
         public Collection<IProperty> getPropertyNames()
@@ -122,29 +124,23 @@ public class BlockState
 
         public <T extends Comparable<T>> T getValue(IProperty<T> property)
         {
-            if (!this.properties.containsKey(property))
-            {
+            Object prop = this.properties.get(property);
+            if (prop == null) {
                 throw new IllegalArgumentException("Cannot get property " + property + " as it does not exist in " + this.block.getBlockState());
-            }
-            else
-            {
-                return (T)((Comparable)property.getValueClass().cast(this.properties.get(property)));
+            } else {
+                return property.getValueClass().cast(prop);
             }
         }
 
         public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value)
         {
-            if (!this.properties.containsKey(property))
-            {
+            Object prop = this.properties.get(property);
+            if (prop == null) {
                 throw new IllegalArgumentException("Cannot set property " + property + " as it does not exist in " + this.block.getBlockState());
-            }
-            else if (!property.getAllowedValues().contains(value))
-            {
+            } else if (!property.getAllowedValues().contains(value)) {
                 throw new IllegalArgumentException("Cannot set property " + property + " to " + value + " on block " + Block.blockRegistry.getNameForObject(this.block) + ", it is not an allowed value");
-            }
-            else
-            {
-                return (IBlockState)(this.properties.get(property) == value ? this : (IBlockState)this.propertyValueTable.get(property, value));
+            } else {
+                return (IBlockState) (prop == value ? this : (IBlockState) this.propertyValueTable.get(property, value));
             }
         }
 
@@ -165,7 +161,7 @@ public class BlockState
 
         public int hashCode()
         {
-            return this.properties.hashCode();
+            return this.microoptimizations$cachedHashcode;
         }
 
         public void buildPropertyValueTable(Map<Map<IProperty, Comparable>, BlockState.StateImplementation> map)

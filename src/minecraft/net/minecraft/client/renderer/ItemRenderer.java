@@ -297,7 +297,17 @@ public class ItemRenderer
         }
 
         GlStateManager.translate(f1 * 0.0F, f1 * 0.0F, f1 * 0.1F);
+        if (ModuleInstance.getBool("Animations", "Bow Swing").isEnabled()) {
+            GlStateManager.rotate(-335.0F, 0.0F, 0.0F, 1.0F);
+            GlStateManager.rotate(-50.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(0.0F, 0.5F, 0.0F);
+        }
         GlStateManager.scale(1.0F, 1.0F, 1.0F + f1 * 0.2F);
+        if (ModuleInstance.getBool("Animations", "Bow Swing").isEnabled()) {
+            GlStateManager.translate(0.0F, -0.5F, 0.0F);
+            GlStateManager.rotate(50.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(335.0F, 0.0F, 0.0F, 1.0F);
+        }
     }
 
     private void doBlockTransformations()
@@ -332,6 +342,13 @@ public class ItemRenderer
             this.rotateWithPlayerRotations((EntityPlayerSP)abstractclientplayer, partialTicks);
             GlStateManager.enableRescaleNormal();
             GlStateManager.pushMatrix();
+
+            if (ModuleInstance.getBool("Animations", "Left Hand").isEnabled()) {
+                GL11.glScaled(-1.0, 1.0, 1.0);
+                GlStateManager.disableCull();
+            } else {
+                GlStateManager.enableCull();
+            }
 
             if (this.itemToRender != null)
             {
@@ -376,6 +393,8 @@ public class ItemRenderer
                                     }
                                     case "1.7": {
                                         transformFirstPersonItem(f, f1);
+                                        GlStateManager.translate(0.0F,0.0F, -0.02F);
+                                        GlStateManager.rotate(1F, 0.0F, 0.0F,- 0.1F);
                                         break;
                                     }
                                     case "Smooth": {
@@ -490,7 +509,7 @@ public class ItemRenderer
                                 this.transformFirstPersonItem(f, 0.0F);
                             this.doBowTransformations(partialTicks, abstractclientplayer);
                     }
-                    float addY = ModuleInstance.getNumber("Animations", "Item Position Y").getFloat();
+                    float addY = ModuleInstance.getNumber("Animations", "Block Y").getFloat();
                     GlStateManager.translate(-addY, addY, addY);
                 }
                 else
@@ -499,6 +518,10 @@ public class ItemRenderer
                     this.transformFirstPersonItem(f, f1);
                 }
 
+                float addX = ModuleInstance.getNumber("Animations", "Item X").getFloat();
+                float addY = ModuleInstance.getNumber("Animations", "Item Y").getFloat();
+                float addZ = ModuleInstance.getNumber("Animations", "Item Z").getFloat();
+                GlStateManager.translate(addX, addY, addZ);
                 this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
             }
             else if (!abstractclientplayer.isInvisible())

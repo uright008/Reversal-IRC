@@ -12,7 +12,7 @@ public final class Bind extends Command {
 
     @Override
     public void onCommand(final String command, final String[] args) {
-        final Module[] modules = StarX.INSTANCE.getModuleManager().getModuleList();
+        final Module[] modules = StarX.moduleManager.getModuleList();
 
         for (final Module m : modules) {
             if (args[0].equalsIgnoreCase(m.getModuleInfo().name())) {
@@ -21,8 +21,8 @@ public final class Bind extends Command {
 
                 m.setKeyBind(key);
 
-                StarX.INSTANCE.getNotificationManager().registerNotification("Bound " + m.getModuleInfo().name() + " with key " + Keyboard.getKeyName(key) + ".", NotificationType.SUCCESS);
-                StarX.INSTANCE.showMsg("Bound " + m.getModuleInfo().name() + " with key " + Keyboard.getKeyName(key) + ".");
+                StarX.notificationManager.registerNotification("Bound " + m.getModuleInfo().name() + " with key " + Keyboard.getKeyName(key) + ".", NotificationType.SUCCESS);
+                StarX.showMsg("Bound " + m.getModuleInfo().name() + " with key " + Keyboard.getKeyName(key) + ".");
                 return;
             }
         }
@@ -39,7 +39,7 @@ public final class Bind extends Command {
 //            }
 //        }
 
-        StarX.INSTANCE.getNotificationManager().registerNotification("Invalid module.", "Command", NotificationType.ERROR);
-        StarX.INSTANCE.showMsg("Invalid module.");
+        StarX.notificationManager.registerNotification("Invalid module.", "Command", NotificationType.ERROR);
+        StarX.showMsg("Invalid module.");
     }
 }

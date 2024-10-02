@@ -1,5 +1,7 @@
 package net.minecraft.client.renderer.tileentity;
 
+import cn.stars.addons.optimization.entityculling.Cullable;
+import cn.stars.addons.optimization.entityculling.EntityCullingModBase;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
@@ -161,6 +163,11 @@ public class TileEntityRendererDispatcher
 
     public void renderTileEntityAt(TileEntity tileEntityIn, double x, double y, double z, float partialTicks, int destroyStage)
     {
+        if (!((Cullable) tileEntityIn).isForcedVisible() && ((Cullable) tileEntityIn).isCulled()) {
+            EntityCullingModBase.instance.skippedBlockEntities++;
+            return;
+        }
+        EntityCullingModBase.instance.renderedBlockEntities++;
         TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = this.<TileEntity>getSpecialRenderer(tileEntityIn);
 
         if (tileentityspecialrenderer != null)

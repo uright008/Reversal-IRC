@@ -5,12 +5,12 @@
  */
 package org.lwjgl.opengl;
 
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.NativeType;
+
 import java.nio.*;
 
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.*;
-
-import static org.lwjgl.system.Checks.*;
+import static org.lwjgl.system.Checks.checkFunctions;
 
 /**
  * The OpenGL functionality up to version 1.5. Includes the deprecated symbols of the Compatibility Profile.

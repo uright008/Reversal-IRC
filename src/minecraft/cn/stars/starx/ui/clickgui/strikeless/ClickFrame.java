@@ -8,7 +8,10 @@ import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.render.ClickGui;
 import cn.stars.starx.setting.Setting;
-import cn.stars.starx.setting.impl.*;
+import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.setting.impl.ModeValue;
+import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.setting.impl.TextValue;
 import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +61,7 @@ public class ClickFrame implements GameInstance {
     private Color background, backgroundDarker, backgroundDarkest, accent, accentDarker, accentDarkest, shadow;
 
     public ClickFrame(final Category category, final float frameX, final float frameY) {
-        this.modules = StarX.INSTANCE.getModuleManager().getModulesByCategory(category);
+        this.modules = StarX.moduleManager.getModulesByCategory(category);
         this.expandedModuleIndices = new ArrayList<>();
 
         this.category = category;
@@ -85,7 +88,7 @@ public class ClickFrame implements GameInstance {
         backgroundDarker = new Color(27, 24, 30);
         backgroundDarkest = new Color(15, 12, 18);
 
-        final ModeValue theme = (ModeValue) StarX.INSTANCE.getModuleManager().getSetting("ClickGui", "Theme");
+        final ModeValue theme = (ModeValue) StarX.moduleManager.getSetting("ClickGui", "Theme");
         customHue = 0;
 
         switch (Objects.requireNonNull(theme).getMode()) {
@@ -107,7 +110,7 @@ public class ClickFrame implements GameInstance {
 
             case "Disco":
                 theme.cycle(true);
-                StarX.INSTANCE.getNotificationManager().registerNotification("Disco Theme doesn't work with Dropdown ClickGui.");
+                StarX.notificationManager.registerNotification("Disco Theme doesn't work with Dropdown ClickGui.");
                 break;
         }
 

@@ -6,7 +6,7 @@ import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.util.render.WingUtils;
 
-@ModuleInfo(name = "Wings", description = "Render a wing on your back",
+@ModuleInfo(name = "Wings", chineseName = "翅膀", description = "Render a wing on your back",
         chineseDescription = "在你的背上渲染一个翅膀", category = Category.RENDER)
 public class Wings extends Module {
 

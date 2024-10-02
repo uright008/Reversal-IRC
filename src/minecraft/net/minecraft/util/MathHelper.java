@@ -2,6 +2,8 @@ package net.minecraft.util;
 
 import java.util.Random;
 import java.util.UUID;
+
+import cn.stars.addons.optimization.normal.CompactSineLUT;
 import net.optifine.util.MathUtils;
 
 public class MathHelper
@@ -26,12 +28,12 @@ public class MathHelper
 
     public static float sin(float p_76126_0_)
     {
-        return fastMath ? SIN_TABLE_FAST[(int)(p_76126_0_ * radToIndex) & 4095] : SIN_TABLE[(int)(p_76126_0_ * 10430.378F) & 65535];
+        return fastMath ? SIN_TABLE_FAST[(int)(p_76126_0_ * radToIndex) & 4095] : CompactSineLUT.sin(p_76126_0_);
     }
 
     public static float cos(float value)
     {
-        return fastMath ? SIN_TABLE_FAST[(int)(value * radToIndex + 1024.0F) & 4095] : SIN_TABLE[(int)(value * 10430.378F + 16384.0F) & 65535];
+        return fastMath ? SIN_TABLE_FAST[(int)(value * radToIndex + 1024.0F) & 4095] : CompactSineLUT.cos(value);
     }
 
     public static float sqrt_float(float value)

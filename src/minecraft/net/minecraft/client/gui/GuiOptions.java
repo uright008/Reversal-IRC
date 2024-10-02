@@ -1,6 +1,10 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
+
+import cn.stars.starx.ui.curiosity.CuriosityTextButton;
+import cn.stars.starx.ui.gui.GuiStarXSettings;
+import cn.stars.starx.util.render.UIUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
@@ -23,6 +27,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     private GuiButton field_175357_i;
     private GuiLockIconButton field_175356_r;
     protected String field_146442_a = "Options";
+    CuriosityTextButton starxSettings;
 
     public GuiOptions(GuiScreen p_i1046_1_, GameSettings p_i1046_2_)
     {
@@ -32,6 +37,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 
     public void initGui()
     {
+        starxSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiStarXSettings(this)),
+                "StarX设置", "e", true, 12, 40, 11);
         int i = 0;
         this.field_146442_a = I18n.format("options.title", new Object[0]);
 
@@ -120,6 +127,25 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             this.field_175356_r.enabled = false;
             this.field_175357_i.enabled = false;
         }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (mouseButton == 0)
+        {
+            for (int i = 0; i < this.buttonList.size(); ++i)
+            {
+                GuiButton guibutton = this.buttonList.get(i);
+
+                if (guibutton.mousePressed(this.mc, mouseX, mouseY))
+                {
+                    this.selectedButton = guibutton;
+                    guibutton.playPressSound(this.mc.getSoundHandler());
+                    this.actionPerformed(guibutton);
+                }
+            }
+        }
+        if (mc.theWorld == null) UIUtil.onButtonClick(new CuriosityTextButton[] {starxSettings}, mouseX, mouseY, mouseButton);
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
@@ -223,7 +249,14 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
+
+        if (mc.theWorld == null) {
+            updatePostProcessing(true, partialTicks);
+            starxSettings.draw(mouseX, mouseY, partialTicks);
+        }
+
         this.drawCenteredString(this.fontRendererObj, this.field_146442_a, this.width / 2, 15, 16777215);
+        updatePostProcessing(false, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

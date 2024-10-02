@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 public class EntityAITasks
 {
     private static final Logger logger = LogManager.getLogger();
-    private List<EntityAITasks.EntityAITaskEntry> taskEntries = Lists.<EntityAITasks.EntityAITaskEntry>newArrayList();
+    public List<EntityAITasks.EntityAITaskEntry> taskEntries = Lists.<EntityAITasks.EntityAITaskEntry>newArrayList();
     private List<EntityAITasks.EntityAITaskEntry> executingTaskEntries = Lists.<EntityAITasks.EntityAITaskEntry>newArrayList();
     private final Profiler theProfiler;
     private int tickCount;
@@ -152,7 +152,7 @@ public class EntityAITasks
         return (taskEntry1.action.getMutexBits() & taskEntry2.action.getMutexBits()) == 0;
     }
 
-    class EntityAITaskEntry
+    public class EntityAITaskEntry
     {
         public EntityAIBase action;
         public int priority;

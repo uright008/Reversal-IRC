@@ -101,7 +101,7 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
 
         this.prevCameraYaw = this.cameraYaw;
         this.updateArmSwingProgress();
-        float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+        /* float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
         float f = (float)Math.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
 
         if (f1 > 0.1F)
@@ -120,7 +120,7 @@ public class EntityOtherPlayerMP extends AbstractClientPlayer
         }
 
         this.cameraYaw += (f1 - this.cameraYaw) * 0.4F;
-        this.cameraPitch += (f - this.cameraPitch) * 0.8F;
+        this.cameraPitch += (f - this.cameraPitch) * 0.8F; */
     }
 
     public void setCurrentItemOrArmor(int slotIn, ItemStack stack)

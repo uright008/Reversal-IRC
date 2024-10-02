@@ -1,14 +1,5 @@
 package cn.stars.starx.ui.gui;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
@@ -16,13 +7,24 @@ import cn.stars.starx.util.animation.normal.Animation;
 import cn.stars.starx.util.animation.normal.Direction;
 import cn.stars.starx.util.animation.normal.impl.EaseBackIn;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
-import cn.stars.starx.util.render.*;
+import cn.stars.starx.util.render.ColorUtil;
+import cn.stars.starx.util.render.GlUtils;
+import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.render.StencilUtils;
 import cn.stars.starx.util.shader.round.RoundedUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GuiScreenshotViewer extends GuiScreen{
 
@@ -179,7 +181,7 @@ public class GuiScreenshotViewer extends GuiScreen{
                 try {
                     desktop.browse(new File(screenshotDir, screenshots.get(selected)).toURI());
                 } catch (IOException e) {
-                    StarX.INSTANCE.showMsg("Failed to open file.Check your file dictionary name,there should not be Chinese or Space!");
+                    StarX.showMsg("Failed to open file.Check your file dictionary name,there should not be Chinese or Space!");
                     e.printStackTrace();
                 }
             }

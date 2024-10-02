@@ -1,11 +1,10 @@
 package cn.stars.starx.util.render;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.shader.Framebuffer;
 
 public class StencilUtils {
 

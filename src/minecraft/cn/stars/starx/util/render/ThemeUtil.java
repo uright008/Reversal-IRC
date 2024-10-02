@@ -4,6 +4,7 @@ import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.util.math.TimeUtil;
+import cn.stars.starx.util.misc.ModuleInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
@@ -45,10 +46,14 @@ public final class ThemeUtil implements GameInstance {
         return getThemeColor(colorOffset, type, 1);
     }
 
+    public static Color getThemeColor(final ThemeType type, final float colorOffset) {
+        return getThemeColor(colorOffset, type, 1);
+    }
+
     public Color getThemeColor(float colorOffset, final ThemeType type, final float timeMultiplier) {
         if (timer.hasReached(50 * 5)) {
             timer.reset();
-            theme = ((ModeValue) Objects.requireNonNull(StarX.INSTANCE.getModuleManager().getSetting("ClientSettings", "Theme"))).getMode();
+            theme = ((ModeValue) Objects.requireNonNull(StarX.moduleManager.getSetting("ClientSettings", "Theme"))).getMode();
             color = new Color(StarX.CLIENT_THEME_COLOR);
         }
 
@@ -65,6 +70,15 @@ public final class ThemeUtil implements GameInstance {
                     colorOffsetMultiplier = 2.2f;
                     break;
 
+                case "Simple": {
+                    if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+                        colorOffsetMultiplier = 5f;
+                    } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
+                        colorOffsetMultiplier = 2.2f;
+                    }
+                    break;
+                }
+
                 case "Modern":
                 case "Rise Rainbow":
                 case "Minecraft Rainbow":
@@ -74,11 +88,11 @@ public final class ThemeUtil implements GameInstance {
             }
         }
 
+        colorOffsetMultiplier *= (float) ModuleInstance.getNumber("ClientSettings", "Index Times").getValue();
         colorOffset *= colorOffsetMultiplier;
 
         final double timer = (System.currentTimeMillis() / 1E+8 * timeMultiplier) * 4E+5;
 
-        final double factor = (Math.sin(timer + colorOffset * 0.55f) + 1) * 0.5f;
         switch (type) {
             case GENERAL:
             case ARRAYLIST:
@@ -86,10 +100,23 @@ public final class ThemeUtil implements GameInstance {
                     case "Rise":
                     case "Comfort":
                     case "Minecraft":
-                    case "Never Lose":
-                        final float offset1 = (float) (Math.abs(Math.sin(timer + colorOffset * 0.45)) / 2) + 1;
+                    case "Never Lose": {
+                        final float offset1 = (float) (Math.abs(Math.sin(timer + colorOffset * 0.45)) / 2) + 1f;
                         color = ColorUtil.liveColorBrighter(StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, offset1);
                         break;
+                    }
+
+                    case "Simple": {
+                        if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+                            color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
+                        } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
+                            final float offset1 = (float) (Math.abs(Math.sin(timer * 0.5 + colorOffset * 0.45)) / 2.2f) + 1f;
+                            color = ColorUtil.liveColorBrighter(StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, offset1);
+                        } else {
+                            color = ColorUtils.INSTANCE.interpolateColorsBackAndForth(30, (int) colorOffset * 4, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR_2, true);
+                        }
+                        break;
+                    }
 
                     case "Modern":
                     case "Rise Rainbow":
@@ -108,6 +135,16 @@ public final class ThemeUtil implements GameInstance {
                     case "Minecraft":
                         color = new Color(StarX.CLIENT_THEME_COLOR_BRIGHT);
                         break;
+
+                    case "Simple": {
+                        if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+                            color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
+                        } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
+                            color = new Color(StarX.CLIENT_THEME_COLOR_BRIGHT);
+                        } else {
+                            color = ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR_2, true);
+                        }
+                    }
 
                     case "Modern":
                     case "Rise Rainbow":

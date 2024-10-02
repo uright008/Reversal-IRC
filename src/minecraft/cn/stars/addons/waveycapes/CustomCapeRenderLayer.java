@@ -44,11 +44,11 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
         if (waveyCapes == null || !waveyCapes.isEnabled() || abstractClientPlayer.isInvisible() || !abstractClientPlayer.hasPlayerInfo() || !abstractClientPlayer.isWearing(EnumPlayerModelParts.CAPE) || abstractClientPlayer.getLocationCape() == null) {
             return;
         }
-        if (((ModeValue)StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             abstractClientPlayer.updateSimulation(abstractClientPlayer, 16);
         }
         this.playerRenderer.bindTexture(abstractClientPlayer.getLocationCape());
-        if (((ModeValue)StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Cape Style")).getMode().equals("Smooth")) {
+        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Style")).getMode().equals("Smooth")) {
             this.smoothCapeRenderer.renderSmoothCape(this, abstractClientPlayer, deltaTick);
         } else {
             final ModelRenderer[] parts = this.customCape;
@@ -62,7 +62,7 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
     }
 
     private void modifyPoseStack(final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
-        if (((ModeValue)StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             this.modifyPoseStackSimulation(abstractClientPlayer, h, part);
             return;
         }
@@ -123,7 +123,7 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
     }
 
     protected float getNaturalWindSwing(final int part) {
-        if (((BoolValue)StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Wind")).isEnabled()) {
+        if (((BoolValue)StarX.moduleManager.getSetting("WaveyCapes", "Wind")).isEnabled()) {
             long highlightedPart = System.currentTimeMillis() / 3L % 360L;
             float relativePart = (part + 1) / 16.0f;
             return (float) (Math.sin(Math.toRadians(relativePart * 360.0f - highlightedPart)) * 3.0);

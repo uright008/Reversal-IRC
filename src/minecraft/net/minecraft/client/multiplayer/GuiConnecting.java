@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.ui.curiosity.CuriosityTextButton;
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
@@ -42,7 +43,7 @@ public class GuiConnecting extends GuiScreen
     private boolean cancel;
     private final GuiScreen previousGuiScreen;
     private Animation animation = new Animation(Easing.EASE_OUT_QUINT, 600);
-    private MenuTextButton cancelButton;
+    private CuriosityTextButton cancelButton;
 
     public GuiConnecting(GuiScreen p_i1181_1_, Minecraft mcIn, ServerData p_i1181_3_)
     {
@@ -92,7 +93,7 @@ public class GuiConnecting extends GuiScreen
                     }
 
                     GuiConnecting.logger.error((String)"Couldn\'t connect to server", (Throwable)unknownhostexception);
-                    GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", new Object[] {"Unknown host"})));
+                    GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", "Unknown host")));
                 }
                 catch (Exception exception)
                 {
@@ -110,7 +111,7 @@ public class GuiConnecting extends GuiScreen
                         s = s.replaceAll(s1, "");
                     }
 
-                    GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", new Object[] {s})));
+                    GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", s)));
                 }
             }
         }).start();
@@ -142,7 +143,7 @@ public class GuiConnecting extends GuiScreen
     public void initGui()
     {
         GameInstance.clearRunnables();
-        this.cancelButton = new MenuTextButton(width / 2 - 30, height / 2 + 100, 60, 30, this::action, "取消", "O", true, 5, 10);
+        this.cancelButton = new CuriosityTextButton(width / 2 - 100, height / 2 + 100, 200, 20, this::action, "取消", "", true, 6, 90, 5, 20);
         this.animation = new Animation(Easing.EASE_OUT_QUINT, 600);
     }
 
@@ -205,8 +206,8 @@ public class GuiConnecting extends GuiScreen
 
         cancelButton.draw(mouseX, mouseY, partialTicks);
 
-        RenderUtil.image(new ResourceLocation("starx/images/starx.png"), width / 2f - 110, (float) animation.getValue() - 50, 280, 190);
-        RenderUtils.drawLoadingCircle2(this.width / 2, this.height / 2 + 40, 6, Color.WHITE);
+        RenderUtil.image(new ResourceLocation("starx/images/curiosity.png"), width / 2f - 100, (float) animation.getValue() - 50, 200, 200);
+        RenderUtils.drawLoadingCircle2(this.width / 2, this.height / 2 + 40, 6, new Color(220, 220, 220, 220));
 
         String ip = "Unknown";
 
@@ -214,8 +215,8 @@ public class GuiConnecting extends GuiScreen
         if(serverData != null)
             ip = serverData.serverIP;
 
-        FontManager.getRegular(20).drawCenteredString(I18n.format("connect.connecting"), this.width / 2, this.height / 2 + 60, Color.WHITE.getRGB());
-        FontManager.getRegular(16).drawCenteredString(ip, this.width / 2, this.height / 2 + 75, Color.WHITE.getRGB());
+        regular24Bold.drawCenteredString("正在连接至服务器...", this.width / 2, this.height / 2 + 60, new Color(220, 220, 220, 220).getRGB());
+        regular16.drawCenteredString(ip, this.width / 2, this.height / 2 + 75, new Color(220, 220, 220, 220).getRGB());
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();

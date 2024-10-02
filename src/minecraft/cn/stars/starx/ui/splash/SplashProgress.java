@@ -1,18 +1,15 @@
 package cn.stars.starx.ui.splash;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.util.animation.lb.AnimatedValue;
 import cn.stars.starx.util.animation.lb.EaseUtils;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.animation.simple.SimpleAnimation;
-import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
-import cn.stars.starx.util.shader.round.RoundedUtils;
+import cn.stars.starx.util.render.RoundedUtil;
+import cn.stars.starx.util.shader.RiseShaders;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -20,13 +17,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.Display;
 
 import java.awt.*;
 
 public final class SplashProgress {
+    public static boolean isFinished = false;
     // Max amount of progress updates
-    private static final int DEFAULT_MAX = 14;
+    private static final int DEFAULT_MAX = 9;
    // private static final TTFFontRenderer fontRenderer = CustomFont.FONT_MANAGER.getFont("PSM 18");
     private static int PROGRESS;
     private static String CURRENT = "";
@@ -34,6 +32,7 @@ public final class SplashProgress {
     private static ResourceLocation splash;
     // Texture manager
     private static TextureManager ctm;
+    Animation animation = new Animation(Easing.LINEAR, 200);
 
     /**
      * Update the splash text
@@ -61,6 +60,7 @@ public final class SplashProgress {
      * @param tm {@link TextureManager}
      */
     public static void drawSplash(final TextureManager tm) {
+        if (PROGRESS == DEFAULT_MAX) isFinished = true;
         // Initialize the texture manager if null
         if (ctm == null) ctm = tm;
 
@@ -96,8 +96,8 @@ public final class SplashProgress {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Draw the image
-        Gui.drawScaledCustomSizeModalRect(0, 0, 0, 0, 1920, 1080,
-                scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), 1920, 1080);
+        Gui.drawScaledCustomSizeModalRect(0, 0, 0, 0, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(),
+                scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
 
         // Draw the progress bar
         drawProgress();
@@ -114,6 +114,7 @@ public final class SplashProgress {
 
         // Update the users screen
         Minecraft.getMinecraft().updateDisplay();
+        Display.sync(60);
     }
 
     /**
@@ -126,19 +127,20 @@ public final class SplashProgress {
         final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
         // Pos
-        final float startX = (sr.getScaledWidth() / 2.0F - 80);
-        final float endX = (sr.getScaledWidth() / 2.0F + 80);
+        final float startX = (sr.getScaledWidth() / 2.0F - 100);
+        final float endX = (sr.getScaledWidth() / 2.0F + 100);
 
         // Calculate the progress bar
         final double nProgress = PROGRESS;
-        final double calc = (nProgress / DEFAULT_MAX) * 160 - 2;
+        final double calc = (nProgress / DEFAULT_MAX) * 200;
+
+
         // Draw the transparent bar before the green bar
-      //  RenderUtil.roundedOutlineGradientRectangle(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 10F, 3f, 1f, new Color(0, 200, 100, 200), new Color(0, 200, 200, 200));
-      //  Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, endX, sr.getScaledHeight() / 2.0F + 20.0F, new Color(255, 255, 255, 60).getRGB());
+        //  RenderUtil.roundedOutlineGradientRectangle(startX, sr.getScaledHeight() / 2.0F + 20.0F, endX - startX, 10F, 3f, 1f, new Color(0, 200, 100, 200), new Color(0, 200, 200, 200));
+    //    RenderUtil.rect(startX, sr.getScaledHeight() / 2.0F + 30.0F, 200, 5f, new Color(255, 255, 255, 60));
 
         // Render the blue progress bar
-     //   RenderUtil.roundedRectangle(startX + 1, sr.getScaledHeight() / 2.0F + 21.0F, MathUtil.round(calc, 2), 8F, 3f, new Color(180, 180, 180, 220));
-     //   Gui.drawRect(startX, sr.getScaledHeight() / 2.0F + 15.0F, (float) (startX + calc), sr.getScaledHeight() / 2.0F + 20.0F, new Color(20, 255, 20, 160).getRGB());
-
+        //   RenderUtil.roundedRectangle(startX + 1, sr.getScaledHeight() / 2.0F + 21.0F, MathUtil.round(calc, 2), 8F, 3f, new Color(180, 180, 180, 220));
+    //    RenderUtil.gradientSideways(startX, sr.getScaledHeight() / 2.0F + 30.0F, (float) calc, 5f, new Color(0,255,255,50), new Color(0,255,255,255));
     }
 }

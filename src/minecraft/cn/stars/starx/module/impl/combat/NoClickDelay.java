@@ -4,9 +4,8 @@ import cn.stars.starx.event.impl.PreMotionEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
-import cn.stars.starx.setting.impl.NumberValue;
 
-@ModuleInfo(name = "NoClickDelay", description = "Remove the delay of clicking",
+@ModuleInfo(name = "NoClickDelay", chineseName = "移除点击延迟", description = "Remove the delay of clicking",
         chineseDescription = "移除特殊情况下出现的鼠标点击延迟", category = Category.COMBAT)
 public class NoClickDelay extends Module {
 

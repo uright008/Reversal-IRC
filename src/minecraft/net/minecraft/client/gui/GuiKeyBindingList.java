@@ -20,9 +20,9 @@ public class GuiKeyBindingList extends GuiListExtended
         super(mcIn, controls.width, controls.height, 63, controls.height - 32, 20);
         this.field_148191_k = controls;
         this.mc = mcIn;
-        KeyBinding[] akeybinding = (KeyBinding[])ArrayUtils.clone(mcIn.gameSettings.keyBindings);
+        KeyBinding[] akeybinding = ArrayUtils.clone(mcIn.gameSettings.keyBindings);
         this.listEntries = new GuiListExtended.IGuiListEntry[akeybinding.length + KeyBinding.getKeybinds().size()];
-        Arrays.sort((Object[])akeybinding);
+        Arrays.sort(akeybinding);
         int i = 0;
         String s = null;
 
@@ -36,7 +36,7 @@ public class GuiKeyBindingList extends GuiListExtended
                 this.listEntries[i++] = new GuiKeyBindingList.CategoryEntry(s1);
             }
 
-            int j = mcIn.fontRendererObj.getStringWidth(I18n.format(keybinding.getKeyDescription(), new Object[0]));
+            int j = mcIn.fontRendererObj.getStringWidth(I18n.format(keybinding.getKeyDescription()));
 
             if (j > this.maxListLabelWidth)
             {

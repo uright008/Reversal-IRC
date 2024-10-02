@@ -5,13 +5,14 @@
  */
 package org.lwjgl.opengl;
 
+import org.lwjgl.system.NativeType;
+
 import java.nio.*;
 
-import org.lwjgl.system.*;
-
-import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.Checks.CHECKS;
+import static org.lwjgl.system.Checks.check;
+import static org.lwjgl.system.JNI.callPV;
+import static org.lwjgl.system.MemoryUtil.memAddress;
 
 /**
  * The OpenGL functionality up to version 1.3. Includes the deprecated symbols of the Compatibility Profile.

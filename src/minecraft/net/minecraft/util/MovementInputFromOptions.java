@@ -1,7 +1,5 @@
 package net.minecraft.util;
 
-import cn.stars.starx.event.impl.Button;
-import cn.stars.starx.event.impl.MoveButtonEvent;
 import net.minecraft.client.settings.GameSettings;
 
 public class MovementInputFromOptions extends MovementInput
@@ -15,35 +13,36 @@ public class MovementInputFromOptions extends MovementInput
 
     public void updatePlayerMoveState()
     {
-        final MoveButtonEvent event = new MoveButtonEvent(new Button(this.gameSettings.keyBindLeft.isKeyDown(), 90), new Button(this.gameSettings.keyBindRight.isKeyDown(), -90), new Button(this.gameSettings.keyBindBack.isKeyDown(), 180), new Button(this.gameSettings.keyBindForward.isKeyDown(), 0), this.gameSettings.keyBindSneak.isKeyDown(), this.gameSettings.keyBindJump.isKeyDown());
-        event.call();
-        if (event.isCancelled()) return;
-
         this.moveStrafe = 0.0F;
         this.moveForward = 0.0F;
 
-        if (event.getForward().isButton()) {
+        if (this.gameSettings.keyBindForward.isKeyDown())
+        {
             ++this.moveForward;
         }
 
-        if (event.getBackward().isButton()) {
+        if (this.gameSettings.keyBindBack.isKeyDown())
+        {
             --this.moveForward;
         }
 
-        if (event.getLeft().isButton()) {
+        if (this.gameSettings.keyBindLeft.isKeyDown())
+        {
             ++this.moveStrafe;
         }
 
-        if (event.getRight().isButton()) {
+        if (this.gameSettings.keyBindRight.isKeyDown())
+        {
             --this.moveStrafe;
         }
 
-        this.jump = event.isJump();
-        this.sneak = event.isSneak();
+        this.jump = this.gameSettings.keyBindJump.isKeyDown();
+        this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
 
-        if (this.sneak) {
-            this.moveStrafe = (float) ((double) this.moveStrafe * 0.3D);
-            this.moveForward = (float) ((double) this.moveForward * 0.3D);
+        if (this.sneak)
+        {
+            this.moveStrafe = (float)((double)this.moveStrafe * 0.3D);
+            this.moveForward = (float)((double)this.moveForward * 0.3D);
         }
     }
 }

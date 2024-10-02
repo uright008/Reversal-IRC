@@ -39,7 +39,7 @@ public class SmoothCapeRenderer
     }
 
     void modifyPoseStack(final CustomCapeRenderLayer layer, final PoseStack poseStack, final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
-        if (((ModeValue) StarX.INSTANCE.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue) StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             this.modifyPoseStackSimulation(layer, poseStack, abstractClientPlayer, h, part);
             return;
         }

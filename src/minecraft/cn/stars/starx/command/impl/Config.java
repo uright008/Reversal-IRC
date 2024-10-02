@@ -11,13 +11,13 @@ public final class Config extends Command {
 
     @Override
     public void onCommand(final String command, final String[] args) {
-        StarX.INSTANCE.getExecutorService().execute(() -> {
+        StarX.executorService.execute(() -> {
             switch (args[0].toLowerCase()) {
                 case "save": {
                     if (args[1].isEmpty()) {
-                        StarX.INSTANCE.showMsg("Invalid config name.");
-                        StarX.INSTANCE.showMsg(".config save <name>");
-                        StarX.INSTANCE.getNotificationManager().registerNotification("Invalid config name.", "Command", NotificationType.ERROR);
+                        StarX.showMsg("Invalid config name.");
+                        StarX.showMsg(".config save <name>");
+                        StarX.notificationManager.registerNotification("Invalid config name.", "Command", NotificationType.ERROR);
                         return;
                     }
                     ConfigHandler.save(args[1]);
@@ -26,9 +26,9 @@ public final class Config extends Command {
 
                 case "create": {
                     if (args[1].isEmpty()) {
-                        StarX.INSTANCE.showMsg("Invalid config name.");
-                        StarX.INSTANCE.showMsg(".config create <name>");
-                        StarX.INSTANCE.getNotificationManager().registerNotification("Invalid config name.", "Command", NotificationType.ERROR);
+                        StarX.showMsg("Invalid config name.");
+                        StarX.showMsg(".config create <name>");
+                        StarX.notificationManager.registerNotification("Invalid config name.", "Command", NotificationType.ERROR);
                         return;
                     }
                     ConfigHandler.create(args[1]);
@@ -51,8 +51,8 @@ public final class Config extends Command {
                 }
 
                 default: {
-                    StarX.INSTANCE.showMsg(".config <save/create/load/list/delete> <name>");
-                    StarX.INSTANCE.getNotificationManager().registerNotification("Invalid usage of command.", "Command", NotificationType.ERROR);
+                    StarX.showMsg(".config <save/create/load/list/delete> <name>");
+                    StarX.notificationManager.registerNotification("Invalid usage of command.", "Command", NotificationType.ERROR);
                 }
             }
         });

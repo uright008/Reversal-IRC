@@ -5,9 +5,9 @@
  */
 package org.lwjgl.opengl;
 
-import java.nio.*;
+import org.lwjgl.system.NativeType;
 
-import org.lwjgl.system.*;
+import java.nio.*;
 
 /**
  * The OpenGL functionality up to version 1.2. Includes the deprecated symbols of the Compatibility Profile.

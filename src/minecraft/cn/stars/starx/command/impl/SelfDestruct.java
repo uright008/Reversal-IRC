@@ -3,8 +3,6 @@ package cn.stars.starx.command.impl;
 import cn.stars.starx.StarX;
 import cn.stars.starx.command.Command;
 import cn.stars.starx.command.api.CommandInfo;
-import cn.stars.starx.ui.notification.NotificationType;
-import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.Display;
 

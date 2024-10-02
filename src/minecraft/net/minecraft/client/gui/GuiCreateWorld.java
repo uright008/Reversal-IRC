@@ -439,7 +439,7 @@ public class GuiCreateWorld extends GuiScreen
                 this.drawString(this.fontRendererObj, I18n.format("selectWorld.allowCommands.info", new Object[0]), this.width / 2 - 150, 172, -6250336);
             }
 
-            this.worldSeedField.drawTextBox();
+            this.worldSeedField.drawTextBox(mouseX, mouseY);
 
             if (WorldType.worldTypes[this.selectedIndex].showWorldInfoNotice())
             {
@@ -450,7 +450,7 @@ public class GuiCreateWorld extends GuiScreen
         {
             this.drawString(this.fontRendererObj, I18n.format("selectWorld.enterName", new Object[0]), this.width / 2 - 100, 47, -6250336);
             this.drawString(this.fontRendererObj, I18n.format("selectWorld.resultFolder", new Object[0]) + " " + this.saveDirName, this.width / 2 - 100, 85, -6250336);
-            this.worldNameField.drawTextBox();
+            this.worldNameField.drawTextBox(mouseX, mouseY);
             this.drawString(this.fontRendererObj, this.gameModeDesc1, this.width / 2 - 100, 137, -6250336);
             this.drawString(this.fontRendererObj, this.gameModeDesc2, this.width / 2 - 100, 149, -6250336);
         }

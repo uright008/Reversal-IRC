@@ -1,6 +1,8 @@
 package net.minecraft.block;
 
 import java.util.Random;
+
+import cn.stars.addons.optimization.normal.AssociatedMutableBlockPos;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -81,12 +83,12 @@ public abstract class BlockLiquid extends Block
     public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
     {
         Material material = worldIn.getBlockState(pos).getBlock().getMaterial();
-        return material == this.blockMaterial ? false : (side == EnumFacing.UP ? true : (material == Material.ice ? false : super.isBlockSolid(worldIn, pos, side)));
+        return material != this.blockMaterial && (side == EnumFacing.UP || (material != Material.ice && super.isBlockSolid(worldIn, pos, side)));
     }
 
     public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
     {
-        return worldIn.getBlockState(pos).getBlock().getMaterial() == this.blockMaterial ? false : (side == EnumFacing.UP ? true : super.shouldSideBeRendered(worldIn, pos, side));
+        return worldIn.getBlockState(pos).getBlock().getMaterial() != this.blockMaterial && (side == EnumFacing.UP || super.shouldSideBeRendered(worldIn, pos, side));
     }
 
     public boolean shouldRenderSides(IBlockAccess blockAccess, BlockPos pos)
@@ -136,7 +138,7 @@ public abstract class BlockLiquid extends Block
 
         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
         {
-            BlockPos blockpos = pos.offset(enumfacing);
+            BlockPos blockpos = AssociatedMutableBlockPos.get(pos);
             int j = this.getEffectiveFlowDecay(worldIn, blockpos);
 
             if (j < 0)
@@ -148,7 +150,7 @@ public abstract class BlockLiquid extends Block
                     if (j >= 0)
                     {
                         int k = j - (i - 8);
-                        vec3 = vec3.addVector((double)((blockpos.getX() - pos.getX()) * k), (double)((blockpos.getY() - pos.getY()) * k), (double)((blockpos.getZ() - pos.getZ()) * k));
+                        vec3 = vec3.addVector((blockpos.getX() - pos.getX()) * k, (double)((blockpos.getY() - pos.getY()) * k), (double)((blockpos.getZ() - pos.getZ()) * k));
                     }
                 }
             }
@@ -159,11 +161,11 @@ public abstract class BlockLiquid extends Block
             }
         }
 
-        if (((Integer)worldIn.getBlockState(pos).getValue(LEVEL)).intValue() >= 8)
+        if ((Integer) worldIn.getBlockState(pos).getValue(LEVEL) >= 8)
         {
             for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
             {
-                BlockPos blockpos1 = pos.offset(enumfacing1);
+                BlockPos blockpos1 = AssociatedMutableBlockPos.get(pos).associateWithOwnBlockPos().move(enumfacing1);
 
                 if (this.isBlockSolid(worldIn, blockpos1, enumfacing1) || this.isBlockSolid(worldIn, blockpos1.up(), enumfacing1))
                 {
@@ -173,6 +175,7 @@ public abstract class BlockLiquid extends Block
             }
         }
 
+        AssociatedMutableBlockPos.get(pos).release();
         return vec3.normalize();
     }
 

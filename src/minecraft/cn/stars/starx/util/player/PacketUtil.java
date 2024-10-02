@@ -15,12 +15,4 @@ public final class PacketUtil {
     public void sendPacketWithoutEvent(final Packet<?> packet) {
         mc.getNetHandler().addToSendQueueWithoutEvent(packet);
     }
-
-    public void receivePacket(final Packet<?> packet) {
-        mc.getNetHandler().addToReceiveQueue(packet);
-    }
-
-    public void receivePacketWithoutEvent(final Packet<?> packet) {
-        mc.getNetHandler().addToReceiveQueueWithoutEvent(packet);
-    }
 }

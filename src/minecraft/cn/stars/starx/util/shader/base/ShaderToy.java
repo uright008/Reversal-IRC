@@ -2,9 +2,13 @@ package cn.stars.starx.util.shader.base;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.util.StarXLogger;
-import org.lwjgl.opengl.*;
-import java.io.*;
-import java.nio.charset.*;
+import org.lwjgl.opengl.GL20;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ShaderToy
 {
@@ -14,6 +18,7 @@ public class ShaderToy
     private final int resolutionUniform;
 
     public ShaderToy(final String fragmentShaderLocation) throws IOException {
+        StarXLogger.info("[ShaderToy] Loading shader from " + fragmentShaderLocation + ", this process can be unsupported on some devices.");
         final int program = GL20.glCreateProgram();
         GL20.glAttachShader(program, this.createShader(ShaderToy.class.getResourceAsStream("/assets/minecraft/starx/shader/passthrough.vsh"), 35633));
         GL20.glAttachShader(program, this.createShader(ShaderToy.class.getResourceAsStream("/assets/minecraft/starx/shader/main_menu/" + fragmentShaderLocation), 35632));
@@ -22,7 +27,7 @@ public class ShaderToy
         if (linked == 0) {
             System.err.println(GL20.glGetProgramInfoLog(program, GL20.glGetProgrami(program, 35716)));
             StarXLogger.fatal("Error while loading shaders", new IllegalStateException("Failed to link shader"));
-            StarX.INSTANCE.isAMDShaderCompatibility = true;
+            StarX.isAMDShaderCompatibility = true;
         }
         GL20.glUseProgram(this.programId = program);
         this.timeUniform = GL20.glGetUniformLocation(program, "time");
@@ -32,7 +37,7 @@ public class ShaderToy
     }
 
     public void useShader(final int width, final int height, final float time) {
-        if (StarX.INSTANCE.isAMDShaderCompatibility) return;
+        if (StarX.isAMDShaderCompatibility) return;
         GL20.glUseProgram(this.programId);
         GL20.glUniform2f(this.resolutionUniform, (float)width, (float)height);
         GL20.glUniform2f(this.mouseUniform, (float)width, 1.0f - height);
@@ -40,7 +45,7 @@ public class ShaderToy
     }
 
     public void useShader(final int width, final int height, final float time, final int mouseX, final int mouseY) {
-        if (StarX.INSTANCE.isAMDShaderCompatibility) return;
+        if (StarX.isAMDShaderCompatibility) return;
         GL20.glUseProgram(this.programId);
         GL20.glUniform2f(this.resolutionUniform, (float) width, (float) height);
         GL20.glUniform2f(this.mouseUniform, (float) mouseX,(float) mouseY);
@@ -55,7 +60,7 @@ public class ShaderToy
         if (compiled == 0) {
             System.err.println(GL20.glGetShaderInfoLog(shader, GL20.glGetShaderi(shader, 35716)));
             StarXLogger.fatal("Error while loading shaders", new IllegalStateException("Failed to compile shader"));
-            StarX.INSTANCE.isAMDShaderCompatibility = true;
+            StarX.isAMDShaderCompatibility = true;
             return 0;
         }
         return shader;

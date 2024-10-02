@@ -3,18 +3,18 @@ package cn.stars.starx.util.render;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.enchantment.Enchantment;
@@ -27,18 +27,20 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 import java.awt.*;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -55,6 +57,26 @@ public final class RenderUtil implements GameInstance {
     public float delta2DFrameTime;
     public float delta3DFrameTime;
     public long initTime = System.currentTimeMillis();
+
+    private static int imageWidth;
+    private static int imageHeight;
+    private static int internalformat;
+    private static ByteBuffer imageBuffer;
+
+    public static void setBuffer(ByteBuffer buffer, int width, int height) {
+        internalformat = 6407;
+        imageWidth = width;
+        imageHeight = height;
+        imageBuffer = buffer;
+    }
+
+    public static void bindTexture() {
+        GL13.glActiveTexture(33984);
+        GL11.glBindTexture(3553, -1);
+        GL11.glTexParameteri(3553, 10241, 9728);
+        GL11.glTexParameteri(3553, 10240, 9728);
+        GL11.glTexImage2D(3553, 0, internalformat, imageWidth, imageHeight, 0, internalformat, 5121, imageBuffer);
+    }
 
     public void push() {
         GL11.glPushMatrix();
@@ -125,77 +147,20 @@ public final class RenderUtil implements GameInstance {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
-    private Vector3d project2D(int scaleFactor, double x, double y, double z) {
-        IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
-        FloatBuffer modelView = GLAllocation.createDirectFloatBuffer(16);
-        FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
-        FloatBuffer vector = GLAllocation.createDirectFloatBuffer(4);
-        GL11.glGetFloatv(2982, modelView);
-        GL11.glGetFloatv(2983, projection);
-        GL11.glGetIntegerv(2978, viewport);
-        return GLU.gluProject((float)x, (float)y, (float)z, modelView, projection, viewport, vector) ? new Vector3d(vector.get(0) / (float)scaleFactor, ((float) Display.getHeight() - vector.get(1)) / (float)scaleFactor, vector.get(2)) : null;
-    }
-
-    public static void drawTargetESP2D(float x, float y, Color color, Color color2, Color color3, Color color4, float scale, int index) {
-        long millis = System.currentTimeMillis() + (long) index * 400L;
-        double angle = MathHelper.clamp_double((Math.sin((double) millis / 150.0) + 1.0) / 2.0 * 30.0, 0.0, 30.0);
-        double scaled = MathHelper.clamp_double((Math.sin((double) millis / 500.0) + 1.0) / 2.0, 0.8, 1.0);
-        double rotate = MathHelper.clamp_double((Math.sin((double) millis / 1000.0) + 1.0) / 2.0 * 360.0, 0.0, 360.0);
-        rotate = (double) 45 - (angle - 15.0) + rotate;
-        float size = 128.0f * scale * (float) scaled;
-        float x2 = (x -= size / 2.0f) + size;
-        float y2 = (y -= size / 2.0f) + size;
-        GlStateManager.pushMatrix();
-        RenderUtil.customRotatedObject2D(x, y, size, size, (float) rotate);
-        GL11.glDisable(3008);
-        GlStateManager.depthMask(false);
-        GlStateManager.enableBlend();
-        GlStateManager.shadeModel(7425);
-        GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
-        drawESPImage(getESPImage(), x, y, x2, y2, color, color2, color3, color4);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.resetColor();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.depthMask(true);
-        GL11.glEnable(3008);
-        GlStateManager.popMatrix();
-    }
-
-    private void drawESPImage(ResourceLocation resource, double x, double y, double x2, double y2, Color c, Color c2, Color c3, Color c4) {
-        mc.getTextureManager().bindTexture(resource);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
-        bufferbuilder.begin(9, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferbuilder.pos(x, y2, 0.0).tex(0.0, 1.0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-        bufferbuilder.pos(x2, y2, 0.0).tex(1.0, 1.0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-        bufferbuilder.pos(x2, y, 0.0).tex(1.0, 0.0).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-        bufferbuilder.pos(x, y, 0.0).tex(0.0, 0.0).color(c4.getRed(), c4.getGreen(), c4.getBlue(), c4.getAlpha()).endVertex();
-        GlStateManager.shadeModel(7425);
-        GlStateManager.depthMask(false);
-        tessellator.draw();
-        GlStateManager.depthMask(true);
-        GlStateManager.shadeModel(7424);
-    }
-
-    private ResourceLocation getESPImage() {
-        switch (ModuleInstance.getMode("TargetESP", "Mode").getMode()) {
-            case "Round":
-                return new ResourceLocation("starx/images/round.png");
-            case "Rectangle":
-                return new ResourceLocation("starx/images/rectangle.png");
-        }
-        return null;
+    public boolean isHovered(final double x, final double y, final double width, final double height, GuiScreen guiScreen) {
+        int i = Mouse.getEventX() * guiScreen.width / mc.displayWidth;
+        int j = guiScreen.height - Mouse.getEventY() * guiScreen.height / mc.displayHeight - 1;
+        return i >= x && i < x + width && j >= y && j < y + height;
     }
 
     public static Vector2f targetESPSPos(EntityLivingBase entity) {
         EntityRenderer entityRenderer = mc.entityRenderer;
         float partialTicks = mc.timer.renderPartialTicks;
         int scaleFactor = new ScaledResolution(mc).getScaleFactor();
-        double x = interpolate(entity.posX, entity.prevPosX, partialTicks);
-        double y = interpolate(entity.posY, entity.prevPosY, partialTicks);
-        double z = interpolate(entity.posZ, entity.prevPosZ, partialTicks);
+        double x = interpolate(entity.prevPosX, entity.posX, partialTicks);
+        double y = interpolate(entity.prevPosY, entity.posY, partialTicks);
+        double z = interpolate(entity.prevPosZ, entity.posZ, partialTicks);
         double height = entity.height / (entity.isChild() ? 1.75f : 1.0f) / 2.0f;
-        double width = 0.0;
         AxisAlignedBB aabb = new AxisAlignedBB(x - 0.0, y, z - 0.0, x + 0.0, y + height, z + 0.0);
         Vector3d[] vectors = new Vector3d[]{new Vector3d(aabb.minX, aabb.minY, aabb.minZ), new Vector3d(aabb.minX, aabb.maxY, aabb.minZ), new Vector3d(aabb.maxX, aabb.minY, aabb.minZ), new Vector3d(aabb.maxX, aabb.maxY, aabb.minZ), new Vector3d(aabb.minX, aabb.minY, aabb.maxZ), new Vector3d(aabb.minX, aabb.maxY, aabb.maxZ), new Vector3d(aabb.maxX, aabb.minY, aabb.maxZ), new Vector3d(aabb.maxX, aabb.maxY, aabb.maxZ)};
         entityRenderer.setupCameraTransform(partialTicks, 0);
@@ -221,6 +186,73 @@ public final class RenderUtil implements GameInstance {
         return null;
     }
 
+    private static Vector3d project2D(int scaleFactor, double x, double y, double z) {
+        IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
+        FloatBuffer modelView = GLAllocation.createDirectFloatBuffer(16);
+        FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
+        FloatBuffer vector = GLAllocation.createDirectFloatBuffer(4);
+        GL11.glGetFloat(2982, modelView);
+        GL11.glGetFloat(2983, projection);
+        GL11.glGetInteger(2978, viewport);
+        return GLU.gluProject((float)x, (float)y, (float)z, modelView, projection, viewport, vector) ? new Vector3d(vector.get(0) / (float)scaleFactor, ((float)Display.getHeight() - vector.get(1)) / (float)scaleFactor, vector.get(2)) : null;
+    }
+
+    public static void drawTargetESP2D(float x, float y, Color color, Color color2, float scale, int index, float alpha) {
+        ResourceLocation resource = getESPImage();
+        if (resource == null) {
+            return;
+        }
+
+        long millis = System.currentTimeMillis() + (long) index * 400L;
+        double angle = MathHelper.clamp_double((Math.sin((double) millis / 150.0) + 1.0) / 2.0 * 30.0, 0.0, 30.0);
+        double scaled = MathHelper.clamp_double((Math.sin((double) millis / 500.0) + 1.0) / 2.0, 0.8, 1.0);
+        double rotate = MathHelper.clamp_double((Math.sin((double) millis / 1000.0) + 1.0) / 2.0 * 360.0, 0.0, 360.0);
+        rotate = (double) 45 - (angle - 15.0) + rotate;
+        float size = 128.0f * scale * (float) scaled;
+        float x2 = (x -= size / 2.0f) + size;
+        float y2 = (y -= size / 2.0f) + size;
+        GlStateManager.pushMatrix();
+        RenderUtil.customRotatedObject2D(x, y, size, size, (float) rotate);
+        GL11.glDisable(3008);
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.shadeModel(7425);
+        GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+        drawESPImage(resource, x, y, x2, y2, color, color2, alpha);
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.resetColor();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.depthMask(true);
+        GL11.glEnable(3008);
+        GlStateManager.popMatrix();
+    }
+
+    private static void drawESPImage(ResourceLocation resource, double x, double y, double x2, double y2, Color c, Color c2, float alpha) {
+        mc.getTextureManager().bindTexture(resource);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        bufferbuilder.pos(x, y2, 0.0).tex(0.0, 1.0).color(c.getRed(), c.getGreen(), c.getBlue(), (int) (alpha * 255)).endVertex();
+        bufferbuilder.pos(x2, y2, 0.0).tex(1.0, 1.0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), (int) (alpha * 255)).endVertex();
+        bufferbuilder.pos(x2, y, 0.0).tex(1.0, 0.0).color(c.getRed(), c.getGreen(), c.getBlue(), (int) (alpha * 255)).endVertex();
+        bufferbuilder.pos(x, y, 0.0).tex(0.0, 0.0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), (int) (alpha * 255)).endVertex();
+        GlStateManager.shadeModel(7425);
+        GlStateManager.depthMask(false);
+        tessellator.draw();
+        GlStateManager.depthMask(true);
+        GlStateManager.shadeModel(7424);
+    }
+
+    private ResourceLocation getESPImage() {
+        switch (ModuleInstance.getMode("TargetESP", "Mode").getMode()) {
+            case "Round":
+                return new ResourceLocation("starx/images/round.png");
+            case "Rectangle":
+                return new ResourceLocation("starx/images/rectangle.png");
+        }
+        return null;
+    }
+
     public static void customRotatedObject2D(float oXpos, float oYpos, float oWidth, float oHeight, float rotate) {
         GL11.glTranslated(oXpos + oWidth / 2.0f, oYpos + oHeight / 2.0f, 0.0);
         GL11.glRotated(rotate, 0.0, 0.0, 1.0);
@@ -229,18 +261,6 @@ public final class RenderUtil implements GameInstance {
 
     public static double interpolate(double current, double old, double scale) {
         return old + (current - old) * scale;
-    }
-
-    public void startSmooth() {
-        enable(GL11.GL_POLYGON_SMOOTH);
-        enable(GL11.GL_LINE_SMOOTH);
-        enable(GL11.GL_POINT_SMOOTH);
-    }
-
-    public void endSmooth() {
-        disable(GL11.GL_POINT_SMOOTH);
-        disable(GL11.GL_LINE_SMOOTH);
-        disable(GL11.GL_POLYGON_SMOOTH);
     }
 
     public void begin(final int glMode) {
@@ -682,10 +702,38 @@ public final class RenderUtil implements GameInstance {
         line(firstX, firstY, secondX, secondY, 0, null);
     }
 
+    /**
+     * Scales the data that you put in the runnable
+     *
+     * @param x     start x pos
+     * @param y     start y pos
+     * @param scale scale
+     */
+    public static void scaleStart(float x, float y, float scale) {
+        glPushMatrix();
+        glTranslatef(x, y, 0);
+        glScalef(scale, scale, 1);
+        glTranslatef(-x, -y, 0);
+    }
+
+    /**
+     * End scale
+     */
+    public static void scaleEnd() {
+        glPopMatrix();
+    }
 
     public void image(final ResourceLocation imageLocation, final float x, final float y, final float width, final float height) {
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        // 平滑线条
+        GL11.glEnable(GL11.GL_POINT_SMOOTH);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
+        GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_NICEST);
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
+        // 抗锯齿,线性过滤
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         enable(GL11.GL_BLEND);
         GlStateManager.disableAlpha();
         OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
@@ -693,6 +741,35 @@ public final class RenderUtil implements GameInstance {
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         GlStateManager.enableAlpha();
         disable(GL11.GL_BLEND);
+        // 关闭
+        GL11.glDisable(GL11.GL_POINT_SMOOTH);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
+    }
+
+    public static void image(DynamicTexture image, float x, float y, float imgWidth, float imgHeight) {
+        GlUtils.startBlend();
+
+        // 绑定纹理并设置过滤参数
+        GlStateManager.bindTexture(image.getGlTextureId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // 启用多重采样
+        glEnable(GL13.GL_MULTISAMPLE);
+
+        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, imgWidth, imgHeight, imgWidth, imgHeight);
+
+        // 禁用多重采样
+        glDisable(GL13.GL_MULTISAMPLE);
+
+        GlUtils.endBlend();
+    }
+
+    public static void image(ResourceLocation resourceLocation, float x, float y, float imgWidth, float imgHeight, Color color) {
+        color(color);
+        image(resourceLocation, x, y, imgWidth, imgHeight);
+        resetColor();
     }
 
     public void imageWithAlpha(final ResourceLocation imageLocation, final float x, final float y, final float width, final float height, float alpha) {

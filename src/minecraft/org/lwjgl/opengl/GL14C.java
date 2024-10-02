@@ -5,15 +5,17 @@
  */
 package org.lwjgl.opengl;
 
-import java.nio.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.NativeType;
 
-import org.lwjgl.*;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-import org.lwjgl.system.*;
-
-import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.Checks.CHECKS;
+import static org.lwjgl.system.Checks.check;
+import static org.lwjgl.system.JNI.callPPV;
+import static org.lwjgl.system.JNI.callPV;
+import static org.lwjgl.system.MemoryUtil.memAddress;
 
 /**
  * The OpenGL functionality of a forward compatible context, up to version 1.4.

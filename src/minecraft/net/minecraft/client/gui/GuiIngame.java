@@ -3,7 +3,8 @@ package net.minecraft.client.gui;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.event.impl.PreBlurEvent;
 import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.module.impl.addons.PostProcessing;
+import cn.stars.starx.module.impl.hud.PostProcessing;
+import cn.stars.starx.module.impl.render.Crosshair;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
@@ -80,6 +81,7 @@ public class GuiIngame extends Gui
     private int lastPlayerHealth = 0;
     private long lastSystemTime = 0L;
     private long healthUpdateCounter = 0L;
+    private PostProcessing postProcessing;
 
     public GuiIngame(Minecraft mcIn)
     {
@@ -341,19 +343,18 @@ public class GuiIngame extends Gui
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();
 
-        final PreBlurEvent eventPreBlur = new PreBlurEvent();
-        eventPreBlur.call();
-
-        PostProcessing postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
+        postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
         postProcessing.blurScreen();
 
         final Render2DEvent render2DEvent = new Render2DEvent(partialTicks, scaledresolution);
         render2DEvent.call();
 
-        Hud.renderGameOverlay();
-
         GameInstance.render2DRunnables(partialTicks, true);
         GameInstance.clearRunnables();
+
+        Hud.renderGameOverlay();
+
+        new PreBlurEvent().call();
     }
 
     protected void renderTooltip(ScaledResolution sr, float partialTicks)
@@ -512,6 +513,7 @@ public class GuiIngame extends Gui
 
     protected boolean showCrosshair()
     {
+        if (ModuleInstance.getModule(Crosshair.class).isEnabled()) return false;
         if (this.mc.gameSettings.showDebugInfo && !this.mc.thePlayer.hasReducedDebug() && !this.mc.gameSettings.reducedDebugInfo)
         {
             return false;
@@ -545,7 +547,6 @@ public class GuiIngame extends Gui
 
     public void renderStreamIndicator(ScaledResolution scaledRes)
     {
-        this.streamIndicator.render(scaledRes.getScaledWidth() - 10, 10);
     }
 
     private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes)

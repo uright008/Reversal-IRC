@@ -44,12 +44,12 @@ public abstract class EntityLiving extends EntityLivingBase
 {
     public int livingSoundTime;
     protected int experienceValue;
-    private EntityLookHelper lookHelper;
+    public EntityLookHelper lookHelper;
     protected EntityMoveHelper moveHelper;
     protected EntityJumpHelper jumpHelper;
     private EntityBodyHelper bodyHelper;
     protected PathNavigate navigator;
-    protected final EntityAITasks tasks;
+    public final EntityAITasks tasks;
     protected final EntityAITasks targetTasks;
     private EntityLivingBase attackTarget;
     private EntitySenses senses;

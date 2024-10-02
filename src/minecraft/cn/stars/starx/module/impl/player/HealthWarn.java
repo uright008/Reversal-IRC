@@ -7,7 +7,7 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.ui.notification.NotificationType;
 
-@ModuleInfo(name = "HealthWarn", description = "Give a warning to you on low health",
+@ModuleInfo(name = "HealthWarn", chineseName = "低血量警告", description = "Give a warning to you on low health",
         chineseDescription = "在低血量时向你发送警告", category = Category.PLAYER)
 public class HealthWarn extends Module {
     private final NumberValue health = new NumberValue("Health", this, 10, 1, 20, 1);

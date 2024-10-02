@@ -191,7 +191,7 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
 
     public SoundEventAccessorComposite getSound(ResourceLocation location)
     {
-        return (SoundEventAccessorComposite)this.sndRegistry.getObject(location);
+        return this.sndRegistry.getObject(location);
     }
 
     public void playSound(ISound sound)

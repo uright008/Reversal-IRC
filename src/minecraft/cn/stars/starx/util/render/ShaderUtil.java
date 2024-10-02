@@ -87,7 +87,7 @@ public class ShaderUtil implements GameInstance {
         int fragmentShaderID = createShader(new ByteArrayInputStream(fragmentShadersrc.getBytes()), GL_FRAGMENT_SHADER);
         int vertexShaderID = 0;
         try {
-            vertexShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation("Tenacity/Shaders/vertex.vsh")).getInputStream(), GL_VERTEX_SHADER);
+            vertexShaderID = createShader(mc.getResourceManager().getResource(new ResourceLocation("starx/shaders/vertex.vsh")).getInputStream(), GL_VERTEX_SHADER);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

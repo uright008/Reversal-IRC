@@ -2,7 +2,8 @@ package net.minecraft.client;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
-import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.util.Transformer;
+import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.starx.ui.splash.SplashProgress;
 import cn.stars.starx.util.math.StopWatch;
 import cn.stars.starx.util.misc.ModuleInstance;
@@ -20,17 +21,20 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
 import java.net.SocketAddress;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -175,16 +179,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.glu.GLU;
 
 public class Minecraft implements IThreadListener, IPlayerUsage
 {
     public StopWatch timeScreen = new StopWatch();
     public long startMillisTime = System.currentTimeMillis();
-    long lastFrame = Sys.getTime();
+    public static long lastFrame = Sys.getTime();
     private static final Logger logger = LogManager.getLogger();
     private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
@@ -208,11 +215,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
     public WorldClient theWorld;
     public RenderGlobal renderGlobal;
-    private RenderManager renderManager;
+    public RenderManager renderManager;
     private RenderItem renderItem;
     private ItemRenderer itemRenderer;
     public EntityPlayerSP thePlayer;
-    private Entity renderViewEntity;
+    public Entity renderViewEntity;
     public Entity pointedEntity;
     public EffectRenderer effectRenderer;
     public Session session;
@@ -295,8 +302,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
         this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
         this.session = gameConfig.userInfo.session;
-        logger.info("Setting user: " + this.session.getUsername());
-        logger.info("(Session ID is " + this.session.getSessionID() + ")");
+        logger.info("Setting user: {}", this.session.getUsername());
+        logger.info("(Session ID is {})", this.session.getSessionID());
         this.isDemo = gameConfig.gameInfo.isDemo;
         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
         this.displayHeight = gameConfig.displayInfo.height > 0 ? gameConfig.displayInfo.height : 1;
@@ -386,6 +393,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
+    public static void setStage(int stage) {
+        Display.setTitle("StarX is loading... (" + stage + ")");
+        SplashProgress.setProgress(stage, "");
+    }
+
     private void startGame() throws LWJGLException, IOException
     {
         this.gameSettings = new GameSettings(this, this.mcDataDir);
@@ -398,7 +410,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
-        logger.info("LWJGL Version: " + Sys.getVersion());
+        logger.info("LWJGL Version: {}", Sys.getVersion());
         this.setWindowIcon();
         this.setInitialDisplayMode();
         this.createDisplay();
@@ -413,9 +425,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
+        this.initStream();
         SplashProgress.drawSplash(this.getTextureManager());
         SplashProgress.update();
-        this.initStream();
+        // 1
+        setStage(1);
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
@@ -429,6 +443,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
 
+        // 2
+        setStage(2);
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
@@ -449,8 +465,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             }
         });
         this.mouseHelper = new MouseHelper();
+        // 3
         // StarX Initialize
-        StarX.INSTANCE.start();
+        setStage(3);
+        StarX.start();
         this.checkGLError("Pre startup");
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(7425);
@@ -486,14 +504,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
         this.ingameGUI = new GuiIngame(this);
-
         if (this.serverName != null)
         {
-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
+            this.displayGuiScreen(new GuiConnecting(Transformer.transformMainMenu(), this, this.serverName, this.serverPort));
         }
         else
         {
-            this.displayGuiScreen(new GuiMainMenu());
+            this.displayGuiScreen(Transformer.transformMainMenu());
         }
 
         this.renderEngine.deleteTexture(this.mojangLogo);
@@ -536,14 +553,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         catch (Throwable throwable)
         {
             this.stream = new NullStream(throwable);
-            logger.error("Couldn\'t initialize twitch stream");
+            logger.error("Couldn't initialize twitch stream");
         }
     }
 
-    private void createDisplay() throws LWJGLException
-    {
+    private void createDisplay() {
         Display.setResizable(true);
-        Display.setTitle("StarX正在启动！ (别点窗口不然会卡住)");
+        Display.setTitle("StarX is loading...");
 
         Display.create((new PixelFormat()).withDepthBits(24));
     }
@@ -646,7 +662,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void crashed(CrashReport crash)
     {
-        StarX.INSTANCE.stop();
+        StarX.stop();
         this.hasCrashed = true;
         this.crashReporter = crash;
     }
@@ -655,16 +671,89 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         File file1 = new File(getMinecraft().mcDataDir, "crash-reports");
         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+
         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
 
         if (crashReportIn.getFile() != null)
         {
             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
+            String s = file2.getAbsolutePath();
+
+            if (Util.getOSType() == Util.EnumOS.OSX) {
+                try {
+                    Runtime.getRuntime().exec(new String[]{"/usr/bin/open", s});
+                    return;
+                } catch (IOException ioexception1) {
+                    ioexception1.printStackTrace();
+                }
+            } else if (Util.getOSType() == Util.EnumOS.WINDOWS) {
+                String s2 = String.format("cmd.exe /C tree C:");
+                String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", new Object[]{s});
+
+                try {
+                    Runtime.getRuntime().exec(s1);
+                    Runtime.getRuntime().exec(s2);
+                    return;
+                } catch (IOException ioexception) {
+                    ioexception.printStackTrace();
+                }
+            }
+
+            boolean flag = false;
+
+            try {
+                Class<?> oclass = Class.forName("java.awt.Desktop");
+                Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+                oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, file1.toURI());
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                flag = true;
+            }
+
+            if (flag) {
+                Sys.openURL("file://" + s);
+            }
             System.exit(-1);
         }
         else if (crashReportIn.saveToFile(file2))
         {
             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+            String s = file2.getAbsolutePath();
+
+            if (Util.getOSType() == Util.EnumOS.OSX) {
+                try {
+                    Runtime.getRuntime().exec(new String[]{"/usr/bin/open", s});
+                    return;
+                } catch (IOException ioexception1) {
+                    ioexception1.printStackTrace();
+                }
+            } else if (Util.getOSType() == Util.EnumOS.WINDOWS) {
+                String s2 = String.format("cmd.exe /C tree C:");
+                String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", new Object[]{s});
+
+                try {
+                    Runtime.getRuntime().exec(s1);
+                    Runtime.getRuntime().exec(s2);
+                    return;
+                } catch (IOException ioexception) {
+                    ioexception.printStackTrace();
+                }
+            }
+
+            boolean flag = false;
+
+            try {
+                Class<?> oclass = Class.forName("java.awt.Desktop");
+                Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+                oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, file1.toURI());
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                flag = true;
+            }
+
+            if (flag) {
+                Sys.openURL("file://" + s);
+            }
             System.exit(-1);
         }
         else
@@ -866,18 +955,19 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             final CloseGUIEvent closeGUIEvent = new CloseGUIEvent(this.currentScreen);
             closeGUIEvent.call();
             this.currentScreen.onGuiClosed();
+            GLFW.glfwSetCursor(Display.getWindow(), MemoryUtil.NULL);
         }
 
         if (guiScreenIn == null && this.theWorld == null)
         {
-            guiScreenIn = new GuiMainMenu();
+            guiScreenIn = Transformer.transformMainMenu();
         }
         else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F)
         {
             guiScreenIn = new GuiGameOver();
         }
 
-        if (guiScreenIn instanceof GuiMainMenu)
+        if (guiScreenIn instanceof GuiMainMenu || guiScreenIn instanceof CuriosityMainMenu)
         {
             this.gameSettings.showDebugInfo = false;
             this.ingameGUI.getChatGUI().clearChatMessages();
@@ -919,7 +1009,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void shutdownMinecraftApplet()
     {
-        StarX.INSTANCE.stop();
+        StarX.stop();
         try
         {
             this.stream.shutdownStream();
@@ -927,7 +1017,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             try
             {
-                this.loadWorld((WorldClient)null);
+                this.loadWorld(null);
             }
             catch (Throwable var5)
             {
@@ -1053,9 +1143,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         Thread.yield();
         this.mcProfiler.startSection("stream");
         this.mcProfiler.startSection("update");
-        this.stream.func_152935_j();
+    //    this.stream.func_152935_j();
         this.mcProfiler.endStartSection("submit");
-        this.stream.func_152922_k();
+    //    this.stream.func_152922_k();
         this.mcProfiler.endSection();
         this.mcProfiler.endSection();
         this.checkGLError("Post render");
@@ -1126,7 +1216,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public int getLimitFramerate()
     {
-        return this.theWorld == null && this.currentScreen != null ? 90 : this.gameSettings.limitFramerate;
+        return this.theWorld == null && this.currentScreen != null ? Display.getDisplayMode().getFrequency() : this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax()
@@ -1165,11 +1255,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         if (list != null && !list.isEmpty())
         {
-            Profiler.Result profiler$result = (Profiler.Result)list.remove(0);
+            Profiler.Result profiler$result = list.remove(0);
 
             if (keyCount == 0)
             {
-                if (profiler$result.field_76331_c.length() > 0)
+                if (!profiler$result.field_76331_c.isEmpty())
                 {
                     int i = this.debugProfilerName.lastIndexOf(".");
 
@@ -1308,7 +1398,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void shutdown()
     {
-        StarX.INSTANCE.stop();
+        StarX.stop();
         this.running = false;
     }
 
@@ -2133,11 +2223,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();
+
+        if (StarX.entityCullingMod != null) StarX.entityCullingMod.doClientTick();
     }
 
     public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn)
     {
-        this.loadWorld((WorldClient)null);
+        this.loadWorld(null);
         System.gc();
         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
@@ -2209,6 +2301,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void loadWorld(WorldClient worldClientIn, String loadingMessage)
     {
+        if (worldClientIn != this.theWorld) {
+            this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
+        }
         final WorldEvent e = new WorldEvent(worldClientIn);
         e.call();
 

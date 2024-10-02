@@ -1,5 +1,7 @@
 package net.minecraft.world;
 
+import cn.stars.addons.optimization.normal.FixedEntityLookHelper;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -25,6 +27,10 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -1012,6 +1018,43 @@ public abstract class World implements IBlockAccess
 
     public boolean spawnEntityInWorld(Entity entityIn)
     {
+        if (entityIn instanceof EntityLiving)
+        {
+            EntityLiving living = (EntityLiving) entityIn;
+            if (ModuleInstance.getBool("Optimization", "AI Improvements - Look AI").isEnabled() || ModuleInstance.getBool("Optimization", "AI Improvements - Look Idle").isEnabled())
+            {
+                Iterator<EntityAITasks.EntityAITaskEntry> it = living.tasks.taskEntries.iterator();
+                while (it.hasNext())
+                {
+                    EntityAITasks.EntityAITaskEntry obj = it.next();
+                    if (obj != null)
+                    {
+                        if (ModuleInstance.getBool("Optimization", "AI Improvements - Look AI").isEnabled() && obj.action instanceof EntityAIWatchClosest)
+                        {
+                            it.remove();
+                        }
+                        else if (ModuleInstance.getBool("Optimization", "AI Improvements - Look Idle").isEnabled() && obj.action instanceof EntityAILookIdle)
+                        {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+
+            //Only replace vanilla look helper to avoid overlapping mods
+            if (ModuleInstance.getBool("Optimization", "AI Improvements - Look Helper").isEnabled() && (living.getLookHelper() == null || living.getLookHelper().getClass() == EntityLookHelper.class))
+            {
+                EntityLookHelper oldHelper = living.lookHelper;
+                living.lookHelper = new FixedEntityLookHelper(living);
+
+                //Not sure if needed but updating just in case
+                living.lookHelper.posX = oldHelper.posX;
+                living.lookHelper.isLooking = oldHelper.isLooking;
+                living.lookHelper.deltaLookPitch = oldHelper.deltaLookPitch;
+                living.lookHelper.deltaLookYaw = oldHelper.deltaLookYaw;
+            }
+        }
+
         int i = MathHelper.floor_double(entityIn.posX / 16.0D);
         int j = MathHelper.floor_double(entityIn.posZ / 16.0D);
         boolean flag = entityIn.forceSpawn;
@@ -3482,10 +3525,6 @@ public abstract class World implements IBlockAccess
 
     public boolean isSpawnChunk(int x, int z)
     {
-        BlockPos blockpos = this.getSpawnPoint();
-        int i = x * 16 + 8 - blockpos.getX();
-        int j = z * 16 + 8 - blockpos.getZ();
-        int k = 128;
-        return i >= -k && i <= k && j >= -k && j <= k;
+        return false;
     }
 }

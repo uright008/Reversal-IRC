@@ -1,6 +1,5 @@
 package cn.stars.starx.util.render;
 
-import cn.stars.starx.event.impl.BlurEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

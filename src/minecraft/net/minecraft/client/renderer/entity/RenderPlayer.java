@@ -21,6 +21,7 @@ import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> implements PlayerEntityModelAccessor
 {

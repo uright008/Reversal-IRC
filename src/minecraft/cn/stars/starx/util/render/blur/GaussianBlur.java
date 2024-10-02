@@ -1,8 +1,8 @@
 package cn.stars.starx.util.render.blur;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.render.ShaderUtil;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.ShaderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.BufferUtils;
@@ -12,7 +12,6 @@ import org.lwjgl.opengl.EXTPackedDepthStencil;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glColorMask;
 import static org.lwjgl.opengl.GL20.glUniform1;
 
 /**

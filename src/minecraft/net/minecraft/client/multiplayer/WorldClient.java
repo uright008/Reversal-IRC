@@ -393,18 +393,14 @@ public class WorldClient extends World
         this.playSound((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, soundName, volume, pitch, distanceDelay);
     }
 
-    public void playSound(double x, double y, double z, String soundName, float volume, float pitch, boolean distanceDelay)
-    {
-        double d0 = this.mc.getRenderViewEntity().getDistanceSq(x, y, z);
-        PositionedSoundRecord positionedsoundrecord = new PositionedSoundRecord(new ResourceLocation(soundName), volume, pitch, (float)x, (float)y, (float)z);
+    public void playSound(final double x, final double y, final double z, final String soundName, final float volume, final float pitch, final boolean distanceDelay) {
+        final double d0 = this.mc.getRenderViewEntity().getDistanceSq(x, y, z);
+        final PositionedSoundRecord positionedsoundrecord = new PositionedSoundRecord(new ResourceLocation(soundName), volume, pitch, (float) x, (float) y, (float) z);
 
-        if (distanceDelay && d0 > 100.0D)
-        {
-            double d1 = Math.sqrt(d0) / 40.0D;
-            this.mc.getSoundHandler().playDelayedSound(positionedsoundrecord, (int)(d1 * 20.0D));
-        }
-        else
-        {
+        if (distanceDelay && d0 > 100.0D) {
+            final double d1 = Math.sqrt(d0) / 40.0D;
+            this.mc.getSoundHandler().playDelayedSound(positionedsoundrecord, (int) (d1 * 20.0D));
+        } else {
             this.mc.getSoundHandler().playSound(positionedsoundrecord);
         }
     }

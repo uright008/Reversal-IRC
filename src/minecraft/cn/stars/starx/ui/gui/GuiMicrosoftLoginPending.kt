@@ -5,15 +5,14 @@ import cn.stars.elixir.account.MinecraftAccount
 import cn.stars.elixir.compat.OAuthServer
 import cn.stars.starx.GameInstance
 import cn.stars.starx.font.CustomFont
+import cn.stars.starx.ui.curiosity.CuriosityTextButton
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton
 import cn.stars.starx.util.StarXLogger
 import cn.stars.starx.util.math.TimeUtil
 import cn.stars.starx.util.shader.RiseShaders
 import cn.stars.starx.util.shader.base.ShaderRenderType
-import cn.stars.starx.util.shader.impl.BackgroundShader
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.GuiSelectWorld
 import net.minecraft.util.Session
 import java.awt.Color
 import java.awt.Desktop
@@ -26,27 +25,18 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
     val timer = TimeUtil()
     private var stage = "Initializing..."
     private lateinit var server: OAuthServer
-    private var cancelButton : MenuTextButton? = null
-    private var retryButton : MenuTextButton? = null
+    private var cancelButton : CuriosityTextButton? = null
     private var isError = false;
 
     override fun initGui() {
         GameInstance.clearRunnables()
         cancelButton =
-            MenuTextButton(width / 2 - 30.0, height / 2 + 20.0, 60.0, 30.0,
+            CuriosityTextButton(width / 2 - 40.0, height / 2 + 100.0, 80.0, 30.0,
                 {
                     server.stop(true)
                     mc.displayGuiScreen(prevGui);
 
-                }, "取消", "O", true, 7, 10)
-        retryButton =
-            MenuTextButton(width / 2 - 30.0, height / 2 + 55.0, 60.0, 30.0,
-                {
-                    isError = false
-                    server.stop(true)
-                    server.start()
-
-                }, "重试 ", "g", true, 7, 10)
+                }, "取消", "g", true, 6, 35, 9)
         server = MicrosoftAccount.buildFromOpenBrowser(object : MicrosoftAccount.OAuthHandler {
             override fun openUrl(url: String) {
                 stage = "Check your browser to continue..."
@@ -92,7 +82,6 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
         GameInstance.clearRunnables()
 
         cancelButton!!.draw(mouseX, mouseY, partialTicks)
-        if (isError) retryButton!!.draw(mouseX, mouseY, partialTicks)
 
         CustomFont.FONT_MANAGER.getFont("PSB 24").drawCenteredString(stage, width / 2f, height / 2f - 50, Color.WHITE.rgb)
         CustomFont.FONT_MANAGER.getFont("PSB 36").drawCenteredString("### Microsoft Login Process ###", width / 2f, 70f, Color.WHITE.rgb)
@@ -113,10 +102,6 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
             if (isHovered(cancelButton!!.x, cancelButton!!.y, cancelButton!!.width, cancelButton!!.height, mouseX, mouseY)) {
                 mc.soundHandler.playButtonPress()
                 cancelButton!!.runAction()
-            }
-            if (isHovered(retryButton!!.x, retryButton!!.y, retryButton!!.width, retryButton!!.height, mouseX, mouseY)) {
-                mc.soundHandler.playButtonPress()
-                retryButton!!.runAction()
             }
         }
     }

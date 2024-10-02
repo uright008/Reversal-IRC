@@ -7,9 +7,11 @@ package cn.stars.addons.mobends.data;
 import cn.stars.addons.mobends.client.model.ModelRendererBends;
 import cn.stars.addons.mobends.client.model.entity.ModelBendsSpider;
 import cn.stars.addons.mobends.util.SmoothVector3f;
-import net.minecraft.client.model.*;
-import net.minecraft.client.*;
-import java.util.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Data_Spider extends EntityData
 {

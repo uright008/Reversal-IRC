@@ -1,9 +1,13 @@
 package cn.stars.starx.util.misc;
 
+import cn.stars.starx.StarX;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
+import org.apache.commons.io.IOUtils;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
  * Utilities for accessing and using files in the Rise directory.
@@ -11,6 +15,7 @@ import java.io.*;
  * @author Strikeless
  * @since 08/06/2021
  */
+@NativeObfuscation
 @UtilityClass
 public class FileUtil {
 
@@ -18,7 +23,7 @@ public class FileUtil {
 
     private final String SEPARATOR = File.separator;
 
-    private final String RISE_PATH = mc.mcDataDir.getAbsolutePath() + SEPARATOR + "StarX" + SEPARATOR;
+    private final String STARX_PATH = mc.mcDataDir.getAbsolutePath() + SEPARATOR + "StarX" + SEPARATOR;
 
     public boolean exists(final String fileName) {
         return getFileOrPath(fileName).exists();
@@ -34,7 +39,13 @@ public class FileUtil {
      * @return whether or not the Rise directory exists.
      */
     public boolean coreDirectoryExists() {
-        return new File(RISE_PATH).exists();
+        return new File(STARX_PATH).exists();
+    }
+
+    public static void unpackFile(File file, String name) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        IOUtils.copy(Objects.requireNonNull(StarX.class.getClassLoader().getResourceAsStream(name)), fos);
+        fos.close();
     }
 
     /**
@@ -108,7 +119,7 @@ public class FileUtil {
      * Creates the Rise directory if absent.
      */
     public void createCoreDirectory() {
-        new File(RISE_PATH).mkdirs();
+        new File(STARX_PATH).mkdirs();
     }
 
     public void createDirectory(final String directoryName) {
@@ -139,7 +150,7 @@ public class FileUtil {
      * @return the file. duh.
      */
     public File getFileOrPath(final String fileName) {
-        return new File(RISE_PATH + fileName.replace("\\", SEPARATOR));
+        return new File(STARX_PATH + fileName.replace("\\", SEPARATOR));
     }
 
     /**

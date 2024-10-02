@@ -1,6 +1,5 @@
 package cn.stars.starx.ui.gui;
 
-import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.font.TTFFontRenderer;
@@ -13,23 +12,22 @@ import net.minecraft.client.gui.GuiScreen;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class GuiEditHUD extends GuiScreen {
     TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
     @Override
     public void initGui() {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+        for(Module m : StarX.moduleManager.moduleList) {
             m.setDragging(false);
         }
     }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+        for(Module m : StarX.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
                 m.editOpacityAnimation.setAnimation(isInside ?  255 : 0, 12);
 
                 RoundedUtils.drawRoundOutline(m.getX() - 4, m.getY() - 4, (m.getWidth()) + 8, (m.getHeight()) + 8, 6, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()));
@@ -56,11 +54,11 @@ public class GuiEditHUD extends GuiScreen {
     @Override
     public void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
 
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList) {
+        for(Module m : StarX.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.INSTANCE.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
 
                 if(isInside) {
                     m.setDragging(true);
@@ -73,14 +71,14 @@ public class GuiEditHUD extends GuiScreen {
 
     @Override
     public void mouseReleased(int mouseX, int mouseY, int state) {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+        for(Module m : StarX.moduleManager.moduleList){
             m.setDragging(false);
         }
     }
 
     @Override
     public void onGuiClosed() {
-        for(Module m : StarX.INSTANCE.moduleManager.moduleList){
+        for(Module m : StarX.moduleManager.moduleList){
             m.setDragging(false);
         }
     }

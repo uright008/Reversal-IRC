@@ -1,6 +1,7 @@
 package cn.stars.starx.util.world;
 
 import cn.stars.starx.GameInstance;
+import com.logisticscraft.occlusionculling.util.Vec3d;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,5 +24,12 @@ public final class BlockUtil implements GameInstance {
 
     public static IBlockState getState(BlockPos blockPos) {
         return mc.theWorld.getBlockState(blockPos);
+    }
+
+    public static Vec3d interpolatePos(float prevposX, float prevposY, float prevposZ, float posX, float posY, float posZ) {
+        double x = prevposX + ((posX - prevposX) * mc.timer.renderPartialTicks) - mc.getRenderViewEntity().getPositionVector().xCoord;
+        double y = prevposY + ((posY - prevposY) * mc.timer.renderPartialTicks) - mc.getRenderViewEntity().getPositionVector().yCoord;
+        double z = prevposZ + ((posZ - prevposZ) * mc.timer.renderPartialTicks) - mc.getRenderViewEntity().getPositionVector().zCoord;
+        return new Vec3d(x, y, z);
     }
 }

@@ -1,6 +1,5 @@
 package cn.stars.starx.util.animation.rise;
 
-import cn.stars.starx.StarX;
 import lombok.Getter;
 import lombok.Setter;
 

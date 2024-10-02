@@ -1,8 +1,10 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.misc.VideoUtils;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.stream.GuiTwitchUserMode;
+import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -55,6 +58,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import tv.twitch.chat.ChatUserInfo;
 
+import static cn.stars.starx.GameInstance.*;
+
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -68,25 +73,25 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     protected List<GuiLabel> labelList = Lists.<GuiLabel>newArrayList();
     public boolean allowUserInput;
     protected FontRenderer fontRendererObj;
-    private GuiButton selectedButton;
+    public GuiButton selectedButton;
     private int eventButton;
     private long lastMouseEvent;
     private int touchValue;
     private URI clickedLinkURI;
     public float screenPartialTicks;
-    ShaderToy mario;
-    ShaderToy redround;
-    ShaderToy water;
-    ShaderToy blackhole;
-    ShaderToy octagrams;
-    ShaderToy tokyo;
-    boolean isShaderToyInitialized = false;
+    public static ShaderToy mario;
+    public static ShaderToy redround;
+    public static ShaderToy water;
+    public static ShaderToy blackhole;
+    public static ShaderToy octagrams;
+    public static ShaderToy tokyo;
+    public static  ShaderToy curiosity;
+    public static boolean isShaderToyInitialized = false;
 
     public GuiScreen() {
-        initializeShaderToy();
     }
 
-    public void initializeShaderToy() {
+    public static void initializeShaderToy() {
         if (!isShaderToyInitialized) {
             try {
                 mario = new ShaderToy("mario.fsh");
@@ -95,8 +100,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 blackhole = new ShaderToy("blackhole.fsh");
                 octagrams = new ShaderToy("octagrams.fsh");
                 tokyo = new ShaderToy("tokyo.fsh");
+                curiosity = new ShaderToy("curiosity.fsh");
                 isShaderToyInitialized = true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -616,16 +622,11 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         {
             this.drawGradientRect(0, 0, this.width, this.height, -1072689136, -804253680);
         }
-        else
-        {
-            if (ModuleInstance.getBool("SpecialGuis", "Shader In All Guis").isEnabled()) {
-                try {
-                    drawMenuBackground(screenPartialTicks, this.width, this.height);
-                } catch (Exception e) {
-                    StarXLogger.error("(GuiScreen) Error while loading background");
-                }
-            } else {
-                drawBackground(tint);
+        else {
+            try {
+                drawMenuBackground(screenPartialTicks, this.width, this.height);
+            } catch (Exception e) {
+                StarXLogger.error("(GuiScreen) Error while loading background");
             }
         }
     }
@@ -764,14 +765,14 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
-        if (StarX.backgroundId == 8) {
-            RenderUtil.image(new ResourceLocation("starx/images/background8.png"), 0, 0, this.width, this.height);
-            return;
-        } else if (StarX.backgroundId == 9) {
+        if (StarX.backgroundId > 9 || StarX.backgroundId < 0) StarX.backgroundId = 9;
+        if (StarX.backgroundId == 9) {
+            VideoUtils.render(0, 0, width, height);
             return;
         }
         if (StarX.isAMDShaderCompatibility) {
-            drawBackground(0);
+            StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
+            StarX.backgroundId = 9;
             return;
         }
         if (StarX.backgroundId == 0) {
@@ -801,6 +802,45 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             useShaderToyBackground(octagrams, 2);
         } else if (StarX.backgroundId == 7) {
             useShaderToyBackground(tokyo, 2);
+        } else if (StarX.backgroundId == 8) {
+            useShaderToyBackground(curiosity, 2, 0, 0);
+        }
+    }
+
+    public void changeMenuBackground(boolean previous) {
+        RenderUtil.initTime = System.currentTimeMillis();
+        BackgroundShader.BACKGROUND_SHADER.stopShader();
+        RiseShaders.MAIN_MENU_SHADER.setActive(false);
+        GL20.glUseProgram(0);
+        if (StarX.isAMDShaderCompatibility) {
+            StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
+            StarX.backgroundId = 9;
+            return;
+        }
+        if (!previous) {
+            if (StarX.backgroundId < 9) StarX.backgroundId++;
+            else StarX.backgroundId = 0;
+        } else {
+            if (StarX.backgroundId > 0) StarX.backgroundId--;
+            else StarX.backgroundId = 9;
+        }
+        StarXLogger.info("(GuiMainMenuNew) Current background id: " + StarX.backgroundId);
+    }
+
+    public void updatePostProcessing(boolean pre, float partialTicks) {
+        if (pre) {
+            // blur
+            RiseShaders.GAUSSIAN_BLUR_SHADER.update();
+            RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+
+            // bloom
+            RiseShaders.POST_BLOOM_SHADER.update();
+            RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+
+            GameInstance.clearRunnables();
+        } else {
+            UI_BLOOM_RUNNABLES.forEach(Runnable::run);
+            UI_BLOOM_RUNNABLES.clear();
         }
     }
 }

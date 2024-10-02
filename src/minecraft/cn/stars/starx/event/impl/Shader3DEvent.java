@@ -7,4 +7,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public final class Shader3DEvent extends Event {
+    boolean isBloom;
 }

@@ -43,8 +43,8 @@ import net.optifine.util.StrUtils;
 
 public class CustomItems
 {
-    private static CustomItemProperties[][] itemProperties = (CustomItemProperties[][])null;
-    private static CustomItemProperties[][] enchantmentProperties = (CustomItemProperties[][])null;
+    private static CustomItemProperties[][] itemProperties = null;
+    private static CustomItemProperties[][] enchantmentProperties = null;
     private static Map mapPotionIds = null;
     private static ItemModelGenerator itemModelGenerator = new ItemModelGenerator();
     private static boolean useGlint = true;
@@ -65,8 +65,8 @@ public class CustomItems
 
     public static void update()
     {
-        itemProperties = (CustomItemProperties[][])null;
-        enchantmentProperties = (CustomItemProperties[][])null;
+        itemProperties = null;
+        enchantmentProperties = null;
         useGlint = true;
 
         if (Config.isCustomItems())
@@ -82,14 +82,14 @@ public class CustomItems
 
             update(Config.getDefaultResourcePack());
 
-            if (itemProperties.length <= 0)
+            if (itemProperties.length == 0)
             {
-                itemProperties = (CustomItemProperties[][])null;
+                itemProperties = null;
             }
 
-            if (enchantmentProperties.length <= 0)
+            if (enchantmentProperties.length == 0)
             {
-                enchantmentProperties = (CustomItemProperties[][])null;
+                enchantmentProperties = null;
             }
         }
     }
@@ -114,7 +114,6 @@ public class CustomItems
         }
         catch (FileNotFoundException var4)
         {
-            return;
         }
         catch (IOException ioexception)
         {

@@ -10,11 +10,13 @@ import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ResourceLocation;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
+@NativeObfuscation
 public class BreakoutGuiPauseMenu extends GuiScreen implements GuiYesNoCallback {
     ScaledResolution sr;
     int alpha = 0;
@@ -163,7 +165,7 @@ public class BreakoutGuiPauseMenu extends GuiScreen implements GuiYesNoCallback 
         }
         drawGradientSidewaysHPlus(65, 270, progress6, 30, new Color(100, 250, 200, 180).getRGB(), new Color(100, 250, 200, 20).getRGB());
         CustomFont.drawStringBig("Quit", 72, 275, new Color(230,230,230,70 + alpha).getRGB());
-      //  StarX.INSTANCE.showMsg("X:"+ mouseX + ",Y:"+ mouseY);
+      //  StarX.showMsg("X:"+ mouseX + ",Y:"+ mouseY);
     }
 
     @Override

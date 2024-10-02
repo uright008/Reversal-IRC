@@ -512,55 +512,14 @@ public class Chunk
 
     public IBlockState getBlockState(final BlockPos pos)
     {
-        if (this.worldObj.getWorldType() == WorldType.DEBUG_WORLD)
-        {
-            IBlockState iblockstate = null;
+        final int y = pos.getY();
 
-            if (pos.getY() == 60)
-            {
-                iblockstate = Blocks.barrier.getDefaultState();
-            }
-
-            if (pos.getY() == 70)
-            {
-                iblockstate = ChunkProviderDebug.func_177461_b(pos.getX(), pos.getZ());
-            }
-
-            return iblockstate == null ? Blocks.air.getDefaultState() : iblockstate;
+        if (y >= 0 && y >> 4 < this.getBlockStorageArray().length) {
+            final ExtendedBlockStorage storage = this.getBlockStorageArray()[y >> 4];
+            if (storage != null) return storage.get(pos.getX() & 15, y & 15, pos.getZ() & 15);
         }
-        else
-        {
-            try
-            {
-                if (pos.getY() >= 0 && pos.getY() >> 4 < this.storageArrays.length)
-                {
-                    ExtendedBlockStorage extendedblockstorage = this.storageArrays[pos.getY() >> 4];
 
-                    if (extendedblockstorage != null)
-                    {
-                        int j = pos.getX() & 15;
-                        int k = pos.getY() & 15;
-                        int i = pos.getZ() & 15;
-                        return extendedblockstorage.get(j, k, i);
-                    }
-                }
-
-                return Blocks.air.getDefaultState();
-            }
-            catch (Throwable throwable)
-            {
-                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting block state");
-                CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being got");
-                crashreportcategory.addCrashSectionCallable("Location", new Callable<String>()
-                {
-                    public String call() throws Exception
-                    {
-                        return CrashReportCategory.getCoordinateInfo(pos);
-                    }
-                });
-                throw new ReportedException(crashreport);
-            }
-        }
+        return Blocks.air.getDefaultState();
     }
 
     private int getBlockMetadata(int x, int y, int z)

@@ -22,7 +22,7 @@ import net.minecraft.util.Vec3;
 
 import java.util.List;
 
-@ModuleInfo(name = "Particles", description = "Renders colorful balls when you attack someone",
+@ModuleInfo(name = "Particles", chineseName = "粒子", description = "Renders colorful balls when you attack someone",
         chineseDescription = "在你攻击时生成弹射的彩色小球", category = Category.RENDER)
 public final class Particles extends Module {
 

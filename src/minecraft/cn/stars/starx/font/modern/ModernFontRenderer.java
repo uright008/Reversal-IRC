@@ -1,19 +1,22 @@
 package cn.stars.starx.font.modern;
 
-import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.Transformer;
 import cn.stars.starx.util.render.ColorUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.src.Config;
 import net.minecraft.util.MathHelper;
+import net.optifine.CustomColors;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 /**
  * @author Patrick, Hazsi
@@ -49,7 +52,7 @@ public class ModernFontRenderer extends MFont {
         this.fillCharacters(this.defaultCharacters, java.awt.Font.PLAIN);
         this.fillCharacters(this.boldCharacters, java.awt.Font.BOLD);
         this.international = international;
-
+        calculateColorCodes();
     //    if (this.international) {
     //        this.fillCharacters(this.internationalCharacters, java.awt.Font.PLAIN);
     //    }
@@ -113,8 +116,8 @@ public class ModernFontRenderer extends MFont {
             // Draw the character. This is cached into an OpenGL texture so that this process doesn't need to
             // be repeated on every frame that the character is later rendered on.
 
-            final BufferedImage charImage = new BufferedImage(MathHelper.ceiling_float_int(
-                    (float) charRectangle.getWidth() + 8.0f), MathHelper.ceiling_float_int(
+            final BufferedImage charImage = new BufferedImage(MathHelper.ceiling_double_int(
+                    (float) charRectangle.getWidth() + 8.0f), MathHelper.ceiling_double_int(
                     (float) charRectangle.getHeight()), BufferedImage.TYPE_INT_ARGB);
 
             final Graphics2D charGraphics = (Graphics2D) charImage.getGraphics();
@@ -150,8 +153,8 @@ public class ModernFontRenderer extends MFont {
         // Draw the character. This is cached into an OpenGL texture so that this process doesn't need to
         // be repeated on every frame that the character is later rendered on.
 
-        final BufferedImage charImage = new BufferedImage(MathHelper.ceiling_float_int(
-                (float) charRectangle.getWidth() + 8.0f), MathHelper.ceiling_float_int(
+        final BufferedImage charImage = new BufferedImage(MathHelper.ceiling_double_int(
+                (float) charRectangle.getWidth() + 8.0f), MathHelper.ceiling_double_int(
                 (float) charRectangle.getHeight()), BufferedImage.TYPE_INT_ARGB);
 
         final Graphics2D charGraphics = (Graphics2D) charImage.getGraphics();
@@ -163,7 +166,7 @@ public class ModernFontRenderer extends MFont {
         charGraphics.setColor(TRANSPARENT_COLOR);
         charGraphics.fillRect(0, 0, width, height);
         setRenderHints(charGraphics);
-        // Use getAscent() instead of getSize(), to fix the bottom of the character not displaying
+        // Use getAscent() instead of font.getSize(), to fix the bottom of the character not displaying
         charGraphics.drawString(String.valueOf(character), MARGIN_WIDTH, fontMetrics.getAscent());
 
         // Generate a new OpenGL texture, and pass it along to uploadTexture() with the image of the character so
@@ -204,40 +207,112 @@ public class ModernFontRenderer extends MFont {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, byteBuffer);
     }
 
-    public int drawString(final String text, final double x, final double y, final int color) {
+    public String trimStringToWidth(String text, float width, boolean reverse, boolean more) {
+        if (text == null) {
+            return "";
+        } else {
+            StringBuilder builder = new StringBuilder();
+            int startIndex = reverse ? text.length() - 1 : 0;
+            int step = reverse ? -1 : 1;
+
+            String nextChar = "";
+            for (int i = startIndex; i <= text.length() - 1 && i >= 0 && getStringWidth(builder + nextChar) <= width; i += step) {
+                builder.append(text.charAt(i));
+                nextChar = reverse ? (i == 0 ? "" : String.valueOf(text.charAt(i + step))) : (i == text.length() - 1 ? "" : String.valueOf(text.charAt(i + step)));
+            }
+
+            if (reverse) builder.reverse();
+            String result = builder.toString();
+            if (more && !text.equals(result)) {
+                result = reverse? "..." + result : result + "...";
+            }
+            return result;
+        }
+    }
+
+    public String autoReturn(String text, float returnWidth, int maxReturns) {
+        if (text == null || returnWidth <= 0 || maxReturns < -1) {
+            throw new IllegalArgumentException("Invalid arguments");
+        }
+
+        text = trimStringToWidth(text, returnWidth * maxReturns - getWidth(" ..."), false, true);
+
+        StringBuilder result = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        int currentReturns = 0;
+
+        for (char c : text.toCharArray()) {
+            line.append(c);
+            if (getWidth(line.toString()) > returnWidth) {
+                if (maxReturns != -1 && currentReturns >= maxReturns) {
+                    break;
+                } else {
+                    // 换行
+                    result.append(line.substring(0, line.length() - 1)).append("\n");
+                    line = new StringBuilder().append(c); // 重新开始新的一行
+                    currentReturns++;
+                }
+            }
+        }
+
+        // 添加最后一行（如果有的话）
+        result.append(line);
+
+        return result.toString();
+    }
+
+    public int autoReturnCount(String text, float returnWidth, int maxReturns) {
+        if (text == null || returnWidth <= 0 || maxReturns < -1) {
+            throw new IllegalArgumentException("Invalid arguments");
+        }
+
+        text = trimStringToWidth(text, returnWidth * maxReturns - getWidth(" ..."), false, true);
+
+        StringBuilder result = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        int currentReturns = 0;
+
+        for (char c : text.toCharArray()) {
+            line.append(c);
+            if (getWidth(line.toString()) > returnWidth) {
+                if (maxReturns != -1 && currentReturns >= maxReturns) {
+                    break;
+                } else {
+                    // 换行
+                    result.append(line.substring(0, line.length() - 1)).append("\n");
+                    line = new StringBuilder().append(c); // 重新开始新的一行
+                    currentReturns++;
+                }
+            }
+        }
+        // 添加最后一行（如果有的话）
+        result.append(line);
+
+        return 1 + currentReturns;
+    }
+
+    public float drawString(final String text, final double x, final double y, final int color) {
         return drawString(text, x, y, color, false);
     }
 
-    public int drawCenteredString(final String text, final double x, final double y, final int color) {
-        return drawString(text, x - (width(text) >> 1), y, color, false); // whoever bitshifted this instead of diving by 2 is a fucking nerd and virgin
+    public float drawCenteredString(final String text, final double x, final double y, final int color) {
+        return drawString(text, x - width(text) / 2f, y, color, false); // whoever bitshifted this instead of diving by 2 is a fucking nerd and virgin
     }
 
-    public int drawRightString(String text, double x, double y, int color) {
+    public float drawRightString(String text, double x, double y, int color) {
         return drawString(text, x - (width(text)), y, color, false);
     }
 
-    public int drawStringWithShadow(final String text, final double x, final double y, final int color) {
+    public float drawStringWithShadow(final String text, final double x, final double y, final int color) {
         drawString(text, x + 0.25, y + 0.25, color, true);
         return drawString(text, x, y, color, false);
     }
 
-    public void drawCenteredStringWithShadow(final String text, final float x, final float y, final int color) {
-        drawString(text, x - (width(text) >> 1) + 0.25, y + 0.25, new Color(color, true).getRGB(), true);
-        drawString(text, x - (width(text) >> 1), y, color, false);
-    }
-
-    public int drawString(String text, double x, double y, final int color, final boolean shadow) {
+    public float drawString(String text, double x, double y, int color, final boolean shadow) {
+        if (text.contains(Minecraft.getMinecraft().session.getUsername())) text = Transformer.passStringWithCustomName(text).replaceAll("§.", "");
 
         if (!this.international && this.requiresInternationalFont(text)) {
             return FontManager.getRegular(this.font.getSize() - 1).drawString(text, x, y, color);
-        }
-
-        if (this.international) {
-            for (int i = 0; i < text.length(); i++) {
-                final char character = text.charAt(i);
-                if (internationalCharacters[character] == null)
-                    fillCharacters(character, java.awt.Font.PLAIN);
-            }
         }
 
         final FontCharacter[] characterSet = this.international ? internationalCharacters : defaultCharacters;
@@ -264,6 +339,58 @@ public class ModernFontRenderer extends MFont {
         for (int i = 0; i < length; ++i) {
             final char character = text.charAt(i);
 
+            if ((character == 167) && i + 1 < text.length())
+            {
+                int l = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
+
+                if (l < 16)
+                {
+                    if (l < 0)
+                    {
+                        l = 15;
+                    }
+
+                    if (shadow)
+                    {
+                        l += 16;
+                    }
+
+                    int i1 = this.COLOR_CODES[l];
+
+                    if (Config.isCustomColors())
+                    {
+                        i1 = CustomColors.getTextColor(l, i1);
+                    }
+
+                    GlStateManager.color((float)(i1 >> 16) / 255.0F, (float)(i1 >> 8 & 255) / 255.0F, (float)(i1 & 255) / 255.0F, 1f);
+                }
+                else if (l == 16)
+                {
+                }
+                else if (l == 17)
+                {
+                }
+                else if (l == 18)
+                {
+                }
+                else if (l == 19)
+                {
+                }
+                else if (l == 20)
+                {
+                }
+                else if (l == 21)
+                {
+                    GlStateManager.color((float)(color >> 16) / 255.0F, (float)(color >> 8 & 255) / 255.0F, (float)(color & 255) / 255.0F, 1f);
+                }
+
+                ++i;
+            } else {
+
+            if (this.international) {
+                if (internationalCharacters[character] == null) fillCharacters(character, java.awt.Font.PLAIN);
+            }
+
             try {
                 if (character == '\n') {
                     x = startX;
@@ -277,7 +404,7 @@ public class ModernFontRenderer extends MFont {
             } catch (Exception exception) {
                 System.out.println("Character \"" + character + "\" was out of bounds " +
                         "(" + ((int) character) + " out of bounds for " + characterSet.length + ")");
-                exception.printStackTrace();
+            }
             }
         }
 
@@ -290,26 +417,24 @@ public class ModernFontRenderer extends MFont {
         return (int) (x - givenX);
     }
 
-    public int width(String text) {
+    public float width(String text) {
+        if (text.contains(Minecraft.getMinecraft().session.getUsername())) text = Transformer.passStringWithCustomName(text).replaceAll("§.", "");;
+
         if (!this.international && this.requiresInternationalFont(text)) {
             return FontManager.getRegular(this.font.getSize()).width(text);
         }
 
-        if (this.international) {
-            for (int i = 0; i < text.length(); i++) {
-                final char character = text.charAt(i);
-                if (internationalCharacters[character] == null)
-                    fillCharacters(character, java.awt.Font.PLAIN);
-            }
-        }
-
         final FontCharacter[] characterSet = this.international ? internationalCharacters : defaultCharacters;
         final int length = text.length();
-        char previousCharacter = '.';
-        int width = 0;
+        float width = 0;
 
         for (int i = 0; i < length; ++i) {
             final char character = text.charAt(i);
+
+            if (this.international) {
+                if (internationalCharacters[character] == null)
+                    fillCharacters(character, java.awt.Font.PLAIN);
+            }
 //            if (previousCharacter != COLOR_INVOKER) {
 //                if (character == COLOR_INVOKER) {
 //                    final int index = COLOR_CODE_CHARACTERS.indexOf(text.toLowerCase().charAt(i + 1));
@@ -322,12 +447,10 @@ public class ModernFontRenderer extends MFont {
 //                    width += characterSet[character].getWidth() - MARGIN_WIDTH * 2;
 //                }
 //            }
-            width += characterSet[character].getWidth() - MARGIN_WIDTH * 2;
-
-            previousCharacter = character;
+            width += characterSet[character].getWidth() - MARGIN_WIDTH * 2f;
         }
 
-        return width / 2;
+        return width / 2f;
     }
 
     public float height() {

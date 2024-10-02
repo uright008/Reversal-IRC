@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-@ModuleInfo(name = "ChinaHat", description = "Gives you a chinese hat",
+@ModuleInfo(name = "ChinaHat", chineseName = "中国帽", description = "Gives you a chinese hat",
         chineseDescription = "在你的头顶渲染一顶帽子", category = Category.RENDER)
 public class ChinaHat extends Module {
 

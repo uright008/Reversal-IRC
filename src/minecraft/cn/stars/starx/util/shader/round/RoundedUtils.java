@@ -1,12 +1,11 @@
 package cn.stars.starx.util.shader.round;
 
-import java.awt.Color;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
 
 import static net.minecraft.client.renderer.GlStateManager.resetColor;
 

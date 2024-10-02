@@ -1,26 +1,19 @@
 package net.minecraft.client.renderer;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Render3DEvent;
-import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.impl.addons.FreeLook;
-import cn.stars.starx.module.impl.addons.PostProcessing;
-import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.module.impl.misc.Protocol;
+import cn.stars.starx.module.impl.render.HurtCam;
 import cn.stars.starx.module.impl.world.TimeTraveller;
-import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.wrapper.WrapperFreeLook;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 
 import java.awt.*;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -32,7 +25,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiDownloadTerrain;
-import cn.stars.starx.ui.gui.GuiMainMenu;
 import net.minecraft.client.gui.MapItemRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.EffectRenderer;
@@ -606,28 +598,43 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     private void hurtCameraEffect(float partialTicks)
     {
-        if (this.mc.getRenderViewEntity() instanceof EntityLivingBase)
-        {
-            EntityLivingBase entitylivingbase = (EntityLivingBase)this.mc.getRenderViewEntity();
-            float f = (float)entitylivingbase.hurtTime - partialTicks;
+        switch (ModuleInstance.getMode("HurtCam", "Mode").getMode()) {
+            case "Vanilla": {
+                if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
+                    EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
+                    float f = (float) entitylivingbase.hurtTime - partialTicks;
 
-            if (entitylivingbase.getHealth() <= 0.0F)
-            {
-                float f1 = (float)entitylivingbase.deathTime + partialTicks;
-                GlStateManager.rotate(40.0F - 8000.0F / (f1 + 200.0F), 0.0F, 0.0F, 1.0F);
+                    if (entitylivingbase.getHealth() <= 0.0F) {
+                        float f1 = (float) entitylivingbase.deathTime + partialTicks;
+                        GlStateManager.rotate(40.0F - 8000.0F / (f1 + 200.0F), 0.0F, 0.0F, 1.0F);
+                    }
+
+                    if (f < 0.0F) {
+                        return;
+                    }
+
+                    f = f / (float) entitylivingbase.maxHurtTime;
+                    f = MathHelper.sin(f * f * f * f * (float) Math.PI);
+                    float f2 = entitylivingbase.attackedAtYaw;
+                    GlStateManager.rotate(-f2, 0.0F, 1.0F, 0.0F);
+                    GlStateManager.rotate(-f * 14.0F, 0.0F, 0.0F, 1.0F);
+                    GlStateManager.rotate(f2, 0.0F, 1.0F, 0.0F);
+                }
+                break;
             }
+            case "FPS": {
+                if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
+                    EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
 
-            if (f < 0.0F)
-            {
-                return;
+                    float f = (float) entitylivingbase.hurtTime - partialTicks;
+                    if (f < 0.0F) {
+                        return;
+                    }
+
+                    HurtCam.hurt = System.currentTimeMillis();
+                }
+                break;
             }
-
-            f = f / (float)entitylivingbase.maxHurtTime;
-            f = MathHelper.sin(f * f * f * f * (float)Math.PI);
-            float f2 = entitylivingbase.attackedAtYaw;
-            GlStateManager.rotate(-f2, 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotate(-f * 14.0F, 0.0F, 0.0F, 1.0F);
-            GlStateManager.rotate(f2, 0.0F, 1.0F, 0.0F);
         }
     }
 
@@ -650,7 +657,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private void orientCamera(float partialTicks)
     {
         Entity entity = this.mc.getRenderViewEntity();
-        float f = entity.getEyeHeight();
+        float f = (ModuleInstance.getBool("Animations", "Old Sneak").isEnabled() && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight();
         double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double)partialTicks;
         double d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double)partialTicks + (double)f;
         double d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double)partialTicks;
@@ -1430,7 +1437,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
             GlStateManager.matrixMode(5888);
             GlStateManager.loadIdentity();
             this.orientCamera(partialTicks);
-            GlStateManager.translate(0.0F, entity.getEyeHeight(), 0.0F);
+            GlStateManager.translate(0.0F, (ModuleInstance.getBool("Animations", "Old Sneak").isEnabled() && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight(), 0.0F);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.005D, 1.0E-4D, 1.0E-4D), 255, 0, 0, 255);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 1.0E-4D, 0.005D), 0, 0, 255, 255);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 0.0033D, 1.0E-4D), 0, 255, 0, 255);
@@ -2639,11 +2646,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
         }
 
-        if (this.mc.currentScreen instanceof GuiMainMenu)
-        {
-            this.updateMainMenu((GuiMainMenu)this.mc.currentScreen);
-        }
-
         if (this.updatedWorld != world)
         {
             RandomEntities.worldChanged(this.updatedWorld, world);
@@ -2676,39 +2678,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 ChatComponentText chatcomponenttext = new ChatComponentText(I18n.format("of.message.openglError", new Object[] {Integer.valueOf(i), s}));
                 this.mc.ingameGUI.getChatGUI().printChatMessage(chatcomponenttext);
             }
-        }
-    }
-
-    private void updateMainMenu(GuiMainMenu p_updateMainMenu_1_)
-    {
-        try
-        {
-            String s = null;
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
-
-            if (i == 8 && j == 4)
-            {
-                s = "Happy birthday, OptiFine!";
-            }
-
-            if (i == 14 && j == 8)
-            {
-                s = "Happy birthday, sp614x!";
-            }
-
-            if (s == null)
-            {
-                return;
-            }
-
-            Reflector.setFieldValue(p_updateMainMenu_1_, Reflector.GuiMainMenu_splashText, s);
-        }
-        catch (Throwable var6)
-        {
-            ;
         }
     }
 

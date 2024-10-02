@@ -1,20 +1,14 @@
 package cn.stars.starx.ui.notification;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.StarX;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.font.modern.FontManager;
 import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;

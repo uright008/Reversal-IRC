@@ -1,6 +1,5 @@
 package cn.stars.starx.module;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.util.StarXLogger;
 import lombok.Getter;
@@ -123,11 +122,11 @@ public final class ModuleManager {
      * @return The setting.
      */
     public Setting getSetting(final String moduleName, final String settingName) {
-        if (getSettingName != null && getSettingSettingName != null && getSettingSetting != null) {
+    /*    if (getSettingName != null && getSettingSettingName != null && getSettingSetting != null) {
             if (getSettingName.equals(moduleName) && getSettingSettingName.equals(settingName)) {
                 return getSettingSetting;
             }
-        }
+        } */
 
         for (final Module m : moduleList) {
             if (m.getModuleInfo().name().equalsIgnoreCase(moduleName)) {

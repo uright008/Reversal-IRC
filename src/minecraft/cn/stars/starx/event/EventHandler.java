@@ -5,6 +5,7 @@ import cn.stars.starx.event.impl.*;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.ClickGUI;
+import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
 import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.hud.Hud;
@@ -14,6 +15,7 @@ import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 
@@ -24,7 +26,7 @@ public final class EventHandler {
     public static boolean canUpdateDeaths;
 
     public static void handle(final Event e) {
-        final Module[] modules = StarX.INSTANCE.getModuleManager().getModuleList();
+        final Module[] modules = StarX.moduleManager.getModuleList();
 
         if (e instanceof Render2DEvent) {
             final Render2DEvent event = ((Render2DEvent) e);
@@ -151,7 +153,7 @@ public final class EventHandler {
                 }
 
                 /* Calls events that are always used called whether the module is on or not*/
-                if (mc.currentScreen instanceof ClickGUI || mc.currentScreen instanceof StrikeGUI || mc.currentScreen instanceof ModernClickGUI) {
+                if (mc.currentScreen instanceof ClickGUI || mc.currentScreen instanceof StrikeGUI || mc.currentScreen instanceof ModernClickGUI || mc.currentScreen instanceof MMTClickGUI) {
                     module.onUpdateAlwaysInGui();
                 }
                 module.onUpdateAlways();
@@ -284,11 +286,18 @@ public final class EventHandler {
         final int r = ClientSettings.red0;
         final int g = ClientSettings.green0;
         final int b = ClientSettings.blue0;
+        final int r2 = ClientSettings.red1;
+        final int g2 = ClientSettings.green1;
+        final int b2 = ClientSettings.blue1;
 
         final Color bright = new Color(Math.min(r + 26, 255), Math.min(g + 45, 255), Math.min(b + 13, 255));
+        final Color bright2 = new Color(Math.min(r2 + 26, 255), Math.min(g2 + 45, 255), Math.min(b2 + 13, 255));
 
         StarX.CLIENT_THEME_COLOR = new Color(r, g, b, 255).getRGB();
         StarX.CLIENT_THEME_COLOR_BRIGHT = bright.hashCode();
         StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR = bright;
+        StarX.CLIENT_THEME_COLOR_2 = new Color(r2, g2, b2, 255).getRGB();
+        StarX.CLIENT_THEME_COLOR_BRIGHT_2 = bright2.hashCode();
+        StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR_2 = bright2;
     }
 }

@@ -4,13 +4,14 @@
 
 package cn.stars.addons.mobends.data;
 
-import net.minecraft.client.model.*;
-import net.minecraft.client.*;
-import net.minecraft.util.*;
-import java.util.*;
-import net.minecraft.entity.*;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.AxisAlignedBB;
 import org.lwjgl.compatibility.util.vector.Vector3f;
+
+import java.util.List;
 
 public class EntityData
 {

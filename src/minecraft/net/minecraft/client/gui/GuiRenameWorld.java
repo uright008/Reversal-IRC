@@ -81,7 +81,7 @@ public class GuiRenameWorld extends GuiScreen
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, I18n.format("selectWorld.renameTitle", new Object[0]), this.width / 2, 20, 16777215);
         this.drawString(this.fontRendererObj, I18n.format("selectWorld.enterName", new Object[0]), this.width / 2 - 100, 47, 10526880);
-        this.field_146583_f.drawTextBox();
+        this.field_146583_f.drawTextBox(mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

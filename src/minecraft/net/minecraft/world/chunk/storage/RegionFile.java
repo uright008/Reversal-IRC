@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
+
+import lombok.SneakyThrows;
 import net.minecraft.server.MinecraftServer;
 
 public class RegionFile
@@ -277,7 +279,6 @@ public class RegionFile
             this.dataFile.writeByte(2);
             this.dataFile.write(data, 0, length);
         } catch (IOException e) {
-            StarXLogger.error("Error writing chunk data: ", e);
         }
     }
 
@@ -303,10 +304,11 @@ public class RegionFile
         this.dataFile.writeInt(offset);
     }
 
-    private void setChunkTimestamp(int x, int z, int timestamp) throws IOException
+    @SneakyThrows
+    private void setChunkTimestamp(int x, int z, int timestamp)
     {
         this.chunkTimestamps[x + z * 32] = timestamp;
-        this.dataFile.seek((long)(4096 + (x + z * 32) * 4));
+        this.dataFile.seek(4096 + (x + z * 32) * 4);
         this.dataFile.writeInt(timestamp);
     }
 

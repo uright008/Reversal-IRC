@@ -1,7 +1,12 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+
+import java.awt.*;
 
 public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry
 {
@@ -9,27 +14,11 @@ public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
     {
-        int i = y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2;
-        this.mc.fontRendererObj.drawString(I18n.format("lanServer.scanning", new Object[0]), this.mc.currentScreen.width / 2 - this.mc.fontRendererObj.getStringWidth(I18n.format("lanServer.scanning", new Object[0])) / 2, i, 16777215);
-        String s;
+        int i = y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2 + 5;
+        RenderUtil.rect(this.mc.currentScreen.width / 2f - 225, i - 10, 450, 0.5, new Color(220, 220, 220, 240));
+        GameInstance.regular20.drawCenteredString(I18n.format("正在搜索局域网服务器...", new Object[0]), this.mc.currentScreen.width / 2, i,  new Color(220, 220, 220, 240).getRGB());
 
-        switch ((int)(Minecraft.getSystemTime() / 300L % 4L))
-        {
-            case 0:
-            default:
-                s = "O o o";
-                break;
-
-            case 1:
-            case 3:
-                s = "o O o";
-                break;
-
-            case 2:
-                s = "o o O";
-        }
-
-        this.mc.fontRendererObj.drawString(s, this.mc.currentScreen.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2, i + this.mc.fontRendererObj.FONT_HEIGHT, 8421504);
+        RenderUtils.drawLoadingCircle2(this.mc.currentScreen.width / 2, i + 15, 4, new Color(220, 220, 220, 220));
     }
 
     public void setSelected(int p_178011_1_, int p_178011_2_, int p_178011_3_)
