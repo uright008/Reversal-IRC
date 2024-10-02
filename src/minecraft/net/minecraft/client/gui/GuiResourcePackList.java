@@ -16,7 +16,7 @@ public abstract class GuiResourcePackList extends GuiListExtended
         super(mcIn, p_i45055_2_, p_i45055_3_, 32, p_i45055_3_ - 55 + 4, 36);
         this.mc = mcIn;
         this.field_148204_l = p_i45055_4_;
-        this.field_148163_i = false;
+        this.centerListVertically = false;
         this.setHasListHeader(true, (int)((float)mcIn.fontRendererObj.FONT_HEIGHT * 1.5F));
     }
 

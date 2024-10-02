@@ -43,7 +43,7 @@ import static cn.stars.starx.GameInstance.MODERN_BLUR_RUNNABLES;
 
 public class ModernClickGUI extends GuiScreen {
     public Color backgroundColor = new Color(30,30,30, 220);
-    public Animation scaleAnimation = new Animation(Easing.EASE_IN_CUBIC, 150);
+    public Animation scaleAnimation = new Animation(Easing.EASE_IN_CUBIC, 1000);
     private Animation animation = new Animation(Easing.LINEAR, 200);
     ScaledResolution sr;
     boolean isSearching = false;

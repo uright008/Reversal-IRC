@@ -12,7 +12,7 @@ public class GuiOptionsRowList extends GuiListExtended
     public GuiOptionsRowList(Minecraft mcIn, int p_i45015_2_, int p_i45015_3_, int p_i45015_4_, int p_i45015_5_, int p_i45015_6_, GameSettings.Options... p_i45015_7_)
     {
         super(mcIn, p_i45015_2_, p_i45015_3_, p_i45015_4_, p_i45015_5_, p_i45015_6_);
-        this.field_148163_i = false;
+        this.centerListVertically = false;
 
         for (int i = 0; i < p_i45015_7_.length; i += 2)
         {

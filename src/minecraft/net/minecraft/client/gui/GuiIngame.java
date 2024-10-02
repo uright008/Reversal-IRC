@@ -51,8 +51,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.border.WorldBorder;
 import net.optifine.CustomColors;
 
-public class GuiIngame extends Gui
-{
+public class GuiIngame extends Gui {
     private static final ResourceLocation vignetteTexPath = new ResourceLocation("textures/misc/vignette.png");
     private static final ResourceLocation widgetsTexPath = new ResourceLocation("textures/gui/widgets.png");
     private static final ResourceLocation pumpkinBlurTexPath = new ResourceLocation("textures/misc/pumpkinblur.png");
@@ -60,7 +59,6 @@ public class GuiIngame extends Gui
     private final Minecraft mc;
     private final RenderItem itemRenderer;
     private final GuiNewChat persistantChatGUI;
-    private final GuiStreamIndicator streamIndicator;
     private int updateCounter;
     private String recordPlaying = "";
     private int recordPlayingUpFor;
@@ -83,14 +81,12 @@ public class GuiIngame extends Gui
     private long healthUpdateCounter = 0L;
     private PostProcessing postProcessing;
 
-    public GuiIngame(Minecraft mcIn)
-    {
+    public GuiIngame(Minecraft mcIn) {
         this.mc = mcIn;
         this.itemRenderer = mcIn.getRenderItem();
         this.overlayDebug = new GuiOverlayDebug(mcIn);
         this.spectatorGui = new GuiSpectator(mcIn);
         this.persistantChatGUI = new GuiNewChat(mcIn);
-        this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.setDefaultTitlesTimes();
     }
@@ -1081,7 +1077,6 @@ public class GuiIngame extends Gui
         }
 
         ++this.updateCounter;
-        this.streamIndicator.updateStreamAlpha();
 
         if (this.mc.thePlayer != null)
         {

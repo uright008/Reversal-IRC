@@ -32,16 +32,6 @@ public abstract class GuiListExtended extends GuiSlot
         }
     }
 
-    @Override
-    protected boolean shouldRenderOverlay() {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldRenderContainer() {
-        return false;
-    }
-
     protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
     {
         IGuiListEntry entry = this.getListEntry(entryID);
@@ -93,6 +83,16 @@ public abstract class GuiListExtended extends GuiSlot
         }
 
         this.setEnabled(true);
+        return false;
+    }
+
+    @Override
+    protected boolean shouldRenderContainer() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldRenderOverlay() {
         return false;
     }
 

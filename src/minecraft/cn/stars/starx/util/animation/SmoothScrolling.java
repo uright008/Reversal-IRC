@@ -1,90 +1,73 @@
-//Deobfuscated with https://github.com/SimplyProgrammer/Minecraft-Deobfuscator3000 using mappings "C:\Users\Administrator\Downloads\Minecraft1.12.2 Mappings"!
-
-//Decompiled by Procyon!
-
 package cn.stars.starx.util.animation;
 
-import java.util.function.*;
-import net.minecraft.util.*;
+import net.minecraft.util.MathHelper;
 
-public class SmoothScrolling
-{
-    private static Function<Double, Double> easingMethod;
+import java.util.function.Function;
+
+public class SmoothScrolling {
+    private static Function<Double, Double> easingMethod = v -> v;
 
     public static Function<Double, Double> getEasingMethod() {
-        return SmoothScrolling.easingMethod;
+        return easingMethod;
     }
 
     public static long getScrollDuration() {
-        return 600L;
+        return 400;
     }
 
     public static float getScrollStep() {
-        return 40.0f;
+        return 50;
     }
 
     public static float getBounceBackMultiplier() {
-        return 0.24f;
+        return 0.20f;
     }
 
-    public static boolean isUnlimitFps() {
-        return true;
-    }
-
-    public static float handleScrollingPosition(final float[] target, final float scroll, final float maxScroll, final float delta, final double start, final double duration) {
-        if (getBounceBackMultiplier() >= 0.0f) {
+    public static float handleScrollingPosition(float[] target, float scroll, float maxScroll, float delta, double start, double duration) {
+        if (getBounceBackMultiplier() >= 0) {
             target[0] = clamp(target[0], maxScroll);
-            if (target[0] < 0.0f) {
-                final int n = 0;
-                target[n] -= target[0] * (1.0f - getBounceBackMultiplier()) * delta / 3.0f;
+            if (target[0] < 0) {
+                target[0] -= target[0] * (1 - getBounceBackMultiplier()) * delta / 3;
+            } else if (target[0] > maxScroll) {
+                target[0] = (target[0] - maxScroll) * (1 - (1 - getBounceBackMultiplier()) * delta / 3) + maxScroll;
             }
-            else if (target[0] > maxScroll) {
-                target[0] = (target[0] - maxScroll) * (1.0f - (1.0f - getBounceBackMultiplier()) * delta / 3.0f) + maxScroll;
-            }
-        }
-        else {
-            target[0] = clamp(target[0], maxScroll, 0.0f);
-        }
-        if (!Precision.almostEquals(scroll, target[0], 0.001f)) {
-            return expoEase(scroll, target[0], Math.min((System.currentTimeMillis() - start) / duration * delta * 3.0, 1.0));
-        }
-        return target[0];
+        } else
+            target[0] = clamp(target[0], maxScroll, 0);
+        if (!Precision.almostEquals(scroll, target[0], Precision.FLOAT_EPSILON))
+            return expoEase(scroll, target[0], Math.min((System.currentTimeMillis() - start) / duration * delta * 3, 1));
+        else
+            return target[0];
     }
 
-    public static float expoEase(final float start, final float end, final double amount) {
+    public static float expoEase(float start, float end, double amount) {
         return start + (end - start) * getEasingMethod().apply(amount).floatValue();
     }
 
-    public static double clamp(final double v, final double maxScroll) {
-        return clamp(v, maxScroll, 300.0);
+    public static double clamp(double v, double maxScroll) {
+        return clamp(v, maxScroll, 300);
     }
 
-    public static double clamp(final double v, final double maxScroll, final double clampExtension) {
+    public static double clamp(double v, double maxScroll, double clampExtension) {
         return MathHelper.clamp_double(v, -clampExtension, maxScroll + clampExtension);
     }
 
-    public static float clamp(final float v, final float maxScroll) {
-        return clamp(v, maxScroll, 300.0f);
+    public static float clamp(float v, float maxScroll) {
+        return clamp(v, maxScroll, 300);
     }
 
-    public static float clamp(final float v, final float maxScroll, final float clampExtension) {
+    public static float clamp(float v, float maxScroll, float clampExtension) {
         return MathHelper.clamp_float(v, -clampExtension, maxScroll + clampExtension);
     }
 
-    static {
-        SmoothScrolling.easingMethod = (Function<Double, Double>)(v -> v);
-    }
+    private static class Precision {
+        public static final float FLOAT_EPSILON = 1e-3f;
+        public static final double DOUBLE_EPSILON = 1e-7;
 
-    private static class Precision
-    {
-        public static final float FLOAT_EPSILON = 0.001f;
-        public static final double DOUBLE_EPSILON = 1.0E-7;
-
-        public static boolean almostEquals(final float value1, final float value2, final float acceptableDifference) {
+        public static boolean almostEquals(float value1, float value2, float acceptableDifference) {
             return Math.abs(value1 - value2) <= acceptableDifference;
         }
 
-        public static boolean almostEquals(final double value1, final double value2, final double acceptableDifference) {
+        public static boolean almostEquals(double value1, double value2, double acceptableDifference) {
             return Math.abs(value1 - value2) <= acceptableDifference;
         }
     }

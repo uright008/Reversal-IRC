@@ -23,7 +23,7 @@ public class GuiPageButtonList extends GuiListExtended
         super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
         this.field_178076_z = p_i45536_7_;
         this.field_178078_x = p_i45536_8_;
-        this.field_148163_i = false;
+        this.centerListVertically = false;
         this.func_178069_s();
         this.func_178055_t();
     }

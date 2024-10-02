@@ -26,8 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.stream.GuiTwitchUserMode;
-import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -48,7 +46,6 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -369,95 +366,63 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
     }
 
-    protected void setText(String newChatText, boolean shouldOverwrite)
-    {
+    /**
+     * Sets the text of the chat
+     */
+    protected void setText(String newChatText, boolean shouldOverwrite) {
     }
 
-    protected boolean handleComponentClick(IChatComponent component)
-    {
-        if (component == null)
-        {
+    /**
+     * Executes the click event specified by the given chat component
+     *
+     * @param component The ChatComponent to check for click
+     */
+    protected boolean handleComponentClick(IChatComponent component) {
+        if (component == null) {
             return false;
-        }
-        else
-        {
+        } else {
             ClickEvent clickevent = component.getChatStyle().getChatClickEvent();
 
-            if (isShiftKeyDown())
-            {
-                if (component.getChatStyle().getInsertion() != null)
-                {
+            if (isShiftKeyDown()) {
+                if (component.getChatStyle().getInsertion() != null) {
                     this.setText(component.getChatStyle().getInsertion(), false);
                 }
-            }
-            else if (clickevent != null)
-            {
-                if (clickevent.getAction() == ClickEvent.Action.OPEN_URL)
-                {
-                    if (!this.mc.gameSettings.chatLinks)
-                    {
+            } else if (clickevent != null) {
+                if (clickevent.getAction() == ClickEvent.Action.OPEN_URL) {
+                    if (!this.mc.gameSettings.chatLinks) {
                         return false;
                     }
 
-                    try
-                    {
+                    try {
                         URI uri = new URI(clickevent.getValue());
                         String s = uri.getScheme();
 
-                        if (s == null)
-                        {
+                        if (s == null) {
                             throw new URISyntaxException(clickevent.getValue(), "Missing protocol");
                         }
 
-                        if (!PROTOCOLS.contains(s.toLowerCase()))
-                        {
+                        if (!PROTOCOLS.contains(s.toLowerCase())) {
                             throw new URISyntaxException(clickevent.getValue(), "Unsupported protocol: " + s.toLowerCase());
                         }
 
-                        if (this.mc.gameSettings.chatLinksPrompt)
-                        {
+                        if (this.mc.gameSettings.chatLinksPrompt) {
                             this.clickedLinkURI = uri;
                             this.mc.displayGuiScreen(new GuiConfirmOpenLink(this, clickevent.getValue(), 31102009, false));
-                        }
-                        else
-                        {
+                        } else {
                             this.openWebLink(uri);
                         }
+                    } catch (URISyntaxException urisyntaxexception) {
+                        LOGGER.error((String) ("Can\'t open url for " + clickevent), (Throwable) urisyntaxexception);
                     }
-                    catch (URISyntaxException urisyntaxexception)
-                    {
-                        LOGGER.error((String)("Can\'t open url for " + clickevent), (Throwable)urisyntaxexception);
-                    }
-                }
-                else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE)
-                {
+                } else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE) {
                     URI uri1 = (new File(clickevent.getValue())).toURI();
                     this.openWebLink(uri1);
-                }
-                else if (clickevent.getAction() == ClickEvent.Action.SUGGEST_COMMAND)
-                {
+                } else if (clickevent.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                     this.setText(clickevent.getValue(), true);
-                }
-                else if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND)
-                {
+                } else if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND) {
                     this.sendChatMessage(clickevent.getValue(), false);
-                }
-                else if (clickevent.getAction() == ClickEvent.Action.TWITCH_USER_INFO)
-                {
-                    ChatUserInfo chatuserinfo = this.mc.getTwitchStream().func_152926_a(clickevent.getValue());
-
-                    if (chatuserinfo != null)
-                    {
-                        this.mc.displayGuiScreen(new GuiTwitchUserMode(this.mc.getTwitchStream(), chatuserinfo));
-                    }
-                    else
-                    {
-                        LOGGER.error("Tried to handle twitch user but couldn\'t find them!");
-                    }
-                }
-                else
-                {
-                    LOGGER.error("Don\'t know how to handle " + clickevent);
+                } else {
+                    LOGGER.error("Don't know how to handle " + clickevent);
                 }
 
                 return true;
