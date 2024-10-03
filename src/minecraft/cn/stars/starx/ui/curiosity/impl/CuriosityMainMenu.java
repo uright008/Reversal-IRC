@@ -179,9 +179,18 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
         // 有什么意义
         updateLog.clear();
+        updateLog.add("[*] 修改logo");
         updateLog.add("[/] 优化主界面");
         updateLog.add("[/] 优化TargetESP效果");
         updateLog.add("[/] 微调BAHalo的一些颜色和大小");
+        updateLog.add("[/] 随机标题回归");
+        updateLog.add("[+] 新增原版列表丝滑滚动");
+        updateLog.add("[+] 重写 材质包/控制/语言 界面");
+        updateLog.add("[+] PotionEffects");
+        updateLog.add("[+] TargetESP 添加动画");
+        updateLog.add("[+] ClientSettings - IndexTimes (允许调整渐变距离)");
+        updateLog.add("[-] SuperheroFX");
+        updateLog.add("[-] 删除原版无用的realms和twitch");
 
 
         // 定义按钮

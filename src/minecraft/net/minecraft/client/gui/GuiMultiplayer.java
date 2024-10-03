@@ -35,9 +35,6 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
     private GuiScreen parentScreen;
     private ServerSelectionList serverListSelector;
     private ServerList savedServerList;
-    private GuiButton btnEditServer;
-    private GuiButton btnSelectServer;
-    private GuiButton btnDeleteServer;
     private boolean deletingServer;
     private boolean addingServer;
     private boolean editingServer;
@@ -97,19 +94,19 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     public void createButtons()
     {
-        selectButton = new CuriosityTextButton(this.width / 2 - 154, this.height - 52, 100, 20, this::connectToSelected, "连接服务器", "", true, 1, 25, 5, 20);
+        selectButton = new CuriosityTextButton(this.width / 2.0 - 154, this.height - 52, 100, 20, this::connectToSelected, "连接服务器", "", true, 1, 25, 5, 20);
 
-        directButton = new CuriosityTextButton(this.width / 2 - 50, this.height - 52, 100, 20, () -> {
+        directButton = new CuriosityTextButton(this.width / 2.0 - 50, this.height - 52, 100, 20, () -> {
             this.directConnect = true;
-            this.mc.displayGuiScreen(new GuiScreenServerList(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName", new Object[0]), "", false)));
+            this.mc.displayGuiScreen(new GuiScreenServerList(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName"), "", false)));
         }, "直接连接", "", true, 1, 30, 5, 20);
 
-        addButton = new CuriosityTextButton(this.width / 2 + 4 + 50, this.height - 52, 100, 20, () -> {
+        addButton = new CuriosityTextButton(this.width / 2.0 + 4 + 50, this.height - 52, 100, 20, () -> {
             this.addingServer = true;
-            this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName", new Object[0]), "", false)));
+            this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName"), "", false)));
         }, "添加服务器", "", true, 1, 25, 5, 20);
 
-        editButton = new CuriosityTextButton(this.width / 2 - 154, this.height - 28, 70, 20, () -> {
+        editButton = new CuriosityTextButton(this.width / 2.0 - 154, this.height - 28, 70, 20, () -> {
             if (guilistextended$iguilistentry instanceof ServerListEntryNormal) {
                 this.editingServer = true;
                 ServerData serverdata = ((ServerListEntryNormal)guilistextended$iguilistentry).getServerData();
@@ -119,7 +116,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
             }
         }, "编辑", "", true, 1, 25, 5, 20);
 
-        deleteButton = new CuriosityTextButton(this.width / 2 - 74, this.height - 28, 70, 20, () -> {
+        deleteButton = new CuriosityTextButton(this.width / 2.0 - 74, this.height - 28, 70, 20, () -> {
             if (guilistextended$iguilistentry instanceof ServerListEntryNormal) {
                 String s4 = ((ServerListEntryNormal)guilistextended$iguilistentry).getServerData().serverName;
                 if (s4 != null)
@@ -135,9 +132,9 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
             }
         }, "删除", "", true, 1, 25, 5, 20);
 
-        refreshButton = new CuriosityTextButton(this.width / 2 + 4, this.height - 28, 70, 20, this::refreshServerList, "刷新", "", true, 1, 25, 5, 20);
+        refreshButton = new CuriosityTextButton(this.width / 2.0 + 4, this.height - 28, 70, 20, this::refreshServerList, "刷新", "", true, 1, 25, 5, 20);
 
-        cancelButton = new CuriosityTextButton(this.width / 2 + 4 + 80, this.height - 28, 70, 20, () -> this.mc.displayGuiScreen(this.parentScreen), "取消", "", true, 1, 25, 5, 20);
+        cancelButton = new CuriosityTextButton(this.width / 2.0 + 4 + 80, this.height - 28, 70, 20, () -> this.mc.displayGuiScreen(this.parentScreen), "取消", "", true, 1, 25, 5, 20);
 
         this.selectServer(this.serverListSelector.func_148193_k());
         buttons = new CuriosityTextButton[] {selectButton, directButton, addButton, editButton, deleteButton, refreshButton, cancelButton};

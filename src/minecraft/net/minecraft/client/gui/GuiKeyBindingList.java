@@ -118,7 +118,7 @@ public class GuiKeyBindingList extends GuiListExtended
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             boolean flag = GuiKeyBindingList.this.field_148191_k.buttonId == this.keybinding;
-            GameInstance.regular18.drawString(this.keyDesc, x + 90 - GuiKeyBindingList.this.maxListLabelWidth, y + slotHeight / 2 - GameInstance.regular18.height() / 2 + 5, new Color(220, 220, 220, 240).getRGB());
+            GameInstance.regular18.drawString(this.keyDesc, x + 90 - GuiKeyBindingList.this.maxListLabelWidth, y + slotHeight / 2.0 - GameInstance.regular18.height() / 2 + 5, new Color(220, 220, 220, 240).getRGB());
             this.btnReset.xPosition = x + 190;
             this.btnReset.yPosition = y;
             this.btnReset.enabled = this.keybinding.getKeyCode() != this.keybinding.getKeyCodeDefault();

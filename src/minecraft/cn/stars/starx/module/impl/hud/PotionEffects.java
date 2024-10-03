@@ -8,6 +8,9 @@ import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
+import cn.stars.starx.util.render.ThemeType;
+import cn.stars.starx.util.render.ThemeUtil;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.PotionEffect;
 
 import java.awt.*;
@@ -22,23 +25,43 @@ public class PotionEffects extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        int x = getX();
-        int y = getY();
+        int x = getX() + 1;
+        int y = getY() + 1;
+        int i = 0;
         for (PotionEffect potionEffect : mc.thePlayer.getActivePotionEffects()) {
-            psb20.drawString(getPotionName(potionEffect), x, y, new Color(255,255,255,255).getRGB());
-            y += 10;
+            regular18.drawString(I18n.format(potionEffect.getEffectName()) + " " + getId(potionEffect.getAmplifier()) + " (" + getTime(potionEffect.getDuration() / 20) + ")", x, y + i * 10, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST, i).getRGB());
+            i++;
+        }
+        setWidth(150);
+        setHeight(i * 10 + 10);
+    }
+
+    private String getId(int num) {
+        if (num < 0 || num > 10) {
+            return String.valueOf(num);
+        }
+
+        switch (num) {
+            case 0: return "I";
+            case 1: return "II";
+            case 2: return "III";
+            case 3: return "IV";
+            case 4: return "V";
+            case 5: return "VI";
+            case 6: return "VII";
+            case 7: return "VIII";
+            case 8: return "IX";
+            case 9: return "X";
+            default: return String.valueOf(num);
         }
     }
 
-    public String getPotionName(PotionEffect effect) {
-        switch (effect.getPotionID()) {
-            case 1: {
-                return "Speed";
-            }
-            case 2: {
-                return "Slowness";
-            }
-        }
-        return "";
+    private String getTime(int totalSeconds) {
+        // 计算分钟和秒数
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        // 格式化输出，确保秒数为两位数
+        return String.format("%d:%02d", minutes, seconds);
     }
 }

@@ -365,7 +365,7 @@ public class StarX {
             new Keystrokes(),
             new MusicInfo(),
             new MusicVisualizer(),
-    //        new PotionEffects(),
+            new PotionEffects(),
             new Scoreboard(),
             new SessionInfo(),
             new TargetHud(),
