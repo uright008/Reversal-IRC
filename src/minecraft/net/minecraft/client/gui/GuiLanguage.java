@@ -1,7 +1,12 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RoundedUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
@@ -9,6 +14,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.Language;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
+import org.lwjgl.opengl.GL11;
 
 public class GuiLanguage extends GuiScreen
 {
@@ -74,9 +80,22 @@ public class GuiLanguage extends GuiScreen
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        drawDefaultBackground();
+
+        updatePostProcessing(true, partialTicks);
+
+        RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, new Color(30, 30, 30, 160));
+        RenderUtil.rect(width / 2f - 225, 30, 450, 0.5, new Color(220, 220, 220, 240));
+        GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, Color.BLACK));
+        GameInstance.regular24Bold.drawCenteredString("语言", width / 2f, 16, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular18.drawCenteredString("(翻译不一定100%正确)", this.width / 2, this.height - 56, new Color(220, 220, 220, 240).getRGB());
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        RenderUtil.scissor(width / 2f - 225, 31, 450, height - 95);
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("options.language", new Object[0]), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.fontRendererObj, "(" + I18n.format("options.languageWarning", new Object[0]) + ")", this.width / 2, this.height - 56, 8421504);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -126,7 +145,6 @@ public class GuiLanguage extends GuiScreen
 
         protected void drawBackground()
         {
-            GuiLanguage.this.drawDefaultBackground();
         }
 
         protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
@@ -134,6 +152,16 @@ public class GuiLanguage extends GuiScreen
             GuiLanguage.this.fontRendererObj.setBidiFlag(true);
             GuiLanguage.this.drawCenteredString(GuiLanguage.this.fontRendererObj, ((Language)this.languageMap.get(this.langCodeList.get(entryID))).toString(), this.width / 2, p_180791_3_ + 1, 16777215);
             GuiLanguage.this.fontRendererObj.setBidiFlag(GuiLanguage.this.languageManager.getCurrentLanguage().isBidirectional());
+        }
+
+        @Override
+        protected boolean shouldRenderContainer() {
+            return false;
+        }
+
+        @Override
+        protected boolean shouldRenderOverlay() {
+            return false;
         }
     }
 }

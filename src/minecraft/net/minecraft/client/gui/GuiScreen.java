@@ -793,19 +793,21 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void updatePostProcessing(boolean pre, float partialTicks) {
-        if (pre) {
-            // blur
-            RiseShaders.GAUSSIAN_BLUR_SHADER.update();
-            RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+        if (mc.theWorld == null) {
+            if (pre) {
+                // blur
+                RiseShaders.GAUSSIAN_BLUR_SHADER.update();
+                RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
 
-            // bloom
-            RiseShaders.POST_BLOOM_SHADER.update();
-            RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+                // bloom
+                RiseShaders.POST_BLOOM_SHADER.update();
+                RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
 
-            GameInstance.clearRunnables();
-        } else {
-            UI_BLOOM_RUNNABLES.forEach(Runnable::run);
-            UI_BLOOM_RUNNABLES.clear();
+                GameInstance.clearRunnables();
+            } else {
+                UI_BLOOM_RUNNABLES.forEach(Runnable::run);
+                UI_BLOOM_RUNNABLES.clear();
+            }
         }
     }
 }

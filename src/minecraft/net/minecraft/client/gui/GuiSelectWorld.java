@@ -26,6 +26,7 @@ import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL11;
 
 import static cn.stars.starx.GameInstance.*;
 import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
@@ -239,7 +240,10 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
         GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, Color.BLACK));
         GameInstance.regular24Bold.drawCenteredString("单人游戏", width / 2f, 16, new Color(220, 220, 220, 240).getRGB());
 
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        RenderUtil.scissor(width / 2f - 225, 31, 450, height - 95);
         this.availableWorlds.drawScreen(mouseX, mouseY, partialTicks);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();

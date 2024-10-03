@@ -1,6 +1,11 @@
 package net.minecraft.client.gui;
 
+import cn.stars.starx.GameInstance;
+import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.RoundedUtil;
 import com.google.common.collect.Lists;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +20,7 @@ import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Sys;
+import org.lwjgl.opengl.GL11;
 
 public class GuiScreenResourcePacks extends GuiScreen
 {
@@ -202,11 +208,24 @@ public class GuiScreenResourcePacks extends GuiScreen
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawBackground(0);
+        this.drawDefaultBackground();
+
+        updatePostProcessing(true, partialTicks);
+
+        RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, new Color(30, 30, 30, 160));
+        RenderUtil.rect(width / 2f - 225, 30, 450, 0.5, new Color(220, 220, 220, 240));
+        GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, Color.BLACK));
+        GameInstance.regular24Bold.drawCenteredString("选择材质包", width / 2f, 16, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular18.drawCenteredString("(在这里放置材质包文件)", this.width / 2 - 77, this.height - 21, new Color(220, 220, 220, 240).getRGB());
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        RenderUtil.scissor(width / 2f - 225, 31, 450, height - 95);
         this.availableResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
         this.selectedResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.title", new Object[0]), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.folderInfo", new Object[0]), this.width / 2 - 77, this.height - 26, 8421504);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        updatePostProcessing(false, partialTicks);
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 

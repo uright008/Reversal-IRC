@@ -1,6 +1,9 @@
 package net.minecraft.client.gui;
 
+import java.awt.*;
 import java.util.Arrays;
+
+import cn.stars.starx.GameInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
@@ -17,7 +20,7 @@ public class GuiKeyBindingList extends GuiListExtended
 
     public GuiKeyBindingList(GuiControls controls, Minecraft mcIn)
     {
-        super(mcIn, controls.width, controls.height, 63, controls.height - 32, 20);
+        super(mcIn, controls.width, controls.height, 110, controls.height - 32, 20);
         this.field_148191_k = controls;
         this.mc = mcIn;
         KeyBinding[] akeybinding = ArrayUtils.clone(mcIn.gameSettings.keyBindings);
@@ -107,7 +110,7 @@ public class GuiKeyBindingList extends GuiListExtended
         private KeyEntry(KeyBinding p_i45029_2_)
         {
             this.keybinding = p_i45029_2_;
-            this.keyDesc = I18n.format(p_i45029_2_.getKeyDescription(), new Object[0]);
+            this.keyDesc = I18n.format(p_i45029_2_.getKeyDescription());
             this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 75, 20, I18n.format(p_i45029_2_.getKeyDescription(), new Object[0]));
             this.btnReset = new GuiButton(0, 0, 0, 50, 20, I18n.format("controls.reset", new Object[0]));
         }
@@ -115,7 +118,7 @@ public class GuiKeyBindingList extends GuiListExtended
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
         {
             boolean flag = GuiKeyBindingList.this.field_148191_k.buttonId == this.keybinding;
-            GuiKeyBindingList.this.mc.fontRendererObj.drawString(this.keyDesc, x + 90 - GuiKeyBindingList.this.maxListLabelWidth, y + slotHeight / 2 - GuiKeyBindingList.this.mc.fontRendererObj.FONT_HEIGHT / 2, 16777215);
+            GameInstance.regular18.drawString(this.keyDesc, x + 90 - GuiKeyBindingList.this.maxListLabelWidth, y + slotHeight / 2 - GameInstance.regular18.height() / 2 + 5, new Color(220, 220, 220, 240).getRGB());
             this.btnReset.xPosition = x + 190;
             this.btnReset.yPosition = y;
             this.btnReset.enabled = this.keybinding.getKeyCode() != this.keybinding.getKeyCodeDefault();

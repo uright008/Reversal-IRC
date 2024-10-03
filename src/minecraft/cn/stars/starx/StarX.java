@@ -353,7 +353,6 @@ public class StarX {
             new TrueSights(),
             new Particles(),
             new SpeedGraph(),
-            new SuperHeroFX(),
             new Wings(),
             // Hud
             new ClientSettings(), // Special Module

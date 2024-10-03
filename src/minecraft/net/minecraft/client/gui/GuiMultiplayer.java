@@ -23,6 +23,7 @@ import net.minecraft.client.resources.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import static cn.stars.starx.GameInstance.*;
 import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
@@ -360,7 +361,10 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
             button.draw(mouseX, mouseY, partialTicks);
         }
 
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        RenderUtil.scissor(width / 2f - 225, 31, 450, height - 95);
         this.serverListSelector.drawScreen(mouseX, mouseY, partialTicks);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         RenderUtil.rect(width / 2f - 225, 30, 450, 0.5, new Color(220, 220, 220, 240));
         GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, Color.BLACK));
