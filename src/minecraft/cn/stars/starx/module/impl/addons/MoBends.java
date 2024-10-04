@@ -144,7 +144,7 @@ public class MoBends extends Module {
         if (renderer instanceof RenderBendsPlayer || renderer instanceof RenderBendsZombie || renderer instanceof RenderBendsSpider) {
             return false;
         }
-        final AnimatedEntity animatedEntity = AnimatedEntity.getByEntity((Entity)entity);
+        final AnimatedEntity animatedEntity = AnimatedEntity.getByEntity(entity);
         if ((animatedEntity != null && (entity instanceof EntityPlayer || entity instanceof EntityZombie)) || entity instanceof EntitySpider) {
             if (entity instanceof EntityPlayer) {
                 final AbstractClientPlayer player = (AbstractClientPlayer)entity;
@@ -153,12 +153,12 @@ public class MoBends extends Module {
             else if (entity instanceof EntityZombie) {
                 final EntityZombie zombie = (EntityZombie)entity;
                 if (AnimatedEntity.zombieRenderer == null) return false;
-                AnimatedEntity.zombieRenderer.doRender((EntityLiving)zombie, x, y, z, entityYaw, partialTicks);
+                AnimatedEntity.zombieRenderer.doRender(zombie, x, y, z, entityYaw, partialTicks);
             }
             else {
                 final EntitySpider spider = (EntitySpider)entity;
                 if (AnimatedEntity.spiderRenderer == null) return false;
-                AnimatedEntity.spiderRenderer.doRender((EntityLiving)spider, x, y, z, entityYaw, partialTicks);
+                AnimatedEntity.spiderRenderer.doRender(spider, x, y, z, entityYaw, partialTicks);
             }
             return true;
         }
