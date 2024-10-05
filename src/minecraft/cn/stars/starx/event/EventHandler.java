@@ -4,18 +4,14 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.ClientSettings;
-import cn.stars.starx.ui.clickgui.ClickGUI;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
-import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
-import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.util.player.PlayerUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 
@@ -67,7 +63,6 @@ public final class EventHandler {
                     module.onFadingOutline(event);
                 }
             }
-            Hud.onFadeOutline();
         } else if (e instanceof Shader3DEvent) {
             final Shader3DEvent event = ((Shader3DEvent) e);
 
@@ -107,7 +102,6 @@ public final class EventHandler {
 
             //Statistics
             if (target != null && !mc.theWorld.playerEntities.contains(target) && mc.thePlayer.getDistance(target.posX, mc.thePlayer.posY, target.posZ) < 30) {
-                StarX.totalKills++;
                 target = null;
             }
 
@@ -115,16 +109,8 @@ public final class EventHandler {
                 PlayerUtil.worldChanges++;
             }
 
-            final double d = mc.thePlayer.getDistance(mc.thePlayer.lastTickPosX, mc.thePlayer.posY, mc.thePlayer.lastTickPosZ);
-
-            StarX.amountOfModulesOn = 0;
-
-            if (mc.thePlayer.onGround)
-                StarX.distanceRan += d;
-
             if (mc.thePlayer.getHealth() <= 0) {
                 if (canUpdateDeaths) {
-                    StarX.totalDeaths++;
                     canUpdateDeaths = false;
                 }
             } else
@@ -132,9 +118,6 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-
-                    StarX.amountOfModulesOn++;
-
                     module.onPostMotion(event);
                 }
             }
@@ -153,7 +136,7 @@ public final class EventHandler {
                 }
 
                 /* Calls events that are always used called whether the module is on or not*/
-                if (mc.currentScreen instanceof ClickGUI || mc.currentScreen instanceof StrikeGUI || mc.currentScreen instanceof ModernClickGUI || mc.currentScreen instanceof MMTClickGUI) {
+                if (mc.currentScreen instanceof ModernClickGUI || mc.currentScreen instanceof MMTClickGUI) {
                     module.onUpdateAlwaysInGui();
                 }
                 module.onUpdateAlways();

@@ -2,13 +2,11 @@ package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
-import cn.stars.starx.font.CustomFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
-import cn.stars.starx.ui.gui.GuiEditHUD;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
@@ -17,7 +15,6 @@ import cn.stars.starx.util.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -42,7 +39,7 @@ import java.util.Objects;
 public final class TargetHud extends Module {
 
     private final TimeUtil timer = new TimeUtil();
-    private final ModeValue mode = new ModeValue("Mode", this, "Normal", "Normal", "Simple", "Classic", "Other", "FpsEater3000", "Exhibition", "OldExhibition", "Remix");
+    private final ModeValue mode = new ModeValue("Mode", this, "Normal", "Normal", "Simple", "Classic", "Other", "Exhibition", "Remix");
     private final BoolValue backGround = new BoolValue("Background", this, true);
     private final BoolValue shadow = new BoolValue("Shadow", this, true);
 
@@ -83,7 +80,7 @@ public final class TargetHud extends Module {
 
     @Override
     public void onUpdateAlwaysInGui() {
-        backGround.hidden = !(mode.is("Normal") || mode.is("FpsEater3000"));
+        backGround.hidden = !(mode.is("Normal"));
     }
 
     @Override
@@ -171,15 +168,15 @@ public final class TargetHud extends Module {
                     RenderUtil.color(Color.WHITE);
                 }
 
-                final double fontHeight = CustomFont.getHeight();
+                final double fontHeight = regular16.height();
 
-                CustomFont.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
+                regular16.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
 
                 GlStateManager.pushMatrix();
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
                 RenderUtil.scissor(posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, 91, 30);
 
-                CustomFont.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, Color.WHITE.hashCode());
+                regular16.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, Color.WHITE.hashCode());
 
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 GlStateManager.popMatrix();
@@ -292,7 +289,7 @@ public final class TargetHud extends Module {
 
                 if (!((dist > 20 || target.isDead))) {
                     float finalOffset1 = offset;
-                    CustomFont.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 2.5f, -1);
+                    regular16.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 2.5f, -1);
                 }
 
                 if (lastTarget != target) {
@@ -314,246 +311,8 @@ public final class TargetHud extends Module {
             GlStateManager.popMatrix();
             timeUtil.reset();
             break;
-
-            case "FpsEater3000": {
-                if (target == null || !(target instanceof EntityPlayer)) {
-                    particles.clear();
-                    return;
-                }
-
-                if (scale == 0) return;
-
-                GlStateManager.pushMatrix();
-                GlStateManager.translate((posX + 38 + 2 + 129 / 2f) * (1 - scale), (posY - 34 + 48 / 2f) * (1 - scale), 0);
-                GlStateManager.scale(scale, scale, 0);
-
-                final EntityPlayer en = (EntityPlayer) target;
-                final double dist = mc.thePlayer.getDistanceToEntity(target);
-
-                final String name = ((EntityPlayer) target).getName();
-
-                //Background
-                if (backGround.isEnabled()) RenderUtil.roundedRect(posX + 38 + 2, posY - 34, 129, 40, 8, new Color(0, 0, 0, 110));
-
-                GlStateManager.popMatrix();
-
-                final int scaleOffset = (int) (((EntityPlayer) target).hurtTime * 0.35f);
-
-                for (final THParticleUtils p : particles) {
-                    if (p.opacity > 4) p.render2D();
-                }
-
-                GlStateManager.pushMatrix();
-                GlStateManager.translate((posX + 38 + 2 + 129 / 2f) * (1 - scale), (posY - 34 + 48 / 2f) * (1 - scale), 0);
-                GlStateManager.scale(scale, scale, 0);
-
-                RenderUtil.circle(posX + 38 + 6 + scaleOffset / 2f - 1, posY - 34 + 5 + scaleOffset / 2f - 1, 32 - scaleOffset, new Color(0, 0, 0, 40));
-
-                //Renders face
-                if (target instanceof AbstractClientPlayer) {
-                    StencilUtil.write(false);
-                    RenderUtil.circle(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 30 - scaleOffset, Color.BLACK);
-                    StencilUtil.erase(true);
-                    //offset other colors aside from red, so the face turns red
-                    final double offset = -(((AbstractClientPlayer) target).hurtTime * 23);
-                    //sets color to red
-                    RenderUtil.color(new Color(255, (int) (255 + offset), (int) (255 + offset)));
-                    //renders face
-                    renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 3, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
-                    //renders top layer of face
-                    renderPlayerModelTexture(posX + 38 + 6 + scaleOffset / 2f, posY - 34 + 5 + scaleOffset / 2f, 15, 3, 3, 3, 30 - scaleOffset, 30 - scaleOffset, 24, 24.5f, (AbstractClientPlayer) en);
-                    //resets color to white
-                    RenderUtil.color(Color.WHITE);
-
-                    StencilUtil.dispose();
-                }
-
-                final double fontHeight = comfortaaNigger.getHeight();
-
-                GlStateManager.pushMatrix();
-                GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                RenderUtil.scissor(posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, 91, 30);
-
-                comfortaaNigger.drawString(name, posX + 38 + 6 + 30 + 2, (float) (posY - 30 + 5 + 10 - fontHeight / 2) - 3, Color.WHITE.hashCode());
-
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                GlStateManager.popMatrix();
-
-                if (!String.valueOf(((EntityPlayer) target).getHealth()).equals("NaN"))
-                    health = Math.min(20, ((EntityPlayer) target).getHealth());
-
-                if (String.valueOf(displayHealth).equals("NaN")) {
-                    displayHealth = (float) (Math.random() * 20);
-                }
-
-                final int speed = 5;
-                if (timer.hasReached(1000 / 60)) {
-                    displayHealth = (displayHealth * (speed - 1) + health) / speed;
-
-                    ticks += 1;
-
-                    for (final THParticleUtils p : particles) {
-                        p.updatePosition();
-
-                        if (p.opacity < 1) particles.remove(p);
-                    }
-
-                    timer.reset();
-                }
-
-                // Get the current theme of the client.
-                final ModeValue setting = ((ModeValue) StarX.moduleManager.getSetting("ClientSettings", "Theme"));
-
-                // If the setting was null return to prevent crashes bc shit setting system.
-                if (setting == null) return;
-
-                // Get the theme and convert it to lower case.
-                final String theme = setting.getMode().toLowerCase();
-
-                if ((((EntityPlayer) target).hurtTime == 9 && !sentParticles) || (lastTarget != null && ((EntityPlayer) lastTarget).hurtTime == 9 && !sentParticles)) {
-
-                    for (int i = 0; i <= 15; i++) {
-                        final THParticleUtils p = new THParticleUtils();
-                        final Color color1 = new Color(StarX.CLIENT_THEME_COLOR);
-                        final Color color2 = new Color(255, 255, 255);
-
-                        final Color c;
-
-                        if (theme.contains("rainbow")) {
-                            c = new Color(ColorUtil.getColor(10 + i, 0.5f, 1));
-                        } else if (theme.contains("blend")) {
-                            final Color color12 = new Color(78, 161, 253, 100);
-                            final Color color22 = new Color(78, 253, 154, 100);
-
-                            c = ColorUtil.mixColors(color12, color22, (Math.sin(Hud.ticks + posX * 0.4f + i) + 1) * 0.5f);
-                        } else if (theme.contains("rice")) {
-
-                            final Color color21 = new Color(190, 0, 255, 100);
-                            final Color color11 = new Color(0, 190, 255, 100);
-
-                            c = ColorUtil.mixColors(color21, color11, (Math.sin(Hud.ticks + posX * 0.4f + i) + 1) * 0.5f);
-                        } else {
-                            c = ColorUtil.mixColors(color1, color2, Math.random());
-                        }
-
-
-                        p.init(posX + 55, posY - 15, ((Math.random() - 0.5) * 2) * 1.4, ((Math.random() - 0.5) * 2) * 1.4, Math.random() * 4, c);
-                        particles.add(p);
-                    }
-
-                    sentParticles = true;
-                }
-
-                if (((EntityPlayer) target).hurtTime == 8) sentParticles = false;
-
-                if ((dist > 20 || target.isDead)) {
-                    health = 0;
-                }
-
-                float offset = 39;
-                final float drawBarPosX = posX + nameWidth;
-
-                if (!((dist > 20 && !Objects.requireNonNull(target.isDead)))) {
-                    altoSmall.drawString(MathUtil.round(displayHealth, 1) + "", (float) (drawBarPosX + offset + displayHealth * 3.5) + 2, posY + 3 - 10, -1);
-                }
-
-                if (displayHealth > 0.1) {
-                    for (int i = 0; i < displayHealth * 4; i++) {
-                        Color color = ThemeUtil.getThemeColor(ThemeType.GENERAL);
-
-                        RenderUtil.rect(drawBarPosX + offset, posY - 7 + 0.5, displayHealth * 3.5, 5, true, color);
-                    }
-                }
-
-                if (lastTarget != target) {
-                    lastTarget = target;
-                }
-
-                final ArrayList<THParticleUtils> removeList = new ArrayList<>();
-                for (final THParticleUtils p : particles) {
-                    if (p.opacity <= 1) {
-                        removeList.add(p);
-                    }
-                }
-
-                for (final THParticleUtils p : removeList) {
-                    particles.remove(p);
-                }
-
-                GlStateManager.popMatrix();
-                timeUtil.reset();
-            }
-            break;
-
+            
             case "Exhibition": {
-                if (target == null || !(target instanceof EntityPlayer) || mc.theWorld.getEntityByID(target.getEntityId()) == null || mc.theWorld.getEntityByID(target.getEntityId()).getDistanceSqToEntity(mc.thePlayer) > 100) {
-                    return;
-                }
-                GlStateManager.pushMatrix();
-                // Width and height
-                final float width = mc.displayWidth / (float) (mc.gameSettings.guiScale * 2) + 680;
-                final float height = mc.displayHeight / (float) (mc.gameSettings.guiScale * 2) + 280;
-                GlStateManager.translate(width - 660, height - 160.0f - 90.0f, 0.0f);
-                // Draws the skeet rectangles.
-                RenderUtil.skeetRect(0, -2.0, skeetBig.getWidth(((EntityPlayer) target).getName()) > 70.0f ? (double) (124.0f + skeetBig.getWidth(((EntityPlayer) target).getName()) - 70.0f) : 124.0, 38.0, 1.0);
-                RenderUtil.skeetRectSmall(0.0f, -2.0f, 124.0f, 38.0f, 1.0);
-                // Draws name.
-                skeetBig.drawStringWithShadow(((EntityPlayer) target).getName(), 42.3f, 0.3f, -1);
-                // Gets health.
-                final float health = ((EntityPlayer) target).getHealth();
-                // Gets health and absorption
-                final float healthWithAbsorption = ((EntityPlayer) target).getHealth() + ((EntityPlayer) target).getAbsorptionAmount();
-                // Color stuff for the healthBar.
-                final float[] fractions = new float[]{0.0F, 0.5F, 1.0F};
-                final Color[] colors = new Color[]{Color.RED, Color.YELLOW, Color.GREEN};
-                // Max health.
-                final float progress = health / ((EntityPlayer) target).getMaxHealth();
-                // Color.
-                final Color healthColor = health >= 0.0f ? ColorUtil.blendColors(fractions, colors, progress).brighter() : Color.RED;
-                // Round.
-                double cockWidth = 0.0;
-                cockWidth = MathUtil.round(cockWidth, (int) 5.0);
-                if (cockWidth < 50.0) {
-                    cockWidth = 50.0;
-                }
-                // Healthbar + absorption
-                final double healthBarPos = cockWidth * (double) progress;
-                RenderUtil.rectangle(42.5, 10.3, 103, 13.5, healthColor.darker().darker().darker().darker().getRGB());
-                RenderUtil.rectangle(42.5, 10.3, 53.0 + healthBarPos + 0.5, 13.5, healthColor.getRGB());
-                if (((EntityPlayer) target).getAbsorptionAmount() > 0.0f) {
-                    RenderUtil.rectangle(97.5 - (double) ((EntityPlayer) target).getAbsorptionAmount(), 10.3, 103.5, 13.5, new Color(137, 112, 9).getRGB());
-                }
-                // Draws rect around health bar.
-                RenderUtil.rectangleBordered(42.0, 9.8f, 54.0 + cockWidth, 14.0, 0.5, 0, Color.BLACK.getRGB());
-                // Draws the lines between the healthbar to make it look like boxes.
-                for (int dist = 1; dist < 10; ++dist) {
-                    final double cock = cockWidth / 8.5 * (double) dist;
-                    RenderUtil.rectangle(43.5 + cock, 9.8, 43.5 + cock + 0.5, 14.0, Color.BLACK.getRGB());
-                }
-                // Draw targets hp number and distance number.
-                GlStateManager.scale(0.5, 0.5, 0.5);
-                final int distance = (int) mc.thePlayer.getDistanceToEntity(target);
-                final String nice = "HP: " + (int) healthWithAbsorption + " | Dist: " + distance;
-                mc.fontRendererObj.drawString(nice, 85.3f, 32.3f, -1, true);
-                GlStateManager.scale(2.0, 2.0, 2.0);
-                GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-                GlStateManager.enableAlpha();
-                GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-                // Draw targets armor and tools and weapons and shows the enchants.
-                if (target != null) drawEquippedShit(28, 20);
-                GlStateManager.disableAlpha();
-                GlStateManager.disableBlend();
-                // Draws targets model.
-                GlStateManager.scale(0.31, 0.31, 0.31);
-                GlStateManager.translate(73.0f, 102.0f, 40.0f);
-                GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-                RenderUtil.drawModel(target.rotationYaw, target.rotationPitch, (EntityLivingBase) target);
-                GlStateManager.popMatrix();
-            }
-            break;
-
-            case "OldExhibition": {
                 if (target == null || !(target instanceof EntityPlayer) || mc.theWorld.getEntityByID(target.getEntityId()) == null || mc.theWorld.getEntityByID(target.getEntityId()).getDistanceSqToEntity(mc.thePlayer) > 100) {
                     return;
                 }
@@ -767,7 +526,7 @@ public final class TargetHud extends Module {
                     }
 
                 if (!((mc.thePlayer.getDistanceToEntity(target) > 20|| target.isDead))) {
-                    CustomFont.drawStringWithShadow(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 4 + offset, posY, -1);
+                    regular16.drawStringWithShadow(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 4 + offset, posY, -1);
                 }
 
             }
@@ -793,9 +552,9 @@ public final class TargetHud extends Module {
 
                 Gui.drawRect(x - 75, y + 4, x + 75, y - 40, 0xBB000000);
 
-                CustomFont.drawString(ent.getName(), x - 35, y - 36, -1);
-                CustomFont.drawString("Dist: " + enDistance, x - 35, y - 26, -1);
-                CustomFont.drawString(enHearts, x + 74 - CustomFont.getWidth(enHearts), y - 16, -1);
+                regular16.drawString(ent.getName(), x - 35, y - 36, -1);
+                regular16.drawString("Dist: " + enDistance, x - 35, y - 26, -1);
+                regular16.drawString(enHearts, x + 74 - regular16.getWidth(enHearts), y - 16, -1);
 
                 RenderUtil.renderGradientRectLeftRight(x - 35, y - 5, (int) (x - 35 + (216 * normalizedenHealthValue) / 2), y - 2, new Color(0xFF078301).darker().getRGB(), 0xFF00FF50);
                 RenderUtil.renderGradientRectLeftRight(x - 35, y, (int) (x - 35 + 216 * (ent.getTotalArmorValue() / 20f) / 2), y + 3, 0xFF0050FF, 0xFF00FFFF);
@@ -845,15 +604,15 @@ public final class TargetHud extends Module {
                     RenderUtil.rect(sr.getScaledWidth() / 2F + 50 + i, sr.getScaledHeight() / 2F + 50 + 78.5, 1, 1.5, new Color(ColorUtil.getStaticColor(i / 8f, 0.7f, 1)));
                 }
 
-                CustomFont.drawStringMedium(((EntityPlayer) target).getName(), (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 6, Color.WHITE.getRGB());
+                regular16.drawString(((EntityPlayer) target).getName(), (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 6, Color.WHITE.getRGB());
 
                 if (enti.getHealth() / enti.getMaxHealth() <= mc.thePlayer.getHealth() / mc.thePlayer.getMaxHealth())
-                    CustomFont.drawStringMedium("Winning", (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 45 + CustomFont.getHeightMedium(), Color.WHITE.getRGB());
+                    regular16.drawString("Winning", (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 45 + regular16.height(), Color.WHITE.getRGB());
                 else
-                    CustomFont.drawStringMedium("Losing", (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 45 + CustomFont.getHeightMedium(), Color.WHITE.getRGB());
+                    regular16.drawString("Losing", (sr.getScaledWidth() / 2F) + 54 + 35, sr.getScaledHeight() / 2F + 50 + 45 + regular16.height(), Color.WHITE.getRGB());
 
-                CustomFont.drawString("Dist: " + distance, (sr.getScaledWidth() / 2F) + 54 + 35.5, sr.getScaledHeight() / 2F + 50 + CustomFont.getHeightMedium() + 6, Color.WHITE.getRGB());
-                CustomFont.drawString("Hurt Resistant Time: " + enti.hurtResistantTime, (sr.getScaledWidth() / 2F) + 54 + 35.5, sr.getScaledHeight() / 2F + 50 + CustomFont.getHeightMedium() + 6 + CustomFont.getHeight() + 1, Color.WHITE.getRGB());
+                regular16.drawString("Dist: " + distance, (sr.getScaledWidth() / 2F) + 54 + 35.5, sr.getScaledHeight() / 2F + 50 + regular16.height() + 6, Color.WHITE.getRGB());
+                regular16.drawString("Hurt Resistant Time: " + enti.hurtResistantTime, (sr.getScaledWidth() / 2F) + 54 + 35.5, sr.getScaledHeight() / 2F + 50 + regular16.height() + 6 + regular16.height() + 1, Color.WHITE.getRGB());
             }
             break;
         }
@@ -867,7 +626,6 @@ public final class TargetHud extends Module {
                 return;
 
             switch (mode.getMode()) {
-                case "FpsEater3000":
                 case "Normal": {
                     final int hurtime = ((EntityPlayer) target).hurtTime;
                     if (hurtime == 0) return;
@@ -896,7 +654,6 @@ public final class TargetHud extends Module {
             return;
 
         switch (mode.getMode()) {
-            case "FpsEater3000":
             case "Normal": {
 
                 final float nameWidth = 38;
@@ -928,7 +685,6 @@ public final class TargetHud extends Module {
             return;
 
         switch (mode.getMode()) {
-            case "FpsEater3000":
             case "Normal": {
 
                 final float nameWidth = 38;
@@ -940,12 +696,7 @@ public final class TargetHud extends Module {
                 GlStateManager.translate((posX + 38 + 2 + 129 / 2f) * (1 - scale), (posY - 34 + 48 / 2f) * (1 - scale), 0);
                 GlStateManager.scale(scale, scale, 0);
 
-                //Background
-                if (mode.is("FpsEater3000")) {
-                    RenderUtil.roundedRect(posX + 38 + 2.5, posY - 33.5, 128, 39, 8, Color.black);
-                } else {
-                    RenderUtil.roundedRect(posX + 38 + 2.5, posY - 33.5, 128, 47, 8, Color.black);
-                }
+                RenderUtil.roundedRect(posX + 38 + 2.5, posY - 33.5, 128, 47, 8, Color.black);
 
                 GlStateManager.popMatrix();
 

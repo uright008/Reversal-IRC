@@ -1,4 +1,4 @@
-package cn.stars.starx.font.modern;
+package cn.stars.starx.font;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

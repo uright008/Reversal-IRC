@@ -1,4 +1,4 @@
-package cn.stars.starx.font.modern;
+package cn.stars.starx.font;
 
 import cn.stars.starx.GameInstance;
 import net.minecraft.client.resources.IResourceManager;

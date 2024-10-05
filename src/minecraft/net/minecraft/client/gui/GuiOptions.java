@@ -1,5 +1,10 @@
 package net.minecraft.client.gui;
 
+import java.io.IOException;
+
+import cn.stars.starx.ui.curiosity.CuriosityTextButton;
+import cn.stars.starx.ui.gui.GuiStarXSettings;
+import cn.stars.starx.util.render.UIUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
@@ -11,18 +16,15 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.EnumDifficulty;
 
-import java.io.IOException;
-
 public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 {
     private static final GameSettings.Options[] field_146440_f = new GameSettings.Options[] {GameSettings.Options.FOV};
     private final GuiScreen field_146441_g;
-
-    /** Reference to the GameSettings object. */
     private final GameSettings game_settings_1;
     private GuiButton field_175357_i;
     private GuiLockIconButton field_175356_r;
     protected String field_146442_a = "Options";
+    CuriosityTextButton starxSettings;
 
     public GuiOptions(GuiScreen p_i1046_1_, GameSettings p_i1046_2_)
     {
@@ -30,12 +32,10 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         this.game_settings_1 = p_i1046_2_;
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     public void initGui()
     {
+        starxSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiStarXSettings(this)),
+                "StarX设置", "e", true, 12, 40, 11);
         int i = 0;
         this.field_146442_a = I18n.format("options.title", new Object[0]);
 
@@ -121,9 +121,25 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if (mouseButton == 0)
+        {
+            for (int i = 0; i < this.buttonList.size(); ++i)
+            {
+                GuiButton guibutton = this.buttonList.get(i);
+
+                if (guibutton.mousePressed(this.mc, mouseX, mouseY))
+                {
+                    this.selectedButton = guibutton;
+                    guibutton.playPressSound(this.mc.getSoundHandler());
+                    this.actionPerformed(guibutton);
+                }
+            }
+        }
+        if (mc.theWorld == null) UIUtil.onButtonClick(new CuriosityTextButton[] {starxSettings}, mouseX, mouseY, mouseButton);
+    }
+
     protected void actionPerformed(GuiButton button) throws IOException
     {
         if (button.enabled)
@@ -207,13 +223,18 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
+
+        if (mc.theWorld == null) {
+            updatePostProcessing(true, partialTicks);
+            starxSettings.draw(mouseX, mouseY, partialTicks);
+        }
+
         this.drawCenteredString(this.fontRendererObj, this.field_146442_a, this.width / 2, 15, 16777215);
+        updatePostProcessing(false, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
+

@@ -1,19 +1,13 @@
 package cn.stars.starx.module.impl.render
 
-import cn.stars.starx.StarX
-import cn.stars.starx.event.impl.PacketReceiveEvent
 import cn.stars.starx.event.impl.Render2DEvent
 import cn.stars.starx.module.Category
 import cn.stars.starx.module.Module
 import cn.stars.starx.module.ModuleInfo
-import cn.stars.starx.module.impl.render.ClickGui.speedValue
 import cn.stars.starx.setting.impl.ModeValue
 import cn.stars.starx.setting.impl.NumberValue
-import cn.stars.starx.ui.clickgui.ClickGUI
 import cn.stars.starx.util.render.RenderUtil
-import cn.stars.starx.util.render.RenderUtils
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.network.play.server.S19PacketEntityStatus
 import java.awt.Color
 
 

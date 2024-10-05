@@ -13,14 +13,13 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.ui.clickgui.ClickGUI;
 import org.lwjgl.input.Keyboard;
 
 @ModuleInfo(name = "ClickGui", chineseName = "点击界面", description = "Opens a Gui where you can toggle modules and change their settings",
         chineseDescription = "显示一个可以让你管理功能的界面", category = Category.RENDER, defaultKey = Keyboard.KEY_RSHIFT)
 public final class ClickGui extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this, "Modern", "Dropdown", "Modern", "MomoTalk");
+    private final ModeValue mode = new ModeValue("Mode", this, "Modern", "Modern", "MomoTalk");
 
     private final ModeValue theme = new ModeValue("Theme", this, "Deep Blue", "Deep Blue",
             "Rural Amethyst", "Rustic Desert", "Orchid Aqua", "Alyssum Pink", "Sweet Grape Vine", "Disco");
@@ -38,10 +37,7 @@ public final class ClickGui extends Module {
         transparency.hidden = !mode.is("StarX");
         blur.hidden = !mode.is("StarX");
 
-        scale.hidden = !mode.is("Dropdown");
         speedValue = (float)(speed.getValue());
-
-        ClickGUI.updateScroll();
     }
 
     @Override
@@ -49,11 +45,6 @@ public final class ClickGui extends Module {
         switch (mode.getMode()) {
             case "MomoTalk": {
                 mc.displayGuiScreen(StarX.mmtClickGUI);
-                break;
-            }
-
-            case "Dropdown": {
-                mc.displayGuiScreen(StarX.strikeGUI);
                 break;
             }
 

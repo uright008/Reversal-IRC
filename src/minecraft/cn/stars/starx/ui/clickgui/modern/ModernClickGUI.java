@@ -1,7 +1,7 @@
 package cn.stars.starx.ui.clickgui.modern;
 
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.addons.GuiSettings;
@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;

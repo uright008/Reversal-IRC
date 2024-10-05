@@ -4,7 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.FontManager;
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
 import cn.stars.starx.util.render.UIUtil;

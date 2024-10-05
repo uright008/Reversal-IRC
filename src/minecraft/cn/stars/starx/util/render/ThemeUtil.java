@@ -63,13 +63,9 @@ public final class ThemeUtil implements GameInstance {
 
         if (type == ThemeType.GENERAL) {
             switch (theme) {
-                case "Rise":
-                case "Comfort":
                 case "Minecraft":
-                case "Never Lose":
-                    colorOffsetMultiplier = 2.2f;
-                    break;
-
+                case "Modern":
+                case "StarX":
                 case "Simple": {
                     if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
                         colorOffsetMultiplier = 5f;
@@ -78,13 +74,6 @@ public final class ThemeUtil implements GameInstance {
                     }
                     break;
                 }
-
-                case "Modern":
-                case "Rise Rainbow":
-                case "Minecraft Rainbow":
-                case "StarX":
-                    colorOffsetMultiplier = 5f;
-                    break;
             }
         }
 
@@ -97,15 +86,9 @@ public final class ThemeUtil implements GameInstance {
             case GENERAL:
             case ARRAYLIST:
                 switch (theme) {
-                    case "Rise":
-                    case "Comfort":
+                    case "Modern":
+                    case "StarX":
                     case "Minecraft":
-                    case "Never Lose": {
-                        final float offset1 = (float) (Math.abs(Math.sin(timer + colorOffset * 0.45)) / 2) + 1f;
-                        color = ColorUtil.liveColorBrighter(StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, offset1);
-                        break;
-                    }
-
                     case "Simple": {
                         if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
                             color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
@@ -117,25 +100,15 @@ public final class ThemeUtil implements GameInstance {
                         }
                         break;
                     }
-
-                    case "Modern":
-                    case "Rise Rainbow":
-                    case "Minecraft Rainbow":
-                    case "StarX":
-                        color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
-                        break;
                 }
 
                 break;
 
             case LOGO:
                 switch (theme) {
-                    case "Rise":
-                    case "Comfort":
+                    case "Modern":
+                    case "StarX":
                     case "Minecraft":
-                        color = new Color(StarX.CLIENT_THEME_COLOR_BRIGHT);
-                        break;
-
                     case "Simple": {
                         if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
                             color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
@@ -145,13 +118,6 @@ public final class ThemeUtil implements GameInstance {
                             color = ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR, StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR_2, true);
                         }
                     }
-
-                    case "Modern":
-                    case "Rise Rainbow":
-                    case "Minecraft Rainbow":
-                    case "StarX":
-                        color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
-                        break;
                 }
 
                 break;

@@ -1,8 +1,7 @@
 package cn.stars.starx.music.ui;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.util.animation.advanced.Direction;
 import cn.stars.starx.util.animation.advanced.composed.ColorAnimation;
 import cn.stars.starx.util.render.RenderUtil;

@@ -25,10 +25,8 @@ import cn.stars.starx.module.impl.player.IRC;
 import cn.stars.starx.module.impl.render.*;
 import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.music.MusicManager;
-import cn.stars.starx.ui.clickgui.ClickGUI;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
-import cn.stars.starx.ui.clickgui.strikeless.StrikeGUI;
 import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.theme.GuiTheme;
@@ -67,7 +65,7 @@ import java.util.concurrent.Executors;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.0.0+beta.2";
+    public static final String VERSION = "v3.0.0+beta.3";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Starlight Team";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -106,8 +104,6 @@ public class StarX {
     public static MusicManager musicManager;
     public static ModernClickGUI modernClickGUI;
     public static MMTClickGUI mmtClickGUI;
-    public static ClickGUI clickGUI;
-    public static StrikeGUI strikeGUI;
     public static GuiTheme guiTheme;
     public static CreativeTabs creativeTab;
     public static String ip;
@@ -206,8 +202,6 @@ public class StarX {
             guiTheme = new GuiTheme();
             modernClickGUI = new ModernClickGUI();
             mmtClickGUI = new MMTClickGUI();
-            clickGUI = new ClickGUI();
-            strikeGUI = new StrikeGUI();
 
             creativeTab = new StarXTab();
 

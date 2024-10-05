@@ -1,4 +1,4 @@
-package cn.stars.starx.font.modern;
+package cn.stars.starx.font;
 
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.util.render.ColorUtil;

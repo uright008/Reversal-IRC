@@ -190,7 +190,6 @@ public final class ConfigHandler {
 
         //Notification
         StarX.notificationManager.registerNotification("Config loaded " + name + ".");
-        StarX.amountOfConfigsLoaded++;
     }
 
     public void loadFromList(final List<String> list) {
@@ -251,8 +250,6 @@ public final class ConfigHandler {
                 ((ModeValue) setting).set(split[3]);
             }
         }
-
-        StarX.amountOfConfigsLoaded++;
     }
 
     public void list() {
@@ -361,6 +358,5 @@ public final class ConfigHandler {
 
         //Notification
         StarX.notificationManager.registerNotification("Config loaded " + name + ".");
-        StarX.amountOfConfigsLoaded++;
     }
 }

@@ -2,9 +2,6 @@ package cn.stars.starx.ui.hud;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.*;
@@ -16,7 +13,6 @@ import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
@@ -83,15 +79,8 @@ public class Hud implements GameInstance {
         final String bps = "BPS: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
         final String bps2 = "Speed: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
         switch (mode) {
-            case "Minecraft Rainbow":
             case "Minecraft": {
                 Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
-            case "Never Lose":
-            case "Comfort": {
-                comfortaa.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
@@ -113,37 +102,13 @@ public class Hud implements GameInstance {
                 break;
             }
 
-            case "Skeet": {
-                skeetBig.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
             default: {
-                CustomFont.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                regular16.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
         }
     }
 
-    public static void onFadeOutline() {
-        final ModeValue setting = ModuleInstance.getMode("ClientSettings", "Theme");
-        final String mode = setting.getMode();
-
-        if (modules == null || Minecraft.getMinecraft().gameSettings.showDebugInfo)
-            return;
-
-        for (final Object m : modules) {
-            final Category c = ((Module) m).getModuleInfo().category();
-
-            final int offsetY = 2;
-            final int offsetX = 1;
-
-            if (mode.equals("Never Lose")) {
-                final double stringWidth = comfortaa.getWidth(((Module) m).getModuleInfo().name());
-                RenderUtil.rect(((Module) m).renderX - offsetX, ((Module) m).renderY - offsetY, stringWidth + offsetX * 1.5, comfortaa.getHeight() + offsetY + 0.3, new Color(25, 25, 25, 245));
-            }
-        }
-    }
 
     public static class ModuleComparator implements Comparator<Object> {
         @Override
@@ -161,18 +126,8 @@ public class Hud implements GameInstance {
             final String name2 = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) o2).getModuleInfo().chineseName().isEmpty() ? ((Module) o2).getModuleInfo().chineseName() : ((Module) o2).getModuleInfo().name();
 
             switch (mode) {
-                case "Minecraft Rainbow":
                 case "Minecraft": {
                     return Float.compare(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name2), Minecraft.getMinecraft().fontRendererObj.getStringWidth(name));
-                }
-
-                case "Never Lose":
-                case "Comfort": {
-                    return Float.compare(comfortaa.getWidth(name2), comfortaa.getWidth(name));
-                }
-
-                case "Skeet": {
-                    return Float.compare(skeetBig.getWidth(name2), skeetBig.getWidth(name));
                 }
 
                 case "StarX": {
@@ -188,7 +143,7 @@ public class Hud implements GameInstance {
                 }
 
                 default: {
-                    return Float.compare(CustomFont.getWidth(name2), CustomFont.getWidth(name));
+                    return Float.compare(regular16.getWidth(name2), regular16.getWidth(name));
                 }
             }
         }
@@ -212,7 +167,7 @@ public class Hud implements GameInstance {
 
         for (final Object n : modules) {
 
-            final float posOnArraylist = offset + moduleCount * CustomFont.getHeight() * 1.2f;
+            float posOnArraylist = offset + moduleCount * 10.8f;
 
             assert n instanceof Module;
             final String name = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) n).getModuleInfo().chineseName().isEmpty() ? ((Module) n).getModuleInfo().chineseName() : ((Module) n).getModuleInfo().name();
@@ -227,42 +182,13 @@ public class Hud implements GameInstance {
                 continue;
 
             switch (mode) {
-                case "Rise":
-                case "Rise Rainbow": {
-                    finalX = arraylistX - CustomFont.getWidth(name);
-                    double x = (double)(renderX + CustomFont.getWidth(name));
-                    CustomFont.drawStringWithShadow(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
-             //       RenderUtil.rect(x, (double) renderY, x + 1, (double) renderY + CustomFont.getHeight(), ThemeUtil.getThemeColor(moduleCount, ThemeType.ARRAYLIST));
-                    break;
-                }
-
-                case "Minecraft":
-                case "Minecraft Rainbow": {
+                case "Minecraft": {
                     finalX = arraylistX - mc.fontRendererObj.getStringWidth(name);
 
                     mc.fontRendererObj.drawStringWithShadow(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
 
                     break;
                 }
-
-                case "Comfort": {
-                    finalX = arraylistX - comfortaa.getWidth(name);
-
-                    comfortaa.drawStringWithShadow(name, renderX + 2, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
-                    break;
-                }
-
-                case "Never Lose": {
-                    final int offsetY = 2;
-                    final int offsetX = 1;
-
-                    final double stringWidth = comfortaa.getWidth(name);
-                    RenderUtil.rect(renderX - offsetX, renderY - offsetY, stringWidth + offsetX * 1.5, comfortaa.getHeight() + offsetY + 0.3, new Color(0, 0, 0, 120));
-                    finalX = arraylistX - comfortaa.getWidth(name);
-
-                    comfortaa.drawString(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
-                }
-                break;
 
                 case "Simple": {
                     final int offsetY = 2;
@@ -299,13 +225,14 @@ public class Hud implements GameInstance {
                     final int offsetX = 1;
 
                     final double stringWidth = gs.getWidth(name);
+                    posOnArraylist = offset + moduleCount * (gs.getHeight() + 1.3f);
 
                     RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, gs.getHeight() + offsetY - 0.7, new Color(0, 0, 0, 60));
                     RenderUtil.roundedRect(renderX + stringWidth, renderY - offsetY + 0.5, 2, gs.getHeight() + offsetY - 0.6, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
 
                     finalX = arraylistX - gs.getWidth(name);
 
-                    gs.drawString(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+                    gs.drawString(name, renderX, renderY + 2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
                 }
                 break;
 
@@ -316,7 +243,7 @@ public class Hud implements GameInstance {
                     final double stringWidth = psm17.getWidth(name);
                     final int mC = moduleCount;
 
-                    if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+                    if (!ModuleInstance.getBool("ClientSettings", "ThunderHack").isEnabled()) {
                         Runnable shadowRunnable = () -> {
                             RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
                                     ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
@@ -364,13 +291,6 @@ public class Hud implements GameInstance {
                     }
 
                     finalX = arraylistX - psm17.getWidth(name);
-                }
-                break;
-
-                case "Skeet": {
-                    finalX = arraylistX - skeetBig.getWidth(name);
-
-                    skeetBig.drawStringWithShadow(name, renderX, renderY, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
                 }
                 break;
             }
@@ -439,69 +359,31 @@ public class Hud implements GameInstance {
 
         if (customName.isEmpty()) customName = "Use \".clientname <name>\" to set custom name.";
         switch (mode) {
-            case "Rise": {
+            case "Minecraft": {
                 if (useDefaultName) {
-                    textGui.setWidth(70);
-                    CustomFont.drawStringBigWithDropShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                    offset = CustomFont.getWidthBig(name);
-                    CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + offset, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                } else {
-                    textGui.setWidth((int) (20 + CustomFont.getWidthBig(customName)));
-                    CustomFont.drawStringBigWithDropShadow(customName, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                }
-                break;
-            }
-
-            case "Rise Rainbow": {
-                if (useDefaultName) {
-                    textGui.setWidth(70);
-                    float off2 = 0;
+                    textGui.setWidth(75);
+                    float off = 0;
 
                     for (int i = 0; i < name.length(); i++) {
                         final String character = String.valueOf(name.charAt(i));
 
-                        CustomFont.drawStringBigWithDropShadow(character, textGui.getX() + 1 + off2, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
+                        mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.ARRAYLIST));
 
-                        off2 += CustomFont.getWidthBig(character) - 2;
+                        off += mc.fontRendererObj.getStringWidth(character);
                     }
 
-                    off2 = CustomFont.getWidthBig(name);
-                    CustomFont.drawStringWithDropShadow(StarX.VERSION, textGui.getX() + off2, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    off = mc.fontRendererObj.getStringWidth(name);
+                    mc.fontRendererObj.drawStringWithShadow("[" + StarX.VERSION + "]", textGui.getX() + off + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
                 } else {
-                    textGui.setWidth((int) (20 + CustomFont.getWidthBig(customName)));
-                    float off2 = 0;
+                    textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
+                    float off = 0;
 
                     for (int i = 0; i < customName.length(); i++) {
                         final String character = String.valueOf(customName.charAt(i));
+                        mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.ARRAYLIST));
 
-                        CustomFont.drawStringBigWithDropShadow(character, textGui.getX() + 1 + off2, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
-
-                        off2 += CustomFont.getWidthBig(character) - 2;
+                        off += mc.fontRendererObj.getStringWidth(character);
                     }
-
-                }
-
-                break;
-            }
-
-            case "Minecraft": {
-                if (useDefaultName) {
-                    textGui.setWidth(70);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                    mc.fontRendererObj.drawStringWithShadow(name, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                    GlStateManager.popMatrix();
-
-                    offset = CustomFont.getWidthBig(name);
-                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, textGui.getX() + offset + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                } else {
-                    textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
-                    GlStateManager.pushMatrix();
-                    GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                    mc.fontRendererObj.drawStringWithShadow(customName, textGui.getX() + 1, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                    GlStateManager.popMatrix();
                 }
                 break;
             }
@@ -509,12 +391,12 @@ public class Hud implements GameInstance {
             case "StarX": {
                 if (useDefaultName) {
                     textGui.setWidth(100);
-                    gsTitle.drawStringWithShadow("S", textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                    gsTitle.drawStringWithShadow("tarX [" + StarX.VERSION + "]", textGui.getX() + 5 + gsTitle.getWidth("S"), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
+                    gsTitle.drawStringWithShadow("S", textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
+                    gsTitle.drawStringWithShadow("tarX [" + StarX.VERSION + "]", textGui.getX() + 7 + gsTitle.getWidth("S"), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
                 } else {
                     textGui.setWidth((int) (20 + gsTitle.getWidth(customName)));
                     // FOOLISH
-                    gsTitle.drawStringWithShadow(String.valueOf(customName.charAt(0)), textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
+                    gsTitle.drawStringWithShadow(String.valueOf(customName.charAt(0)), textGui.getX() + 7, textGui.getY() + 5, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
                     // 从字符串第二个字开始获取
                     gsTitle.drawStringWithShadow(customName.substring(1), textGui.getX() + 5 + gsTitle.getWidth(String.valueOf(customName.charAt(0))), textGui.getY() + 4.9f, new Color(230, 230, 230, 200).getRGB());
                 }
@@ -606,7 +488,7 @@ public class Hud implements GameInstance {
                 String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
-                if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+                if (!ModuleInstance.getBool("ClientSettings", "ThunderHack").isEnabled()) {
                     if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, Color.BLACK);
@@ -614,17 +496,15 @@ public class Hud implements GameInstance {
                     }
 
                     RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, new Color(0, 0, 0, 80));
-                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1,
-                            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                    RenderUtil.roundedOutlineRectangle(x, y, 35 + extraWidth, 14, 3, 1, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                 //    RoundedUtil.drawRoundOutline(x, y, 35 + extraWidth, 14, 3, 0.1f, new Color(0, 0, 0, 80),
-                //            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                //            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.ARRAYLIST) : new Color(250, 250, 250, 200));
                     psm18.drawString(extraText, x + 30.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
 
                     if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            psm18.drawString(extraText, x + 30.5, y + 4f, ThemeUtil.getThemeColor(ThemeType.LOGO).getRGB());
-                            RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4,
-                                    ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200));
+                            psm18.drawString(extraText, x + 30.5, y + 4f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST).getRGB());
+                            RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 
@@ -633,12 +513,10 @@ public class Hud implements GameInstance {
                         final String character = String.valueOf(name.charAt(i));
 
                         final float off1 = off;
-                        psb20.drawString(character, x + 4 + off1, y + 3.5,
-                                ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(i, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
+                        psb20.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i, ThemeType.ARRAYLIST));
                         int finalI = i;
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            psb20.drawString(character, x + 4 + off1, y + 3.5,
-                                    ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColorInt(finalI, ThemeType.LOGO) : new Color(250, 250, 250, 200).getRGB());
+                            psb20.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(finalI, ThemeType.ARRAYLIST));
                         });
                         off += psb20.getWidth(character);
                     }
@@ -689,136 +567,6 @@ public class Hud implements GameInstance {
                 }
                 break;
             }
-
-            case "Minecraft Rainbow": {
-                if (useDefaultName) {
-                    textGui.setWidth(75);
-                    float off = 0;
-
-                    for (int i = 0; i < name.length(); i++) {
-                        final String character = String.valueOf(name.charAt(i));
-
-                        GlStateManager.pushMatrix();
-                        GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                        mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
-                        GlStateManager.popMatrix();
-
-                        off += mc.fontRendererObj.getStringWidth(character);
-                    }
-
-                    off = CustomFont.getWidthBig(name);
-                    mc.fontRendererObj.drawStringWithShadow(StarX.VERSION, textGui.getX() + off + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                } else {
-                    textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
-                    float off = 0;
-
-                    for (int i = 0; i < customName.length(); i++) {
-                        final String character = String.valueOf(customName.charAt(i));
-
-                        GlStateManager.pushMatrix();
-                        GlStateManager.scale(1.5F, 1.5F, 1.5F);
-                        mc.fontRendererObj.drawStringWithShadow(character, textGui.getX() + 1 + off, textGui.getY(), ThemeUtil.getThemeColorInt(i, ThemeType.LOGO));
-
-                        GlStateManager.popMatrix();
-
-                        off += mc.fontRendererObj.getStringWidth(character);
-                    }
-                }
-                break;
-            }
-
-            case "Comfort": {
-                if (useDefaultName) {
-                    textGui.setWidth(70);
-                    comfortaaBig.drawStringWithShadow(name, textGui.getX(), textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                    offset = CustomFont.getWidthBig(name);
-                    comfortaa.drawStringWithShadow(StarX.VERSION, textGui.getX() + 3 + offset, textGui.getY() - 1, ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-                } else {
-                    textGui.setWidth((int) (20 + comfortaaBig.getWidth(customName)));
-                    comfortaaBig.drawStringWithShadow(customName, textGui.getX(), textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.LOGO));
-
-                }
-                break;
-            }
-
-            case "Never Lose": {
-                float x = textGui.getX() + 2;
-                final float y = textGui.getY() - 1;
-                final String clientName = useDefaultName ? "STARX" : customName.toUpperCase();
-                final String ip = (mc.getCurrentServerData() == null ? "Singleplayer" : mc.getCurrentServerData().serverIP);
-                String username = mc.getSession().getUsername();
-                if (username == null) username = mc.thePlayer.getName();
-                final float width = museo.getWidth(clientName) + eaves.getWidth(ip + Minecraft.getDebugFPS() + username);
-                final int informationColor = new Color(255, 255, 255, 220).hashCode();
-                textGui.setWidth((int) (width + 34));
-                RenderUtil.roundedRect(x - 1, y - 1, width + 34, 12, 3, Color.black);
-
-
-                RenderUtil.roundedRect(x - 1 - 4 / 2f, y - 1 - 4 / 2f, width + 34 + 4, 12 + 4, 6, new Color(0, 0, 0, 25));
-
-                final Color themeColor = ThemeUtil.getThemeColor(ThemeType.GENERAL);
-                final Color color = new Color(
-                        themeColor.getRed(),
-                        themeColor.getGreen(),
-                        themeColor.getBlue(),
-                        85
-                );
-
-                museo.drawString(clientName, x + 1, y, color.hashCode());
-                museo.drawString(clientName, x + 2, y + 1, informationColor);
-
-                x += museo.getWidth(clientName) + 5;
-                eaves.drawString("|", x - 4, y + 2, new Color(255, 255, 255, 150).hashCode());
-                eaves.drawString(username, x, y + 2, informationColor);
-
-                x += eaves.getWidth(username) + 4;
-                eaves.drawString("|", x - 4, y + 2, new Color(255, 255, 255, 150).hashCode());
-                eaves.drawString(ip, x, y + 2, informationColor);
-
-                x += eaves.getWidth(ip) + 4;
-                eaves.drawString("|", x - 4, y + 2, new Color(255, 255, 255, 150).hashCode());
-                eaves.drawString("FPS " + Minecraft.getDebugFPS(), x, y + 2, informationColor);
-            }
-            break;
-
-            case "Skeet": {
-                float x = textGui.getX() + 4;
-                final float y = textGui.getY() + 1f;
-
-                final String clientName = useDefaultName ? "starx" : customName.toLowerCase();
-                final NetworkPlayerInfo info = mc.getNetHandler().getPlayerInfo(mc.thePlayer.getUniqueID());
-                final int responseTime = info == null || mc.isSingleplayer() ? 0 : info.getResponseTime();
-
-                String username = mc.getSession().getUsername();
-                if (username == null) username = mc.thePlayer.getName();
-                final float width = (skeet.getWidth(clientName) + skeet.getWidth(Minecraft.getDebugFPS() + " fps" + responseTime + "ms" + username)) + 10;
-                final int informationColor = Color.WHITE.hashCode();
-                textGui.setWidth((int) (width + 35) + 4);
-
-                for (int i = 1; i <= 4; i++) {
-                    RenderUtil.rect(x - 1.5 - i / 2f, y - 1.5 - i / 2f, width + 35 + i, 9 + i, true, Color.DARK_GRAY.darker());
-                    RenderUtil.rect(x - 1 - i / 2f, y - 1 - i / 2f, width + 34 + i, 8 + i, true, Color.DARK_GRAY);
-                }
-
-                RenderUtil.rect(x - 1, y - 1, width + 34, 8, true, Color.DARK_GRAY.darker().darker());
-
-                skeet.drawString(clientName, x + 2, y + 0.5f, informationColor);
-                skeet.drawString(" sense", (x + 2) + skeet.getWidth(clientName) - 2, y + 0.5f, StarX.CLIENT_THEME_COLOR_BRIGHT);
-
-                x += skeet.getWidth(clientName + "sense") + 15;
-                skeet.drawString("|", x - 12, y + 0.5f, new Color(255, 255, 255, 150).hashCode());
-                skeet.drawString(Minecraft.getDebugFPS() + " fps", x - 6, y + 0.5f, informationColor);
-
-                x += skeet.getWidth(Minecraft.getDebugFPS() + " fps") + 6;
-                skeet.drawString("|", x - 12, y + 0.5f, new Color(255, 255, 255, 150).hashCode());
-                skeet.drawString(responseTime + "ms", x - 6, y + 0.5f, informationColor);
-
-                x += skeet.getWidth(responseTime + "ms") + 6;
-                skeet.drawString("|", x - 12, y + 0.5f, new Color(255, 255, 255, 150).hashCode());
-                skeet.drawString(username, x - 6, y + 0.5f, informationColor);
-            }
-            break;
         }
     }
 

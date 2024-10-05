@@ -1,7 +1,7 @@
 package cn.stars.starx.ui.notification;
 
 import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.font.CustomFont;
+import cn.stars.starx.font.FontManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public final class NotificationManager {
     }
 
     public void registerNotification(final String description, final String title, final NotificationType type) {
-        notifications.add(new Notification(description, title, (long) (CustomFont.getWidth(description) * 30), type));
+        notifications.add(new Notification(description, title, (long) (FontManager.getPSM(20).getWidth(description) * 30), type));
     }
 
     public void registerNotification(final String description, final long delay, final NotificationType type) {
@@ -27,11 +27,11 @@ public final class NotificationManager {
     }
 
     public void registerNotification(final String description, final NotificationType type) {
-        notifications.add(new Notification(description,StringUtils.capitalize(type.name().toLowerCase()), (long) (CustomFont.getWidth(description) * 30), type));
+        notifications.add(new Notification(description,StringUtils.capitalize(type.name().toLowerCase()), (long) (FontManager.getPSM(20).getWidth(description) * 30), type));
     }
 
     public void registerNotification(final String description) {
-        notifications.add(new Notification(description, "Notification", (long) (CustomFont.getWidth(description) * 40), NotificationType.NOTIFICATION));
+        notifications.add(new Notification(description, "Notification", (long) (FontManager.getPSM(20).getWidth(description) * 40), NotificationType.NOTIFICATION));
 
         /*try {
             AuthGUI.getClipboardString();

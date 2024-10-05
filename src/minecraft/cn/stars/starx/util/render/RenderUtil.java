@@ -1,8 +1,6 @@
 package cn.stars.starx.util.render;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
@@ -40,7 +38,6 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -2041,51 +2038,6 @@ public final class RenderUtil implements GameInstance {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-
-    public void drawArmorHUD(final int x, final int y) {
-        GL11.glPushMatrix();
-        ScaledResolution sr = new ScaledResolution(mc);
-        final List<ItemStack> stuff = new ArrayList<>();
-        int cock = -2;
-        for (int geraltOfNigeria = 3; geraltOfNigeria >= 0; --geraltOfNigeria) {
-            final ItemStack armor = mc.thePlayer.getCurrentArmor(geraltOfNigeria);
-            if (armor != null) {
-                stuff.add(armor);
-            }
-        }
-        if (mc.thePlayer.getHeldItem() != null) {
-            stuff.add(mc.thePlayer.getHeldItem());
-        }
-
-        for (final ItemStack yes : stuff) {
-            if (Minecraft.getMinecraft().theWorld != null) {
-                RenderHelper.enableGUIStandardItemLighting();
-                cock += 24;
-            }
-            GlStateManager.pushMatrix();
-            GlStateManager.disableAlpha();
-            GlStateManager.clear(256);
-            GlStateManager.enableBlend();
-            Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(yes, cock + x + 2, y);
-            Minecraft.getMinecraft().getRenderItem().renderItemOverlays(Minecraft.getMinecraft().fontRendererObj, yes, cock + x + 2, y);
-            rect(cock + x - 2, y - 1, 24, 28, new Color(0,0,0,60));
-       //     RenderUtil.renderEnchantText(yes, cock + x, y + sr.getScaledHeight() - 75);
-            final TTFFontRenderer f = CustomFont.FONT_MANAGER.getFont("Light 10");
-       //     GlStateManager.scale(0.5f, 0.5f, 0.5)
-            CustomFont.drawStringSmall(String.valueOf(yes.getMaxDamage() - yes.getItemDamage()), cock + x + 1, y + 17.5, Color.WHITE.getRGB());
-            GlStateManager.scale(1.0,1.0,1.0);
-            GlStateManager.disableBlend();
-            GlStateManager.scale(0.5, 0.5, 0.5);
-            GlStateManager.disableDepth();
-            GlStateManager.disableLighting();
-            GlStateManager.enableDepth();
-            GlStateManager.scale(2.0f, 2.0f, 2.0f);
-            GlStateManager.enableAlpha();
-            GlStateManager.popMatrix();
-            yes.getEnchantmentTagList();
-        }
-        GL11.glPopMatrix();
     }
 
     public static void renderEnchantText(ItemStack stack, int x, float y) {

@@ -4,9 +4,8 @@ import cn.stars.elixir.account.MicrosoftAccount
 import cn.stars.elixir.account.MinecraftAccount
 import cn.stars.elixir.compat.OAuthServer
 import cn.stars.starx.GameInstance
-import cn.stars.starx.font.CustomFont
+import cn.stars.starx.font.FontManager
 import cn.stars.starx.ui.curiosity.CuriosityTextButton
-import cn.stars.starx.ui.gui.mainmenu.MenuTextButton
 import cn.stars.starx.util.StarXLogger
 import cn.stars.starx.util.math.TimeUtil
 import cn.stars.starx.util.shader.RiseShaders
@@ -83,8 +82,8 @@ class GuiMicrosoftLoginPending(private val prevGui: GuiScreen) : GuiScreen() {
 
         cancelButton!!.draw(mouseX, mouseY, partialTicks)
 
-        CustomFont.FONT_MANAGER.getFont("PSB 24").drawCenteredString(stage, width / 2f, height / 2f - 50, Color.WHITE.rgb)
-        CustomFont.FONT_MANAGER.getFont("PSB 36").drawCenteredString("### Microsoft Login Process ###", width / 2f, 70f, Color.WHITE.rgb)
+        FontManager.getPSB(24).drawCenteredString(stage, width / 2.0, height / 2.0 - 50, Color.WHITE.rgb)
+        FontManager.getPSB(36).drawCenteredString("### Microsoft Login Process ###", width / 2.0, 70.0, Color.WHITE.rgb)
 
 
         GameInstance.UI_BLOOM_RUNNABLES.forEach(Consumer { obj: Runnable -> obj.run() })

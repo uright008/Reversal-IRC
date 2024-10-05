@@ -1,8 +1,8 @@
 package cn.stars.starx.ui.clickgui.modern;
 
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.addons.GuiSettings;
@@ -17,26 +17,21 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.animation.advanced.Direction;
 import cn.stars.starx.util.animation.advanced.impl.DecelerateAnimation;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
 import java.io.IOException;
 import java.util.ArrayList;
 

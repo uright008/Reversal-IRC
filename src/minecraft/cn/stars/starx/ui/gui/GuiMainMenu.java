@@ -2,8 +2,8 @@ package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
 import cn.stars.starx.util.StarXLogger;

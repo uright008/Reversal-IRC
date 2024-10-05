@@ -1,8 +1,8 @@
 package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.event.impl.*;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;

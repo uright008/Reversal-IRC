@@ -1,203 +1,225 @@
 package cn.stars.starx.font;
 
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.Minecraft;
 
-import java.awt.*;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-public final class FontManager {
+public class FontManager {
+    private static final HashMap<Integer, ModernFontRenderer> REGULAR = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> REGULARBOLD = new HashMap<>();
 
-    private final HashMap<String, TTFFontRenderer> fonts = new HashMap<>();
-    private final TTFFontRenderer defaultFont;
+    private static final HashMap<Integer, ModernFontRenderer> INTERNATIONAL = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> MONTSERRAT_MAP = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> ROBOTO_MAP = new HashMap<>();
 
-    public TTFFontRenderer getFont(final String key) {
-        return this.fonts.getOrDefault(key, this.defaultFont);
+    private static final HashMap<Integer, ModernFontRenderer> LIGHT_MAP = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> RAINBOW_PARTY = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> NUNITO = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> NUNITO_BOLD = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> MUSEO_SANS = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> NUNITO_LIGHT_MAP = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> POPPINS_BOLD = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> POPPINS_SEMI_BOLD = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> POPPINS_MEDIUM = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> POPPINS_REGULAR = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> POPPINS_LIGHT = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> QUICKSAND_MAP_MEDIUM = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> QUICKSAND_MAP_LIGHT = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> TAHOMA_BOLD = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> TAHOMA = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> MOREICONS = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> ICONS_2 = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> ICONS_3 = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> DREAMSCAPE = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> DREAMSCAPE_NO_AA = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> SOMATIC = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> BIKO = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> MONTSERRAT_HAIRLINE = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> PRODUCT_SANS_BOLD = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> PRODUCT_SANS_REGULAR = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> PRODUCT_SANS_MEDIUM = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> PRODUCT_SANS_LIGHT = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> SF_UI_PRO = new HashMap<>();
+
+    private static final HashMap<Integer, ModernFontRenderer> HACK = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> CHECK = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> EAVES = new HashMap<>();
+    private static final HashMap<Integer, ModernFontRenderer> CUR = new HashMap<>();
+
+    // COPY THIS METHOD FOR EACH METHOD AND REPLACE FONTNAME WITH THE USED FONT FILE NAME
+    public static MFont getMontserratMedium(final int size) {
+        return get(MONTSERRAT_MAP, size, "Montserrat-Medium", true, true);
     }
 
-    public FontManager() {
+    public static MFont getMontserratHairline(final int size) {
+        return get(MONTSERRAT_HAIRLINE, size, "Montserrat-Hairline", true, true);
+    }
 
-        final ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-        final ConcurrentLinkedQueue<TextureData> textureQueue = new ConcurrentLinkedQueue<>();
+    public static MFont getInternational(int size) {
+        return get(INTERNATIONAL, size, "NotoSans-Regular", true, true, false, true);
+    }
 
-        this.defaultFont = new TTFFontRenderer(executorService, textureQueue, new Font("Verdana", Font.PLAIN, 18));
+    public static MFont getRainbowParty(int size) {
+        return get(RAINBOW_PARTY,  size, "RainbowParty", true, true, false, false);
+    }
 
-        try {
-            for (final int i : new int[]{60, 96}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Dreamscape.ttf");
+    public static MFont getRegular(int size) {
+        return get(REGULAR,  size, "regular", true, true, false, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Dreamscape " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getRegularBold(int size) {
+        return get(REGULARBOLD,  size, "regularBold", true, true, false, true);
+    }
 
-            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 24, 36}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/GoogleSans.ttf");
+    public static MFont getCur(int size) {
+        return get(CUR,  size, "curiosity", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("GoogleSans " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getRobotoLight(final int size) {
+        return get(ROBOTO_MAP, size, "Roboto-Light", true, true);
+    }
 
-            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 19, 20, 24, 36}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/ProductSansMedium.ttf");
+    public static MFont getLight(final int size) {
+        return get(LIGHT_MAP, size, "Light", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("PSM " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getSFUIPro(final int size) {
+        return get(SF_UI_PRO, size, "SF-UI-Pro", true, true);
+    }
 
-            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 20, 24, 36}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/ProductSansBold.ttf");
+    public static MFont getPoppinsBold(final int size) {
+        return get(POPPINS_BOLD, size, "Poppins-Bold", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("PSB " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getPoppinsSemiBold(final int size) {
+        return get(POPPINS_SEMI_BOLD, size, "Poppins-SemiBold", true, true);
+    }
 
-            for (final int i : new int[]{1, 2, 12, 15, 16, 18, 24, 36}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Moreicon.ttf");
+    public static MFont getCheck(final int size) {
+        return get(CHECK, size, "check", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Mi " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getPoppinsMedium(final int size) {
+        return get(POPPINS_MEDIUM, size, "Poppins-Medium", true, true);
+    }
 
+    public static MFont getPoppinsRegular(final int size) {
+        return get(POPPINS_REGULAR, size, "Poppins-Regular", true, true);
+    }
 
-            for (final int i : new int[]{1, 2, 18, 32, 35, 200}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/regular.ttf");
+    public static MFont getPoppinsLight(final int size) {
+        return get(POPPINS_LIGHT, size, "Poppins-Light", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Regular " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getNunito(final int size) {
+        return get(PRODUCT_SANS_REGULAR, size, "product_sans_regular", true, true, false, true);
+    }
 
-            for (final int i : new int[]{10,14, 16, 18, 19, 20, 22, 24, 36, 48, 72, 96}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Light.ttf");
+    public static MFont getNunitoBold(final int size) {
+        return get(PRODUCT_SANS_BOLD, size, "product_sans_bold", true, true, false, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Light " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getMuseo(final int size) {
+        return get(MUSEO_SANS, size, "MuseoSans_900", true, true);
+    }
 
-            for (final int i : new int[]{18}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/SigmaRegular.ttf");
+    public static MFont getNunitoLight(final int size) {
+        return get(PRODUCT_SANS_LIGHT, size, "product_sans_light", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("SigmaBold " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getQuicksandMedium(final int size) {
+        return get(QUICKSAND_MAP_MEDIUM, size, "Quicksand-Medium", true, true);
+    }
 
-            for (final int i : new int[]{12}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/TahomaBold.ttf");
+    public static MFont getQuicksandLight(final int size) {
+        return get(QUICKSAND_MAP_LIGHT, size, "Quicksand-Light", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("SkeetBold " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getTahomaBold(final int size) {
+        return get(TAHOMA_BOLD, size, "TahomaBold", true, true);
+    }
 
-            for (final int i : new int[]{18, 16}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Tahoma.ttf");
+    public static MFont getTahoma(final int size) {
+        return get(TAHOMA, size, "Tahoma", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Skeet " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getDreamscape(final int size) {
+        return get(DREAMSCAPE, size, "Dreamscape", true, true);
+    }
 
-            for (final int i : new int[]{16, 18, 28, 36, 48}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Biko_Regular.otf");
+    public static MFont getSomatic(final int size) {
+        return get(SOMATIC, size, "Somatic-Rounded", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Biko " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getDreamscapeNoAA(final int size) {
+        return get(DREAMSCAPE_NO_AA, size, "Dreamscape", true, false);
+    }
 
-            for (final int i : new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 32, 128}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Comfortaa-Regular.ttf");
+    public static MFont getMi(final int size) {
+        return get(MOREICONS, size, "Moreicon", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Comfortaa " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getIconFont(final int size) {
+        return get(ICONS_2, size, "Icon-Font", true, true);
+    }
 
-            for (final int i : new int[]{18, 24}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Icon-Font.ttf");
+    public static MFont getBiko(final int size) {
+        return get(BIKO, size, "Biko_Regular", true, true, true, false);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Icon " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getEaves(final int size) {
+        return get(EAVES, size, "Eaves", true, true);
+    }
 
-            for (final int i : new int[]{18, 24}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/check.ttf");
+    public static MFont getPSB(final int size) {
+        return get(PRODUCT_SANS_BOLD, size, "ProductSansBold", true, true, false, false);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Check " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getPSR(final int size) {
+        return get(PRODUCT_SANS_REGULAR, size, "product_sans_regular", true, true, false, false);
+    }
 
-            for (final int i : new int[]{18}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/icon2.ttf");
+    public static MFont getPSM(final int size) {
+        return get(PRODUCT_SANS_MEDIUM, size, "ProductSansMedium", true, true, false, false);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Icon2 " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static MFont getProductSansLight(final int size) {
+        return get(PRODUCT_SANS_LIGHT, size, "product_sans_light", true, true, false, true);
+    }
 
-            for (final int i : new int[]{18, 20, 24, 36, 48, 72, 96}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Jello.ttf");
+    public static MFont getHack(final int size) {
+        return get(HACK, size, "Hack-Regular", true, true);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Jello " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    public static net.minecraft.client.gui.FontRenderer getMinecraft() {
+        return Minecraft.getMinecraft().fontRendererObj;
+    }
 
-            for (final int i : new int[]{18, 20, 24, 36, 48, 72, 96}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/aldotheapache.ttf");
+    private static MFont get(HashMap<Integer, ModernFontRenderer> map, int size, String name, boolean fractionalMetrics, boolean AA) {
+        return get(map, size, name, fractionalMetrics, AA, false, false);
+    }
 
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Skid " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
+    private static MFont get(HashMap<Integer, ModernFontRenderer> map, int size, String name, boolean fractionalMetrics, boolean AA, boolean otf, boolean international) {
+        if (!map.containsKey(size)) {
+            final java.awt.Font font = FontUtil.getResource("starx/font/" + name + (otf ? ".otf" : ".ttf"), size);
 
-            for (final int i : new int[]{18, 20, 24}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/MuseoSans_900.otf");
-
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Museo " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
-
-            for (final int i : new int[]{16, 18, 20, 24}) {
-                final InputStream istream = this.getClass().getResourceAsStream("/assets/minecraft/starx/font/Eaves.ttf");
-
-                Font myFont = Font.createFont(0, istream);
-                myFont = myFont.deriveFont(Font.PLAIN, (float) i);
-                this.fonts.put("Eaves " + i, new TTFFontRenderer(executorService, textureQueue, myFont));
-            }
-
-        } catch (final Exception ignored) {
-        }
-
-        executorService.shutdown();
-
-        while (!executorService.isTerminated()) {
-            try {
-                Thread.sleep(10L);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
-            while (!textureQueue.isEmpty()) {
-                final TextureData textureData = textureQueue.poll();
-                GlStateManager.bindTexture(textureData.getTextureId());
-                GL11.glTexParameteri(3553, 10241, 9728);
-                GL11.glTexParameteri(3553, 10240, 9728);
-                GL11.glTexImage2D(3553, 0, 6408, textureData.getWidth(), textureData.getHeight(), 0, 6408, 5121, textureData.getBuffer());
+            if (font != null) {
+                map.put(size, new ModernFontRenderer(font, fractionalMetrics, AA, international));
             }
         }
+
+        return map.get(size);
     }
 }

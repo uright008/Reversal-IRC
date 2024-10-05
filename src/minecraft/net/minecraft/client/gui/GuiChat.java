@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.TargetHud;

@@ -1,9 +1,7 @@
 package cn.stars.starx;
 
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.TTFFontRenderer;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
@@ -19,18 +17,8 @@ import java.util.List;
 public interface GameInstance {
     Minecraft mc = Minecraft.getMinecraft();
 
-    TTFFontRenderer comfortaa = CustomFont.FONT_MANAGER.getFont("Comfortaa 18");
-    TTFFontRenderer comfortaaNigger = CustomFont.FONT_MANAGER.getFont("Comfortaa 26");
-    TTFFontRenderer comfortaaBig = CustomFont.FONT_MANAGER.getFont("Comfortaa 32");
-    TTFFontRenderer altoSmall = CustomFont.FONT_MANAGER.getFont("Biko 18");
-    TTFFontRenderer altoCock = CustomFont.FONT_MANAGER.getFont("Biko 28");
-    TTFFontRenderer skeetBig = CustomFont.FONT_MANAGER.getFont("Skeet 18");
-    TTFFontRenderer museo = CustomFont.FONT_MANAGER.getFont("Museo 20");
-    TTFFontRenderer eaves = CustomFont.FONT_MANAGER.getFont("Eaves 18");
-    TTFFontRenderer skeet = CustomFont.FONT_MANAGER.getFont("SkeetBold 12");
-    TTFFontRenderer gs = CustomFont.FONT_MANAGER.getFont("GoogleSans 18");
-    TTFFontRenderer gsTitle = CustomFont.FONT_MANAGER.getFont("GoogleSans 24");
-    TTFFontRenderer gsBig = CustomFont.FONT_MANAGER.getFont("GoogleSans 36");
+    MFont gs = FontManager.getPSR(18);
+    MFont gsTitle = FontManager.getPSR(24);
 
     MFont psm16 = FontManager.getPSM(16);
     MFont psm17 = FontManager.getPSM(17);

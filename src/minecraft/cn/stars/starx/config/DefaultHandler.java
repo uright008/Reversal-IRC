@@ -131,27 +131,6 @@ public class DefaultHandler {
             if (line == null) return;
 
             final String[] split = line.split("_");
-
-            if (split[0].contains("Kills"))
-                StarX.totalKills = Integer.parseInt(split[1]);
-
-            if (split[0].contains("Deaths"))
-                StarX.totalDeaths = Integer.parseInt(split[1]);
-
-            if (split[0].contains("DistanceRan"))
-                StarX.distanceRan = Float.parseFloat(split[1]);
-
-            if (split[0].contains("DistanceFlew"))
-                StarX.distanceFlew = Float.parseFloat(split[1]);
-
-            if (split[0].contains("DistanceJumped"))
-                StarX.distanceJumped = Float.parseFloat(split[1]);
-
-            if (split[0].contains("VoidSaves"))
-                StarX.amountOfVoidSaves = Integer.parseInt(split[1]);
-
-            if (split[0].contains("ConfigsLoaded"))
-                StarX.amountOfConfigsLoaded = Integer.parseInt(split[1]);
         }
     }
 
@@ -237,13 +216,5 @@ public class DefaultHandler {
 
 
     public static void saveStatistics() {
-        final String statisticsBuilder = "Kills_" + StarX.totalKills + "\r\n" +
-                "Deaths_" + StarX.totalDeaths + "\r\n" +
-                "DistanceRan_" + StarX.distanceRan + "\r\n" +
-                "DistanceFlew_" + StarX.distanceFlew + "\r\n" +
-                "DistanceJumped_" + StarX.distanceJumped + "\r\n" +
-                "VoidSaves_" + StarX.amountOfVoidSaves + "\r\n" +
-                "ConfigsLoaded_" + StarX.amountOfConfigsLoaded + "\r\n";
-        FileUtil.saveFile("statistics.txt", true, statisticsBuilder);
     }
 }

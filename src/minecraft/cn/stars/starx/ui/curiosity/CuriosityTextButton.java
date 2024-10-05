@@ -1,7 +1,7 @@
 package cn.stars.starx.ui.curiosity;
 
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
 import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;

@@ -1,15 +1,7 @@
 package cn.stars.starx.ui.splash;
 
-import cn.stars.starx.font.CustomFont;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.util.animation.lb.AnimatedValue;
-import cn.stars.starx.util.animation.lb.EaseUtils;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
-import cn.stars.starx.util.render.RoundedUtil;
-import cn.stars.starx.util.shader.RiseShaders;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;

@@ -2,10 +2,12 @@ package net.minecraft.client;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.starx.ui.splash.SplashProgress;
 import cn.stars.starx.util.math.StopWatch;
+import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtils;
 import com.google.common.collect.Iterables;
@@ -36,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
@@ -183,6 +186,7 @@ import org.lwjgl.util.glu.GLU;
 
 public class Minecraft implements IThreadListener, IPlayerUsage
 {
+    public static StopWatch startTimer;
     public StopWatch timeScreen = new StopWatch();
     public long startMillisTime = System.currentTimeMillis();
     public static long lastFrame = Sys.getTime();
@@ -365,7 +369,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
                 this.freeMemory();
-                logger.fatal((String)"Reported exception thrown!", (Throwable)reportedexception);
+                logger.fatal("Reported exception thrown!", reportedexception);
                 this.displayCrashReport(reportedexception.getCrashReport());
                 break;
             }
@@ -388,11 +392,14 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public static void setStage(int stage) {
         Display.setTitle("StarX is loading... (" + stage + ")");
+        StarXLogger.info("Stage " + (stage - 1) + " took " + startTimer.getElapsedTime() + " ms");
+        startTimer.reset();
         SplashProgress.setProgress(stage, "");
     }
 
-    private void startGame() throws LWJGLException, IOException
+    private void startGame()
     {
+        startTimer = new StopWatch();
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
         this.startTimerHackThread();
@@ -424,9 +431,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         setStage(1);
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
-        this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
-        this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
-        this.mcMusicTicker = new MusicTicker(this);
+        CompletableFuture<Void> soundFuture = CompletableFuture.runAsync(() -> {
+            this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
+            this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
+            this.mcMusicTicker = new MusicTicker(this);
+        });
+        CompletableFuture.allOf(soundFuture).join();
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
 
         if (this.gameSettings.language != null)
@@ -442,18 +452,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
         this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
         this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
-        AchievementList.openInventory.setStatStringFormatter(new IStatStringFormat()
-        {
-            public String formatString(String str)
-            {
-                try
-                {
-                    return String.format(str, GameSettings.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()));
-                }
-                catch (Exception exception)
-                {
-                    return "Error: " + exception.getLocalizedMessage();
-                }
+        AchievementList.openInventory.setStatStringFormatter(str -> {
+            try {
+                return str.replace("%s", GameSettings.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()));
+            } catch (Exception exception) {
+                return "Error: " + exception.getLocalizedMessage();
             }
         });
         this.mouseHelper = new MouseHelper();
@@ -767,7 +770,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
         catch (RuntimeException runtimeexception)
         {
-            logger.info((String)"Caught error stitching, removing all assigned resourcepacks", (Throwable)runtimeexception);
+            logger.info("Caught error stitching, removing all assigned resourcepacks", (Throwable)runtimeexception);
             list.clear();
             list.addAll(this.defaultResourcePacks);
             this.mcResourcePackRepository.setRepositories(Collections.<ResourcePackRepository.Entry>emptyList());
@@ -800,8 +803,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         return bytebuffer;
     }
 
-    private void updateDisplayMode() throws LWJGLException
-    {
+    private void updateDisplayMode() {
         Set<DisplayMode> set = Sets.<DisplayMode>newHashSet();
         Collections.addAll(set, Display.getAvailableDisplayModes());
         DisplayMode displaymode = Display.getDesktopDisplayMode();

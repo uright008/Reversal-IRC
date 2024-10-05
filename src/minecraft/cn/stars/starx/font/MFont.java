@@ -1,4 +1,4 @@
-package cn.stars.starx.font.modern;
+package cn.stars.starx.font;
 
 public abstract class MFont {
     public abstract float drawString(String text, double x, double y, int color, boolean dropShadow);

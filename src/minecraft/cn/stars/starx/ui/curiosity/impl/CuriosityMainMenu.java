@@ -2,12 +2,10 @@ package cn.stars.starx.ui.curiosity.impl;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
 import cn.stars.starx.ui.gui.GuiMicrosoftLoginPending;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
-import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.util.animation.advanced.composed.ColorAnimation;
 import cn.stars.starx.util.animation.rise.Animation;
@@ -22,7 +20,6 @@ import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.RandomUtils;
 import org.lwjgl.opengl.GL11;
 import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
@@ -177,20 +174,12 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         title = StarX.wittyTitle[RandomUtil.INSTANCE.nextInt(0, StarX.wittyTitle.length)];
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
-        // 有什么意义
         updateLog.clear();
-        updateLog.add("[*] 修改logo");
-        updateLog.add("[/] 优化主界面");
-        updateLog.add("[/] 优化TargetESP效果");
-        updateLog.add("[/] 微调BAHalo的一些颜色和大小");
-        updateLog.add("[/] 随机标题回归");
-        updateLog.add("[+] 新增原版列表丝滑滚动");
-        updateLog.add("[+] 重写 材质包/控制/语言 界面");
-        updateLog.add("[+] PotionEffects");
-        updateLog.add("[+] TargetESP 添加动画");
-        updateLog.add("[+] ClientSettings - IndexTimes (允许调整渐变距离)");
-        updateLog.add("[-] SuperheroFX");
-        updateLog.add("[-] 删除原版无用的realms和twitch");
+        updateLog.add("[-] 删除Minecraft/StarX/Modern/Simple以外所有设计");
+        updateLog.add("[-] 删除旧的TTFFontRenderer");
+        updateLog.add("[-] 删除TargetHud一些模式");
+        updateLog.add("[+] 所有设计现在均支持三种颜色模式");
+        updateLog.add("[/] 大幅优化启动速度");
 
 
         // 定义按钮

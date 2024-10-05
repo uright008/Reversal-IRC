@@ -1,8 +1,8 @@
 package cn.stars.starx.ui.notification;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.font.modern.FontManager;
-import cn.stars.starx.font.modern.MFont;
+import cn.stars.starx.font.FontManager;
+import cn.stars.starx.font.MFont;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeType;

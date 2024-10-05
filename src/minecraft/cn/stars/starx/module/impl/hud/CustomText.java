@@ -6,15 +6,13 @@ package cn.stars.starx.module.impl.hud;
 
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.font.modern.FontManager;
+import cn.stars.starx.font.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.ThemeType;
 import cn.stars.starx.util.render.ThemeUtil;
 
