@@ -149,7 +149,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         FontManager.getRegular(64).drawCenteredString("STARX", 140, height / 6f + 18, new Color(250,250,250,250).getRGB());
 
         regular18.drawCenteredString("Copyright © 2024 Starlight, All rights reserved.", this.width / 2f, this.height - 20, colorAnimation.getOutput().getRGB());
-        if (StarX.isAMDShaderCompatibility) regular20.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 35, new Color(220, 20, 20, 220).getRGB());
+        if (StarX.isAMDShaderCompatibility) regular20.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 40, new Color(220, 20, 20, 220).getRGB());
 
         //    regular.drawCenteredString(tipString, width / 2f, height / 2f + 100,
         //            ColorUtil.withAlpha(new Color(250, 250, 250, 250), (int) fontAnimation.getValue()).getRGB());

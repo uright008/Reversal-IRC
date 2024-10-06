@@ -41,11 +41,14 @@ public final class ModuleManager {
     public void registerModules(Module[] modules) {
         try {
             this.moduleList = modules;
+
+            for (Module module : modules) {
+                module.onLoad();
+            }
         }
         catch (Exception e) {
             StarXLogger.error("An error has occurred while loading StarX." + e);
         }
-
     }
 
     public List<Module> getEnabledModules() {

@@ -137,7 +137,6 @@ public final class ConfigHandler {
 
                         if (!module.isEnabled()) {
                             module.toggleModule();
-                            module.onLoad();
                         }
                     }
                 }

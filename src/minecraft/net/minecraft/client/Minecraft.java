@@ -7,10 +7,8 @@ import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.starx.ui.splash.SplashProgress;
 import cn.stars.starx.util.math.StopWatch;
-import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtils;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -20,7 +18,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
@@ -144,11 +141,9 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.IStatStringFormat;
 import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.FrameTimer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.MathHelper;
@@ -271,15 +266,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private final MinecraftSessionService sessionService;
     private SkinManager skinManager;
     private final Queue < FutureTask<? >> scheduledTasks = Queues. < FutureTask<? >> newArrayDeque();
-    private long field_175615_aJ = 0L;
     private final Thread mcThread = Thread.currentThread();
     private ModelManager modelManager;
     private BlockRendererDispatcher blockRenderDispatcher;
     volatile boolean running = true;
     public String debug = "";
-    public boolean field_175613_B = false;
-    public boolean field_175614_C = false;
-    public boolean field_175611_D = false;
     public boolean renderChunksMany = true;
     long debugUpdateTime = getSystemTime();
     int fpsCounter;
@@ -572,17 +563,19 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             try
             {
-                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(new ResourceLocation("icons/icon_16x16.png"));
-                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(new ResourceLocation("icons/icon_32x32.png"));
+                inputstream = this.getClass().getResourceAsStream("/assets/minecraft/starx/images/icon_512x512.png");
+                inputstream1 = this.getClass().getResourceAsStream("/assets/minecraft/starx/images/icon_256x256.png");
 
                 if (inputstream != null && inputstream1 != null)
                 {
                     Display.setIcon(new ByteBuffer[] {this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1)});
+                } else {
+                    logger.error("Couldn't find icon.");
                 }
             }
             catch (IOException ioexception)
             {
-                logger.error((String)"Couldn\'t set icon", (Throwable)ioexception);
+                logger.error("Couldn't set icon.", ioexception);
             }
             finally
             {
@@ -631,9 +624,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                     {
                         Thread.sleep(2147483647L);
                     }
-                    catch (InterruptedException var2)
+                    catch (InterruptedException ignored)
                     {
-                        ;
                     }
                 }
             }
@@ -791,7 +783,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException
     {
         BufferedImage bufferedimage = ImageIO.read(imageStream);
-        int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), (int[])null, 0, bufferedimage.getWidth());
+        int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), null, 0, bufferedimage.getWidth());
         ByteBuffer bytebuffer = ByteBuffer.allocate(4 * aint.length);
 
         for (int i : aint)

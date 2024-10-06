@@ -2,11 +2,13 @@ package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
 import cn.stars.starx.module.impl.addons.MoBends;
+import cn.stars.starx.module.impl.render.SelfTag;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+import com.kAIS.KAIMyEntity.renderer.KAIMyEntityRendererPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -108,6 +110,16 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
     {
         if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
         {
+        /*    if (entity instanceof EntityPlayer) {
+                if (KAIMyEntityRendererPlayer.GetInst() == null)
+                {
+                    KAIMyEntityRendererPlayer.Init(getRenderManager());
+                }
+                float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks;
+                KAIMyEntityRendererPlayer.GetInst().doRender((EntityPlayer) entity, entity.getPosition().getX(), entity.getPosition().getY(), entity.getPosition().getZ(), f, partialTicks);
+                return;
+            } */
+
             if (ModuleInstance.getModule(MoBends.class).isEnabled()) {
                 if (MoBends.onRenderLivingEvent(this, entity, x, y, z, entityYaw, partialTicks)) {
                     return;
@@ -716,6 +728,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
     protected boolean canRenderName(T entity)
     {
         EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
+
+        if (ModuleInstance.getModule(SelfTag.class).isEnabled() && entity == entityplayersp) return true;
 
         if (entity instanceof EntityPlayer && entity != entityplayersp)
         {

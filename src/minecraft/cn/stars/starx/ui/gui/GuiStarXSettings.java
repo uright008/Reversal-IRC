@@ -54,7 +54,7 @@ public class GuiStarXSettings extends GuiScreen {
 
         // BetterMainMenu
         regular20Bold.drawString("Better Main Menu", width / 2f - 490, 180, new Color(220, 220, 220, 240).getRGB());
-        regular16.drawString("使你的主菜单变得更美丽。\n左侧色块会被清除，最上方增加日期显示。", width / 2f - 490, 195, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("使你的主菜单变得更美丽。\n最上方增加日期显示，其他待更新。", width / 2f - 490, 195, new Color(220, 220, 220, 240).getRGB());
 
         updatePostProcessing(false, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -78,7 +78,7 @@ public class GuiStarXSettings extends GuiScreen {
     }
 
     private void createButton() {
-        if (StarX.isAMDShaderCompatibility) {
+        if (!StarX.isAMDShaderCompatibility) {
             this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> StarX.isAMDShaderCompatibility = !StarX.isAMDShaderCompatibility),
                     "开", "9", true, 10, 34, 7);
         } else {

@@ -78,7 +78,6 @@ public class DefaultHandler {
                     if (split[2].contains("true")) {
                         if (!module.isEnabled()) {
                             module.toggleNoEvent();
-                            module.onLoad();
                         }
                     }
                 }

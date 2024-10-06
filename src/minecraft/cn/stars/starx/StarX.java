@@ -38,6 +38,7 @@ import cn.stars.starx.util.misc.VideoUtils;
 import cn.stars.starx.util.starx.Branch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kAIS.KAIMyEntity.KAIMyEntity;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -65,7 +66,7 @@ import java.util.concurrent.Executors;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.0.0+beta.3";
+    public static final String VERSION = "v3.0.0 Pre-release";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Starlight Team";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -346,6 +347,7 @@ public class StarX {
             new TimeTraveller(),
             new TrueSights(),
             new Particles(),
+            new SelfTag(),
             new SpeedGraph(),
             new Wings(),
             // Hud
