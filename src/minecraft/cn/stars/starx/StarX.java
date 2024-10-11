@@ -241,7 +241,6 @@ public class StarX {
     public static void postInitialize() {
         try {
             Hud.initializeModules();
-            if (!isAMDShaderCompatibility) GuiScreen.initializeShaderToy();
 
             FastTrig.init();
 

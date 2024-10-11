@@ -422,12 +422,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         setStage(1);
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
-        CompletableFuture<Void> soundFuture = CompletableFuture.runAsync(() -> {
-            this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
-            this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
-            this.mcMusicTicker = new MusicTicker(this);
-        });
-        CompletableFuture.allOf(soundFuture).join();
+        this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
+        this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
+        this.mcMusicTicker = new MusicTicker(this);
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
 
         if (this.gameSettings.language != null)

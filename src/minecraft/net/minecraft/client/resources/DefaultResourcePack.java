@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -52,7 +51,7 @@ public class DefaultResourcePack implements IResourcePack
     public InputStream getInputStreamAssets(ResourceLocation location) throws IOException, FileNotFoundException
     {
         File file1 = (File)this.mapAssets.get(location.toString());
-        return file1 != null && file1.isFile() ? Files.newInputStream(file1.toPath()) : null;
+        return file1 != null && file1.isFile() ? new FileInputStream(file1) : null;
     }
 
     private InputStream getResourceStream(ResourceLocation location)
@@ -79,9 +78,13 @@ public class DefaultResourcePack implements IResourcePack
             InputStream inputstream = new FileInputStream((File)this.mapAssets.get("pack.mcmeta"));
             return AbstractResourcePack.readMetadata(metadataSerializer, inputstream, metadataSectionName);
         }
-        catch (RuntimeException | FileNotFoundException var4)
+        catch (RuntimeException var4)
         {
-            return null;
+            return (T)((IMetadataSection)null);
+        }
+        catch (FileNotFoundException var5)
+        {
+            return (T)((IMetadataSection)null);
         }
     }
 

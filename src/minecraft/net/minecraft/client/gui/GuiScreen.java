@@ -739,6 +739,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
             StarX.backgroundId = 9;
             return;
+        } else {
+            initializeShaderToy();
         }
         if (StarX.backgroundId == 0) {
             GlStateManager.disableLighting();

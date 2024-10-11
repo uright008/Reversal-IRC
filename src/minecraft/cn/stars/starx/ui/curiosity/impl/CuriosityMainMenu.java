@@ -175,11 +175,11 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
         updateLog.clear();
-        updateLog.add("[-] 删除Minecraft/StarX/Modern/Simple以外所有设计");
-        updateLog.add("[-] 删除旧的TTFFontRenderer");
-        updateLog.add("[-] 删除TargetHud一些模式");
-        updateLog.add("[+] 所有设计现在均支持三种颜色模式");
-        updateLog.add("[/] 大幅优化启动速度");
+        updateLog.add("[+] SelfTag (显示玩家自身名称)");
+        updateLog.add("[*] 修复主菜单一些问题");
+        updateLog.add("[*] 修复StarX设置界面按钮效果错误");
+        updateLog.add("[+] 修改窗口图标");
+        updateLog.add("[/] 优化启动速度");
 
 
         // 定义按钮
