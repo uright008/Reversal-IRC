@@ -66,7 +66,7 @@ import java.util.concurrent.Executors;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.0.0 Pre-release";
+    public static final String VERSION = "v3.0.0 Pre-release.2";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Starlight Team";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -80,7 +80,7 @@ public class StarX {
     // maybe
     public static final String[] wittyTitle = new String[]
             {"乌云再厚也遮不住阳光,风雨过后总会有彩虹", "与你的日常,就是奇迹", "虚假的真实是真实吗?", "未来仍有无限可能", "在那灿烂的群星中,总有一颗代表我正与你对视", "王女手握钥匙,方舟恭候多时",
-            "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?"};
+            "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?", "我有鱼鱼症"};
 //    public static final String[] wittyTitle = new String[] { "你所珍视的那个人,是否也同样珍视你?", "虚空的虚空,凡事都是虚空"};
 
 

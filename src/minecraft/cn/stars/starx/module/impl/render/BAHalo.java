@@ -4,7 +4,6 @@
  */
 package cn.stars.starx.module.impl.render;
 
-import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -13,9 +12,7 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.src.Config;
 import org.lwjgl.opengl.GL11;
