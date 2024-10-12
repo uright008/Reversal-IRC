@@ -1,5 +1,6 @@
 package cn.stars.starx.config;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -31,7 +32,7 @@ public final class ConfigHandler {
         configBuilder.append("StarX_Version_").append(StarX.VERSION).append("\r\n");
         configBuilder.append("ClientName_").append(ThemeUtil.getCustomClientName()).append("\r\n");
         configBuilder.append("CustomPlayerName_").append(StarX.customName).append("\r\n");
-        configBuilder.append("MainMenuBackground_").append(StarX.backgroundId).append("\r\n");
+        configBuilder.append("MainMenuBackground_").append(LonelyAPI.backgroundId).append("\r\n");
         configBuilder.append("DisableShader_").append(false).append("\r\n");
 
         for (final Module m : StarX.moduleManager.getModuleList()) {
@@ -120,7 +121,7 @@ public final class ConfigHandler {
             }
 
             if (split[0].contains("MainMenuBackground")) {
-                StarX.backgroundId = Integer.parseInt(split[1]);
+                LonelyAPI.backgroundId = Integer.parseInt(split[1]);
                 continue;
             }
 

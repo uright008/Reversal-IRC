@@ -1,5 +1,6 @@
 package cn.stars.starx.config;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -62,7 +63,7 @@ public class DefaultHandler {
             }
 
             if (split[0].contains("MainMenuBackground")) {
-                StarX.backgroundId = Integer.parseInt(split[1]);
+                LonelyAPI.backgroundId = Integer.parseInt(split[1]);
                 continue;
             }
 
@@ -120,70 +121,12 @@ public class DefaultHandler {
         }
     }
 
-    public static void loadStatistics() {
-        final String statistics = FileUtil.loadFile("statistics.txt");
-        if (statistics == null) return;
-
-        final String[] statisticsLines = statistics.split("\r\n");
-
-        for (final String line : statisticsLines) {
-            if (line == null) return;
-
-            final String[] split = line.split("_");
-        }
-    }
-
-    public static void loadClientMod() {
-        final String client = FileUtil.loadFile("client.txt");
-
-        // re-save if not available on start.
-        if (client == null || !client.contains("DisableShader") || !client.contains("DisableViaMCP") || !client.contains("LicenseReviewed")) {
-            saveClientMod();
-            return;
-        }
-
-        final String[] clientLines = client.split("\r\n");
-
-        for (final String line : clientLines) {
-            if (line == null) return;
-
-            final String[] split = line.split("_");
-
-            if (split[0].contains("DisableShader")) {
-                StarX.isAMDShaderCompatibility = Boolean.parseBoolean(split[1]);
-            }
-            if (split[0].contains("DisableViaMCP")) {
-                StarX.isViaCompatibility = Boolean.parseBoolean(split[1]);
-            }
-            if (split[0].contains("LicenseReviewed")) {
-                Transformer.isLicenseReviewed = Boolean.parseBoolean(split[1]);
-            }
-            if (split[0].contains("BetterMainMenu")) {
-                Transformer.betterMainMenu = Boolean.parseBoolean(split[1]);
-            }
-            if (split[0].contains("CustomText")) {
-                StarX.customText = split[1];
-            }
-        }
-    }
-
-    public static void saveClientMod() {
-        final StringBuilder clientBuilder = new StringBuilder();
-        clientBuilder.append("DisableShader_").append(StarX.isAMDShaderCompatibility).append("\r\n");
-        clientBuilder.append("DisableViaMCP_").append(StarX.isViaCompatibility).append("\r\n");
-        clientBuilder.append("LicenseReviewed_").append(Transformer.isLicenseReviewed).append("\r\n");
-        clientBuilder.append("BetterMainMenu_").append(Transformer.betterMainMenu).append("\r\n");
-        clientBuilder.append("CustomText_").append(StarX.customText).append("\r\n");
-
-        FileUtil.saveFile("client.txt", true, clientBuilder.toString());
-    }
-
     public static void saveConfig(boolean force) {
         final StringBuilder configBuilder = new StringBuilder();
         configBuilder.append("StarX_Version_").append(StarX.VERSION).append("\r\n");
         configBuilder.append("ClientName_").append(ThemeUtil.getCustomClientName()).append("\r\n");
         configBuilder.append("CustomPlayerName_").append(StarX.customName).append("\r\n");
-        configBuilder.append("MainMenuBackground_").append(StarX.backgroundId).append("\r\n");
+        configBuilder.append("MainMenuBackground_").append(LonelyAPI.backgroundId).append("\r\n");
         configBuilder.append("DisableShader_").append(false).append("\r\n");
 
         if (!force) {
@@ -211,9 +154,5 @@ public class DefaultHandler {
         }
 
         FileUtil.saveFile("settings.txt", true, configBuilder.toString());
-    }
-
-
-    public static void saveStatistics() {
     }
 }

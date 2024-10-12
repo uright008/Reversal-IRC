@@ -4,6 +4,7 @@
  */
 package cn.stars.starx.module.impl.player;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.UpdateEvent;
 import cn.stars.starx.module.Category;
@@ -15,11 +16,10 @@ import cn.stars.starx.util.irc.User;
 public class IRC extends Module {
     boolean isTrying = false;
 
-    @Override
-    public void onLoad() {
-        if (StarX.user == null && !isTrying) {
+    public void onUpdate(UpdateEvent event) {
+        if (LonelyAPI.ircUser == null && !isTrying) {
             new Thread(() -> {
-                StarX.user = new User("irc-chat.6667890.xyz", 27810, mc.session.getUsername());
+                LonelyAPI.ircUser = new User("irc-chat.6667890.xyz", 27810, mc.session.getUsername());
             }).start();
             isTrying = true;
         }

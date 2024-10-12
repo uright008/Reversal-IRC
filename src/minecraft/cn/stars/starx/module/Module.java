@@ -200,7 +200,7 @@ public abstract class Module implements GameInstance {
     public void onShader3D(final Shader3DEvent event) {
     }
 
-    public void onAlpja(final AlphaEvent event) {
+    public void onAlpha(final AlphaEvent event) {
     }
 
     public void onRender3D(final Render3DEvent event) {

@@ -1,5 +1,6 @@
 package cn.stars.starx.module.impl.hud;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -40,7 +41,6 @@ public class BASticker extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         sr = new ScaledResolution(mc);
         int x = getX() + 5;
         int y = getY() + 5;

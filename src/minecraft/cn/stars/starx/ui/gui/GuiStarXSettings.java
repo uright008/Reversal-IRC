@@ -5,6 +5,7 @@
 package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.config.DefaultHandler;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
@@ -73,23 +74,23 @@ public class GuiStarXSettings extends GuiScreen {
     private void switchOption(Runnable runnable) {
         runnable.run();
         createButton();
-        DefaultHandler.saveClientMod();
+        LonelyAPI.processAPI();
         buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, betterMainMenuButton};
     }
 
     private void createButton() {
-        if (!StarX.isAMDShaderCompatibility) {
-            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> StarX.isAMDShaderCompatibility = !StarX.isAMDShaderCompatibility),
+        if (!LonelyAPI.isShaderCompatibility) {
+            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> LonelyAPI.isShaderCompatibility = !LonelyAPI.isShaderCompatibility),
                     "开", "9", true, 10, 34, 7);
         } else {
-            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> StarX.isAMDShaderCompatibility = !StarX.isAMDShaderCompatibility),
+            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> LonelyAPI.isShaderCompatibility = !LonelyAPI.isShaderCompatibility),
                     "关", "0", true, 10, 34, 7);
         }
-        if (!StarX.isViaCompatibility) {
-            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> StarX.isViaCompatibility = !StarX.isViaCompatibility),
+        if (!LonelyAPI.isViaCompatibility) {
+            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> LonelyAPI.isViaCompatibility = !LonelyAPI.isViaCompatibility),
                     "开", "9", true, 10, 34, 7);
         } else {
-            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> StarX.isViaCompatibility = !StarX.isViaCompatibility),
+            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> LonelyAPI.isViaCompatibility = !LonelyAPI.isViaCompatibility),
                     "关", "0", true, 10, 34, 7);
         }
         if (Transformer.betterMainMenu) {

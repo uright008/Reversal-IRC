@@ -469,6 +469,7 @@ public class ModernClickGUI extends GuiScreen {
         hasEditedSliders = false;
         animation.reset();
         scaleAnimation.reset();
+        scrollAmount = 0;
     }
 
     @Override

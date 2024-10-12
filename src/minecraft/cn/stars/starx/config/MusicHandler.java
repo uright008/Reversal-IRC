@@ -1,5 +1,6 @@
 package cn.stars.starx.config;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -38,7 +39,7 @@ public final class MusicHandler {
 
     public void load() {
         final String config = FileUtil.loadFile("MusicAccount.txt");
-        if (config == null || !StarX.hasJavaFX) {
+        if (config == null || !LonelyAPI.hasJavaFX) {
             return;
         }
         MusicAPI.user = MusicUtil.gson.fromJson(config, User.class);

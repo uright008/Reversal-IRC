@@ -1,6 +1,7 @@
 package cn.stars.starx.ui.curiosity.impl;
 
 import cn.stars.starx.GameInstance;
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.FontManager;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
@@ -98,7 +99,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
         RenderUtil.scissor(this.width - 60 - backgroundIdAnimationX.getValue(), this.height - 97, backgroundIdAnimationX.getValue(), 35);
         regular32.drawString("更换背景", this.width - 142, this.height - 91, new Color(220, 220, 220, 240).getRGB());
-        regular16.drawString("(当前ID: " + StarX.backgroundId + ")", this.width - 132, this.height - 75, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("(当前ID: " + LonelyAPI.backgroundId + ")", this.width - 132, this.height - 75, new Color(220, 220, 220, 240).getRGB());
 
         RenderUtil.scissor(this.width - 60 - exitAnimationX.getValue(), this.height - 55, exitAnimationX.getValue(), 35);
         regular32.drawString("退出游戏", this.width - 142, this.height - 43, new Color(220, 220, 220, 240).getRGB());
@@ -136,7 +137,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         regular.drawString(copyright, width - regular.getWidth(copyright) - 1, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
         regular.drawString("Minecraft 1.8.9 (StarX/mcp/vanilla)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
         regular.drawString("OptiFine_1.8.9_HD_U_M6_pre2", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        regular.drawString("当前背景ID: " + StarX.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB()); */
+        regular.drawString("当前背景ID: " + LonelyAPI.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB()); */
 
         // MainMenu
         RenderUtil.rect(0, 0, 230, height, new Color(0, 0, 0, 50));
@@ -149,7 +150,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         FontManager.getRegular(64).drawCenteredString("STARX", 140, height / 6f + 18, new Color(250,250,250,250).getRGB());
 
         regular18.drawCenteredString("Copyright © 2024 Starlight, All rights reserved.", this.width / 2f, this.height - 20, colorAnimation.getOutput().getRGB());
-        if (StarX.isAMDShaderCompatibility) regular20.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 40, new Color(220, 20, 20, 220).getRGB());
+        if (LonelyAPI.isShaderCompatibility) regular20.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 40, new Color(220, 20, 20, 220).getRGB());
 
         //    regular.drawCenteredString(tipString, width / 2f, height / 2f + 100,
         //            ColorUtil.withAlpha(new Color(250, 250, 250, 250), (int) fontAnimation.getValue()).getRGB());
@@ -171,7 +172,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
     @Override
     public void initGui() {
-        title = StarX.wittyTitle[RandomUtil.INSTANCE.nextInt(0, StarX.wittyTitle.length)];
+        title = LonelyAPI.getRandomTitle();
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
         updateLog.clear();

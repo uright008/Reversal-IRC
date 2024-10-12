@@ -4,6 +4,7 @@
  */
 package cn.stars.starx.module.impl.hud;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
@@ -46,9 +47,7 @@ public class MusicInfo extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!StarX.hasJavaFX) return;
-        if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
+        if (!LonelyAPI.hasJavaFX) return;
         MusicPlayer player = StarX.musicManager.screen.player;
         if (player.getMusic() == null) return;
         if (coverTexture == null) {
@@ -102,7 +101,7 @@ public class MusicInfo extends Module {
 
     @Override
     public void onShader3D(Shader3DEvent event) {
-        if (!StarX.hasJavaFX) return;
+        if (!LonelyAPI.hasJavaFX) return;
         MusicPlayer player = StarX.musicManager.screen.player;
         if (player.getMusic() == null) return;
         Gui.drawNewRect(getX(), getY(), getHeight(), getHeight(), Color.BLACK.getRGB());

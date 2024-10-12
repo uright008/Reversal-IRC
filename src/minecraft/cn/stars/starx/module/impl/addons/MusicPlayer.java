@@ -4,6 +4,7 @@
  */
 package cn.stars.starx.module.impl.addons;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -13,7 +14,7 @@ import cn.stars.starx.module.ModuleInfo;
 public class MusicPlayer extends Module {
     @Override
     protected void onEnable() {
-        if (StarX.hasJavaFX) mc.displayGuiScreen(StarX.musicManager.screen);
+        if (LonelyAPI.hasJavaFX) mc.displayGuiScreen(StarX.musicManager.screen);
         else StarX.showMsg("未在你使用的Java版本上找到有效的JavaFX,无法使用MusicPlayer! 请安装后重试。");
         toggleModule();
     }

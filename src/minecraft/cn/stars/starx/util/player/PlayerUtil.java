@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
 public final class PlayerUtil {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public static final Map<String, Boolean> serverResponses = new HashMap<>();
-    public static boolean sentEmail;
-    public static boolean firstWorld;
     public static int worldChanges;
     private static HashMap<Integer, Integer> GOOD_POTIONS = new HashMap<Integer, Integer>() {{
         put(6, 1); // Instant Health

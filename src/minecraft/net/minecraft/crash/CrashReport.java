@@ -1,5 +1,6 @@
 package net.minecraft.crash;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import com.google.common.collect.Lists;
 import java.io.File;
@@ -337,7 +338,7 @@ public class CrashReport
 
     private static String getWittyComment()
     {
-        String[] astring = StarX.wittyCrashReport;
+        String[] astring = LonelyAPI.wittyCrashReport;
 
         try
         {

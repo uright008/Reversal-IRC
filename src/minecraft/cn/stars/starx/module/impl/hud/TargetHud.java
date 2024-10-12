@@ -91,8 +91,6 @@ public final class TargetHud extends Module {
 
     @Override
     public void onRender2D(final Render2DEvent event) {
-        if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         if (target == null || target.isDead || mc.thePlayer.getDistanceToEntity(target) > 10) return;
 
         sr = new ScaledResolution(mc);

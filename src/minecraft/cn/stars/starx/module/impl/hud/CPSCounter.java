@@ -39,9 +39,6 @@ public class CPSCounter extends Module {
 
     @Override
     public void onShader3D(Shader3DEvent event) {
-        if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
-            return;
         if (displayOnClick.isEnabled() && (Lclicks.isEmpty() && Rclicks.isEmpty())) return;
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
 
@@ -63,9 +60,6 @@ public class CPSCounter extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!getModule("HUD").isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo)
-            return;
         if (displayOnClick.isEnabled() && (Lclicks.isEmpty() && Rclicks.isEmpty())) return;
         String cpsString = Lclicks.size() + " CPS | " + Rclicks.size() + " CPS";
         Color color = rainbow.isEnabled() ? ThemeUtil.getThemeColor(ThemeType.LOGO) : new Color(250, 250, 250, 200);

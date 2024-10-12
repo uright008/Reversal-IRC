@@ -7,17 +7,22 @@ import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
 import cn.stars.starx.ui.notification.NotificationType;
+import cn.stars.starx.util.misc.ClassUtil;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 public final class CommandManager {
 
-    public static Command[] COMMANDS;
+    public static Command[] commandList = new Command[0];
 
     public void callCommand(final String input) {
         final String[] spit = input.split(" ");
         final String command = spit[0];
         final String args = input.substring(command.length()).trim();
 
-        for (final Command c : COMMANDS) {
+        for (final Command c : commandList) {
             for (final String alias : c.getCommandInfo().aliases()) {
                 if (alias.equalsIgnoreCase(command)) {
                     try {
@@ -52,22 +57,24 @@ public final class CommandManager {
                                     ((ModeValue) setting).set(spit[2]);
                                 }
 
-
                             } catch (final NumberFormatException ignored) {
-                                StarX.notificationManager.registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
-                                StarX.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
+                                StarX.notificationManager.registerNotification("Settings name error. Dont type space!", "Command", NotificationType.ERROR);
+                                StarX.showMsg("Settings name error. Dont type space!");
                                 return;
                             }
                         } catch (final ArrayIndexOutOfBoundsException ignored) {
-                            StarX.notificationManager.registerNotification("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)", "Command", NotificationType.ERROR);
-                            StarX.showMsg("Settings name error.Dont type space! (eg. Rotation Mode -> RotationMode)");
+                            StarX.notificationManager.registerNotification("Settings name error. Dont type space!", "Command", NotificationType.ERROR);
+                            StarX.showMsg("Settings name error. Dont type space!");
                         }
 
                         return;
                     }
 
                     StarX.notificationManager.registerNotification("Settings " + spit[1].toLowerCase() + " in " + command.toLowerCase() + " doesn't exist!", "Command", NotificationType.ERROR);
-                    StarX.showMsg("Settings \" + spit[1].toLowerCase() + \" in \" + command.toLowerCase() + \" doesn't exist!");
+                    StarX.showMsg("Settings " + spit[1].toLowerCase() + " in " + command.toLowerCase() + " doesn't exist!");
+                    return;
+                } else {
+                    module.toggleModule();
                     return;
                 }
             }
@@ -75,5 +82,12 @@ public final class CommandManager {
 
         StarX.notificationManager.registerNotification("Module or command " + command.toLowerCase() + " doesn't exist.", "Command", NotificationType.ERROR);
         StarX.showMsg("Module or command " + command.toLowerCase() + " doesn't exist.");
+    }
+
+    public void registerCommands() {
+        for (Command command : ClassUtil.instantiateList(ClassUtil.resolvePackage(this.getClass().getPackage().getName() + ".impl", Command.class))) {
+            commandList = Arrays.stream(Stream.concat(Arrays.stream(commandList), Stream.of(command))
+                    .toArray(Command[]::new)).sorted(Comparator.comparing(c -> c.getCommandInfo().name())).toArray(Command[]::new);
+        }
     }
 }

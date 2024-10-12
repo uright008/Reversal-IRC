@@ -13,7 +13,7 @@ public final class Help extends Command {
     public void onCommand(final String command, final String[] args) throws Exception {
         StarX.showMsg(EnumChatFormatting.WHITE + "All available commands:");
 
-        for (final Command cmd : CommandManager.COMMANDS) {
+        for (final Command cmd : CommandManager.commandList) {
             final String description = cmd.getCommandInfo().description();
             final String alias = cmd.getCommandInfo().aliases()[0];
 

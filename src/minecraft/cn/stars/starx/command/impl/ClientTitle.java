@@ -1,5 +1,6 @@
 package cn.stars.starx.command.impl;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.command.Command;
 import cn.stars.starx.command.api.CommandInfo;
@@ -16,7 +17,7 @@ public final class ClientTitle extends Command {
     @Override
     public void onCommand(final String command, final String[] args) {
         if (args[0].equals("%reset%")) {
-            Display.setTitle(StarX.NAME + " " + StarX.VERSION + " " + Branch.getBranchName(StarX.BRANCH) + " | " + StarX.wittyTitle[RandomUtil.INSTANCE.nextInt(0, StarX.wittyTitle.length)]);
+            Display.setTitle(StarX.NAME + " " + StarX.VERSION + " " + Branch.getBranchName(StarX.BRANCH) + " | " + LonelyAPI.getRandomTitle());
             StarX.notificationManager.registerNotification("Successfully reset the client window title.", "Command", NotificationType.SUCCESS);
             StarX.showMsg("Successfully reset the client window title.");
         } else {

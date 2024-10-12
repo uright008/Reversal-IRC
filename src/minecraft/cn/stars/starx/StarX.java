@@ -8,22 +8,7 @@ import cn.stars.starx.command.CommandManager;
 import cn.stars.starx.command.impl.*;
 import cn.stars.starx.config.DefaultHandler;
 import cn.stars.starx.config.MusicHandler;
-import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleManager;
-import cn.stars.starx.module.impl.addons.*;
-import cn.stars.starx.module.impl.combat.ClickSound;
-import cn.stars.starx.module.impl.combat.ExperimentReachDistanceChecker;
-import cn.stars.starx.module.impl.combat.NoClickDelay;
-import cn.stars.starx.module.impl.hud.*;
-import cn.stars.starx.module.impl.misc.ClientSpoofer;
-import cn.stars.starx.module.impl.misc.CustomName;
-import cn.stars.starx.module.impl.misc.NoAchievements;
-import cn.stars.starx.module.impl.misc.Protocol;
-import cn.stars.starx.module.impl.movement.Sprint;
-import cn.stars.starx.module.impl.player.HealthWarn;
-import cn.stars.starx.module.impl.player.IRC;
-import cn.stars.starx.module.impl.render.*;
-import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.music.MusicManager;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
@@ -31,18 +16,14 @@ import cn.stars.starx.ui.hud.Hud;
 import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.math.RandomUtil;
 import cn.stars.starx.util.misc.FileUtil;
-import cn.stars.starx.util.irc.User;
 import cn.stars.starx.util.misc.VideoUtils;
 import cn.stars.starx.util.starx.Branch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kAIS.KAIMyEntity.KAIMyEntity;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.opengl.Display;
@@ -66,23 +47,10 @@ import java.util.concurrent.Executors;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.0.0 Pre-release.2";
+    public static final String VERSION = "v3.0.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Starlight Team";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
-
-    // Witty comments
-    public static final String[] wittyCrashReport = new String[]
-            {"玩原神玩的", "粥批差不多得了", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
-                    "闭嘴!我的父亲在mojang工作,他可以使你的mInEcRaFt崩溃", "纪狗气死我了", "致敬传奇耐崩王MiNeCrAfT", "你的客户端坠机了",
-            "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
-
-    // maybe
-    public static final String[] wittyTitle = new String[]
-            {"乌云再厚也遮不住阳光,风雨过后总会有彩虹", "与你的日常,就是奇迹", "虚假的真实是真实吗?", "未来仍有无限可能", "在那灿烂的群星中,总有一颗代表我正与你对视", "王女手握钥匙,方舟恭候多时",
-            "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?", "我有鱼鱼症"};
-//    public static final String[] wittyTitle = new String[] { "你所珍视的那个人,是否也同样珍视你?", "虚空的虚空,凡事都是虚空"};
-
 
     // Init
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -90,12 +58,6 @@ public class StarX {
 
     public static EntityCullingMod entityCullingMod;
 
-    public static User user = null;
-    public static boolean hasJavaFX = true;
-    public static boolean isAMDShaderCompatibility = false;
-    public static boolean isViaCompatibility = false;
-
-    public static int backgroundId = 9; // ?
     public static String customName = "";
     public static String customText = ".setText <text>";
 
@@ -103,19 +65,12 @@ public class StarX {
     public static NotificationManager notificationManager;
     public static CommandManager cmdManager;
     public static MusicManager musicManager;
+
     public static ModernClickGUI modernClickGUI;
     public static MMTClickGUI mmtClickGUI;
+
     public static GuiTheme guiTheme;
     public static CreativeTabs creativeTab;
-    public static String ip;
-    public static int totalKills;
-    public static int totalDeaths;
-    public static float distanceRan;
-    public static float distanceFlew;
-    public static float distanceJumped;
-    public static int amountOfModulesOn;
-    public static int amountOfVoidSaves;
-    public static int amountOfConfigsLoaded;
     public static boolean firstBoot;
 
     // Core
@@ -123,11 +78,11 @@ public class StarX {
         try {
             StarXLogger.info("Loading client...");
 
-            DefaultHandler.loadClientMod();
+            LonelyAPI.loadAPI();
 
             // ViaMCP init
             Minecraft.setStage(4);
-            if (!isViaCompatibility) {
+            if (!LonelyAPI.isViaCompatibility) {
                 ViaMCP.create();
                 ViaMCP.INSTANCE.initAsyncSlider();
             }
@@ -138,12 +93,9 @@ public class StarX {
             DefaultHandler.loadConfigs();
 
             Minecraft.setStage(8);
-            DefaultHandler.loadStatistics();
-
-            Minecraft.setStage(9);
             postInitialize();
 
-            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)]);
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + LonelyAPI.getRandomTitle());
             StarXLogger.info("Client loaded successfully.");
             StarXLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
@@ -169,8 +121,7 @@ public class StarX {
     // run required
     public static void saveAll() {
         DefaultHandler.saveConfig(false);
-        DefaultHandler.saveStatistics();
-        DefaultHandler.saveClientMod();
+        LonelyAPI.processAPI();
     }
 
 
@@ -184,18 +135,18 @@ public class StarX {
 
             // StarX Initialize
             moduleManager = new ModuleManager();
-            moduleManager.registerModules(modules);
+            moduleManager.registerModules();
 
             notificationManager = new NotificationManager();
 
             cmdManager = new CommandManager();
-            CommandManager.COMMANDS = commands;
+            cmdManager.registerCommands();
 
             try {
                 musicManager = new MusicManager();
                 musicManager.initGUI();
             } catch (NoClassDefFoundError e) {
-                hasJavaFX = false;
+                LonelyAPI.hasJavaFX = false;
                 StarXLogger.warn("No JavaFX found in the current java version! Music player is disabled.");
             }
 
@@ -240,15 +191,17 @@ public class StarX {
 
     public static void postInitialize() {
         try {
-            Hud.initializeModules();
-
             FastTrig.init();
 
             entityCullingMod = new EntityCullingMod();
             entityCullingMod.onInitialize();
 
-            if (hasJavaFX) MusicHandler.load();
+            if (LonelyAPI.hasJavaFX) MusicHandler.load();
 
+            Minecraft.setStage(9);
+            Hud.initializeModules();
+
+            Minecraft.setStage(10);
             if (!FileUtil.exists("Background" + File.separator)) {
                 FileUtil.createDirectory("Background" + File.separator);
             }
@@ -281,99 +234,13 @@ public class StarX {
             cmdManager.callCommand(s.substring(1));
             return false;
         }
-    //    return !s.startsWith("-");
         return true;
-        // 我操你妈的irc
     }
-
-    private static final Command[] commands = new Command[] {
-            new Bind(),
-            new Chat(),
-            new ClientName(),
-            new ClientTitle(),
-            new Config(),
-            new Help(),
-            new Name(),
-            new Say(),
-            new SelfDestruct(),
-            new SetText()
-    };
-
-    public static final Module[] modules = new Module[] {
-            // Addons
-            new GuiSettings(), // Special Module
-            new Optimization(), // Special Module
-            new FreeLook(),
-            new MoBends(),
-            new MusicPlayer(),
-            new WaveyCapes(),
-            new SkinLayers3D(), // Special Module
-            // Combat
-            new ClickSound(),
-            new ExperimentReachDistanceChecker(),
-            new NoClickDelay(),
-            // Movement
-            new Sprint(),
-            // Misc
-            new ClientSpoofer(),
-            new CustomName(),
-            new NoAchievements(),
-            new Protocol(),
-            // World
-            // Player
-            new HealthWarn(),
-            new IRC(),
-            // Render
-            new Animations(),
-            new BAHalo(),
-            new BetterFont(),
-            new BlockOverlay(),
-            new Breadcrumbs(),
-            new ChinaHat(),
-            new ClickGui(), // Special Module
-            new Crosshair(),
-            new DamageParticle(),
-            new Fullbright(),
-            new HitEffect(),
-            new HurtCam(), // Special Module
-            new ItemPhysics(),
-            new JumpCircle(),
-            new MotionBlur(),
-            new NoBob(),
-            new ReachDisplay(),
-            new TargetESP(),
-            new TNTTimer(),
-            new TimeTraveller(),
-            new TrueSights(),
-            new Particles(),
-            new SelfTag(),
-            new SpeedGraph(),
-            new Wings(),
-            // Hud
-            new ClientSettings(), // Special Module
-            new PostProcessing(), // Special Module
-            new Arraylist(),
-            new BASticker(),
-            new BPSCounter(),
-            new CPSCounter(),
-            new HUD(),
-            new Keystrokes(),
-            new MusicInfo(),
-            new MusicVisualizer(),
-            new PotionEffects(),
-            new Scoreboard(),
-            new SessionInfo(),
-            new TargetHud(),
-            new TextGui(),
-            new CustomText()
-    };
 
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_2 = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT = new Color(185, 69, 255).hashCode();
     public static int CLIENT_THEME_COLOR_BRIGHT_2 = new Color(185, 69, 255).hashCode();
-    public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR = new Color(185, 69, 255);
-    public static Color CLIENT_THEME_COLOR_BRIGHT_COLOR_2 = new Color(185, 69, 255);
     public static boolean isDestructed = false;
 
 }

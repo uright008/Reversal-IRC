@@ -1,6 +1,7 @@
 package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.FontManager;
 import cn.stars.starx.font.MFont;
@@ -90,7 +91,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         psr.drawString(s1, width - psr.getWidth(s1) - 1, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
         psr.drawString("Minecraft 1.8.9 (StarX/mcp/vanilla)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
         psr.drawString("OptiFine_1.8.9_HD_U_M6_pre2", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        psr.drawString("当前背景ID: " + StarX.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psr.drawString("当前背景ID: " + LonelyAPI.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
 
 
         // 主要按钮
@@ -101,7 +102,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         this.exitButton.draw(mouseX, mouseY, partialTicks);
 
 
-        if (StarX.isAMDShaderCompatibility && StarX.backgroundId <= 8) {
+        if (LonelyAPI.isShaderCompatibility && LonelyAPI.backgroundId <= 8) {
             psr.drawCenteredString("警告: 检测到Shader兼容性错误,背景已强制关闭. (AMD CPU?)", width / 2f, height / 2f + 100, new Color(250,50,50, 250).getRGB());
         }
 

@@ -4,6 +4,7 @@
  */
 package cn.stars.starx.module.impl.hud;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.module.Category;
@@ -45,7 +46,7 @@ public class MusicVisualizer extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!StarX.hasJavaFX) return;
+        if (!LonelyAPI.hasJavaFX) return;
         sr = new ScaledResolution(mc);
         GL11.glPushMatrix();
         setWidth(fillValue.isEnabled() ? sr.getScaledWidth() : (int) widthValue.getValue());

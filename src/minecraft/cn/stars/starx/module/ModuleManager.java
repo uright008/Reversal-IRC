@@ -1,24 +1,23 @@
 package cn.stars.starx.module;
 
 import cn.stars.starx.setting.Setting;
-import cn.stars.starx.util.StarXLogger;
+import cn.stars.starx.util.misc.ClassUtil;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
 public final class ModuleManager {
-    /**
-     * This is the list where we store our module instances.
-     */
-    public Module[] moduleList;
+    public Module[] moduleList = new Module[0];
+    ArrayList<Module> modulesToAdd = new ArrayList<>();
 
-    /**
-     * We cache some modules here to improve performance.
-     */
+
     private Module lastGetModule;
     private String lastGetModuleName;
 
@@ -28,26 +27,19 @@ public final class ModuleManager {
     private List<Module> enabledModules = new ArrayList<>();
     private boolean edited = true;
 
-    /**
-     * When the class is instantiated we register all of our modules.
-     * Its handled here as we do not need a new method for registering.
-     */
 
     /**
      * This method returns all the current registered and enabled modules.
      *
-     * @return all enabled modules.
      */
-    public void registerModules(Module[] modules) {
-        try {
-            this.moduleList = modules;
-
-            for (Module module : modules) {
-                module.onLoad();
-            }
+    public void registerModules() {
+        for (Module module : ClassUtil.instantiateList(ClassUtil.resolvePackage(this.getClass().getPackage().getName() + ".impl", Module.class))) {
+            moduleList = Arrays.stream(Stream.concat(Arrays.stream(moduleList), Stream.of(module))
+                    .toArray(Module[]::new)).sorted(Comparator.comparing(m -> m.getModuleInfo().name())).toArray(Module[]::new);
         }
-        catch (Exception e) {
-            StarXLogger.error("An error has occurred while loading StarX." + e);
+
+        for (Module module : moduleList) {
+            module.onLoad();
         }
     }
 

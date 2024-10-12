@@ -1,5 +1,6 @@
 package cn.stars.starx.module.impl.hud;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.event.impl.Shader3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -32,6 +33,7 @@ public class PostProcessing extends Module
 
     public void blurScreen() {
         if (!this.isEnabled()) return;
+        if (!LonelyAPI.canDrawHUD()) return;
         if (blur.isEnabled()) {
             stencilFramebuffer = RenderUtil.createFrameBuffer(stencilFramebuffer);
 

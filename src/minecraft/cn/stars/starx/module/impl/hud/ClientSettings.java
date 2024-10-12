@@ -23,6 +23,7 @@ public final class ClientSettings extends Module {
     private final NumberValue green2 = new NumberValue("Green2", this, 150, 0, 255, 1);
     private final NumberValue blue2 = new NumberValue("Blue2", this, 255, 0, 255, 1);
     private final NumberValue indexTimes = new NumberValue("Index Times", this, 1, 1, 10, 0.1);
+    private final NumberValue indexSpeed = new NumberValue("Index Speed", this, 1, 1, 5, 0.1);
 
     private final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);

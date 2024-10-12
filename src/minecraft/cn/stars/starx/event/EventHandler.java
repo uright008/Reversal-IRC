@@ -1,7 +1,9 @@
 package cn.stars.starx.event;
 
+import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
@@ -32,10 +34,17 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
                     module.onRender2D(event);
                 }
             }
             NotificationManager.onRender2D(event);
+
+            StarX.CLIENT_THEME_COLOR = new Color(ClientSettings.red0, ClientSettings.green0, ClientSettings.blue0, 255).getRGB();
+            StarX.CLIENT_THEME_COLOR_BRIGHT = new Color(Math.min(ClientSettings.red0 + 26, 255), Math.min(ClientSettings.green0 + 45, 255), Math.min(ClientSettings.blue0 + 13, 255)).hashCode();
+            StarX.CLIENT_THEME_COLOR_2 = new Color(ClientSettings.red1, ClientSettings.green1, ClientSettings.blue1, 255).getRGB();
+            StarX.CLIENT_THEME_COLOR_BRIGHT_2 = new Color(Math.min(ClientSettings.red1 + 26, 255), Math.min(ClientSettings.green1 + 45, 255), Math.min(ClientSettings.blue1 + 13, 255)).hashCode();
+
         } else if (e instanceof Render3DEvent) {
             final Render3DEvent event = ((Render3DEvent) e);
 
@@ -44,6 +53,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
                     module.onRender3D(event);
                 }
             }
@@ -52,15 +62,8 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
                     module.onBlur(event);
-                }
-            }
-        } else if (e instanceof FadingOutlineEvent) {
-            final FadingOutlineEvent event = ((FadingOutlineEvent) e);
-
-            for (final Module module : modules) {
-                if (module.isEnabled()) {
-                    module.onFadingOutline(event);
                 }
             }
         } else if (e instanceof Shader3DEvent) {
@@ -68,6 +71,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
                     module.onShader3D(event);
                 }
             }
@@ -100,22 +104,6 @@ public final class EventHandler {
         } else if (e instanceof PostMotionEvent) {
             final PostMotionEvent event = ((PostMotionEvent) e);
 
-            //Statistics
-            if (target != null && !mc.theWorld.playerEntities.contains(target) && mc.thePlayer.getDistance(target.posX, mc.thePlayer.posY, target.posZ) < 30) {
-                target = null;
-            }
-
-            if (mc.thePlayer.ticksExisted == 1) {
-                PlayerUtil.worldChanges++;
-            }
-
-            if (mc.thePlayer.getHealth() <= 0) {
-                if (canUpdateDeaths) {
-                    canUpdateDeaths = false;
-                }
-            } else
-                canUpdateDeaths = true;
-
             for (final Module module : modules) {
                 if (module.isEnabled()) {
                     module.onPostMotion(event);
@@ -123,12 +111,6 @@ public final class EventHandler {
             }
         } else if (e instanceof PreMotionEvent) {
             final PreMotionEvent event = ((PreMotionEvent) e);
-
-            /* Used to reset PlayerUtil.isOnServer() */
-            if (mc.thePlayer.ticksExisted == 1) {
-                PlayerUtil.serverResponses.clear();
-                PlayerUtil.sentEmail = false;
-            }
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
@@ -198,17 +180,11 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    module.onAlpja(event);
+                    module.onAlpha(event);
                 }
             }
         } else if (e instanceof AttackEvent) {
             final AttackEvent event = ((AttackEvent) e);
-
-            //Statistics
-            final Entity entity = event.getTarget();
-            if (entity instanceof EntityPlayer) {
-                target = (EntityPlayer) entity;
-            }
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
@@ -265,22 +241,5 @@ public final class EventHandler {
                 }
             }
         }
-
-        final int r = ClientSettings.red0;
-        final int g = ClientSettings.green0;
-        final int b = ClientSettings.blue0;
-        final int r2 = ClientSettings.red1;
-        final int g2 = ClientSettings.green1;
-        final int b2 = ClientSettings.blue1;
-
-        final Color bright = new Color(Math.min(r + 26, 255), Math.min(g + 45, 255), Math.min(b + 13, 255));
-        final Color bright2 = new Color(Math.min(r2 + 26, 255), Math.min(g2 + 45, 255), Math.min(b2 + 13, 255));
-
-        StarX.CLIENT_THEME_COLOR = new Color(r, g, b, 255).getRGB();
-        StarX.CLIENT_THEME_COLOR_BRIGHT = bright.hashCode();
-        StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR = bright;
-        StarX.CLIENT_THEME_COLOR_2 = new Color(r2, g2, b2, 255).getRGB();
-        StarX.CLIENT_THEME_COLOR_BRIGHT_2 = bright2.hashCode();
-        StarX.CLIENT_THEME_COLOR_BRIGHT_COLOR_2 = bright2;
     }
 }
