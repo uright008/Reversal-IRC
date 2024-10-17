@@ -1,6 +1,6 @@
 package cn.stars.starx.event;
 
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.module.Category;
@@ -9,10 +9,8 @@ import cn.stars.starx.module.impl.hud.ClientSettings;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
 import cn.stars.starx.ui.notification.NotificationManager;
-import cn.stars.starx.util.player.PlayerUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.awt.*;
@@ -34,11 +32,11 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !RainyAPI.canDrawHUD()) return;
                     module.onRender2D(event);
                 }
             }
-            NotificationManager.onRender2D(event);
+            NotificationManager.onRender2D();
 
             StarX.CLIENT_THEME_COLOR = new Color(ClientSettings.red0, ClientSettings.green0, ClientSettings.blue0, 255).getRGB();
             StarX.CLIENT_THEME_COLOR_BRIGHT = new Color(Math.min(ClientSettings.red0 + 26, 255), Math.min(ClientSettings.green0 + 45, 255), Math.min(ClientSettings.blue0 + 13, 255)).hashCode();
@@ -53,7 +51,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !RainyAPI.canDrawHUD()) return;
                     module.onRender3D(event);
                 }
             }
@@ -62,7 +60,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !RainyAPI.canDrawHUD()) return;
                     module.onBlur(event);
                 }
             }
@@ -71,7 +69,7 @@ public final class EventHandler {
 
             for (final Module module : modules) {
                 if (module.isEnabled()) {
-                    if (module.getModuleInfo().category().equals(Category.HUD) && !LonelyAPI.canDrawHUD()) return;
+                    if (module.getModuleInfo().category().equals(Category.HUD) && !RainyAPI.canDrawHUD()) return;
                     module.onShader3D(event);
                 }
             }

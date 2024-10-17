@@ -7,6 +7,7 @@ import cn.stars.starx.module.impl.misc.Protocol;
 import cn.stars.starx.module.impl.render.HurtCam;
 import cn.stars.starx.module.impl.world.TimeTraveller;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.particle.ParticleManager;
 import cn.stars.starx.util.wrapper.WrapperFreeLook;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
@@ -177,6 +178,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private float avgServerTickDiff = 0.0F;
     private ShaderGroup[] fxaaShaders = new ShaderGroup[10];
     private boolean loadVisibleChunks = false;
+    public final ParticleManager particleManager = new ParticleManager();
 
     public EntityRenderer(Minecraft mcIn, IResourceManager resourceManagerIn)
     {
@@ -1331,14 +1333,10 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
                 try
                 {
-                    if (Reflector.ForgeHooksClient_drawScreen.exists())
-                    {
-                        Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, new Object[] {this.mc.currentScreen, Integer.valueOf(k1), Integer.valueOf(l1), Float.valueOf(partialTicks)});
-                    }
-                    else
-                    {
-                        this.mc.currentScreen.drawScreen(k1, l1, partialTicks);
-                    }
+                    this.mc.currentScreen.drawScreen(k1, l1, partialTicks);
+
+                    particleManager.setAmount(200);
+                    particleManager.renderParticles();
                 }
                 catch (Throwable throwable)
                 {

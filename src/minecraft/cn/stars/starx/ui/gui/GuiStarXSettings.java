@@ -4,12 +4,8 @@
  */
 package cn.stars.starx.ui.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.LonelyAPI;
-import cn.stars.starx.StarX;
-import cn.stars.starx.config.DefaultHandler;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.util.Transformer;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RoundedUtil;
 import cn.stars.starx.util.render.UIUtil;
@@ -23,7 +19,7 @@ import static cn.stars.starx.GameInstance.*;
 
 public class GuiStarXSettings extends GuiScreen {
     public GuiScreen parent;
-    private CuriosityTextButton exitButton, shaderButton, viaButton, betterMainMenuButton;
+    private CuriosityTextButton exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton;
     private CuriosityTextButton[] buttons;
 
     public GuiStarXSettings(GuiScreen parent) {
@@ -53,9 +49,13 @@ public class GuiStarXSettings extends GuiScreen {
         regular20Bold.drawString("Via Version", width / 2f - 490, 110, new Color(220, 220, 220, 240).getRGB());
         regular16.drawString("开启这个选项后，将允许客户端进行跨版本。\n如果你的客户端偶现无法加载，可以尝试关闭。", width / 2f - 490, 125, new Color(220, 220, 220, 240).getRGB());
 
-        // BetterMainMenu
-        regular20Bold.drawString("Better Main Menu", width / 2f - 490, 180, new Color(220, 220, 220, 240).getRGB());
-        regular16.drawString("使你的主菜单变得更美丽。\n最上方增加日期显示，其他待更新。", width / 2f - 490, 195, new Color(220, 220, 220, 240).getRGB());
+        // MainMenuDate
+        regular20Bold.drawString("Main Menu Date", width / 2f - 490, 180, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("使你的主菜单最上方增加日期显示。", width / 2f - 490, 195, new Color(220, 220, 220, 240).getRGB());
+
+        // MainMenuDate
+        regular20Bold.drawString("Gui Snow", width / 2f - 490, 250, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("使你的界面有类似下雪的效果。", width / 2f - 490, 265, new Color(220, 220, 220, 240).getRGB());
 
         updatePostProcessing(false, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -68,36 +68,43 @@ public class GuiStarXSettings extends GuiScreen {
 
         createButton();
 
-        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, betterMainMenuButton};
+        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton};
     }
 
     private void switchOption(Runnable runnable) {
         runnable.run();
         createButton();
-        LonelyAPI.processAPI();
-        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, betterMainMenuButton};
+        RainyAPI.processAPI();
+        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton};
     }
 
     private void createButton() {
-        if (!LonelyAPI.isShaderCompatibility) {
-            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> LonelyAPI.isShaderCompatibility = !LonelyAPI.isShaderCompatibility),
+        if (!RainyAPI.isShaderCompatibility) {
+            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> RainyAPI.isShaderCompatibility = !RainyAPI.isShaderCompatibility),
                     "开", "9", true, 10, 34, 7);
         } else {
-            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> LonelyAPI.isShaderCompatibility = !LonelyAPI.isShaderCompatibility),
+            this.shaderButton = new CuriosityTextButton(width / 2f - 490, 75, 60, 25, () -> switchOption(() -> RainyAPI.isShaderCompatibility = !RainyAPI.isShaderCompatibility),
                     "关", "0", true, 10, 34, 7);
         }
-        if (!LonelyAPI.isViaCompatibility) {
-            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> LonelyAPI.isViaCompatibility = !LonelyAPI.isViaCompatibility),
+        if (!RainyAPI.isViaCompatibility) {
+            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> RainyAPI.isViaCompatibility = !RainyAPI.isViaCompatibility),
                     "开", "9", true, 10, 34, 7);
         } else {
-            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> LonelyAPI.isViaCompatibility = !LonelyAPI.isViaCompatibility),
+            this.viaButton = new CuriosityTextButton(width / 2f - 490, 145, 60, 25, () -> switchOption(() -> RainyAPI.isViaCompatibility = !RainyAPI.isViaCompatibility),
                     "关", "0", true, 10, 34, 7);
         }
-        if (Transformer.betterMainMenu) {
-            this.betterMainMenuButton = new CuriosityTextButton(width / 2f - 490, 215, 60, 25, () -> switchOption(() -> Transformer.betterMainMenu = !Transformer.betterMainMenu),
+        if (RainyAPI.mainMenuDate) {
+            this.mainMenuDateButton = new CuriosityTextButton(width / 2f - 490, 215, 60, 25, () -> switchOption(() -> RainyAPI.mainMenuDate = !RainyAPI.mainMenuDate),
                     "开", "9", true, 10, 34, 7);
         } else {
-            this.betterMainMenuButton = new CuriosityTextButton(width / 2f - 490, 215, 60, 25, () -> switchOption(() -> Transformer.betterMainMenu = !Transformer.betterMainMenu),
+            this.mainMenuDateButton = new CuriosityTextButton(width / 2f - 490, 215, 60, 25, () -> switchOption(() -> RainyAPI.mainMenuDate = !RainyAPI.mainMenuDate),
+                    "关", "0", true, 10, 34, 7);
+        }
+        if (RainyAPI.guiSnow) {
+            this.guiSnowButton = new CuriosityTextButton(width / 2f - 490, 285, 60, 25, () -> switchOption(() -> RainyAPI.guiSnow = !RainyAPI.guiSnow),
+                    "开", "9", true, 10, 34, 7);
+        } else {
+            this.guiSnowButton = new CuriosityTextButton(width / 2f - 490, 285, 60, 25, () -> switchOption(() -> RainyAPI.guiSnow = !RainyAPI.guiSnow),
                     "关", "0", true, 10, 34, 7);
         }
     }

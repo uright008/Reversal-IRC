@@ -75,8 +75,4 @@ public class Sys {
     public static boolean is64Bit() {
         return Platform.getArchitecture().toString().endsWith("64");
     }
-
-    public String getClipboard() {
-        return GLFW.glfwGetClipboardString(Display.getWindow());
-    }
 }

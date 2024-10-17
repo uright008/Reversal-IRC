@@ -4,8 +4,7 @@
  */
 package cn.stars.starx.module.impl.player;
 
-import cn.stars.starx.LonelyAPI;
-import cn.stars.starx.StarX;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.event.impl.UpdateEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -17,9 +16,9 @@ public class IRC extends Module {
     boolean isTrying = false;
 
     public void onUpdate(UpdateEvent event) {
-        if (LonelyAPI.ircUser == null && !isTrying) {
+        if (RainyAPI.ircUser == null && !isTrying) {
             new Thread(() -> {
-                LonelyAPI.ircUser = new User("irc-chat.6667890.xyz", 27810, mc.session.getUsername());
+                RainyAPI.ircUser = new User("irc-chat.6667890.xyz", 27810, mc.session.getUsername());
             }).start();
             isTrying = true;
         }

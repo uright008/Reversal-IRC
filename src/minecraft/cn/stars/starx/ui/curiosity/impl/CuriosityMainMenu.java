@@ -1,17 +1,16 @@
 package cn.stars.starx.ui.curiosity.impl;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.FontManager;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
 import cn.stars.starx.ui.gui.GuiMicrosoftLoginPending;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
-import cn.stars.starx.util.Transformer;
+import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.util.animation.advanced.composed.ColorAnimation;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
-import cn.stars.starx.util.math.RandomUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.starx.Branch;
 import lombok.SneakyThrows;
@@ -58,7 +57,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // background
-        drawMenuBackground(partialTicks, mouseX, mouseY);
+        drawDefaultBackground();
 
         updatePostProcessing(true, partialTicks);
 
@@ -99,7 +98,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
         RenderUtil.scissor(this.width - 60 - backgroundIdAnimationX.getValue(), this.height - 97, backgroundIdAnimationX.getValue(), 35);
         regular32.drawString("更换背景", this.width - 142, this.height - 91, new Color(220, 220, 220, 240).getRGB());
-        regular16.drawString("(当前ID: " + LonelyAPI.backgroundId + ")", this.width - 132, this.height - 75, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("(当前ID: " + RainyAPI.backgroundId + ")", this.width - 132, this.height - 75, new Color(220, 220, 220, 240).getRGB());
 
         RenderUtil.scissor(this.width - 60 - exitAnimationX.getValue(), this.height - 55, exitAnimationX.getValue(), 35);
         regular32.drawString("退出游戏", this.width - 142, this.height - 43, new Color(220, 220, 220, 240).getRGB());
@@ -142,15 +141,15 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         // MainMenu
         RenderUtil.rect(0, 0, 230, height, new Color(0, 0, 0, 50));
         RenderUtil.rect(230, 0, 1, height, new Color(220, 220, 220, 240));
-        if (Transformer.betterMainMenu) {
+        if (RainyAPI.mainMenuDate) {
             FontManager.getRainbowParty(96).drawCenteredString(LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH), width / 2f, 20, new Color(250,250,250,250).getRGB());
             FontManager.getRainbowParty(48).drawCenteredString(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), width / 2f, 72, new Color(250,250,250,250).getRGB());
         }
         RenderUtil.image(new ResourceLocation("starx/images/curiosity.png"), 10, height / 6f - 20, 100, 100, new Color(255,255,255,255));
         FontManager.getRegular(64).drawCenteredString("STARX", 140, height / 6f + 18, new Color(250,250,250,250).getRGB());
 
-        regular18.drawCenteredString("Copyright © 2024 Starlight, All rights reserved.", this.width / 2f, this.height - 20, colorAnimation.getOutput().getRGB());
-        if (LonelyAPI.isShaderCompatibility) regular20.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 40, new Color(220, 20, 20, 220).getRGB());
+        regular18.drawCenteredString("Copyright © 2024 Starlight, All rights reserved.", this.width / 2f, this.height - 10, colorAnimation.getOutput().getRGB());
+        if (RainyAPI.isShaderCompatibility) regular18.drawCenteredString("警告: 配置已开启DisableShader选项！你将只能使用ID 9作为背景！", this.width / 2f, this.height - 30, new Color(220, 20, 20, 220).getRGB());
 
         //    regular.drawCenteredString(tipString, width / 2f, height / 2f + 100,
         //            ColorUtil.withAlpha(new Color(250, 250, 250, 250), (int) fontAnimation.getValue()).getRGB());
@@ -158,21 +157,23 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         textAnimation.run(1);
-        RenderUtil.scissor(this.width / 2f - 1, this.height - 40, regular20.width(title) / 2f * textAnimation.getValue() + 2, 20);
-        regular20.drawCenteredString(title, this.width / 2f, this.height - 30, colorAnimation.getOutput().getRGB());
-        RenderUtil.scissor(this.width / 2f - regular20.width(title) / 2f * textAnimation.getValue() + 1, this.height - 40, regular20.width(title) / 2f * textAnimation.getValue(), 20);
-        regular20.drawCenteredString(title, this.width / 2f, this.height - 30, colorAnimation.getOutput().getRGB());
+        RenderUtil.scissor(this.width / 2f - 1, this.height - 30, regular18.width(title) / 2f * textAnimation.getValue() + 2, 20);
+        regular18.drawCenteredString(title, this.width / 2f, this.height - 20, colorAnimation.getOutput().getRGB());
+        RenderUtil.scissor(this.width / 2f - regular18.width(title) / 2f * textAnimation.getValue() + 1, this.height - 30, regular18.width(title) / 2f * textAnimation.getValue(), 20);
+        regular18.drawCenteredString(title, this.width / 2f, this.height - 20, colorAnimation.getOutput().getRGB());
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        regular20.drawString(">", this.width / 2f + regular20.width(title) / 2f * textAnimation.getValue() + 10, this.height - 30, colorAnimation.getOutput().getRGB());
-        regular20.drawString("<", this.width / 2f - regular20.width(title) / 2f * textAnimation.getValue() - 10, this.height - 30, colorAnimation.getOutput().getRGB());
+        regular18.drawString(">", this.width / 2f + regular18.width(title) / 2f * textAnimation.getValue() + 10, this.height - 20, colorAnimation.getOutput().getRGB());
+        regular18.drawString("<", this.width / 2f - regular18.width(title) / 2f * textAnimation.getValue() - 10, this.height - 20, colorAnimation.getOutput().getRGB());
+
+        NotificationManager.onRender2D();
 
         updatePostProcessing(false, partialTicks);
     }
 
     @Override
     public void initGui() {
-        title = LonelyAPI.getRandomTitle();
+        title = RainyAPI.getRandomTitle();
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
         updateLog.clear();

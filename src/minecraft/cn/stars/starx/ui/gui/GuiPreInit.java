@@ -42,7 +42,7 @@ public class GuiPreInit extends GuiScreen {
     @SneakyThrows
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawMenuBackground(partialTicks, mouseX, mouseY);
+        drawDefaultBackground();
 
         // blur
         RiseShaders.GAUSSIAN_BLUR_SHADER.update();

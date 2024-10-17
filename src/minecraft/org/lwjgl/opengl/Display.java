@@ -1,6 +1,7 @@
 package org.lwjgl.opengl;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.input.KeyCodes;
@@ -16,7 +17,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Display {
     private static String windowTitle = "Game";
-
+    private static Canvas parent = new Canvas();
     private static boolean displayCreated = false;
     private static boolean displayFocused = true;
     private static boolean displayVisible = true;
@@ -70,7 +71,7 @@ public class Display {
      * @param pixel_format    Describes the minimum specifications the context must fulfill.
      * @param shared_drawable The Drawable to share context with. (optional, may be null)
      *
-     * @throws org.lwjgl.LWJGLException
+     * @throws LWJGLException
      */
     public static void create(PixelFormat pixel_format, Drawable shared_drawable) {
         System.out.println("TODO: Implement Display.create(PixelFormat, Drawable)"); // TODO
@@ -183,7 +184,7 @@ public class Display {
 
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                Mouse.addButtonEvent(button, action == GLFW.GLFW_PRESS ? true : false);
+                Mouse.addButtonEvent(button, action == GLFW_PRESS ? true : false);
             }
         };
 
@@ -254,7 +255,7 @@ public class Display {
 
         IntBuffer fbw = BufferUtils.createIntBuffer(1);
         IntBuffer fbh = BufferUtils.createIntBuffer(1);
-        GLFW.glfwGetFramebufferSize(Window.handle, fbw, fbh);
+        glfwGetFramebufferSize(Window.handle, fbw, fbh);
         displayFramebufferWidth = fbw.get(0);
         displayFramebufferHeight = fbh.get(0);
 
@@ -279,9 +280,9 @@ public class Display {
         }
 
         int[] x = new int[1], y = new int[1];
-        GLFW.glfwGetWindowSize(Window.handle, x, y);
+        glfwGetWindowSize(Window.handle, x, y);
         Window.windowSizeCallback.invoke(Window.handle, x[0], y[0]);
-        GLFW.glfwGetFramebufferSize(Window.handle, x, y);
+        glfwGetFramebufferSize(Window.handle, x, y);
         Window.framebufferSizeCallback.invoke(Window.handle, x[0], y[0]);
     }
 
@@ -359,7 +360,7 @@ public class Display {
 
     public static DisplayMode[] getAvailableDisplayModes() {
         IntBuffer count = BufferUtils.createIntBuffer(1);
-        GLFWVidMode.Buffer modes = GLFW.glfwGetVideoModes(glfwGetPrimaryMonitor());
+        GLFWVidMode.Buffer modes = glfwGetVideoModes(glfwGetPrimaryMonitor());
 
         DisplayMode[] displayModes = new DisplayMode[count.get(0)];
 
@@ -445,7 +446,7 @@ public class Display {
             }
             glfwImages.put(icon, GLFWImage.create().set(dimension, dimension, nativeBuffers[icon]));
         }
-        GLFW.glfwSetWindowIcon(getWindow(), glfwImages);
+        glfwSetWindowIcon(getWindow(), glfwImages);
         glfwImages.free();
         return 0;
     }
@@ -495,9 +496,7 @@ public class Display {
         return false;
     }
 
-    public static void setParent(Canvas parent) {
-        // Do nothing as set parent not supported
-    }
+
 
     public static void releaseContext() {
         glfwMakeContextCurrent(0);
@@ -587,17 +586,17 @@ public class Display {
         static GLFWFramebufferSizeCallback framebufferSizeCallback;
 
         public static void setCallbacks() {
-            GLFW.glfwSetKeyCallback(handle, keyCallback);
-            GLFW.glfwSetCharCallback(handle, charCallback);
-            GLFW.glfwSetCursorPosCallback(handle, cursorPosCallback);
-            GLFW.glfwSetMouseButtonCallback(handle, mouseButtonCallback);
-            GLFW.glfwSetScrollCallback(handle, scrollCallback);
-            GLFW.glfwSetWindowFocusCallback(handle, windowFocusCallback);
-            GLFW.glfwSetWindowIconifyCallback(handle, windowIconifyCallback);
-            GLFW.glfwSetWindowSizeCallback(handle, windowSizeCallback);
-            GLFW.glfwSetWindowPosCallback(handle, windowPosCallback);
-            GLFW.glfwSetWindowRefreshCallback(handle, windowRefreshCallback);
-            GLFW.glfwSetFramebufferSizeCallback(handle, framebufferSizeCallback);
+            glfwSetKeyCallback(handle, keyCallback);
+            glfwSetCharCallback(handle, charCallback);
+            glfwSetCursorPosCallback(handle, cursorPosCallback);
+            glfwSetMouseButtonCallback(handle, mouseButtonCallback);
+            glfwSetScrollCallback(handle, scrollCallback);
+            glfwSetWindowFocusCallback(handle, windowFocusCallback);
+            glfwSetWindowIconifyCallback(handle, windowIconifyCallback);
+            glfwSetWindowSizeCallback(handle, windowSizeCallback);
+            glfwSetWindowPosCallback(handle, windowPosCallback);
+            glfwSetWindowRefreshCallback(handle, windowRefreshCallback);
+            glfwSetFramebufferSizeCallback(handle, framebufferSizeCallback);
         }
 
         public static void releaseCallbacks() {

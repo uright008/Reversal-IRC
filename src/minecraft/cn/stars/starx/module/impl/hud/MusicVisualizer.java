@@ -4,16 +4,14 @@
  */
 package cn.stars.starx.module.impl.hud;
 
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
-import cn.stars.starx.music.ui.ThemeColor;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.math.MathUtil;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RoundedUtil;
 import cn.stars.starx.util.render.ThemeType;
@@ -46,7 +44,7 @@ public class MusicVisualizer extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!LonelyAPI.hasJavaFX) return;
+        if (!RainyAPI.hasJavaFX) return;
         sr = new ScaledResolution(mc);
         GL11.glPushMatrix();
         setWidth(fillValue.isEnabled() ? sr.getScaledWidth() : (int) widthValue.getValue());
@@ -74,6 +72,7 @@ public class MusicVisualizer extends Module {
             int vertexIndex = 2;
             int colorIndex = 0;
             for (float magnitude : magnitudeInterp) {
+                if (vertexIndex >= vertex.length - 1) break;
                 float realY = (float) (renderY + heightValue.getValue() - (1 - (-magnitude / 60f)) * 1.2f * heightValue.getValue());
                 vertex[vertexIndex] = renderX;
                 vertex[vertexIndex + 1] = realY;

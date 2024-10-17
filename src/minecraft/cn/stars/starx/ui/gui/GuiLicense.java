@@ -5,7 +5,7 @@
 package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.Transformer;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.ui.curiosity.CuriosityTextButton;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RoundedUtil;
@@ -44,7 +44,7 @@ public class GuiLicense extends GuiScreen {
     @Override
     public void initGui() {
         acceptButton = new CuriosityTextButton(this.width / 2 - 100, this.height - 60, 200, 20, () -> {
-            Transformer.isLicenseReviewed = true;
+            RainyAPI.isLicenseReviewed = true;
             mc.displayGuiScreen(new GuiPreInit());
         }, "同意", "", true, 1, 90, 5, 20);
         rejectButton = new CuriosityTextButton(this.width / 2 - 100, this.height - 35, 200, 20, () -> mc.shutdown(), "拒绝", "", true, 1, 90, 5, 20);
@@ -54,7 +54,7 @@ public class GuiLicense extends GuiScreen {
     @SneakyThrows
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawMenuBackground(partialTicks, mouseX, mouseY);
+        drawDefaultBackground();
 
         // blur
         RiseShaders.GAUSSIAN_BLUR_SHADER.update();

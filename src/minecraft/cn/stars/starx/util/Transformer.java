@@ -1,6 +1,7 @@
 package cn.stars.starx.util;
 
 import cn.stars.starx.GameInstance;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.impl.misc.CustomName;
 import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
@@ -10,11 +11,8 @@ import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.gui.GuiScreen;
 
 public class Transformer implements GameInstance {
-    public static boolean isLicenseReviewed = false;
-    public static boolean betterMainMenu = true;
-
     public static GuiScreen transformMainMenu() {
-        if (isLicenseReviewed) {
+        if (RainyAPI.isLicenseReviewed) {
             if (ModuleInstance.getBool("GuiSettings", "Curiosity Style").isEnabled()) {
                 return new CuriosityMainMenu();
             }

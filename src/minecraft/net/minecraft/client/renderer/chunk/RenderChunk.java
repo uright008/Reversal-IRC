@@ -67,7 +67,6 @@ public class RenderChunk
     public static final EnumWorldBlockLayer[] ENUM_WORLD_BLOCK_LAYERS = EnumWorldBlockLayer.values();
     private final EnumWorldBlockLayer[] blockLayersSingle = new EnumWorldBlockLayer[1];
     private final boolean isMipmaps = Config.isMipmaps();
-    private final boolean fixBlockLayer = !Reflector.BetterFoliageClient.exists();
     private boolean playerUpdate = false;
     public int regionX;
     public int regionZ;
@@ -567,50 +566,34 @@ public class RenderChunk
         return new RegionRenderCache(p_createRegionRenderCache_1_, p_createRegionRenderCache_2_, p_createRegionRenderCache_3_, p_createRegionRenderCache_4_);
     }
 
-    private EnumWorldBlockLayer fixBlockLayer(IBlockState p_fixBlockLayer_1_, EnumWorldBlockLayer p_fixBlockLayer_2_)
-    {
-        if (CustomBlockLayers.isActive())
-        {
+    private EnumWorldBlockLayer fixBlockLayer(IBlockState p_fixBlockLayer_1_, EnumWorldBlockLayer p_fixBlockLayer_2_) {
+        if (CustomBlockLayers.isActive()) {
             EnumWorldBlockLayer enumworldblocklayer = CustomBlockLayers.getRenderLayer(p_fixBlockLayer_1_);
 
-            if (enumworldblocklayer != null)
-            {
+            if (enumworldblocklayer != null) {
                 return enumworldblocklayer;
             }
         }
 
-        if (!this.fixBlockLayer)
-        {
-            return p_fixBlockLayer_2_;
-        }
-        else
-        {
-            if (this.isMipmaps)
-            {
-                if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT)
-                {
-                    Block block = p_fixBlockLayer_1_.getBlock();
+        if (this.isMipmaps) {
+            if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT) {
+                Block block = p_fixBlockLayer_1_.getBlock();
 
-                    if (block instanceof BlockRedstoneWire)
-                    {
-                        return p_fixBlockLayer_2_;
-                    }
-
-                    if (block instanceof BlockCactus)
-                    {
-                        return p_fixBlockLayer_2_;
-                    }
-
-                    return EnumWorldBlockLayer.CUTOUT_MIPPED;
+                if (block instanceof BlockRedstoneWire) {
+                    return p_fixBlockLayer_2_;
                 }
-            }
-            else if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT_MIPPED)
-            {
-                return EnumWorldBlockLayer.CUTOUT;
-            }
 
-            return p_fixBlockLayer_2_;
+                if (block instanceof BlockCactus) {
+                    return p_fixBlockLayer_2_;
+                }
+
+                return EnumWorldBlockLayer.CUTOUT_MIPPED;
+            }
+        } else if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT_MIPPED) {
+            return EnumWorldBlockLayer.CUTOUT;
         }
+
+        return p_fixBlockLayer_2_;
     }
 
     private void postRenderOverlays(RegionRenderCacheBuilder p_postRenderOverlays_1_, CompiledChunk p_postRenderOverlays_2_, boolean[] p_postRenderOverlays_3_)

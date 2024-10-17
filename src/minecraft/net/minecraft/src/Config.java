@@ -154,8 +154,7 @@ public class Config
         }
     }
 
-    public static void initDisplay()
-    {
+    public static void initDisplay() throws LWJGLException {
         checkInitialized();
         antialiasingLevel = gameSettings.ofAaLevel;
         checkDisplaySettings();
@@ -1872,8 +1871,7 @@ public class Config
         return p_normalize_0_ == null ? "" : p_normalize_0_;
     }
 
-    public static void checkDisplaySettings()
-    {
+    public static void checkDisplaySettings() throws LWJGLException {
         int i = getAntialiasingLevel();
 
         if (i > 0)

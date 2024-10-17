@@ -18,6 +18,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenWorking;
@@ -56,8 +60,12 @@ public class ResourcePackRepository
     private IResourcePack resourcePackInstance;
     private final ReentrantLock lock = new ReentrantLock();
     private ListenableFuture<Object> downloadingPacks;
-    private List<ResourcePackRepository.Entry> repositoryEntriesAll = Lists.<ResourcePackRepository.Entry>newArrayList();
-    public List<ResourcePackRepository.Entry> repositoryEntries = Lists.<ResourcePackRepository.Entry>newArrayList();
+    private List<ResourcePackRepository.Entry> repositoryEntriesAll = Lists.newArrayList();
+    public List<ResourcePackRepository.Entry> repositoryEntries = Lists.newArrayList();
+    private Map<String, ResourcePackRepository.Entry> cachedEntries = new ConcurrentHashMap<>();
+
+    // 使用线程池处理异步任务
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public ResourcePackRepository(File dirResourcepacksIn, File dirServerResourcepacksIn, IResourcePack rprDefaultResourcePackIn, IMetadataSerializer rprMetadataSerializerIn, GameSettings settings)
     {
@@ -66,7 +74,7 @@ public class ResourcePackRepository
         this.rprDefaultResourcePack = rprDefaultResourcePackIn;
         this.rprMetadataSerializer = rprMetadataSerializerIn;
         this.fixDirResourcepacks();
-        this.updateRepositoryEntriesAll();
+        this.updateRepositoryEntriesAllAsync(); // 异步更新资源包条目
         Iterator<String> iterator = settings.resourcePacks.iterator();
 
         while (iterator.hasNext())
@@ -84,9 +92,21 @@ public class ResourcePackRepository
                     }
 
                     iterator.remove();
-                    logger.warn("Removed selected resource pack {} because it\'s no longer compatible", new Object[] {resourcepackrepository$entry.getResourcePackName()});
+                    logger.warn("Removed selected resource pack {} because it's no longer compatible", new Object[] {resourcepackrepository$entry.getResourcePackName()});
                 }
             }
+        }
+    }
+
+    // 在关闭时释放线程池资源
+    public void shutdown() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
         }
     }
 
@@ -110,42 +130,41 @@ public class ResourcePackRepository
         return this.dirResourcepacks.isDirectory() ? Arrays.asList(this.dirResourcepacks.listFiles(resourcePackFilter)) : Collections.<File>emptyList();
     }
 
+    // 增加异步更新资源包条目的方法
+    public void updateRepositoryEntriesAllAsync()
+    {
+        executor.submit(() -> {
+            try {
+                updateRepositoryEntriesAll();
+            } catch (Exception e) {
+                logger.error("Failed to update resource packs asynchronously", e);
+            }
+        });
+    }
+
+    // 增加缓存机制并优化更新逻辑
     public void updateRepositoryEntriesAll()
     {
         List<ResourcePackRepository.Entry> list = Lists.<ResourcePackRepository.Entry>newArrayList();
 
         for (File file1 : this.getResourcePackFiles())
         {
-            ResourcePackRepository.Entry resourcepackrepository$entry = new ResourcePackRepository.Entry(file1);
+            String filePath = file1.getAbsolutePath();
+            ResourcePackRepository.Entry resourcepackrepository$entry;
 
-            if (!this.repositoryEntriesAll.contains(resourcepackrepository$entry))
-            {
-                try
-                {
+            // 检查缓存中是否已有条目
+            if (cachedEntries.containsKey(filePath)) {
+                resourcepackrepository$entry = cachedEntries.get(filePath);
+            } else {
+                resourcepackrepository$entry = new ResourcePackRepository.Entry(file1);
+                try {
                     resourcepackrepository$entry.updateResourcePack();
-                    list.add(resourcepackrepository$entry);
-                }
-                catch (Exception var61)
-                {
-                    list.remove(resourcepackrepository$entry);
+                    cachedEntries.put(filePath, resourcepackrepository$entry); // 将新条目放入缓存
+                } catch (Exception var61) {
+                    continue;
                 }
             }
-            else
-            {
-                int i = this.repositoryEntriesAll.indexOf(resourcepackrepository$entry);
-
-                if (i > -1 && i < this.repositoryEntriesAll.size())
-                {
-                    list.add(this.repositoryEntriesAll.get(i));
-                }
-            }
-        }
-
-        this.repositoryEntriesAll.removeAll(list);
-
-        for (ResourcePackRepository.Entry resourcepackrepository$entry1 : this.repositoryEntriesAll)
-        {
-            resourcepackrepository$entry1.closeResourcePack();
+            list.add(resourcepackrepository$entry);
         }
 
         this.repositoryEntriesAll = list;

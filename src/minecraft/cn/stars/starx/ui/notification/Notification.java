@@ -3,6 +3,7 @@ package cn.stars.starx.ui.notification;
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.font.FontManager;
 import cn.stars.starx.font.MFont;
+import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.starx.util.math.TimeUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.ThemeType;
@@ -20,15 +21,15 @@ public final class Notification implements GameInstance {
     private final NotificationType type;
     private long delay, start, end;
 
-    private final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-
-    MFont icon = FontManager.getCheck(24);
-    MFont psb = FontManager.getPSB(24);
-    MFont psm = FontManager.getPSM(20);
+    private ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
     private float xVisual = sr.getScaledWidth();
     public float yVisual = sr.getScaledHeight() - 50;
     public float y = sr.getScaledHeight() - 50;
+
+    MFont icon = FontManager.getCheck(24);
+    MFont psb = FontManager.getPSB(24);
+    MFont psm = FontManager.getPSM(20);
 
     private final TimeUtil timer = new TimeUtil();
 
@@ -71,6 +72,8 @@ public final class Notification implements GameInstance {
     }
 
     public void render() {
+        sr = new ScaledResolution(Minecraft.getMinecraft());
+
         final String name = StringUtils.capitalize(type.name().toLowerCase());
         Color sideColor = new Color(-1);
         final float screenWidth = sr.getScaledWidth();
@@ -84,7 +87,7 @@ public final class Notification implements GameInstance {
 
         if (timer.hasReached(1000 / 60)) {
             xVisual = lerp(xVisual, x, 0.2f);
-            yVisual = lerp(yVisual, y, 0.2f);
+            yVisual = lerp(yVisual, y - (mc.currentScreen instanceof CuriosityMainMenu ? 180 : 0), 0.2f);
             timer.reset();
         }
 
@@ -113,16 +116,13 @@ public final class Notification implements GameInstance {
 
         Color finalSideColor = sideColor;
         String finalIconString = iconString;
-        NORMAL_BLUR_RUNNABLES.add(() -> RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO)));
 
-        NORMAL_RENDER_RUNNABLES.add(() -> {
-            RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
+        RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);
 
-            RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
-            icon.drawString(finalIconString, xVisual + 4, yVisual + 2, finalSideColor.getRGB());
-            psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual + 1, new Color(255, 255, 255, 220).getRGB());
-            psm.drawString(description, xVisual + 4, yVisual + 12, new Color(255, 255, 255, 220).getRGB());
-        });
+        RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
+        icon.drawString(finalIconString, xVisual + 4, yVisual + 2, finalSideColor.getRGB());
+        psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual + 1, new Color(255, 255, 255, 220).getRGB());
+        psm.drawString(description, xVisual + 4, yVisual + 12, new Color(255, 255, 255, 220).getRGB());
 
         NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
         //    RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);

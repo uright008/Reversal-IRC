@@ -44,8 +44,8 @@ public class GuiScreenResourcePacks extends GuiScreen
 
         if (!this.changed)
         {
-            this.availableResourcePacks = Lists.<ResourcePackListEntry>newArrayList();
-            this.selectedResourcePacks = Lists.<ResourcePackListEntry>newArrayList();
+            this.availableResourcePacks = Lists.newArrayList();
+            this.selectedResourcePacks = Lists.newArrayList();
             ResourcePackRepository resourcepackrepository = this.mc.getResourcePackRepository();
             resourcepackrepository.updateRepositoryEntriesAll();
             List<ResourcePackRepository.Entry> list = Lists.newArrayList(resourcepackrepository.getRepositoryEntriesAll());

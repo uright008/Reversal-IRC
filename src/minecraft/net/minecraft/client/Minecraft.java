@@ -1,13 +1,16 @@
 package net.minecraft.client;
 
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
+import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.starx.ui.splash.SplashProgress;
 import cn.stars.starx.util.math.StopWatch;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,7 +38,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
@@ -171,12 +173,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.glu.GLU;
 
 public class Minecraft implements IThreadListener, IPlayerUsage
@@ -388,8 +388,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         SplashProgress.setProgress(stage, "");
     }
 
-    private void startGame()
-    {
+    private void startGame() throws LWJGLException {
         startTimer = new StopWatch();
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
@@ -493,6 +492,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
         else
         {
+            StarX.notificationManager.registerNotification(StarX.NAME + " " + StarX.VERSION + ", made with love by " + StarX.AUTHOR + ".", "StarX", NotificationType.NOTIFICATION);
             this.displayGuiScreen(Transformer.transformMainMenu());
         }
 
@@ -527,15 +527,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class);
     }
 
-    private void createDisplay() {
+    private void createDisplay() throws LWJGLException {
         Display.setResizable(true);
         Display.setTitle("StarX is loading...");
 
         Display.create((new PixelFormat()).withDepthBits(24));
+
+        RainyAPI.setupGLFW();
+        RainyAPI.setupDrag();
     }
 
-    private void setInitialDisplayMode()
-    {
+    private void setInitialDisplayMode() throws LWJGLException {
         if (this.fullscreen)
         {
             Display.setFullscreen(true);
@@ -792,7 +794,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         return bytebuffer;
     }
 
-    private void updateDisplayMode() {
+    private void updateDisplayMode() throws LWJGLException {
         Set<DisplayMode> set = Sets.<DisplayMode>newHashSet();
         Collections.addAll(set, Display.getAvailableDisplayModes());
         DisplayMode displaymode = Display.getDesktopDisplayMode();
@@ -925,7 +927,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             final CloseGUIEvent closeGUIEvent = new CloseGUIEvent(this.currentScreen);
             closeGUIEvent.call();
             this.currentScreen.onGuiClosed();
-            GLFW.glfwSetCursor(Display.getWindow(), MemoryUtil.NULL);
+        //    GLFW.glfwSetCursor(Display., MemoryUtil.NULL);
         }
 
         if (guiScreenIn == null && this.theWorld == null)
@@ -1005,6 +1007,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         final int deltaTime = (int) (currentTime - lastFrame);
         lastFrame = currentTime;
         RenderUtils.deltaTime = deltaTime;
+
+        RenderUtil.calcDeltaFrameTime();
 
         if (Display.isCreated() && Display.isCloseRequested())
         {
@@ -1173,7 +1177,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public int getLimitFramerate()
     {
-        return this.theWorld == null && this.currentScreen != null ? Display.getDisplayMode().getFrequency() : this.gameSettings.limitFramerate;
+        return this.theWorld == null && this.currentScreen != null ? 240 : this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax()

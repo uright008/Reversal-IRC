@@ -31,8 +31,8 @@ public class CuriosityViaMenu extends GuiScreen implements GuiYesNoCallback {
 
     MFont regular = FontManager.getRegular(20);
     MFont eaves = FontManager.getEaves(64);
-    MFont psm = FontManager.getPSM(24);
-    MFont psb = FontManager.getPSB(24);
+    MFont regular2 = FontManager.getRegular(24);
+    MFont regularBold = FontManager.getRegularBold(24);
     private final Animation fontAnimation = new Animation(Easing.EASE_OUT_SINE, 400);
 
     private CuriosityTextButton back;
@@ -46,7 +46,7 @@ public class CuriosityViaMenu extends GuiScreen implements GuiYesNoCallback {
     @SneakyThrows
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        drawMenuBackground(partialTicks, mouseX, mouseY);
+        drawDefaultBackground();
 
         updatePostProcessing(true, partialTicks);
 
@@ -150,9 +150,9 @@ public class CuriosityViaMenu extends GuiScreen implements GuiYesNoCallback {
         @Override
         protected void drawSlot(int i, int i1, int i2, int i3, int i4, int i5) {
             if (ViaLoadingBase.PROTOCOLS.indexOf(ViaLoadingBase.getInstance().getTargetVersion()) == i) {
-                psb.drawCenteredString(">  " + ViaLoadingBase.PROTOCOLS.get(i).getName() + "  <", width / 2f, i2 + 2, Color.WHITE.getRGB());
+                regularBold.drawCenteredString(">  " + ViaLoadingBase.PROTOCOLS.get(i).getName() + "  <", width / 2f, i2 + 2, Color.WHITE.getRGB());
             } else {
-                psm.drawCenteredString(ViaLoadingBase.PROTOCOLS.get(i).getName(), width / 2f, i2 + 2, Color.GRAY.getRGB());
+                regular2.drawCenteredString(ViaLoadingBase.PROTOCOLS.get(i).getName(), width / 2f, i2 + 2, Color.GRAY.getRGB());
             }
         }
     }

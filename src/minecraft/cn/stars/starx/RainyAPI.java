@@ -5,27 +5,43 @@
 package cn.stars.starx;
 
 import cn.stars.starx.module.impl.hud.HUD;
-import cn.stars.starx.util.Transformer;
+import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
+import cn.stars.starx.ui.notification.NotificationType;
+import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.irc.User;
 import cn.stars.starx.util.math.RandomUtil;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.starx.util.misc.VideoUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.opengl.Display;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 @Getter
 @Setter
 @UtilityClass
-public class LonelyAPI implements GameInstance {
-
-    public static int backgroundId = 9;
+@SuppressWarnings("all")
+public class RainyAPI {
+    public static Minecraft mc = Minecraft.getMinecraft();
+    public static long window;
+    
     public static User ircUser = null;
     public static boolean hasJavaFX = true;
 
+    public static int backgroundId = 9;
     public static boolean isShaderCompatibility = false;
     public static boolean isViaCompatibility = false;
+    public static boolean isLicenseReviewed = false;
+    public static boolean mainMenuDate = true;
+    public static boolean guiSnow = false;
 
     // 崩溃报告随机语录
     public static final String[] wittyCrashReport = new String[]
@@ -35,7 +51,9 @@ public class LonelyAPI implements GameInstance {
     // 随机标题
     public static final String[] wittyTitle = new String[]
             {"乌云再厚也遮不住阳光,风雨过后总会有彩虹", "与你的日常,就是奇迹", "虚假的真实是真实吗?", "未来仍有无限可能", "在那灿烂的群星中,总有一颗代表我正与你对视", "王女手握钥匙,方舟恭候多时",
-                    "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?", "我有鱼鱼症"};
+                    "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?", "我有鱼鱼症",
+                    "你应该小时候受过心理创伤,才会长大后出来祸害别人"
+            };
 
     public static String getRandomTitle() {
         return wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)];
@@ -48,6 +66,39 @@ public class LonelyAPI implements GameInstance {
             } else return !mc.gameSettings.showDebugInfo;
         }
         return false;
+    }
+
+    public static void setupGLFW() {
+        window = Display.getWindow();
+        GLFW.glfwMakeContextCurrent(window);
+    }
+
+    public static void setupDrag() {
+        GLFW.glfwSetDropCallback(window, (window, count, names) -> {
+            String filePath = GLFWDropCallback.getName(names, 0);
+            if (mc.currentScreen instanceof CuriosityMainMenu) {
+                if (count == 1) {
+                    File droppedFile = new File(filePath);
+
+                    if (droppedFile.exists() && droppedFile.getName().toLowerCase().endsWith(".mp4")) {
+                        StarXLogger.info("Dragged file successfully detected: " + droppedFile.getAbsolutePath());
+
+                        try {
+                            VideoUtils.stop();
+                            File tempFile = new File(Minecraft.getMinecraft().mcDataDir, "StarX/Background");
+                            File videoFile = new File(tempFile, "background.mp4");
+                            Files.copy(droppedFile.toPath(), videoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            VideoUtils.init(videoFile);
+                            StarX.notificationManager.registerNotification("Background changed successfully!", "Main Menu", 2000L, NotificationType.SUCCESS);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Failed to load new background file.");
+                        }
+                    } else {
+                        StarXLogger.error("Dragged file read failed.");
+                    }
+                }
+            }
+        });
     }
 
     // 加载客户端设置
@@ -75,10 +126,13 @@ public class LonelyAPI implements GameInstance {
                 isViaCompatibility = Boolean.parseBoolean(split[1]);
             }
             if (split[0].contains("LicenseReviewed")) {
-                Transformer.isLicenseReviewed = Boolean.parseBoolean(split[1]);
+                isLicenseReviewed = Boolean.parseBoolean(split[1]);
             }
-            if (split[0].contains("BetterMainMenu")) {
-                Transformer.betterMainMenu = Boolean.parseBoolean(split[1]);
+            if (split[0].contains("MainMenuDate")) {
+                mainMenuDate = Boolean.parseBoolean(split[1]);
+            }
+            if (split[0].contains("GuiSnow")) {
+                guiSnow = Boolean.parseBoolean(split[1]);
             }
             if (split[0].contains("CustomText")) {
                 StarX.customText = split[1];
@@ -91,8 +145,9 @@ public class LonelyAPI implements GameInstance {
         final StringBuilder clientBuilder = new StringBuilder();
         clientBuilder.append("DisableShader_").append(isShaderCompatibility).append("\r\n");
         clientBuilder.append("DisableViaMCP_").append(isViaCompatibility).append("\r\n");
-        clientBuilder.append("LicenseReviewed_").append(Transformer.isLicenseReviewed).append("\r\n");
-        clientBuilder.append("BetterMainMenu_").append(Transformer.betterMainMenu).append("\r\n");
+        clientBuilder.append("LicenseReviewed_").append(isLicenseReviewed).append("\r\n");
+        clientBuilder.append("MainMenuDate_").append(mainMenuDate).append("\r\n");
+        clientBuilder.append("GuiSnow_").append(guiSnow).append("\r\n");
         clientBuilder.append("CustomText_").append(StarX.customText).append("\r\n");
 
         FileUtil.saveFile("client.txt", true, clientBuilder.toString());

@@ -29,8 +29,7 @@ public final class ModuleManager {
 
 
     /**
-     * This method returns all the current registered and enabled modules.
-     *
+     * 遍历impl下所有继承Module的class并注册
      */
     public void registerModules() {
         for (Module module : ClassUtil.instantiateList(ClassUtil.resolvePackage(this.getClass().getPackage().getName() + ".impl", Module.class))) {

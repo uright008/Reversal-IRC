@@ -1,6 +1,6 @@
 package cn.stars.starx.config;
 
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -8,7 +8,6 @@ import cn.stars.starx.setting.Setting;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.render.ThemeUtil;
@@ -63,7 +62,7 @@ public class DefaultHandler {
             }
 
             if (split[0].contains("MainMenuBackground")) {
-                LonelyAPI.backgroundId = Integer.parseInt(split[1]);
+                RainyAPI.backgroundId = Integer.parseInt(split[1]);
                 continue;
             }
 
@@ -126,7 +125,7 @@ public class DefaultHandler {
         configBuilder.append("StarX_Version_").append(StarX.VERSION).append("\r\n");
         configBuilder.append("ClientName_").append(ThemeUtil.getCustomClientName()).append("\r\n");
         configBuilder.append("CustomPlayerName_").append(StarX.customName).append("\r\n");
-        configBuilder.append("MainMenuBackground_").append(LonelyAPI.backgroundId).append("\r\n");
+        configBuilder.append("MainMenuBackground_").append(RainyAPI.backgroundId).append("\r\n");
         configBuilder.append("DisableShader_").append(false).append("\r\n");
 
         if (!force) {

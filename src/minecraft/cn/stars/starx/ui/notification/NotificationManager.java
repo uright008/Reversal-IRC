@@ -43,7 +43,7 @@ public final class NotificationManager {
     }
 
 
-    public static void onRender2D(final Render2DEvent event) {
+    public static void onRender2D() {
         if (!notifications.isEmpty()) {
            if (notifications.getFirst().getEnd() > System.currentTimeMillis()) {
                 notifications.getFirst().y = new ScaledResolution(Minecraft.getMinecraft()).getScaledHeight() - 50;

@@ -1,6 +1,5 @@
 package cn.stars.starx.module.impl.hud;
 
-import cn.stars.starx.LonelyAPI;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
@@ -8,7 +7,6 @@ import cn.stars.starx.module.ModuleInfo;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NoteValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.src.Config;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ARBCopyBuffer;
 import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.ARBMultitexture;
@@ -94,8 +95,7 @@ public class OpenGlHelper
     public static final int GL_QUADS = 7;
     public static final int GL_TRIANGLES = 4;
 
-    public static void initializeTextures()
-    {
+    public static void initializeTextures() throws LWJGLException {
         Config.initDisplay();
         ContextCapabilities contextcapabilities = GLContext.getCapabilities();
         arbMultitexture = contextcapabilities.GL_ARB_multitexture && !contextcapabilities.OpenGL13;

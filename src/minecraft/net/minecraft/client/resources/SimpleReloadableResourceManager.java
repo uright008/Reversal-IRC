@@ -35,7 +35,7 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
         for (String s : resourcePack.getResourceDomains())
         {
             this.setResourceDomains.add(s);
-            FallbackResourceManager fallbackresourcemanager = (FallbackResourceManager)this.domainResourceManagers.get(s);
+            FallbackResourceManager fallbackresourcemanager = this.domainResourceManagers.get(s);
 
             if (fallbackresourcemanager == null)
             {

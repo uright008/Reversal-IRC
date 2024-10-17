@@ -1,13 +1,12 @@
 package cn.stars.starx.ui.gui;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.font.FontManager;
 import cn.stars.starx.font.MFont;
 import cn.stars.starx.ui.gui.mainmenu.MenuButton;
 import cn.stars.starx.ui.gui.mainmenu.MenuTextButton;
-import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
 import cn.stars.starx.util.misc.WebUtil;
@@ -46,13 +45,9 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         sr = new ScaledResolution(mc);
 
         // 背景
-        try {
-            drawMenuBackground(partialTicks, mouseX, mouseY);
-        } catch (IOException e) {
-            StarXLogger.error("(GuiMainMenu) Error while loading background", e);
-        }
+        drawDefaultBackground();
 
-    //    NORMAL_BLUR_RUNNABLES.add(() -> RenderUtil.rectangle(0, 0, sr.getScaledWidth(), sr.getScaledHeight(), Color.BLACK));
+        //    NORMAL_BLUR_RUNNABLES.add(() -> RenderUtil.rectangle(0, 0, sr.getScaledWidth(), sr.getScaledHeight(), Color.BLACK));
 
         // blur
         RiseShaders.GAUSSIAN_BLUR_SHADER.update();
@@ -91,7 +86,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         psr.drawString(s1, width - psr.getWidth(s1) - 1, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation2.getValue()).getRGB());
         psr.drawString("Minecraft 1.8.9 (StarX/mcp/vanilla)", 2, height - 36, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
         psr.drawString("OptiFine_1.8.9_HD_U_M6_pre2", 2, height - 24, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
-        psr.drawString("当前背景ID: " + LonelyAPI.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
+        psr.drawString("当前背景ID: " + RainyAPI.backgroundId, 2, height - 12, ColorUtil.withAlpha(stringColor, (int) textHoverAnimation.getValue()).getRGB());
 
 
         // 主要按钮
@@ -102,7 +97,7 @@ public class GuiMainMenu extends GuiScreen implements GameInstance {
         this.exitButton.draw(mouseX, mouseY, partialTicks);
 
 
-        if (LonelyAPI.isShaderCompatibility && LonelyAPI.backgroundId <= 8) {
+        if (RainyAPI.isShaderCompatibility && RainyAPI.backgroundId <= 8) {
             psr.drawCenteredString("警告: 检测到Shader兼容性错误,背景已强制关闭. (AMD CPU?)", width / 2f, height / 2f + 100, new Color(250,50,50, 250).getRGB());
         }
 

@@ -4,7 +4,7 @@
  */
 package cn.stars.starx.module.impl.hud;
 
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.Render2DEvent;
 import cn.stars.starx.event.impl.Shader3DEvent;
@@ -16,16 +16,12 @@ import cn.stars.starx.music.api.player.MusicPlayer;
 import cn.stars.starx.music.ui.ThemeColor;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.NumberValue;
-import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
 
 @ModuleInfo(name = "MusicInfo", chineseName = "音乐信息", description = "Display the music info",
         chineseDescription = "显示音乐信息", category = Category.HUD)
@@ -47,7 +43,7 @@ public class MusicInfo extends Module {
 
     @Override
     public void onRender2D(Render2DEvent event) {
-        if (!LonelyAPI.hasJavaFX) return;
+        if (!RainyAPI.hasJavaFX) return;
         MusicPlayer player = StarX.musicManager.screen.player;
         if (player.getMusic() == null) return;
         if (coverTexture == null) {
@@ -101,7 +97,7 @@ public class MusicInfo extends Module {
 
     @Override
     public void onShader3D(Shader3DEvent event) {
-        if (!LonelyAPI.hasJavaFX) return;
+        if (!RainyAPI.hasJavaFX) return;
         MusicPlayer player = StarX.musicManager.screen.player;
         if (player.getMusic() == null) return;
         Gui.drawNewRect(getX(), getY(), getHeight(), getHeight(), Color.BLACK.getRGB());

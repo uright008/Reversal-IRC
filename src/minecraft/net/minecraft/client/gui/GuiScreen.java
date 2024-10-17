@@ -1,10 +1,10 @@
 package net.minecraft.client.gui;
 
 import cn.stars.starx.GameInstance;
-import cn.stars.starx.LonelyAPI;
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
+import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.misc.VideoUtils;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
@@ -54,7 +54,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import tv.twitch.chat.ChatUserInfo;
 
 import static cn.stars.starx.GameInstance.*;
 
@@ -731,19 +730,19 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
-        if (LonelyAPI.backgroundId > 9 || LonelyAPI.backgroundId < 0) LonelyAPI.backgroundId = 9;
-        if (LonelyAPI.backgroundId == 9) {
+        if (RainyAPI.backgroundId > 9 || RainyAPI.backgroundId < 0) RainyAPI.backgroundId = 9;
+        if (RainyAPI.backgroundId == 9) {
             VideoUtils.render(0, 0, width, height);
             return;
         }
-        if (LonelyAPI.isShaderCompatibility) {
+        if (RainyAPI.isShaderCompatibility) {
             StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
-            LonelyAPI.backgroundId = 9;
+            RainyAPI.backgroundId = 9;
             return;
         } else {
             initializeShaderToy();
         }
-        if (LonelyAPI.backgroundId == 0) {
+        if (RainyAPI.backgroundId == 0) {
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
             BackgroundShader.BACKGROUND_SHADER.startShader();
@@ -756,21 +755,21 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             worldRenderer.pos(0, 0, 0.0D).endVertex();
             instance.draw();
             BackgroundShader.BACKGROUND_SHADER.stopShader();
-        } else if (LonelyAPI.backgroundId == 1) {
+        } else if (RainyAPI.backgroundId == 1) {
             RiseShaders.MAIN_MENU_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, null);
-        } else if (LonelyAPI.backgroundId == 2) {
+        } else if (RainyAPI.backgroundId == 2) {
             useShaderToyBackground(mario, 2);
-        } else if (LonelyAPI.backgroundId == 3) {
+        } else if (RainyAPI.backgroundId == 3) {
             useShaderToyBackground(redround, 2);
-        } else if (LonelyAPI.backgroundId == 4) {
+        } else if (RainyAPI.backgroundId == 4) {
             useShaderToyBackground(water, 1);
-        } else if (LonelyAPI.backgroundId == 5) {
+        } else if (RainyAPI.backgroundId == 5) {
             useShaderToyBackground(blackhole, 2);
-        } else if (LonelyAPI.backgroundId == 6) {
+        } else if (RainyAPI.backgroundId == 6) {
             useShaderToyBackground(octagrams, 2);
-        } else if (LonelyAPI.backgroundId == 7) {
+        } else if (RainyAPI.backgroundId == 7) {
             useShaderToyBackground(tokyo, 2);
-        } else if (LonelyAPI.backgroundId == 8) {
+        } else if (RainyAPI.backgroundId == 8) {
             useShaderToyBackground(curiosity, 2, 0, 0);
         }
     }
@@ -780,19 +779,20 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         BackgroundShader.BACKGROUND_SHADER.stopShader();
         RiseShaders.MAIN_MENU_SHADER.setActive(false);
         GL20.glUseProgram(0);
-        if (LonelyAPI.isShaderCompatibility) {
+        if (RainyAPI.isShaderCompatibility) {
             StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
-            LonelyAPI.backgroundId = 9;
+            RainyAPI.backgroundId = 9;
             return;
         }
         if (!previous) {
-            if (LonelyAPI.backgroundId < 9) LonelyAPI.backgroundId++;
-            else LonelyAPI.backgroundId = 0;
+            if (RainyAPI.backgroundId < 9) RainyAPI.backgroundId++;
+            else RainyAPI.backgroundId = 0;
         } else {
-            if (LonelyAPI.backgroundId > 0) LonelyAPI.backgroundId--;
-            else LonelyAPI.backgroundId = 9;
+            if (RainyAPI.backgroundId > 0) RainyAPI.backgroundId--;
+            else RainyAPI.backgroundId = 9;
         }
-        StarXLogger.info("(GuiMainMenuNew) Current background id: " + LonelyAPI.backgroundId);
+        StarX.notificationManager.registerNotification("Background id changed to: " + RainyAPI.backgroundId, "Main Menu", 2000, NotificationType.SUCCESS);
+        StarXLogger.info("(GuiMainMenuNew) Current background id: " + RainyAPI.backgroundId);
     }
 
     public void updatePostProcessing(boolean pre, float partialTicks) {

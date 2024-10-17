@@ -48,9 +48,11 @@ public final class RenderUtil implements GameInstance {
 
     private static final Frustum frustrum = new Frustum();
 
+    public long lastFrame = System.currentTimeMillis();
     public long last2DFrame = System.currentTimeMillis();
     public long last3DFrame = System.currentTimeMillis();
 
+    public float deltaFrameTime;
     public float delta2DFrameTime;
     public float delta3DFrameTime;
     public long initTime = System.currentTimeMillis();
@@ -59,6 +61,11 @@ public final class RenderUtil implements GameInstance {
     private static int imageHeight;
     private static int internalformat;
     private static ByteBuffer imageBuffer;
+
+    public static void calcDeltaFrameTime() {
+        deltaFrameTime = (System.currentTimeMillis() - lastFrame) / 10F;
+        lastFrame = System.currentTimeMillis();
+    }
 
     public static void setBuffer(ByteBuffer buffer, int width, int height) {
         internalformat = 6407;
@@ -1038,6 +1045,38 @@ public final class RenderUtil implements GameInstance {
         // Vertical bars
         outline(x + halfRadius, y, width - halfRadius, halfRadius, thickness, color);
         outline(x + halfRadius, y + height, width - halfRadius, halfRadius, thickness, color);*/
+    }
+
+    public static void drawCircle(float cx, float cy, float r, int num_segments, int c) {
+        glPushMatrix();
+        cx *= 2.0f;
+        cy *= 2.0f;
+        float f = (float) (c >> 24 & 0xFF) / 255.0f;
+        float f1 = (float) (c >> 16 & 0xFF) / 255.0f;
+        float f2 = (float) (c >> 8 & 0xFF) / 255.0f;
+        float f3 = (float) (c & 0xFF) / 255.0f;
+        float theta = (float) (6.2831852 / (double) num_segments);
+        float p = (float) Math.cos(theta);
+        float s = (float) Math.sin(theta);
+        float x = r * 2.0f;
+        float y = 0.0f;
+        GlUtils.setup2DRendering();
+        glScalef(0.5f, 0.5f, 0.5f);
+        glColor4f(f1, f2, f3, f);
+        glBegin(2);
+        for (int ii = 0; ii < num_segments; ++ii) {
+            glVertex2f(cx, cy);
+            glVertex2f(x + cx, y + cy);
+            float t = x;
+            x = p * x - s * y;
+            y = s * t + p * y;
+        }
+        // 结束绘制
+        glEnd();
+        glScalef(2.0f, 2.0f, 2.0f);
+        GlUtils.end2DRendering();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        glPopMatrix();
     }
 
     public void roundedRectCustom(final double x, final double y, double width, double height, final double edgeRadius, final Color color, final boolean topLeft, final boolean topRight, final boolean bottomLeft, final boolean bottomRight) {

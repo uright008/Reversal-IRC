@@ -49,6 +49,14 @@ public class VideoUtils {
         Thread thread = getThread();
         thread.start();
     }
+
+    public static void stop() throws FFmpegFrameGrabber.Exception {
+        StarXLogger.info("[*] Stopping video player...");
+        stopped = true;
+        frameGrabber.release();
+        frameGrabber.stop();
+    }
+
     private static Thread getThread() {
         Thread thread = new Thread("Video Background"){
 

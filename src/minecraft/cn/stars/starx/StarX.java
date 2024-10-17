@@ -3,9 +3,7 @@ package cn.stars.starx;
 import cn.stars.addons.creativetab.StarXTab;
 import cn.stars.addons.optimization.entityculling.EntityCullingMod;
 import cn.stars.addons.optimization.util.FastTrig;
-import cn.stars.starx.command.Command;
 import cn.stars.starx.command.CommandManager;
-import cn.stars.starx.command.impl.*;
 import cn.stars.starx.config.DefaultHandler;
 import cn.stars.starx.config.MusicHandler;
 import cn.stars.starx.module.ModuleManager;
@@ -49,7 +47,7 @@ public class StarX {
     public static final String NAME = "StarX";
     public static final String VERSION = "v3.0.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
-    public static final String AUTHOR = "Starlight Team";
+    public static final String AUTHOR = "Stars, BzdHyp";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
 
     // Init
@@ -78,11 +76,11 @@ public class StarX {
         try {
             StarXLogger.info("Loading client...");
 
-            LonelyAPI.loadAPI();
+            RainyAPI.loadAPI();
 
             // ViaMCP init
             Minecraft.setStage(4);
-            if (!LonelyAPI.isViaCompatibility) {
+            if (!RainyAPI.isViaCompatibility) {
                 ViaMCP.create();
                 ViaMCP.INSTANCE.initAsyncSlider();
             }
@@ -95,7 +93,7 @@ public class StarX {
             Minecraft.setStage(8);
             postInitialize();
 
-            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + LonelyAPI.getRandomTitle());
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + RainyAPI.getRandomTitle());
             StarXLogger.info("Client loaded successfully.");
             StarXLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
@@ -121,7 +119,7 @@ public class StarX {
     // run required
     public static void saveAll() {
         DefaultHandler.saveConfig(false);
-        LonelyAPI.processAPI();
+        RainyAPI.processAPI();
     }
 
 
@@ -146,7 +144,7 @@ public class StarX {
                 musicManager = new MusicManager();
                 musicManager.initGUI();
             } catch (NoClassDefFoundError e) {
-                LonelyAPI.hasJavaFX = false;
+                RainyAPI.hasJavaFX = false;
                 StarXLogger.warn("No JavaFX found in the current java version! Music player is disabled.");
             }
 
@@ -196,7 +194,7 @@ public class StarX {
             entityCullingMod = new EntityCullingMod();
             entityCullingMod.onInitialize();
 
-            if (LonelyAPI.hasJavaFX) MusicHandler.load();
+            if (RainyAPI.hasJavaFX) MusicHandler.load();
 
             Minecraft.setStage(9);
             Hud.initializeModules();
