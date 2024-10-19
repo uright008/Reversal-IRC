@@ -1,6 +1,5 @@
-package cn.stars.starx.util;
+package cn.stars.starx.util.player;
 
-import cn.stars.starx.util.player.PlayerUtil;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.*;
 import net.minecraft.init.Blocks;

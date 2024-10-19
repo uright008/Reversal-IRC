@@ -1,6 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.optimization.entityculling.EntityRendererInter;
+import cn.stars.starx.module.impl.player.SmallPlayer;
+import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -350,6 +352,13 @@ public abstract class Render<T extends Entity> implements IEntityRenderer, Entit
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();
             GlStateManager.translate((float)x + 0.0F, (float)y + entityIn.height + 0.5F, (float)z);
+            if (ModuleInstance.getModule(SmallPlayer.class).isEnabled() && entityIn instanceof EntityPlayer) {
+                if (!ModuleInstance.getBool("SmallPlayer", "Self").isEnabled()) {
+                    GlStateManager.translate(0.0F, -1f, 0.0F);
+                } else if (entityIn == Minecraft.getMinecraft().thePlayer) {
+                    GlStateManager.translate(0.0F, -1f, 0.0F);
+                }
+            }
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);

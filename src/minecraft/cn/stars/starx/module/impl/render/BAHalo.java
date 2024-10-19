@@ -8,10 +8,12 @@ import cn.stars.starx.event.impl.Render3DEvent;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.ModuleInfo;
+import cn.stars.starx.module.impl.player.SmallPlayer;
 import cn.stars.starx.setting.impl.BoolValue;
 import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
+import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.src.Config;
@@ -34,6 +36,9 @@ public class BAHalo extends Module {
     @Override
     public void onRender3D(Render3DEvent event) {
         if (mc.gameSettings.thirdPersonView == 0 && !showInFirstPerson.isEnabled()) return;
+        if (mc.gameSettings.thirdPersonView != 0 && ModuleInstance.getModule(SmallPlayer.class).isEnabled()) {
+            GlStateManager.scale(0.5f, 0.5f, 0.5f);
+        }
         switch (mode.getMode()) {
             case "Shiroko": {
                 drawShirokoHalo();
@@ -570,6 +575,7 @@ public class BAHalo extends Module {
         if (mc.gameSettings.thirdPersonView == 0 || Config.zoomMode) {
             return 2;
         }
+        if (ModuleInstance.getModule(SmallPlayer.class).isEnabled()) return 0.5f;
         return 1;
     }
 

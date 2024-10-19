@@ -12,6 +12,7 @@ import cn.stars.starx.util.math.StopWatch;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.starx.util.starx.ImageWindow;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -189,7 +190,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
     public static byte[] memoryReserve = new byte[10485760];
-    private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode[] {new DisplayMode(2560, 1600), new DisplayMode(2880, 1800)});
+    private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
     private final File fileResourcepacks;
     private final PropertyMap twitchDetails;
     private final PropertyMap profileProperties;
@@ -276,6 +277,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     int fpsCounter;
     long prevFrameTime = -1L;
     private String debugProfilerName = "root";
+    private FoliageColorReloadListener foliageColorReloadListener;
+    private GrassColorReloadListener grassColorReloadListener;
 
     public Minecraft(GameConfiguration gameConfig)
     {
@@ -390,6 +393,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void startGame() throws LWJGLException {
         startTimer = new StopWatch();
+    //    ImageWindow.load();
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
         this.startTimerHackThread();
@@ -435,10 +439,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         // 2
         setStage(2);
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
+        this.foliageColorReloadListener = new FoliageColorReloadListener();
+        this.grassColorReloadListener = new GrassColorReloadListener();
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
-        this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
-        this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
+        this.mcResourceManager.registerReloadListener(this.foliageColorReloadListener);
+        this.mcResourceManager.registerReloadListener(this.grassColorReloadListener);
         AchievementList.openInventory.setStatStringFormatter(str -> {
             try {
                 return str.replace("%s", GameSettings.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()));
@@ -745,9 +751,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         List<IResourcePack> list = Lists.newArrayList(this.defaultResourcePacks);
 
-        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getRepositoryEntries())
-        {
-            list.add(resourcepackrepository$entry.getResourcePack());
+        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getRepositoryEntries()) {
+            IResourcePack resourcePack = resourcepackrepository$entry.getResourcePack();
+            if (!list.contains(resourcePack)) {
+                list.add(resourcePack);
+            }
         }
 
         if (this.mcResourcePackRepository.getResourcePackInstance() != null)
@@ -761,10 +769,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
         catch (RuntimeException runtimeexception)
         {
-            logger.info("Caught error stitching, removing all assigned resourcepacks", (Throwable)runtimeexception);
+            logger.error("Caught error stitching, removing all assigned resourcepacks", runtimeexception);
             list.clear();
             list.addAll(this.defaultResourcePacks);
-            this.mcResourcePackRepository.setRepositories(Collections.<ResourcePackRepository.Entry>emptyList());
+            this.mcResourcePackRepository.setRepositories(Collections.emptyList());
             this.mcResourceManager.reloadResources(list);
             this.gameSettings.resourcePacks.clear();
             this.gameSettings.incompatibleResourcePacks.clear();
@@ -777,6 +785,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             this.renderGlobal.loadRenderers();
         }
+    }
+
+    public void refreshLanguage() {
+        this.mcLanguageManager.onResourceManagerReload(mcResourceManager);
     }
 
     private ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException
@@ -2681,13 +2693,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public ListenableFuture<Object> scheduleResourcesRefresh()
     {
-        return this.addScheduledTask(new Runnable()
-        {
-            public void run()
-            {
-                Minecraft.this.refreshResources();
-            }
-        });
+        return this.addScheduledTask(Minecraft.this::refreshResources);
     }
 
     public void addServerStatsToSnooper(PlayerUsageSnooper playerSnooper)

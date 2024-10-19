@@ -21,7 +21,7 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
     private static final Logger logger = LogManager.getLogger();
     private static final Joiner joinerResourcePacks = Joiner.on(", ");
     private final Map<String, FallbackResourceManager> domainResourceManagers = Maps.<String, FallbackResourceManager>newHashMap();
-    private final List<IResourceManagerReloadListener> reloadListeners = Lists.<IResourceManagerReloadListener>newArrayList();
+    private final List<IResourceManagerReloadListener> reloadListeners = Lists.newArrayList();
     private final Set<String> setResourceDomains = Sets.newLinkedHashSet();
     private final IMetadataSerializer rmMetadataSerializer;
 
@@ -89,13 +89,7 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
     public void reloadResources(List<IResourcePack> resourcesPacksList)
     {
         this.clearResources();
-        logger.info("Reloading ResourceManager: " + joinerResourcePacks.join(Iterables.transform(resourcesPacksList, new Function<IResourcePack, String>()
-        {
-            public String apply(IResourcePack p_apply_1_)
-            {
-                return p_apply_1_.getPackName();
-            }
-        })));
+        logger.info("Reloading ResourceManager: {}", joinerResourcePacks.join(Iterables.transform(resourcesPacksList, IResourcePack::getPackName)));
 
         for (IResourcePack iresourcepack : resourcesPacksList)
         {
@@ -103,6 +97,24 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
         }
 
         this.notifyReloadListeners();
+    }
+
+    public void reloadResource(IResourcePack resourcePack)
+    {
+        for (String s : resourcePack.getResourceDomains())
+        {
+            this.setResourceDomains.add(s);
+            FallbackResourceManager fallbackresourcemanager = this.domainResourceManagers.get(s);
+
+            if (fallbackresourcemanager == null)
+            {
+                fallbackresourcemanager = new FallbackResourceManager(this.rmMetadataSerializer);
+                this.domainResourceManagers.put(s, fallbackresourcemanager);
+            }
+
+            fallbackresourcemanager.addResourcePack(resourcePack);
+        }
+        notifyReloadListeners();
     }
 
     public void registerReloadListener(IResourceManagerReloadListener reloadListener)

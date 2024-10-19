@@ -17,7 +17,7 @@ import net.optifine.reflect.Reflector;
 
 public class ItemModelMesher
 {
-    private final Map<Integer, ModelResourceLocation> simpleShapes = Maps.<Integer, ModelResourceLocation>newHashMap();
+    private final Map<Integer, ModelResourceLocation> simpleShapes = Maps.newHashMap();
     private final Map<Integer, IBakedModel> simpleShapesCache = Maps.<Integer, IBakedModel>newHashMap();
     private final Map<Item, ItemMeshDefinition> shapers = Maps.<Item, ItemMeshDefinition>newHashMap();
     private final ModelManager modelManager;
@@ -107,7 +107,7 @@ public class ItemModelMesher
 
         for (Entry<Integer, ModelResourceLocation> entry : this.simpleShapes.entrySet())
         {
-            this.simpleShapesCache.put(entry.getKey(), this.modelManager.getModel((ModelResourceLocation)entry.getValue()));
+            this.simpleShapesCache.put(entry.getKey(), this.modelManager.getModel(entry.getValue()));
         }
     }
 }

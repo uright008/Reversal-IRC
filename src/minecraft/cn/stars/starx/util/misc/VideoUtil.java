@@ -9,13 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
-import org.jcodec.common.JCodecUtil;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 
 @NativeObfuscation
-public class VideoUtils {
+public class VideoUtil {
     private static FFmpegFrameGrabber frameGrabber;
     private static double frameRate;
     private static int ticks;
@@ -31,6 +29,8 @@ public class VideoUtils {
         frameGrabber = new FFmpegFrameGrabber(file.getPath());
         frameGrabber.setPixelFormat(2);
         frameGrabber.setOption("loglevel", "quiet");
+        frameGrabber.setOption("threads", "2");
+        frameGrabber.setOption("buffer_size", "1024000");
         time = 0L;
         ticks = 0;
         flag = false;
@@ -50,11 +50,14 @@ public class VideoUtils {
         thread.start();
     }
 
-    public static void stop() throws FFmpegFrameGrabber.Exception {
-        StarXLogger.info("[*] Stopping video player...");
-        stopped = true;
-        frameGrabber.release();
-        frameGrabber.stop();
+    public static void stop() {
+        try {
+            StarXLogger.info("[*] Stopping video player...");
+            stopped = true;
+            frameGrabber.release();
+            frameGrabber.stop();
+        } catch (Exception ignored) {
+        }
     }
 
     private static Thread getThread() {

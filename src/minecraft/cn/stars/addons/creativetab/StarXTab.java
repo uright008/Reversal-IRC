@@ -2,7 +2,7 @@ package cn.stars.addons.creativetab;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
-import cn.stars.starx.util.ItemUtil;
+import cn.stars.starx.util.player.ItemUtil;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

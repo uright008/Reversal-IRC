@@ -1,7 +1,5 @@
 package net.minecraft.client;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.util.misc.VideoUtils;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

@@ -6,5 +6,7 @@ public interface IReloadableResourceManager extends IResourceManager
 {
     void reloadResources(List<IResourcePack> resourcesPacksList);
 
+    void reloadResource(IResourcePack resourcePack);
+
     void registerReloadListener(IResourceManagerReloadListener reloadListener);
 }

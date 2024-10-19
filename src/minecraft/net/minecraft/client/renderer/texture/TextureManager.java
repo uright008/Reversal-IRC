@@ -185,7 +185,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
 
             if (s.startsWith("mcpatcher/") || s.startsWith("optifine/") || EmissiveTextures.isEmissive(resourcelocation))
             {
-                ITextureObject itextureobject = (ITextureObject)this.mapTextureObjects.get(resourcelocation);
+                ITextureObject itextureobject = this.mapTextureObjects.get(resourcelocation);
 
                 if (itextureobject instanceof AbstractTexture)
                 {
@@ -202,7 +202,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
         for (Object o : new HashSet(this.mapTextureObjects.entrySet()))
         {
             Entry<ResourceLocation, ITextureObject> entry = (Entry<ResourceLocation, ITextureObject>) o;
-            this.loadTexture((ResourceLocation)entry.getKey(), (ITextureObject)entry.getValue());
+            this.loadTexture(entry.getKey(), entry.getValue());
         }
     }
 

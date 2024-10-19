@@ -5,7 +5,7 @@ import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.ui.notification.NotificationType;
 import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.misc.VideoUtils;
+import cn.stars.starx.util.misc.VideoUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.shader.RiseShaders;
 import cn.stars.starx.util.shader.base.ShaderRenderType;
@@ -732,7 +732,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
         if (RainyAPI.backgroundId > 9 || RainyAPI.backgroundId < 0) RainyAPI.backgroundId = 9;
         if (RainyAPI.backgroundId == 9) {
-            VideoUtils.render(0, 0, width, height);
+            VideoUtil.render(0, 0, width, height);
             return;
         }
         if (RainyAPI.isShaderCompatibility) {

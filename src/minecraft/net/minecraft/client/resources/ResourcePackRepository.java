@@ -19,9 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenWorking;
@@ -62,10 +59,7 @@ public class ResourcePackRepository
     private ListenableFuture<Object> downloadingPacks;
     private List<ResourcePackRepository.Entry> repositoryEntriesAll = Lists.newArrayList();
     public List<ResourcePackRepository.Entry> repositoryEntries = Lists.newArrayList();
-    private Map<String, ResourcePackRepository.Entry> cachedEntries = new ConcurrentHashMap<>();
-
-    // 使用线程池处理异步任务
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<String, ResourcePackRepository.Entry> cachedEntries = new ConcurrentHashMap<>();
 
     public ResourcePackRepository(File dirResourcepacksIn, File dirServerResourcepacksIn, IResourcePack rprDefaultResourcePackIn, IMetadataSerializer rprMetadataSerializerIn, GameSettings settings)
     {
@@ -74,12 +68,12 @@ public class ResourcePackRepository
         this.rprDefaultResourcePack = rprDefaultResourcePackIn;
         this.rprMetadataSerializer = rprMetadataSerializerIn;
         this.fixDirResourcepacks();
-        this.updateRepositoryEntriesAllAsync(); // 异步更新资源包条目
+        this.updateRepositoryEntriesAll();
         Iterator<String> iterator = settings.resourcePacks.iterator();
 
         while (iterator.hasNext())
         {
-            String s = (String)iterator.next();
+            String s = iterator.next();
 
             for (ResourcePackRepository.Entry resourcepackrepository$entry : this.repositoryEntriesAll)
             {
@@ -95,18 +89,6 @@ public class ResourcePackRepository
                     logger.warn("Removed selected resource pack {} because it's no longer compatible", new Object[] {resourcepackrepository$entry.getResourcePackName()});
                 }
             }
-        }
-    }
-
-    // 在关闭时释放线程池资源
-    public void shutdown() {
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
         }
     }
 
@@ -130,22 +112,9 @@ public class ResourcePackRepository
         return this.dirResourcepacks.isDirectory() ? Arrays.asList(this.dirResourcepacks.listFiles(resourcePackFilter)) : Collections.<File>emptyList();
     }
 
-    // 增加异步更新资源包条目的方法
-    public void updateRepositoryEntriesAllAsync()
-    {
-        executor.submit(() -> {
-            try {
-                updateRepositoryEntriesAll();
-            } catch (Exception e) {
-                logger.error("Failed to update resource packs asynchronously", e);
-            }
-        });
-    }
-
-    // 增加缓存机制并优化更新逻辑
     public void updateRepositoryEntriesAll()
     {
-        List<ResourcePackRepository.Entry> list = Lists.<ResourcePackRepository.Entry>newArrayList();
+        List<ResourcePackRepository.Entry> list = Lists.newArrayList();
 
         for (File file1 : this.getResourcePackFiles())
         {
@@ -193,6 +162,10 @@ public class ResourcePackRepository
 
     public ListenableFuture<Object> downloadResourcePack(String url, String hash)
     {
+        if (!this.dirServerResourcepacks.exists()) {
+            this.dirServerResourcepacks.mkdirs();
+        }
+
         String s;
 
         if (hash.matches("^[a-f0-9]{40}$"))

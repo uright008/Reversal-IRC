@@ -1,5 +1,6 @@
 package cn.stars.starx.command.impl;
 
+import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.command.Command;
 import cn.stars.starx.command.api.CommandInfo;
@@ -11,7 +12,7 @@ public final class Config extends Command {
 
     @Override
     public void onCommand(final String command, final String[] args) {
-        StarX.executorService.execute(() -> {
+        RainyAPI.executorService.execute(() -> {
             switch (args[0].toLowerCase()) {
                 case "save": {
                     if (args[1].isEmpty()) {

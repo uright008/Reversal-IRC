@@ -2,13 +2,14 @@ package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
 import cn.stars.starx.module.impl.addons.MoBends;
-import cn.stars.starx.module.impl.render.SelfTag;
+import cn.stars.starx.module.impl.player.Dinnerbone;
+import cn.stars.starx.module.impl.player.SmallPlayer;
+import cn.stars.starx.module.impl.player.SelfTag;
 import cn.stars.starx.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import com.kAIS.KAIMyEntity.renderer.KAIMyEntityRendererPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -352,6 +353,25 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
         if (flag || flag1)
         {
+            if (ModuleInstance.getModule(SmallPlayer.class).isEnabled() && entitylivingbaseIn instanceof EntityPlayer) {
+                if (!ModuleInstance.getBool("SmallPlayer", "Self").isEnabled()) {
+                    float f = 0.5f;
+                    GlStateManager.scale(f, f, f);
+                    GlStateManager.translate(0.0F, 24.0F * scaleFactor, 0.0F);
+                } else if (entitylivingbaseIn == Minecraft.getMinecraft().thePlayer) {
+                    float f = 0.5f;
+                    GlStateManager.scale(f, f, f);
+                    GlStateManager.translate(0.0F, 24.0F * scaleFactor, 0.0F);
+                }
+                if (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && entitylivingbaseIn instanceof EntityPlayer) {
+                    if (!ModuleInstance.getBool("Dinnerbone", "Self").isEnabled()) {
+                        GlStateManager.translate(0.0F, -30.0F * scaleFactor, 0.0F);
+                    } else if (entitylivingbaseIn == Minecraft.getMinecraft().thePlayer) {
+                        GlStateManager.translate(0.0F, -30.0F * scaleFactor, 0.0F);
+                    }
+                }
+            }
+
             if (!this.bindEntityTexture(entitylivingbaseIn))
             {
                 return;
@@ -406,7 +426,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 GlStateManager.popMatrix();
                 GlStateManager.depthMask(true);
             }
-
         }
     }
 
@@ -587,7 +606,9 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         {
             String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getName());
 
-            if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm")) && (!(bat instanceof EntityPlayer) || ((EntityPlayer)bat).isWearing(EnumPlayerModelParts.CAPE)))
+            if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm") ||
+                    (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && ((ModuleInstance.getBool("Dinnerbone", "Self").isEnabled() && bat == Minecraft.getMinecraft().thePlayer) || !ModuleInstance.getBool("Dinnerbone", "Self").isEnabled())))
+                    && (!(bat instanceof EntityPlayer) || ((EntityPlayer)bat).isWearing(EnumPlayerModelParts.CAPE)))
             {
                 GlStateManager.translate(0.0F, bat.height + 0.1F, 0.0F);
                 GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);

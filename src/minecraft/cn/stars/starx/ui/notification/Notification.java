@@ -28,8 +28,8 @@ public final class Notification implements GameInstance {
     public float y = sr.getScaledHeight() - 50;
 
     MFont icon = FontManager.getCheck(24);
-    MFont psb = FontManager.getPSB(24);
-    MFont psm = FontManager.getPSM(20);
+    MFont psb = FontManager.getRegularBold(24);
+    MFont psm = FontManager.getRegular(20);
 
     private final TimeUtil timer = new TimeUtil();
 
@@ -121,8 +121,8 @@ public final class Notification implements GameInstance {
 
         RenderUtil.roundedRect(xVisual + (percentageLeft * (gs.getWidth(description)) + 8), yVisual + 21, screenWidth + 1, 1, 2, ThemeUtil.getThemeColor(ThemeType.LOGO));
         icon.drawString(finalIconString, xVisual + 4, yVisual + 2, finalSideColor.getRGB());
-        psb.drawString(title, xVisual + 4 + icon.getWidth(finalIconString), yVisual + 1, new Color(255, 255, 255, 220).getRGB());
-        psm.drawString(description, xVisual + 4, yVisual + 12, new Color(255, 255, 255, 220).getRGB());
+        psb.drawString(title, xVisual + 6 + icon.getWidth(finalIconString), yVisual + 1, new Color(255, 255, 255, 220).getRGB());
+        psm.drawString(description, xVisual + 4, yVisual + 13, new Color(255, 255, 255, 220).getRGB());
 
         NORMAL_POST_BLOOM_RUNNABLES.add(() -> {
         //    RenderUtil.roundedRectCustom(xVisual, yVisual - 3, sr.getScaledWidth() - xVisual, 25, 2, new Color(0, 0, 0, 100), true, false, true, false);

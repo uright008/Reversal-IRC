@@ -12,7 +12,7 @@ import cn.stars.starx.util.irc.User;
 import cn.stars.starx.util.math.RandomUtil;
 import cn.stars.starx.util.misc.FileUtil;
 import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.misc.VideoUtils;
+import cn.stars.starx.util.misc.VideoUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
@@ -24,6 +24,8 @@ import org.lwjgl.opengl.Display;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Getter
 @Setter
@@ -42,6 +44,8 @@ public class RainyAPI {
     public static boolean isLicenseReviewed = false;
     public static boolean mainMenuDate = true;
     public static boolean guiSnow = false;
+
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     // 崩溃报告随机语录
     public static final String[] wittyCrashReport = new String[]
@@ -68,11 +72,19 @@ public class RainyAPI {
         return false;
     }
 
+    /**
+     * LWJGL3: 初始化GLFW
+     * 获取窗口GL Context, 允许使用GLFW操作
+     */
     public static void setupGLFW() {
         window = Display.getWindow();
         GLFW.glfwMakeContextCurrent(window);
     }
 
+    /**
+     * 检测窗口拖入文件
+     * 在主菜单接受MP4文件并替换背景
+     */
     public static void setupDrag() {
         GLFW.glfwSetDropCallback(window, (window, count, names) -> {
             String filePath = GLFWDropCallback.getName(names, 0);
@@ -80,16 +92,20 @@ public class RainyAPI {
                 if (count == 1) {
                     File droppedFile = new File(filePath);
 
+                    // 检测后缀名
                     if (droppedFile.exists() && droppedFile.getName().toLowerCase().endsWith(".mp4")) {
                         StarXLogger.info("Dragged file successfully detected: " + droppedFile.getAbsolutePath());
 
                         try {
-                            VideoUtils.stop();
+                            // 停止加载
+                            VideoUtil.stop();
+                            // 将获取的文件替换现有的文件
                             File tempFile = new File(Minecraft.getMinecraft().mcDataDir, "StarX/Background");
                             File videoFile = new File(tempFile, "background.mp4");
                             Files.copy(droppedFile.toPath(), videoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            VideoUtils.init(videoFile);
-                            StarX.notificationManager.registerNotification("Background changed successfully!", "Main Menu", 2000L, NotificationType.SUCCESS);
+                            // 重新加载
+                            VideoUtil.init(videoFile);
+                            StarX.notificationManager.registerNotification("成功更换视频背景!", "主菜单", 2000L, NotificationType.SUCCESS);
                         } catch (Exception e) {
                             throw new RuntimeException("Failed to load new background file.");
                         }
@@ -101,7 +117,9 @@ public class RainyAPI {
         });
     }
 
-    // 加载客户端设置
+    /**
+     * 加载客户端设置
+     */
     public static void loadAPI() {
         Display.setTitle("Loading LonelyAPI...");
         final String client = FileUtil.loadFile("client.txt");

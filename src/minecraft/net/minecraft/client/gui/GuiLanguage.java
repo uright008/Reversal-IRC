@@ -122,10 +122,10 @@ public class GuiLanguage extends GuiScreen
 
         protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY)
         {
-            Language language = (Language)this.languageMap.get(this.langCodeList.get(slotIndex));
+            Language language = this.languageMap.get(this.langCodeList.get(slotIndex));
             GuiLanguage.this.languageManager.setCurrentLanguage(language);
             GuiLanguage.this.game_settings_3.language = language.getLanguageCode();
-            this.mc.refreshResources();
+            this.mc.refreshLanguage();
             GuiLanguage.this.fontRendererObj.setUnicodeFlag(GuiLanguage.this.languageManager.isCurrentLocaleUnicode() || GuiLanguage.this.game_settings_3.forceUnicodeFont);
             GuiLanguage.this.fontRendererObj.setBidiFlag(GuiLanguage.this.languageManager.isCurrentLanguageBidirectional());
             GuiLanguage.this.confirmSettingsBtn.displayString = I18n.format("gui.done", new Object[0]);

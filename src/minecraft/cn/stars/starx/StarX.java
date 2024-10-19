@@ -15,7 +15,7 @@ import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.ui.theme.GuiTheme;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.misc.FileUtil;
-import cn.stars.starx.util.misc.VideoUtils;
+import cn.stars.starx.util.misc.VideoUtil;
 import cn.stars.starx.util.starx.Branch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,7 +51,6 @@ public class StarX {
     public static final Branch BRANCH = Branch.DEVELOPMENT;
 
     // Init
-    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     public static Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static EntityCullingMod entityCullingMod;
@@ -216,7 +215,7 @@ public class StarX {
                 }
             }
             try {
-                VideoUtils.init(videoFile);
+                VideoUtil.init(videoFile);
             } catch (IOException e) {
                 StarXLogger.error("Failed to load background file.");
                 throw new RuntimeException(e);
