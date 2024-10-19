@@ -125,7 +125,6 @@ public class StarX {
     public static void initialize() {
         try {
             Minecraft.setStage(5);
-
             // Minecraft Pre-Initialize
             // Shut the fuck fast render off
             Minecraft.getMinecraft().gameSettings.ofFastRender = false;
