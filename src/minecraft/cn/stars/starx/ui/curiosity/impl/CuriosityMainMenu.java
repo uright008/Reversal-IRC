@@ -11,6 +11,7 @@ import cn.stars.starx.ui.notification.NotificationManager;
 import cn.stars.starx.util.animation.advanced.composed.ColorAnimation;
 import cn.stars.starx.util.animation.rise.Animation;
 import cn.stars.starx.util.animation.rise.Easing;
+import cn.stars.starx.util.player.PlayerUtil;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.starx.Branch;
 import lombok.SneakyThrows;
@@ -140,7 +141,7 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
 
         // MainMenu
         RenderUtil.rect(0, 0, 230, height, new Color(0, 0, 0, 50));
-        RenderUtil.rect(230, 0, 1, height, new Color(220, 220, 220, 240));
+        RenderUtil.rect(230, 0, 0.5, height, new Color(220, 220, 220, 240));
         if (RainyAPI.mainMenuDate) {
             FontManager.getRainbowParty(96).drawCenteredString(LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH), width / 2f, 20, new Color(250,250,250,250).getRGB());
             FontManager.getRainbowParty(48).drawCenteredString(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), width / 2f, 72, new Color(250,250,250,250).getRGB());
@@ -177,11 +178,6 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
         updateLog.clear();
-        updateLog.add("[+] SelfTag (显示玩家自身名称)");
-        updateLog.add("[*] 修复主菜单一些问题");
-        updateLog.add("[*] 修复StarX设置界面按钮效果错误");
-        updateLog.add("[+] 修改窗口图标");
-        updateLog.add("[/] 优化启动速度");
 
 
         // 定义按钮

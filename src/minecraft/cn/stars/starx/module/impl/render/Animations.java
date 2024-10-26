@@ -12,10 +12,11 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 @ModuleInfo(name = "Animations", chineseName = "动画", description = "Display special swing animations.",
         chineseDescription = "修改你的挥手动画", category = Category.RENDER)
 public class Animations extends Module {
-    private final NumberValue itemX = new NumberValue("Item X", this, 0.0, -2, 2, 0.1);
-    private final NumberValue itemY = new NumberValue("Item Y", this, 0.0, -2, 2, 0.1);
-    private final NumberValue itemZ = new NumberValue("Item Z", this, 0.0, -2, 2, 0.1);
-    private final NumberValue blockY = new NumberValue("Block Y", this, 0.1, -2, 2, 0.1);
+    private final NumberValue itemX = new NumberValue("Item X", this, 0.0, -1, 1, 0.1);
+    private final NumberValue itemY = new NumberValue("Item Y", this, 0.0, -1, 1, 0.1);
+    private final NumberValue itemZ = new NumberValue("Item Z", this, 0.0, -1, 1, 0.1);
+    private final NumberValue blockY = new NumberValue("Block Y", this, 0.1, -1, 1, 0.1);
+    private final NumberValue itemScale = new NumberValue("Item Scale", this, 1.0, 0.1, 2, 0.1);
     private final BoolValue swordSwing = new BoolValue("Sword Swing", this, true);
     private final ModeValue swordMode = new ModeValue("Sword Mode", this, "1.7",
             "None" ,"1.7", "Smooth", "Stab", "Spin", "Leaked", "Old", "Exhibition", "Wood", "Swong", "Chill",

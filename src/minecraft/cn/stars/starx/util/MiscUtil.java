@@ -23,4 +23,17 @@ public class MiscUtil {
 
         return byteArrayOutputStream.toByteArray();
     }
+
+    public static boolean containsAnyIgnoreCase(String input, String[] keywords) {
+        if (input == null || keywords == null) {
+            return false;
+        }
+
+        for (String keyword : keywords) {
+            if (keyword != null && input.toLowerCase().contains(keyword.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

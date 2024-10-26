@@ -13,7 +13,7 @@ import net.minecraft.client.gui.ScaledResolution;
         chineseDescription = "客户端的整体视觉效果设置", category = Category.HUD)
 public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Simple",
-            "Minecraft", "StarX", "Modern", "Simple");
+            "Minecraft", "StarX", "Modern", "Simple", "Empathy");
     private final ModeValue colorStyle = new ModeValue("Color Type", this, "Rainbow", "Rainbow", "Double", "Fade");
     private final ModeValue list = new ModeValue("List Animation", this, "StarX", "StarX", "Slide");
     private final NumberValue red = new NumberValue("Red", this, 19, 0, 255, 1);

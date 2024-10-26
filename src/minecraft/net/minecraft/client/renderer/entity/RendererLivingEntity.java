@@ -607,7 +607,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getName());
 
             if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm") ||
-                    (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && ((ModuleInstance.getBool("Dinnerbone", "Self").isEnabled() && bat == Minecraft.getMinecraft().thePlayer) || !ModuleInstance.getBool("Dinnerbone", "Self").isEnabled())))
+                    (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && bat instanceof EntityPlayer && ((ModuleInstance.getBool("Dinnerbone", "Self").isEnabled() && bat == Minecraft.getMinecraft().thePlayer) || !ModuleInstance.getBool("Dinnerbone", "Self").isEnabled())))
                     && (!(bat instanceof EntityPlayer) || ((EntityPlayer)bat).isWearing(EnumPlayerModelParts.CAPE)))
             {
                 GlStateManager.translate(0.0F, bat.height + 0.1F, 0.0F);

@@ -1,7 +1,7 @@
 package cn.stars.starx.util.starx;
 
 public enum Branch {
-    PRODUCTION, DEVELOPMENT, SNAPSHOT;
+    PRODUCTION, DEVELOPMENT, SNAPSHOT, PRIVATE;
 
     public static String getBranchName(Branch branch) {
         if (branch == DEVELOPMENT) {
@@ -12,6 +12,9 @@ public enum Branch {
         }
         if (branch == SNAPSHOT) {
             return "(SNAPSHOT)";
+        }
+        if (branch == PRIVATE) {
+            return "(PRIVATE)";
         }
         return null;
     }

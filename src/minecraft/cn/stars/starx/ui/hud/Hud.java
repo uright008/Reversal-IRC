@@ -2,6 +2,7 @@ package cn.stars.starx.ui.hud;
 
 import cn.stars.starx.GameInstance;
 import cn.stars.starx.StarX;
+import cn.stars.starx.font.FontManager;
 import cn.stars.starx.module.Category;
 import cn.stars.starx.module.Module;
 import cn.stars.starx.module.impl.hud.*;
@@ -208,6 +209,40 @@ public class Hud implements GameInstance {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
                             RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 + 1, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
+                        });
+
+                    }
+                }
+                break;
+
+                case "Empathy": {
+                    final int offsetY = 2;
+                    final int offsetX = 1;
+
+                    final double stringWidth = regular16.getWidth(name);
+
+                    RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, new Color(20,20,20,200));
+                    RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 - 2, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(moduleCount, ThemeType.ARRAYLIST));
+
+                    finalX = arraylistX - regular16.getWidth(name);
+
+                    regular16.drawString(name, renderX - 15, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+
+                    RenderUtil.roundedRectangle(renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, new Color(20,20,20,200));
+                    FontManager.getMi(16).drawString("j", renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 12, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+
+                    final int mC = moduleCount;
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, Color.BLACK);
+                            RenderUtil.roundedRectangle(renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, new Color(20,20,20,200));
+                            RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 - 2, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
                         });
                     }
 
@@ -475,6 +510,80 @@ public class Hud implements GameInstance {
                     if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
+                        });
+                    }
+                }
+                break;
+            }
+
+            case "Empathy": {
+                if (useDefaultName) {
+                    final String clientName = "★ STARX";
+
+                    textGui.setWidth(100);
+                    int x = textGui.getX() + 5;
+                    int y = textGui.getY();
+                    float off = 0;
+
+                    RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, new Color(20,20,20,200));
+                    RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
+
+                    for (int i = 0; i < clientName.length(); i++) {
+                        final String character = String.valueOf(clientName.charAt(i));
+
+                        final float off1 = off;
+                        regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i / 2, ThemeType.ARRAYLIST));
+                        int finalI = i;
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(finalI / 2, ThemeType.ARRAYLIST));
+                        });
+                        off += regular20Bold.width(character);
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
+                        });
+                    }
+
+                } else {
+                    final String clientName = "★ " + customName;
+
+                    textGui.setWidth((int) (20 + regular20Bold.width(clientName)));
+                    int x = textGui.getX() + 5;
+                    int y = textGui.getY();
+                    float off = 0;
+
+                    RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, new Color(20, 20, 20, 200));
+                    RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
+
+                    for (int i = 0; i < clientName.length(); i++) {
+                        final String character = String.valueOf(clientName.charAt(i));
+
+                        final float off1 = off;
+                        int finalI = i;
+                        regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(i / 2, ThemeType.ARRAYLIST));
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            regular20Bold.drawString(character, x + 4 + off1, y + 3.5, ThemeUtil.getThemeColorInt(finalI / 2, ThemeType.ARRAYLIST));
+                        });
+                        off += regular20Bold.width(character);
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        MODERN_BLOOM_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, Color.BLACK);
+                        });
+                    }
+
+                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        MODERN_BLUR_RUNNABLES.add(() -> {
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, Color.BLACK);
                         });
                     }
                 }

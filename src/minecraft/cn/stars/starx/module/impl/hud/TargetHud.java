@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static cn.stars.starx.util.render.RenderUtil.renderPlayerModelTexture;
+import static cn.stars.starx.util.render.RenderUtil.renderSteveModelTexture;
+
 @ModuleInfo(name = "TargetHud", chineseName = "敌人信息", description = "Renders a Gui with your targets information",
         chineseDescription = "显示你攻击敌人的信息", category = Category.HUD)
 public final class TargetHud extends Module {
@@ -60,22 +63,6 @@ public final class TargetHud extends Module {
         setY(300);
         setHeight(70);
         setWidth(180);
-    }
-
-    public static void renderSteveModelTexture(final double x, final double y, final float u, final float v, final int uWidth, final int vHeight, final int width, final int height, final float tileWidth, final float tileHeight) {
-        final ResourceLocation skin = new ResourceLocation("textures/entity/steve.png");
-        Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
-        GL11.glEnable(GL11.GL_BLEND);
-        Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
-        GL11.glDisable(GL11.GL_BLEND);
-    }
-
-    public static void renderPlayerModelTexture(final double x, final double y, final float u, final float v, final int uWidth, final int vHeight, final int width, final int height, final float tileWidth, final float tileHeight, final AbstractClientPlayer target) {
-        final ResourceLocation skin = target.getLocationSkin();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
-        GL11.glEnable(GL11.GL_BLEND);
-        Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
@@ -168,13 +155,13 @@ public final class TargetHud extends Module {
 
                 final double fontHeight = regular16.height();
 
-                regular16.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
+                regular16.drawString("Distance: " + MathUtil.round(dist, 1), posX + 38 + 6 + 33, posY - 34 + 5 + 15 + 2, Color.WHITE.hashCode());
 
                 GlStateManager.pushMatrix();
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
                 RenderUtil.scissor(posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, 91, 30);
 
-                regular16.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 15 - fontHeight, Color.WHITE.hashCode());
+                regular16.drawString("Name: " + name, posX + 38 + 6 + 30 + 3, posY - 34 + 5 + 17 - fontHeight, Color.WHITE.hashCode());
 
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 GlStateManager.popMatrix();
@@ -211,38 +198,19 @@ public final class TargetHud extends Module {
                 // If the setting was null return to prevent crashes bc shit setting system.
                 if (setting == null) return;
 
-                // Get the theme and convert it to lower case.
-                final String theme = setting.getMode().toLowerCase();
-
                 float offset = 6;
                 final float drawBarPosX = posX + nameWidth;
 
                 if (displayHealth > 0.1)
                     for (int i = 0; i < displayHealth * 4; i++) {
 
-                        int color = ThemeUtil.getThemeColorInt(ThemeType.GENERAL);
-
-                        // If the user is using a rainbow theme adjust based on it.
-                        if (theme.contains("rainbow")) {
-                            color = ColorUtil.getColor(1 * posX * 1.4f + i / 6f, 0.5f, 1);
-                        }
-
-                        // If the user is on the blend theme blend accordingly.
-                        else if (theme.contains("blend")) {
-
-                            final Color color1 = new Color(78, 161, 253, 100);
-                            final Color color2 = new Color(78, 253, 154, 100);
-
-                            color = ColorUtil.mixColors(color1, color2, (Math.sin(Hud.ticks + posX * 0.4f + i * 0.6f / 14f) + 1) * 0.5f).hashCode();
-                        }
-
+                        int color = ThemeUtil.getThemeColorInt((float) i / 5, ThemeType.ARRAYLIST);
                         float finalOffset = offset;
-                        int finalColor = color;
-                        Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
+                        Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, color);
 
                         if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                             MODERN_BLOOM_RUNNABLES.add(() -> {
-                                Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, finalColor);
+                                Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, color);
                             });
                         }
 
@@ -253,30 +221,9 @@ public final class TargetHud extends Module {
 
                     for (int i = 0; i <= 15; i++) {
                         final THParticleUtils p = new THParticleUtils();
-                        final Color color1 = new Color(StarX.CLIENT_THEME_COLOR);
-                        final Color color2 = new Color(255, 255, 255);
+                        Color color = ThemeUtil.getThemeColor(ThemeType.ARRAYLIST);
 
-                        final Color c;
-
-                        if (theme.contains("rainbow")) {
-                            c = new Color(ColorUtil.getColor(10 + i, 0.5f, 1));
-                        } else if (theme.contains("blend")) {
-                            final Color color12 = new Color(78, 161, 253, 100);
-                            final Color color22 = new Color(78, 253, 154, 100);
-
-                            c = ColorUtil.mixColors(color12, color22, (Math.sin(Hud.ticks + posX * 0.4f + i) + 1) * 0.5f);
-                        } else if (theme.contains("rice")) {
-
-                            final Color color21 = new Color(190, 0, 255, 100);
-                            final Color color11 = new Color(0, 190, 255, 100);
-
-                            c = ColorUtil.mixColors(color21, color11, (Math.sin(Hud.ticks + posX * 0.4f + i) + 1) * 0.5f);
-                        } else {
-                            c = ColorUtil.mixColors(color1, color2, Math.random());
-                        }
-
-
-                        p.init(posX + 55, posY - 15, ((Math.random() - 0.5) * 2) * 1.4, ((Math.random() - 0.5) * 2) * 1.4, Math.random() * 4, c);
+                        p.init(posX + 55, posY - 15, ((Math.random() - 0.5) * 2) * 1.4, ((Math.random() - 0.5) * 2) * 1.4, Math.random() * 4, color);
                         particles.add(p);
                     }
 
@@ -287,7 +234,7 @@ public final class TargetHud extends Module {
 
                 if (!((dist > 20 || target.isDead))) {
                     float finalOffset1 = offset;
-                    regular16.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 2.5f, -1);
+                    regular16.drawString(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 2 + finalOffset1 * 1.25, posY + 5.5f, -1);
                 }
 
                 if (lastTarget != target) {
@@ -494,23 +441,7 @@ public final class TargetHud extends Module {
                         // If the setting was null return to prevent crashes bc shit setting system.
                         if (setting == null) return;
 
-                        // Get the theme and convert it to lower case.
-                        final String theme = setting.getMode().toLowerCase();
-
-                        int color = ThemeUtil.getThemeColorInt(ThemeType.GENERAL);
-
-                        // If the user is using a rainbow theme adjust based on it.
-                        if (theme.contains("rainbow")) {
-                            color = ColorUtil.getColor(1 * posX * 1.4f + i / 6f, 0.5f, 1);
-                        }
-
-                        // If the user is on the blend theme blend accordingly.
-                        else if (theme.contains("blend")) {
-                            final Color color1 = new Color(78, 161, 253, 100);
-                            final Color color2 = new Color(78, 253, 154, 100);
-
-                            color = ColorUtil.mixColors(color1, color2, (Math.sin(Hud.ticks + posX * 0.4f + i * 0.6f / 14f) + 1) * 0.5f).hashCode();
-                        }
+                        int color = ThemeUtil.getThemeColorInt((float) i / 5, ThemeType.ARRAYLIST);
 
                         Gui.drawRect(drawBarPosX + offset, posY, drawBarPosX + 1 + offset, posY + 10, color);
 
@@ -524,7 +455,7 @@ public final class TargetHud extends Module {
                     }
 
                 if (!((mc.thePlayer.getDistanceToEntity(target) > 20|| target.isDead))) {
-                    regular16.drawStringWithShadow(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 4 + offset, posY, -1);
+                    regular16.drawStringWithShadow(String.valueOf(MathUtil.round(displayHealth, 1)), drawBarPosX + 4 + offset, posY + 3, -1);
                 }
 
             }

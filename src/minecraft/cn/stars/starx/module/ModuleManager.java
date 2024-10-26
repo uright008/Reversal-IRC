@@ -42,6 +42,14 @@ public final class ModuleManager {
         }
     }
 
+    public void registerModules(Module[] modules) {
+        moduleList = modules;
+
+        for (Module module : moduleList) {
+            module.onLoad();
+        }
+    }
+
     public List<Module> getEnabledModules() {
         if (edited) {
             enabledModules = new ArrayList<>();

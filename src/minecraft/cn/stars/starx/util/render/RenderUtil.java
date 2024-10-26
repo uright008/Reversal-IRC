@@ -1,10 +1,12 @@
 package cn.stars.starx.util.render;
 
 import cn.stars.starx.GameInstance;
+import cn.stars.starx.StarX;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -41,6 +43,7 @@ import java.nio.IntBuffer;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import static net.minecraft.client.gui.Gui.drawScaledCustomSizeModalRect;
 import static org.lwjgl.opengl.GL11.*;
 
 @UtilityClass
@@ -157,9 +160,46 @@ public final class RenderUtil implements GameInstance {
         return i >= x && i < x + width && j >= y && j < y + height;
     }
 
-    public static Vector2f targetESPSPos(EntityLivingBase entity) {
+    public static void renderSteveModelTexture(final double x, final double y, final float u, final float v, final int uWidth, final int vHeight, final int width, final int height, final float tileWidth, final float tileHeight) {
+        final ResourceLocation skin = new ResourceLocation("textures/entity/steve.png");
+        Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+        GL11.glEnable(GL11.GL_BLEND);
+        drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public static void renderPlayerModelTexture(final double x, final double y, final float u, final float v, final int uWidth, final int vHeight, final int width, final int height, final float tileWidth, final float tileHeight, final AbstractClientPlayer target) {
+        final ResourceLocation skin = target.getLocationSkin();
+        Minecraft.getMinecraft().getTextureManager().bindTexture(skin);
+        GL11.glEnable(GL11.GL_BLEND);
+        drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public static void quickDrawHead(ResourceLocation skin, int x, int y, int width, int height) {
+        mc.getTextureManager().bindTexture(skin);
+        drawScaledCustomSizeModalRect(x, y, 8F, 8F, 8, 8, width, height,
+                64F, 64F);
+        drawScaledCustomSizeModalRect(x, y, 40F, 8F, 8, 8, width, height,
+                64F, 64F);
+    }
+
+    public void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height)
+    {
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos((double)(x + 0), (double)(y + height), (double)Gui.zLevel).tex((double)((float)(textureX + 0) * f), (double)((float)(textureY + height) * f1)).endVertex();
+        worldrenderer.pos((double)(x + width), (double)(y + height), (double)Gui.zLevel).tex((double)((float)(textureX + width) * f), (double)((float)(textureY + height) * f1)).endVertex();
+        worldrenderer.pos((double)(x + width), (double)(y + 0), (double)Gui.zLevel).tex((double)((float)(textureX + width) * f), (double)((float)(textureY + 0) * f1)).endVertex();
+        worldrenderer.pos((double)(x + 0), (double)(y + 0), (double)Gui.zLevel).tex((double)((float)(textureX + 0) * f), (double)((float)(textureY + 0) * f1)).endVertex();
+        tessellator.draw();
+    }
+
+    public static Vector2f targetESPSPos(EntityLivingBase entity, float partialTicks) {
         EntityRenderer entityRenderer = mc.entityRenderer;
-        float partialTicks = mc.timer.renderPartialTicks;
         int scaleFactor = new ScaledResolution(mc).getScaleFactor();
         double x = interpolate(entity.prevPosX, entity.posX, partialTicks);
         double y = interpolate(entity.prevPosY, entity.posY, partialTicks);
@@ -189,6 +229,7 @@ public final class RenderUtil implements GameInstance {
         }
         return null;
     }
+
 
     private static Vector3d project2D(int scaleFactor, double x, double y, double z) {
         IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);

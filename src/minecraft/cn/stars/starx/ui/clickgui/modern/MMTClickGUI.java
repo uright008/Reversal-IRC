@@ -188,7 +188,6 @@ public class MMTClickGUI extends GuiScreen {
                             }
                             if (setting instanceof ModeValue) {
                                 psr18.drawString(setting.name, setting.guiX, setting.guiY - 15, new Color(76,91,110,255).getRGB());
-                                RenderUtil.roundedOutlineRectangle(setting.guiX + 3 + psr18.width(setting.name), setting.guiY - 17, psr18.getWidth(((ModeValue) setting).getModes().get(((ModeValue) setting).index)) + 4, 10, 2, 1, new Color(100, 200, 255, 250));
                                 psr18.drawString(((ModeValue) setting).getModes().get(((ModeValue) setting).index),
                                         setting.guiX + 5 + psr18.width(setting.name), setting.guiY - 15, new Color(76,91,110,200).getRGB());
                                 settingY += 12;

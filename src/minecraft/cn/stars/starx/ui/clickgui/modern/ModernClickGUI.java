@@ -105,7 +105,7 @@ public class ModernClickGUI extends GuiScreen {
             FontManager.getPSR(26).drawString(searchString,x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
             RenderUtil.roundedRectangle(x + 5, y + 35, 105, 20, 4, new Color(60, 60, 60, 160));
         }  else {
-            FontManager.getPSR(26).drawString("Ctrl+F", x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
+            FontManager.getPSR(26).drawString("Search...", x + 8, y + 40, new Color(160, 160, 160, 160).getRGB());
             RenderUtil.roundedRectangle(x + 5, y + 35, 105, 20, 4, new Color(60, 60, 60, 160));
         }
 
@@ -469,7 +469,6 @@ public class ModernClickGUI extends GuiScreen {
         hasEditedSliders = false;
         animation.reset();
         scaleAnimation.reset();
-        scrollAmount = 0;
     }
 
     @Override

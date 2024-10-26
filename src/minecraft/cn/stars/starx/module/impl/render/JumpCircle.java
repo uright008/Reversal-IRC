@@ -57,7 +57,7 @@ public class JumpCircle extends Module {
                 GlStateManager.enableLineSmooth();
                 GlStateManager.disableTexture2D();
                 GlStateManager.disableDepth();
-                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
                 GL11.glLineWidth(circle.width / 2f);
                 GL11.glRotatef(90F, 1F, 0F, 0F);

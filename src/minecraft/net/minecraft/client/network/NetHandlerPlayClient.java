@@ -1886,7 +1886,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
     public NetworkPlayerInfo getPlayerInfo(UUID p_175102_1_)
     {
-        return (NetworkPlayerInfo)this.playerInfoMap.get(p_175102_1_);
+        return this.playerInfoMap.get(p_175102_1_);
     }
 
     public NetworkPlayerInfo getPlayerInfo(String p_175104_1_)

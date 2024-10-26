@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import cn.stars.starx.StarX;
 import cn.stars.starx.module.impl.render.Animations;
 import cn.stars.starx.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
@@ -358,6 +359,7 @@ public class ItemRenderer
                 }
                 else if (abstractclientplayer.getItemInUseCount() > 0 || (mc.gameSettings.keyBindUseItem.isKeyDown() && anythingBlock))
                 {
+                    GlStateManager.translate(ModuleInstance.getNumber("Animations", "Item X").getFloat(), ModuleInstance.getNumber("Animations", "Item Y").getFloat(), ModuleInstance.getNumber("Animations", "Item Z").getFloat());
                     boolean m = ModuleInstance.getModule(Animations.class).isEnabled();
                     EnumAction enumaction = this.itemToRender.getItemUseAction();
 
@@ -509,19 +511,17 @@ public class ItemRenderer
                                 this.transformFirstPersonItem(f, 0.0F);
                             this.doBowTransformations(partialTicks, abstractclientplayer);
                     }
-                    float addY = ModuleInstance.getNumber("Animations", "Block Y").getFloat();
-                    GlStateManager.translate(-addY, addY, addY);
+                    float blockY = ModuleInstance.getNumber("Animations", "Block Y").getFloat();
+                    GlStateManager.translate(-blockY, blockY, blockY);
+                    GlStateManager.scale(ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat());
                 }
                 else
                 {
+                    GlStateManager.translate(ModuleInstance.getNumber("Animations", "Item X").getFloat(), ModuleInstance.getNumber("Animations", "Item Y").getFloat(), ModuleInstance.getNumber("Animations", "Item Z").getFloat());
                     if (!ModuleInstance.getBool("Animations", "Swing Animation").isEnabled()) this.doItemUsedTransformations(f1);
                     this.transformFirstPersonItem(f, f1);
+                    GlStateManager.scale(ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat());
                 }
-
-                float addX = ModuleInstance.getNumber("Animations", "Item X").getFloat();
-                float addY = ModuleInstance.getNumber("Animations", "Item Y").getFloat();
-                float addZ = ModuleInstance.getNumber("Animations", "Item Z").getFloat();
-                GlStateManager.translate(addX, addY, addZ);
                 this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
             }
             else if (!abstractclientplayer.isInvisible())

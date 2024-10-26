@@ -90,4 +90,8 @@ public final class CommandManager {
                     .toArray(Command[]::new)).sorted(Comparator.comparing(c -> c.getCommandInfo().name())).toArray(Command[]::new);
         }
     }
+
+    public void registerCommands(Command[] commands) {
+        commandList = commands;
+    }
 }

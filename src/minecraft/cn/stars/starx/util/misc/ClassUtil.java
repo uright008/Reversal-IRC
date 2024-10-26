@@ -48,13 +48,10 @@ public class ClassUtil {
      * author: liulihaocai
      */
     public static <T> List<Class<? extends T>> resolvePackage(String packagePath, Class<T> klass) {
-        // use resolver in log4j to scan classes in target package
         ResolverUtil resolver = new ResolverUtil();
 
-        // set class loader
         resolver.setClassLoader(klass.getClassLoader());
 
-        // set package to scan
         resolver.findInPackage(new ResolverUtil.ClassTest() {
             @Override
             public boolean matches(Class<?> type) {
@@ -62,25 +59,25 @@ public class ClassUtil {
             }
         }, packagePath);
 
-        // use a list to cache classes
-        List<Class<? extends T>> list = resolver.getClasses().stream()
-                .filter(resolved -> {
-                    // check if class is assignable from target class
-                    return klass.isAssignableFrom(resolved) && !resolved.isInterface() && !Modifier.isAbstract(resolved.getModifiers());
-                })
-                .peek(resolved -> {
-                    // check for native methods
-                    for (Method method : resolved.getDeclaredMethods()) {
-                        if (Modifier.isNative(method.getModifiers())) {
-                            String klass1 = resolved.getTypeName() + "." + method.getName();
-                            throw new UnsatisfiedLinkError(klass1 + "\n\tat " + klass1 + "(Native Method)"); // we don't want native methods
-                        }
-                    }
-                })
-                .map(resolved -> (Class<? extends T>) resolved)
-                .collect(Collectors.toList());
+        List<Class<? extends T>> resultList = new ArrayList<>();
 
-        return list;
+        for (Class<?> resolved : resolver.getClasses()) {
+            if (klass.isAssignableFrom(resolved) && !resolved.isInterface() && !Modifier.isAbstract(resolved.getModifiers())) {
+                boolean hasNativeMethod = false;
+                for (Method method : resolved.getDeclaredMethods()) {
+                    if (Modifier.isNative(method.getModifiers())) {
+                        String klassName = resolved.getTypeName() + "." + method.getName();
+                        throw new UnsatisfiedLinkError(klassName + "\n\tat " + klassName + "(Native Method)"); // 不允许包含本地方法
+                    }
+                }
+
+                if (!hasNativeMethod) {
+                    resultList.add((Class<? extends T>) resolved);
+                }
+            }
+        }
+
+        return resultList;
     }
 
     public static <T> List<T> instantiateList(List<Class<? extends T>> classes) {

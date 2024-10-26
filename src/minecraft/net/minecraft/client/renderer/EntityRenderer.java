@@ -1833,7 +1833,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         if (Reflector.ForgeHooksClient_dispatchRenderLast.exists())
         {
             this.mc.mcProfiler.endStartSection("forge_render_last");
-            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, new Object[] {renderglobal, Float.valueOf(partialTicks)});
+            Reflector.callVoid(Reflector.ForgeHooksClient_dispatchRenderLast, renderglobal, Float.valueOf(partialTicks));
         }
 
         final Render3DEvent render3DEvent = new Render3DEvent(partialTicks);

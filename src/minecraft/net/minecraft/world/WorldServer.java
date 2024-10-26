@@ -156,7 +156,6 @@ public class WorldServer extends World implements IThreadListener
     public void tick()
     {
         super.tick();
-        StarX.entityCullingMod.doWorldTick();
 
         if (this.getWorldInfo().isHardcoreModeEnabled() && this.getDifficulty() != EnumDifficulty.HARD)
         {
@@ -212,18 +211,20 @@ public class WorldServer extends World implements IThreadListener
         this.worldTeleporter.removeStalePortalLocations(this.getTotalWorldTime());
         this.theProfiler.endSection();
         this.sendQueuedBlockEvents();
+
+        if (StarX.entityCullingMod != null) StarX.entityCullingMod.doWorldTick();
     }
 
     public BiomeGenBase.SpawnListEntry getSpawnListEntryForTypeAt(EnumCreatureType creatureType, BlockPos pos)
     {
         List<BiomeGenBase.SpawnListEntry> list = this.getChunkProvider().getPossibleCreatures(creatureType, pos);
-        return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
+        return list != null && !list.isEmpty() ? WeightedRandom.getRandomItem(this.rand, list) : null;
     }
 
     public boolean canCreatureTypeSpawnHere(EnumCreatureType creatureType, BiomeGenBase.SpawnListEntry spawnListEntry, BlockPos pos)
     {
         List<BiomeGenBase.SpawnListEntry> list = this.getChunkProvider().getPossibleCreatures(creatureType, pos);
-        return list != null && !list.isEmpty() ? list.contains(spawnListEntry) : false;
+        return list != null && !list.isEmpty() && list.contains(spawnListEntry);
     }
 
     public void updateAllPlayersSleepingFlag()

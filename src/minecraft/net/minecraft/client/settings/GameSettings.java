@@ -181,7 +181,7 @@ public class GameSettings {
     public float gammaSetting;
     public float saturation;
     /** GUI scale */
-    public int guiScale;
+    public int guiScale = 2;
     /** Determines amount of particles. 0 = All, 1 = Decreased, 2 = Minimal */
     public int particleSetting;
     /** Game settings language */

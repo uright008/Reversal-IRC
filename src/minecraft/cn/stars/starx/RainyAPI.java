@@ -54,9 +54,7 @@ public class RainyAPI {
                     "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
     // 随机标题
     public static final String[] wittyTitle = new String[]
-            {"乌云再厚也遮不住阳光,风雨过后总会有彩虹", "与你的日常,就是奇迹", "虚假的真实是真实吗?", "未来仍有无限可能", "在那灿烂的群星中,总有一颗代表我正与你对视", "王女手握钥匙,方舟恭候多时",
-                    "一缕星光会给予我和你无尽的力量", "vanitas vanitatum et omnia vanitas", "情感在于表达,更在于理解", "古希腊掌握PVP的神", "从来如此,便对吗?", "你所珍视的那个人,是否也同样珍视你?", "我有鱼鱼症",
-                    "你应该小时候受过心理创伤,才会长大后出来祸害别人"
+            { "我有鱼鱼症", "我们因缘分而相遇，因共同而相聚", "人生有欢喜也有悲剧,一切已是命中注定", "在那灿烂的群星中,总有一颗代表我正与你对视"
             };
 
     public static String getRandomTitle() {
@@ -110,6 +108,7 @@ public class RainyAPI {
                             throw new RuntimeException("Failed to load new background file.");
                         }
                     } else {
+                        StarX.notificationManager.registerNotification("不支持的文件类型!", "主菜单", 2000L, NotificationType.ERROR);
                         StarXLogger.error("Dragged file read failed.");
                     }
                 }
@@ -121,7 +120,7 @@ public class RainyAPI {
      * 加载客户端设置
      */
     public static void loadAPI() {
-        Display.setTitle("Loading LonelyAPI...");
+        StarXLogger.info("Loading RainyAPI...");
         final String client = FileUtil.loadFile("client.txt");
 
         // re-save if not available on start.

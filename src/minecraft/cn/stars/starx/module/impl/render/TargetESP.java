@@ -16,6 +16,7 @@ import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 
+import javax.vecmath.Vector2f;
 import java.awt.*;
 
 @ModuleInfo(name = "TargetESP", chineseName = "敌人标记", description = "Display a ESP when you hit targets", chineseDescription = "当你攻击目标时渲染ESP", category = Category.RENDER)
@@ -43,7 +44,7 @@ public class TargetESP extends Module {
             Color color = ThemeUtil.getThemeColor(ThemeType.ARRAYLIST, 1);
             Color color2 = ThemeUtil.getThemeColor(ThemeType.ARRAYLIST, 2);
             float dst = mc.thePlayer.getSmoothDistanceToEntity(attackedEntity);
-            javax.vecmath.Vector2f vector2f = RenderUtil.targetESPSPos(attackedEntity);
+            Vector2f vector2f = RenderUtil.targetESPSPos(attackedEntity, event.getPartialTicks());
             if (vector2f == null) return;
             RenderUtil.drawTargetESP2D(vector2f.x, vector2f.y, color, color2, 1.0f - MathHelper.clamp_float(Math.abs(dst - 6.0f) / 60.0f, 0.0f, 0.75f), 1, auraESPAnim.getOutput().floatValue());
         }

@@ -3,10 +3,20 @@ package cn.stars.starx;
 import cn.stars.addons.creativetab.StarXTab;
 import cn.stars.addons.optimization.entityculling.EntityCullingMod;
 import cn.stars.addons.optimization.util.FastTrig;
+import cn.stars.starx.command.Command;
 import cn.stars.starx.command.CommandManager;
+import cn.stars.starx.command.impl.*;
 import cn.stars.starx.config.DefaultHandler;
 import cn.stars.starx.config.MusicHandler;
-import cn.stars.starx.module.ModuleManager;
+import cn.stars.starx.module.*;
+import cn.stars.starx.module.impl.hud.*;
+import cn.stars.starx.module.impl.render.*;
+import cn.stars.starx.module.impl.player.*;
+import cn.stars.starx.module.impl.combat.*;
+import cn.stars.starx.module.impl.misc.*;
+import cn.stars.starx.module.impl.movement.*;
+import cn.stars.starx.module.impl.addons.*;
+import cn.stars.starx.module.impl.world.*;
 import cn.stars.starx.music.MusicManager;
 import cn.stars.starx.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.starx.ui.clickgui.modern.ModernClickGUI;
@@ -31,13 +41,10 @@ import tech.skidonion.obfuscator.annotations.StringEncryption;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-/*
- * TODO: IMPORTANT INFORMATION
- *
- * Assets are missing because of optifine. We fixed it.
+/**
+ * Copyright (c) 2024 Starlight Team, All rights reserved.
+ * A Hack-Visual PVP Client, a small dream planted by Stars.
  */
 @NativeObfuscation
 @StringEncryption
@@ -45,10 +52,10 @@ import java.util.concurrent.Executors;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.0.0";
+    public static final String VERSION = "v3.1.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars, BzdHyp";
-    public static final Branch BRANCH = Branch.DEVELOPMENT;
+    public static final Branch BRANCH = Branch.PRIVATE;
 
     // Init
     public static Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -92,7 +99,8 @@ public class StarX {
             Minecraft.setStage(8);
             postInitialize();
 
-            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + RainyAPI.getRandomTitle());
+        //    Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + RainyAPI.getRandomTitle());
+            Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH));
             StarXLogger.info("Client loaded successfully.");
             StarXLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
@@ -104,14 +112,14 @@ public class StarX {
     }
 
     // Usages
-    public static void showMsg(String msg) {
+    public static void showMsg(Object msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
         }
     }
-    public static void showMsg(Object msg) {
+    public static void showCustomMsg(Object msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText((String) msg));
         }
     }
 
@@ -131,12 +139,12 @@ public class StarX {
 
             // StarX Initialize
             moduleManager = new ModuleManager();
-            moduleManager.registerModules();
+            moduleManager.registerModules(modules);
 
             notificationManager = new NotificationManager();
 
             cmdManager = new CommandManager();
-            cmdManager.registerCommands();
+            cmdManager.registerCommands(commands);
 
             try {
                 musicManager = new MusicManager();
@@ -204,7 +212,7 @@ public class StarX {
 
             File tempFile = new File(Minecraft.getMinecraft().mcDataDir, "StarX/Background");
             File videoFile = new File(tempFile, "background.mp4");
-            if (!tempFile.exists() || !videoFile.exists()) {
+            if (!(tempFile.exists() && !videoFile.exists())) {
                 tempFile.mkdir();
                 try {
                     FileUtil.unpackFile(videoFile, "assets/minecraft/starx/background.mp4");
@@ -232,6 +240,92 @@ public class StarX {
         }
         return true;
     }
+
+    private static final Command[] commands = new Command[] {
+            new Bind(),
+            new Chat(),
+            new ClientName(),
+            new ClientTitle(),
+            new Config(),
+            new Help(),
+            new Name(),
+            new Say(),
+            new SelfDestruct(),
+            new SetText()
+    };
+
+    public static final Module[] modules = new Module[] {
+            // Addons
+            new GuiSettings(), // Special Module
+            new Optimization(), // Special Module
+            new FreeLook(),
+            new MoBends(),
+            new MusicPlayer(),
+            new WaveyCapes(),
+            new SkinLayers3D(), // Special Module
+            // Combat
+            new ClickSound(),
+            new ExperimentReachDistanceChecker(),
+            new NoClickDelay(),
+            // Movement
+            new Sprint(),
+            // Misc
+            new ClientSpoofer(),
+            new CustomName(),
+            new NoAchievements(),
+            new Protocol(),
+            // World
+            // Player
+            new AutoGG(),
+            new Dinnerbone(),
+            new HealthWarn(),
+            new IRC(),
+            new SelfTag(),
+            new SmallPlayer(),
+            // Render
+            new Animations(),
+            new BAHalo(),
+            new BetterFont(),
+            new BlockOverlay(),
+            new Breadcrumbs(),
+            new ChinaHat(),
+            new ClickGui(), // Special Module
+            new Crosshair(),
+            new DamageParticle(),
+            new Fullbright(),
+            new HitEffect(),
+            new Hotbar(),
+            new HurtCam(), // Special Module
+            new ItemPhysics(),
+            new JumpCircle(),
+            new MotionBlur(),
+            new NoBob(),
+            new ReachDisplay(),
+            new TargetESP(),
+            new TNTTimer(),
+            new TimeTraveller(),
+            new TrueSights(),
+            new Particles(),
+            new SpeedGraph(),
+            new Wings(),
+            // Hud
+            new ClientSettings(), // Special Module
+            new PostProcessing(), // Special Module
+            new Arraylist(),
+            new BASticker(),
+            new BPSCounter(),
+            new CPSCounter(),
+            new HUD(),
+            new Keystrokes(),
+            new MusicInfo(),
+            new MusicVisualizer(),
+            new PotionEffects(),
+            new Scoreboard(),
+            new SessionInfo(),
+            new TargetHud(),
+            new TextGui(),
+            new CustomText()
+    };
 
     public static int CLIENT_THEME_COLOR = new Color(159, 24, 242).hashCode();
     public static int CLIENT_THEME_COLOR_2 = new Color(159, 24, 242).hashCode();

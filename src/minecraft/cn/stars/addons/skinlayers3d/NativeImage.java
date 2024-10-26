@@ -1,6 +1,7 @@
 package cn.stars.addons.skinlayers3d;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11C;
 
 import java.nio.*;
 
@@ -82,7 +83,7 @@ public final class NativeImage implements AutoCloseable
 
     public void downloadTexture(final int i, final boolean bl) {
         this.format.setPackPixelStoreState();
-        GL11.glGetTexImage(3553, i, this.format.glFormat(), 5121, this.buffer);
+        GL11C.glGetTexImage(3553, i, this.format.glFormat(), 5121, this.buffer);
         if (bl && this.format.hasAlpha()) {
             for (int j = 0; j < this.getHeight(); ++j) {
                 for (int k = 0; k < this.getWidth(); ++k) {

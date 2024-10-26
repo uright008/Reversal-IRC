@@ -1,6 +1,8 @@
 package cn.stars.starx.util.player;
 
 import com.google.common.base.Predicates;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
@@ -17,10 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class PlayerUtil {
@@ -122,7 +121,15 @@ public final class PlayerUtil {
         return null;
     }
 
-
+    public static ResourceLocation getSkinFromCrafatar(String uuid) {
+        try {
+            String url = "https://crafatar.com/skins/" + uuid;
+            return new ResourceLocation(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResourceLocation("textures/entity/steve.png");
+        }
+    }
 
     public static boolean isOnSameTeam(final EntityLivingBase entity) {
         if (entity.getTeam() != null && PlayerUtil.mc.thePlayer.getTeam() != null) {

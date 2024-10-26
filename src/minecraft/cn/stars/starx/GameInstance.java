@@ -30,12 +30,10 @@ public interface GameInstance {
     MFont regular20Bold = FontManager.getRegularBold(20);
     MFont regular24Bold = FontManager.getRegularBold(24);
     MFont regular32 = FontManager.getRegular(32);
-    MFont eaves64 = FontManager.getEaves(64);
 
     List<Runnable> UI_BLOOM_RUNNABLES = new ArrayList<>();
     List<Runnable> UI_POST_BLOOM_RUNNABLES = new ArrayList<>();
     List<Runnable> UI_RENDER_RUNNABLES = new ArrayList<>();
-    List<Runnable> UI_BLUR_RUNNABLES = new ArrayList<>();
     List<Runnable> NORMAL_PRE_RENDER_RUNNABLES = new ArrayList<>();
     List<Runnable> NORMAL_BLUR_RUNNABLES = new ArrayList<>();
     List<Runnable> NORMAL_POST_BLOOM_RUNNABLES = new ArrayList<>();

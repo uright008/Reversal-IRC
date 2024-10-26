@@ -55,14 +55,14 @@ public class Main
             System.out.println("Completely ignored arguments: " + list);
         }
 
-        String s = (String)optionset.valueOf(optionspec5);
+        String s = optionset.valueOf(optionspec5);
         Proxy proxy = Proxy.NO_PROXY;
 
         if (s != null)
         {
             try
             {
-                proxy = new Proxy(Type.SOCKS, new InetSocketAddress(s, ((Integer)optionset.valueOf(optionspec6)).intValue()));
+                proxy = new Proxy(Type.SOCKS, new InetSocketAddress(s, optionset.valueOf(optionspec6).intValue()));
             }
             catch (Exception var46)
             {
