@@ -54,8 +54,7 @@ public class RainyAPI {
                     "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
     // 随机标题
     public static final String[] wittyTitle = new String[]
-            { "我有鱼鱼症", "我们因缘分而相遇，因共同而相聚", "人生有欢喜也有悲剧,一切已是命中注定", "在那灿烂的群星中,总有一颗代表我正与你对视"
-            };
+            { "我有鱼鱼症", "我们因缘分而相遇，因共同而相聚", "人生有欢喜也有悲剧,一切已是命中注定", "在那灿烂的群星中,总有一颗代表我正与你对视"};
 
     public static String getRandomTitle() {
         return wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)];

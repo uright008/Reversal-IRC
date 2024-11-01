@@ -2,6 +2,7 @@ package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
 import cn.stars.starx.module.impl.addons.MoBends;
+import cn.stars.starx.module.impl.addons.SkinLayers3D;
 import cn.stars.starx.module.impl.player.Dinnerbone;
 import cn.stars.starx.module.impl.player.SmallPlayer;
 import cn.stars.starx.module.impl.player.SelfTag;
@@ -398,7 +399,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
 
             // This should be different parts
-            if (!(this instanceof PlayerEntityModelAccessor) || ModuleInstance.getModule(MoBends.class).isEnabled()) {
+            if (!(this instanceof PlayerEntityModelAccessor) || ModuleInstance.getModule(MoBends.class).isEnabled() || !ModuleInstance.getModule(SkinLayers3D.class).isEnabled()) {
                 return;
             }
             if (!this.bindEntityTexture(entitylivingbaseIn)) {

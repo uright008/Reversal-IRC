@@ -15,8 +15,12 @@ import cn.stars.starx.music.api.base.LyricLine;
 import cn.stars.starx.music.api.player.MusicPlayer;
 import cn.stars.starx.music.ui.ThemeColor;
 import cn.stars.starx.setting.impl.BoolValue;
+import cn.stars.starx.setting.impl.ModeValue;
 import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.starx.util.render.ColorUtil;
 import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.starx.util.render.ThemeType;
+import cn.stars.starx.util.render.ThemeUtil;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
@@ -26,6 +30,7 @@ import java.awt.*;
 @ModuleInfo(name = "MusicInfo", chineseName = "音乐信息", description = "Display the music info",
         chineseDescription = "显示音乐信息", category = Category.HUD)
 public class MusicInfo extends Module {
+    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Empathy");
     private final BoolValue lyrics = new BoolValue("Lyrics", this, false);
     private final NumberValue heightValue = new NumberValue("Height", this, 50, 50, 100, 1);
     private DynamicTexture coverTexture;
@@ -54,8 +59,12 @@ public class MusicInfo extends Module {
             }
         }
         setHeight((int) heightValue.getValue());
-        Gui.drawNewRect(getX(), getY(), getHeight(), getHeight(), new Color(0, 0, 0, 80).getRGB());
-        Gui.drawNewRect(getX(), getY(), getWidth(), getHeight(), new Color(0, 0, 0, 80).getRGB());
+        if (mode.getMode().equals("Simple")) {
+            Gui.drawNewRect(getX(), getY(), getWidth(), getHeight(), new Color(0, 0, 0, 80).getRGB());
+        } else {
+            RenderUtil.roundedRectangle(getX() - 2, getY(), getWidth() + 2, getHeight(), 3f, ColorUtil.empathyColor());
+            RenderUtil.roundedRectangle(getX() - 2.5, getY() + 2.5, 1.5, regular20Bold.height() - 2.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
+        }
         try {
             RenderUtil.image(coverTexture, getX(), getY(), getHeight(), getHeight());
         } catch (Exception e) {
@@ -100,7 +109,11 @@ public class MusicInfo extends Module {
         if (!RainyAPI.hasJavaFX) return;
         MusicPlayer player = StarX.musicManager.screen.player;
         if (player.getMusic() == null) return;
-        Gui.drawNewRect(getX(), getY(), getHeight(), getHeight(), Color.BLACK.getRGB());
-        Gui.drawNewRect(getX(), getY(), getWidth(), getHeight(), Color.BLACK.getRGB());
+        if (mode.getMode().equals("Simple")) {
+            Gui.drawNewRect(getX(), getY(), getWidth(), getHeight(), Color.BLACK.getRGB());
+        } else {
+            RenderUtil.roundedRectangle(getX() - 2, getY(), getWidth() + 2, getHeight(), 3f, ColorUtil.empathyGlowColor());
+            RenderUtil.roundedRectangle(getX() - 2.5, getY() + 2.5, 1.5, regular20Bold.height() - 2.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
+        }
     }
 }

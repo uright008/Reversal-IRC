@@ -490,6 +490,33 @@ public class RenderUtils {
         GlStateManager.disableLineSmooth();
     }
 
+    public static void drawRect(double left, double top, double right, double bottom, int color) {
+        if (left < right) {
+            double i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            double j = top;
+            top = bottom;
+            bottom = j;
+        }
+        RenderUtil.resetColor();
+        RenderUtil.setAlphaLimit(0);
+        GlUtils.setup2DRendering(true);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+
+        worldrenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(left, bottom, 0.0D).color(color).endVertex();
+        worldrenderer.pos( right, bottom, 0.0D).color(color).endVertex();
+        worldrenderer.pos(right, top, 0.0D).color(color).endVertex();
+        worldrenderer.pos(left, top, 0.0D).color(color).endVertex();
+        tessellator.draw();
+        GlUtils.end2DRendering();
+    }
+
     public static void drawRect(final float x, final float y, final float x2, final float y2, final Color color) {
         drawRect(x, y, x2, y2, color.getRGB());
     }

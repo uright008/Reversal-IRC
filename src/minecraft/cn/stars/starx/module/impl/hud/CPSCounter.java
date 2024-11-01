@@ -21,7 +21,7 @@ import java.util.List;
 @ModuleInfo(name = "CPSCounter", chineseName = "CPS显示", description = "Show your CPS on screen",
         chineseDescription = "显示你的点击速度", category = Category.HUD)
 public class CPSCounter extends Module {
-    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Modern", "ThunderHack");
+    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Modern", "ThunderHack", "Empathy");
     private final BoolValue displayOnClick = new BoolValue("Display On Click", this, false);
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final BoolValue outline = new BoolValue("Background", this, true);
@@ -55,6 +55,9 @@ public class CPSCounter extends Module {
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
         } else if (mode.getMode().equals("Simple")) {
             RenderUtil.rect(getX() + 2, getY() - 1, 19 + psm.getWidth(cpsString), psm.getHeight() + 3, Color.BLACK);
+        } else if (mode.getMode().equals("Empathy")) {
+            RenderUtil.roundedRectangle(getX(), getY() - 1, 21 + psm.getWidth(cpsString), psm.getHeight() + 3, 3f, ColorUtil.empathyGlowColor());
+            RenderUtil.roundedRectangle(getX() - 0.5, getY() + 1.5, 1.5, psm.getHeight() - 2.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
         }
     }
 
@@ -78,6 +81,10 @@ public class CPSCounter extends Module {
                 RoundedUtil.drawRound(getX() + 1, getY() - 2, 21 + psm.getWidth(cpsString), psm.getHeight() + 5, 4, new Color(0, 0, 0, 220));
             } else if (mode.getMode().equals("Simple")) {
                 RenderUtil.rect(getX() + 2, getY() - 1, 19 + psm.getWidth(cpsString), psm.getHeight() + 3, new Color(0, 0, 0, 80));
+            }
+            else if (mode.getMode().equals("Empathy")) {
+                RenderUtil.roundedRectangle(getX(), getY() - 1, 21 + psm.getWidth(cpsString), psm.getHeight() + 3, 3f, ColorUtil.empathyColor());
+                RenderUtil.roundedRectangle(getX() - 0.5, getY() + 1.5, 1.5, psm.getHeight() - 2.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
             }
         }
         icon.drawString("P", getX() + 4, getY() + 2, new Color(250, 250, 250, 200).getRGB());

@@ -4,15 +4,15 @@ import cn.stars.starx.RainyAPI;
 import cn.stars.starx.StarX;
 import cn.stars.starx.event.impl.*;
 import cn.stars.starx.ui.notification.NotificationType;
+import cn.stars.starx.ui.splash.SplashScreen;
+import cn.stars.starx.ui.splash.utils.AsyncGLContentLoader;
 import cn.stars.starx.util.StarXLogger;
 import cn.stars.starx.util.Transformer;
 import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
-import cn.stars.starx.ui.splash.SplashProgress;
 import cn.stars.starx.util.math.StopWatch;
 import cn.stars.starx.util.misc.ModuleInstance;
 import cn.stars.starx.util.render.RenderUtil;
 import cn.stars.starx.util.render.RenderUtils;
-import cn.stars.starx.util.starx.ImageWindow;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -270,7 +270,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private final Thread mcThread = Thread.currentThread();
     private ModelManager modelManager;
     private BlockRendererDispatcher blockRenderDispatcher;
-    volatile boolean running = true;
+    public volatile boolean running = true;
     public String debug = "";
     public boolean renderChunksMany = true;
     long debugUpdateTime = getSystemTime();
@@ -383,14 +383,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             return;
         }
     }
-
-    public static void setStage(int stage) {
-        Display.setTitle("StarX is loading... (" + stage + ")");
-        StarXLogger.info("Stage " + (stage - 1) + " took " + startTimer.getElapsedTime() + " ms");
-        startTimer.reset();
-        SplashProgress.setProgress(stage, "");
-    }
-
     private void startGame() throws LWJGLException {
         startTimer = new StopWatch();
     //    ImageWindow.load();
@@ -419,10 +411,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-        SplashProgress.drawSplash(this.getTextureManager());
-        SplashProgress.update();
-        // 1
-        setStage(1);
+        SplashScreen.init();
+        SplashScreen.setProgress(10, "Minecraft - Init");
+
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
@@ -435,9 +426,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
-
-        // 2
-        setStage(2);
+        SplashScreen.setProgress(20, "Minecraft - Font Renderer");
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.foliageColorReloadListener = new FoliageColorReloadListener();
         this.grassColorReloadListener = new GrassColorReloadListener();
@@ -453,10 +442,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             }
         });
         this.mouseHelper = new MouseHelper();
-        // 3
-        // StarX Initialize
-        setStage(3);
+        SplashScreen.setProgress(40, "StarX - Client Loading");
         StarX.start();
+        SplashScreen.setProgress(75, "Minecraft - GL Startup");
         this.checkGLError("Pre startup");
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(7425);
@@ -470,6 +458,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         GlStateManager.loadIdentity();
         GlStateManager.matrixMode(5888);
         this.checkGLError("Startup");
+        SplashScreen.setProgress(100, "Minecraft - Textures");
         this.textureMapBlocks = new TextureMap("textures");
         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
@@ -492,14 +481,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
         this.ingameGUI = new GuiIngame(this);
+
         if (this.serverName != null)
         {
             this.displayGuiScreen(new GuiConnecting(Transformer.transformMainMenu(), this, this.serverName, this.serverPort));
         }
         else
         {
-            StarX.notificationManager.registerNotification(StarX.NAME + " " + StarX.VERSION + ", made with love by " + StarX.AUTHOR + ".", "StarX", NotificationType.NOTIFICATION);
             this.displayGuiScreen(Transformer.transformMainMenu());
+            StarX.notificationManager.registerNotification(StarX.NAME + " " + StarX.VERSION + ", made with love by " + StarX.AUTHOR + ".", "StarX", NotificationType.NOTIFICATION);
         }
 
         this.renderEngine.deleteTexture(this.mojangLogo);
@@ -522,6 +512,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
 
         this.renderGlobal.makeEntityOutlineShader();
+
+        SplashScreen.notifyGameLoaded();
     }
 
     private void registerMetadataSerializers()
@@ -692,6 +684,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             if (flag) {
                 Sys.openURL("file://" + s);
             }
+
             System.exit(-1);
         }
         else if (crashReportIn.saveToFile(file2))
@@ -733,6 +726,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             if (flag) {
                 Sys.openURL("file://" + s);
             }
+
             System.exit(-1);
         }
         else
@@ -1130,9 +1124,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         Thread.yield();
         this.mcProfiler.startSection("stream");
         this.mcProfiler.startSection("update");
-    //    this.stream.func_152935_j();
         this.mcProfiler.endStartSection("submit");
-    //    this.stream.func_152922_k();
         this.mcProfiler.endSection();
         this.mcProfiler.endSection();
         this.checkGLError("Post render");
@@ -1640,7 +1632,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
-    private void resize(int width, int height)
+    public void resize(int width, int height)
     {
         this.displayWidth = Math.max(1, width);
         this.displayHeight = Math.max(1, height);

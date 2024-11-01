@@ -52,7 +52,7 @@ import java.io.IOException;
 public class StarX {
     // Client Info
     public static final String NAME = "StarX";
-    public static final String VERSION = "v3.1.0";
+    public static final String VERSION = "NEXT v0.2.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars, BzdHyp";
     public static final Branch BRANCH = Branch.PRIVATE;
@@ -85,7 +85,6 @@ public class StarX {
             RainyAPI.loadAPI();
 
             // ViaMCP init
-            Minecraft.setStage(4);
             if (!RainyAPI.isViaCompatibility) {
                 ViaMCP.create();
                 ViaMCP.INSTANCE.initAsyncSlider();
@@ -93,10 +92,8 @@ public class StarX {
 
             initialize();
 
-            Minecraft.setStage(7);
             DefaultHandler.loadConfigs();
 
-            Minecraft.setStage(8);
             postInitialize();
 
         //    Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + RainyAPI.getRandomTitle());
@@ -114,7 +111,7 @@ public class StarX {
     // Usages
     public static void showMsg(Object msg) {
         if (Minecraft.getMinecraft().thePlayer != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b" + NAME + "§7] §r" + msg));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§7[§b§l" + NAME + "§r§7] §r" + msg));
         }
     }
     public static void showCustomMsg(Object msg) {
@@ -132,7 +129,6 @@ public class StarX {
 
     public static void initialize() {
         try {
-            Minecraft.setStage(5);
             // Minecraft Pre-Initialize
             // Shut the fuck fast render off
             Minecraft.getMinecraft().gameSettings.ofFastRender = false;
@@ -154,7 +150,6 @@ public class StarX {
                 StarXLogger.warn("No JavaFX found in the current java version! Music player is disabled.");
             }
 
-            Minecraft.setStage(6);
             guiTheme = new GuiTheme();
             modernClickGUI = new ModernClickGUI();
             mmtClickGUI = new MMTClickGUI();
@@ -202,10 +197,8 @@ public class StarX {
 
             if (RainyAPI.hasJavaFX) MusicHandler.load();
 
-            Minecraft.setStage(9);
             Hud.initializeModules();
 
-            Minecraft.setStage(10);
             if (!FileUtil.exists("Background" + File.separator)) {
                 FileUtil.createDirectory("Background" + File.separator);
             }
@@ -315,11 +308,13 @@ public class StarX {
             new BASticker(),
             new BPSCounter(),
             new CPSCounter(),
+            new CustomText(),
             new HUD(),
             new Keystrokes(),
             new MusicInfo(),
             new MusicVisualizer(),
             new PotionEffects(),
+            new PVPStats(),
             new Scoreboard(),
             new SessionInfo(),
             new TargetHud(),

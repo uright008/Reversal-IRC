@@ -4,6 +4,7 @@ import cn.stars.starx.StarX;
 import cn.stars.starx.ui.theme.Theme;
 import cn.stars.starx.util.animation.simple.SimpleAnimation;
 import cn.stars.starx.util.math.MathUtil;
+import cn.stars.starx.util.misc.ModuleInstance;
 import com.ibm.icu.text.NumberFormat;
 import lombok.experimental.UtilityClass;
 import org.lwjgl.opengl.GL11;
@@ -32,6 +33,10 @@ public final class ColorUtil {
         GL11.glColor4f(r, g, b, a);
     }
 
+    public static int hexColor(int red, int green, int blue, int alpha) {
+        return alpha << 24 | red << 16 | green << 8 | blue;
+    }
+
     public static int reAlpha(int color, float alpha) {
         Color c = new Color(color);
         float r = 0.003921569f * (float)c.getRed();
@@ -42,6 +47,14 @@ public final class ColorUtil {
 
     public static Color withAlpha(final Color color, final int alpha) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) MathUtil.clamp(0, 255, alpha));
+    }
+
+    public static Color empathyGlowColor() {
+        return ModuleInstance.getBool("ClientSettings", "Empathy Glow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.ARRAYLIST) : Color.BLACK;
+    }
+
+    public static Color empathyColor() {
+        return new Color(20, 20, 20, 200);
     }
 
     private final Pattern COLOR_PATTERN = Pattern.compile("(?i)§[0-9A-FK-OR]");

@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import cn.stars.starx.ui.splash.SplashScreen;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -225,9 +226,11 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
         this.vertexBufferFormat = new VertexFormat();
         this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
-        this.generateStars();
-        this.generateSky();
-        this.generateSky2();
+        synchronized (SplashScreen.renderLock) {
+            this.generateStars();
+            this.generateSky();
+            this.generateSky2();
+        }
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager)
@@ -558,9 +561,11 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 this.renderChunkFactory = new VboChunkFactory();
             }
 
-            this.generateStars();
-            this.generateSky();
-            this.generateSky2();
+            synchronized (SplashScreen.renderLock) {
+                this.generateStars();
+                this.generateSky();
+                this.generateSky2();
+            }
 
             if (this.viewFrustum != null)
             {

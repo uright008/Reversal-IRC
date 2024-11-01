@@ -71,7 +71,7 @@ public class S0CPacketSpawnPlayer implements Packet<INetHandlerPlayClient>
 
     public void processPacket(INetHandlerPlayClient handler)
     {
-        if (handler != null) handler.handleSpawnPlayer(this);
+        handler.handleSpawnPlayer(this);
     }
 
     public List<DataWatcher.WatchableObject> func_148944_c()

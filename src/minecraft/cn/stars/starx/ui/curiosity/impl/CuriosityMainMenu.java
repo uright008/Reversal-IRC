@@ -178,6 +178,13 @@ public class CuriosityMainMenu extends GuiScreen implements GameInstance {
         textAnimation = new Animation(Easing.EASE_OUT_EXPO, 1000);
 
         updateLog.clear();
+        updateLog.add("[+] EMPATHY Theme fully impl");
+        updateLog.add("[+] PVPStats");
+        updateLog.add("[*] Fix AutoGG spamming");
+        updateLog.add("[*] Fix client lagging on enabling PostProcessing");
+        updateLog.add("[+] Animations scale editing && better xyz editing");
+        updateLog.add("[+] Hotbar");
+        updateLog.add("[/] Improve Minecraft code, better performance");
 
 
         // 定义按钮

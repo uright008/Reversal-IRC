@@ -11,7 +11,6 @@ public class SkinLayers3D extends Module {
 
     @Override
     public void onUpdateAlways() {
-        if (!isEnabled()) toggleModule();
      }
 
     private final NumberValue baseVoxelSize = new NumberValue("Voxel Size", this, 1.15, 1.01, 1.4, 0.01);

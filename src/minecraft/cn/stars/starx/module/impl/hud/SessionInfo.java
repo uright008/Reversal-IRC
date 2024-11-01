@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @ModuleInfo(name = "SessionInfo", chineseName = "游戏数据", description = "Show your game stats",
         chineseDescription = "显示你的游戏数据", category = Category.HUD)
 public class SessionInfo extends Module {
-    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Modern", "ThunderHack");
+    private final ModeValue mode = new ModeValue("Mode", this, "Simple", "Simple", "Modern", "ThunderHack", "Empathy");
     private final BoolValue rainbow = new BoolValue("Rainbow", this, false);
     private final TimeUtil timer = new TimeUtil();
     int second = 0;
@@ -60,6 +60,9 @@ public class SessionInfo extends Module {
                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 3000, Color.WHITE, Color.BLACK, true));
         } else if (mode.getMode().equals("Simple")) {
             RenderUtil.rect(x - 2, y - 4, 148, 64, Color.BLACK);
+        } else if (mode.getMode().equals("Empathy")) {
+            RenderUtil.roundedRectangle(x - 4, y - 4, 150, 64, 3f, ColorUtil.empathyGlowColor());
+            RenderUtil.roundedRectangle(x - 4.5, y - 1.5, 1.5, psb.height() - 2.5, 3f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
         }
     }
 
@@ -89,6 +92,9 @@ public class SessionInfo extends Module {
             RoundedUtil.drawRound(x - 3, y - 5, 150, 66, 4, new Color(0, 0, 0, 220));
         } else if (mode.getMode().equals("Simple")) {
             RenderUtil.rect(x - 2, y - 4, 148, 64, new Color(0, 0, 0, 80));
+        } else if (mode.getMode().equals("Empathy")) {
+            RenderUtil.roundedRectangle(x - 4, y - 4, 150, 64, 3f, ColorUtil.empathyColor());
+            RenderUtil.roundedRectangle(x - 4.5, y - 1.5, 1.5, psb.height() - 2.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
         }
 
         // 顶部

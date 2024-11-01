@@ -77,8 +77,7 @@ public class Hud implements GameInstance {
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
 
         final double x = bpsCounter.getX(), y = bpsCounter.getY() + 15;
-        final String bps = "BPS: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
-        final String bps2 = "Speed: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
+        final String bps = "Speed: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
         switch (mode) {
             case "Minecraft": {
                 Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
@@ -86,20 +85,26 @@ public class Hud implements GameInstance {
             }
 
             case "StarX": {
-                gs.drawStringWithShadow(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                gs.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 gs.drawStringWithShadow("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ,1),(float) x, (float) y - 10f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
             case "Modern": {
-                psm16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                psm16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 break;
             }
 
             case "Simple": {
-                regular16.drawString(bps2, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                regular16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
                 regular16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
+                break;
+            }
+
+            case "Empathy": {
+                regular16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
+                regular16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
                 break;
             }
 
@@ -168,7 +173,7 @@ public class Hud implements GameInstance {
 
         for (final Object n : modules) {
 
-            float posOnArraylist = offset + moduleCount * 10.8f;
+            float posOnArraylist = offset + moduleCount * 10.8f * (mode.equals("Empathy") ? 1.25f : 1f);
 
             assert n instanceof Module;
             final String name = mode.equals("Simple") && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) n).getModuleInfo().chineseName().isEmpty() ? ((Module) n).getModuleInfo().chineseName() : ((Module) n).getModuleInfo().name();
@@ -225,30 +230,30 @@ public class Hud implements GameInstance {
                     final int offsetY = 2;
                     final int offsetX = 1;
 
-                    final double stringWidth = regular16.getWidth(name);
+                    final double nameWidth = regular16.getWidth(name);
 
-                    RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, new Color(20,20,20,200));
-                    RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 - 2, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(moduleCount, ThemeType.ARRAYLIST));
+                    RenderUtil.roundedRectangle(renderX - offsetX - 15.5, renderY - offsetY + 0.5, nameWidth + offsetX * 1.5 + 2, 9.15 + offsetY, 2f, ColorUtil.empathyColor());
+                //    RenderUtil.rect(renderX - offsetX + nameWidth + offsetX * 1.5 - 2, renderY - offsetY - 1, 1, (8.8 + offsetY) * 1.3, ThemeUtil.getThemeColor(moduleCount, ThemeType.ARRAYLIST));
 
                     finalX = arraylistX - regular16.getWidth(name);
 
                     regular16.drawString(name, renderX - 15, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
 
-                    RenderUtil.roundedRectangle(renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, new Color(20,20,20,200));
-                    FontManager.getMi(16).drawString("j", renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 12, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
+                    RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, ColorUtil.empathyColor());
+                    FontManager.getMi(16).drawString("j", renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 12, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
 
-                    final int mC = moduleCount;
                     if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, Color.BLACK);
-                            RenderUtil.roundedRectangle(renderX - offsetX + stringWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, new Color(20,20,20,200));
-                            RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 - 2, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
+                            RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, nameWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, ColorUtil.empathyGlowColor());
+                            RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, ColorUtil.empathyGlowColor());
+                        //    RenderUtil.rect(renderX - offsetX + nameWidth + offsetX * 1.5 - 2, renderY - offsetY - 1, 1, (8.8 + offsetY) * 1.3, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
                         });
                     }
 
                     if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
-                            RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
+                            RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, nameWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, Color.BLACK);
+                            RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, Color.BLACK);
                         });
 
                     }
@@ -260,7 +265,7 @@ public class Hud implements GameInstance {
                     final int offsetX = 1;
 
                     final double stringWidth = gs.getWidth(name);
-                    posOnArraylist = offset + moduleCount * (gs.getHeight() + 1.3f);
+                    posOnArraylist = offset + moduleCount * (gs.getHeight() + 1.25f);
 
                     RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5, gs.getHeight() + offsetY - 0.7, new Color(0, 0, 0, 60));
                     RenderUtil.roundedRect(renderX + stringWidth, renderY - offsetY + 0.5, 2, gs.getHeight() + offsetY - 0.6, 2.5, ColorUtil.liveColorBrighter(new Color(0,255,255), 1f));
@@ -358,7 +363,7 @@ public class Hud implements GameInstance {
 
         }
 
-        arraylist.setHeight(moduleCount * 12);
+        arraylist.setHeight((int)(moduleCount * 12 * (mode.equals("Empathy") ? 1.25 : 1)));
 
         // Resetting timer
         if (timer2.hasReached(1000 / 100)) {
@@ -542,7 +547,8 @@ public class Hud implements GameInstance {
 
                     if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, ColorUtil.empathyGlowColor());
+                            RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 
@@ -560,7 +566,7 @@ public class Hud implements GameInstance {
                     int y = textGui.getY();
                     float off = 0;
 
-                    RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, new Color(20, 20, 20, 200));
+                    RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, ColorUtil.empathyColor());
                     RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
 
                     for (int i = 0; i < clientName.length(); i++) {
@@ -577,7 +583,8 @@ public class Hud implements GameInstance {
 
                     if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, Color.BLACK);
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, ColorUtil.empathyGlowColor());
+                            RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 

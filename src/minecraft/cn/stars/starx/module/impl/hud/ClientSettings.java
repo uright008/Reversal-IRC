@@ -29,6 +29,7 @@ public final class ClientSettings extends Module {
     private final BoolValue enableNoti = new BoolValue("Show Notifications", this, false);
     private final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
     private final BoolValue thunderHack = new BoolValue("ThunderHack", this, true);
+    private final BoolValue empathyGlow = new BoolValue("Empathy Glow", this, true);
 
     public static String theme;
 
@@ -53,6 +54,8 @@ public final class ClientSettings extends Module {
         green1 = (int) green2.getValue();
         blue1 = (int) blue2.getValue();
 
+        thunderHack.hidden = !mode.getMode().equals("Modern");
+        empathyGlow.hidden = !mode.getMode().equals("Empathy");
 
         if (!isEnabled()) toggleModule();
 

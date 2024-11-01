@@ -2,6 +2,8 @@ package net.optifine;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.stars.starx.ui.splash.SplashScreen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLeaf;
 import net.minecraft.block.BlockOldLeaf;

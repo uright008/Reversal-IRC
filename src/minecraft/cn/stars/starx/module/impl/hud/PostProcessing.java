@@ -30,6 +30,14 @@ public class PostProcessing extends Module
         setCanBeEdited(false);
     }
 
+    @Override
+    public void onUpdateAlways() {
+        if (!this.isEnabled()) {
+            MODERN_BLOOM_RUNNABLES.clear();
+            MODERN_BLUR_RUNNABLES.clear();
+        }
+    }
+
     public void blurScreen() {
         if (!this.isEnabled()) return;
         if (!RainyAPI.canDrawHUD()) return;
