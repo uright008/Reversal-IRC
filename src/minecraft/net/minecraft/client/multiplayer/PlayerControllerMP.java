@@ -1,6 +1,6 @@
 package net.minecraft.client.multiplayer;
 
-import cn.stars.starx.event.impl.BlockBreakEvent;
+import cn.stars.reversal.event.impl.BlockBreakEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

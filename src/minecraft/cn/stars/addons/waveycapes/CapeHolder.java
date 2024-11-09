@@ -1,7 +1,7 @@
 package cn.stars.addons.waveycapes;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.setting.impl.NumberValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
@@ -44,7 +44,7 @@ public interface CapeHolder
         float n = abstractClientPlayer.prevRenderYawOffset + abstractClientPlayer.renderYawOffset - abstractClientPlayer.prevRenderYawOffset;
         double o = Math.sin(n * 0.017453292f);
         double p = -Math.cos(n * 0.017453292f);
-        float heightMul = (float) ((NumberValue) StarX.moduleManager.getSetting("WaveyCapes", "Height Multiplier")).getValue();
+        float heightMul = (float) ((NumberValue) Reversal.moduleManager.getSetting("WaveyCapes", "Height Multiplier")).getValue();
         double fallHack = MathHelper.clamp_double(simulation.points.get(0).position.y - abstractClientPlayer.posY * heightMul, 0.0, 1.0);
         StickSimulation.Vector2 position = simulation.points.get(0).position;
         position.x += (float) (d * o + m * p + fallHack);

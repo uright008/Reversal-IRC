@@ -1,12 +1,12 @@
 package net.minecraft.client.entity;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.event.impl.MoveEvent;
-import cn.stars.starx.event.impl.PostMotionEvent;
-import cn.stars.starx.event.impl.PreMotionEvent;
-import cn.stars.starx.event.impl.UpdateEvent;
-import cn.stars.starx.module.impl.movement.Sprint;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.event.impl.MoveEvent;
+import cn.stars.reversal.event.impl.PostMotionEvent;
+import cn.stars.reversal.event.impl.PreMotionEvent;
+import cn.stars.reversal.event.impl.UpdateEvent;
+import cn.stars.reversal.module.impl.movement.Sprint;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -241,7 +241,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     public void sendChatMessage(String message)
     {
-        if (StarX.onSendChatMessage(message)) this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
+        if (Reversal.onSendChatMessage(message)) this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
     }
 
     public void swingItem()

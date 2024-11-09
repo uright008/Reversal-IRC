@@ -1,8 +1,7 @@
 package net.minecraft.client.renderer;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.module.impl.render.Animations;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.render.Animations;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

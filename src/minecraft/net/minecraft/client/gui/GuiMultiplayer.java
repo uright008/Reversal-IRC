@@ -1,11 +1,11 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RoundedUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -13,7 +13,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-import de.florianmichael.viamcp.ViaMCP;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
@@ -25,8 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import static cn.stars.starx.GameInstance.*;
-import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
+import static cn.stars.reversal.GameInstance.*;
+import static cn.stars.reversal.GameInstance.UI_BLOOM_RUNNABLES;
 
 public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
 {

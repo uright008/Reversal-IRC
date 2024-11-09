@@ -1,12 +1,9 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

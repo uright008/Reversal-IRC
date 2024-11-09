@@ -1,15 +1,7 @@
-# StarX
-A PVP Client Based on Optifine 1.8.9
-# Hack Visual PVP Client
-This client has no hacked features.Always notice this!
-# Modern Features
-1. Wavey Capes
-2. 3D Skin Layers
-3. No Click Delay
-4. Client Spoofer
-5. Wings
-6. Chunk Animator
-# Optimzed Gaming
-1. Optifine
-2. ServerListBufferFixer
-3. Scoreboard Fix
+# Reversal
+A Modern PVP Client Based on Minecraft 1.8.9, Made by Stars.  
+Imagine a PVP Client with HACK visual?
+# Build
+本代码暂未配置任何构建工具。请自行配置Gradle/Maven。  
+library: 原版依赖  
+addits: 客户端依赖

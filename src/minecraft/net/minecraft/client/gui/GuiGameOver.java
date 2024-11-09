@@ -3,17 +3,17 @@ package net.minecraft.client.gui;
 import java.awt.*;
 import java.io.IOException;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.font.FontManager;
-import cn.stars.starx.util.Transformer;
-import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.util.render.UIUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.font.FontManager;
+import cn.stars.reversal.util.Transformer;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.util.render.UIUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 
-import static cn.stars.starx.GameInstance.*;
+import static cn.stars.reversal.GameInstance.*;
 
 public class GuiGameOver extends GuiScreen implements GuiYesNoCallback
 {

@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.util.animation.SmoothScrolling;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.animation.SmoothScrolling;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

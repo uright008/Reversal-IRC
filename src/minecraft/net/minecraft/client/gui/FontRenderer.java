@@ -1,10 +1,10 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.module.impl.render.BetterFont;
-import cn.stars.starx.util.Transformer;
-import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.ColorUtil;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.module.impl.render.BetterFont;
+import cn.stars.reversal.util.Transformer;
+import cn.stars.reversal.util.misc.ModuleInstance;
+import cn.stars.reversal.util.render.ColorUtil;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -831,7 +831,11 @@ public class FontRenderer implements IResourceManagerReloadListener
 
     public List<String> listFormattedStringToWidth(String str, int wrapWidth)
     {
-        return Arrays.<String>asList(this.wrapFormattedStringToWidth(str, wrapWidth).split("\n"));
+        try {
+            return Arrays.asList(this.wrapFormattedStringToWidth(str, wrapWidth).split("\n"));
+        } catch (StackOverflowError e) {
+            return Arrays.asList(str.split("\n"));
+        }
     }
 
     String wrapFormattedStringToWidth(String str, int wrapWidth)

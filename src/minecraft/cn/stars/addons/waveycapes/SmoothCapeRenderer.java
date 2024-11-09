@@ -1,7 +1,7 @@
 package cn.stars.addons.waveycapes;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.setting.impl.ModeValue;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.setting.impl.ModeValue;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -39,7 +39,7 @@ public class SmoothCapeRenderer
     }
 
     void modifyPoseStack(final CustomCapeRenderLayer layer, final PoseStack poseStack, final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
-        if (((ModeValue) StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue) Reversal.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             this.modifyPoseStackSimulation(layer, poseStack, abstractClientPlayer, h, part);
             return;
         }

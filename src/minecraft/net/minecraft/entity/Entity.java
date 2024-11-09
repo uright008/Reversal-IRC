@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import cn.stars.addons.optimization.entityculling.Cullable;
 import cn.stars.addons.optimization.entityculling.EntityCullingModBase;
 import cn.stars.addons.optimization.normal.PooledMutableBlockPos;
-import cn.stars.starx.event.impl.StrafeEvent;
+import cn.stars.reversal.event.impl.StrafeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;

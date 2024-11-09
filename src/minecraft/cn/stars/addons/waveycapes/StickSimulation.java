@@ -1,8 +1,7 @@
 package cn.stars.addons.waveycapes;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.setting.impl.ModeValue;
-import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.setting.impl.NumberValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class StickSimulation
     }
 
     public void simulate() {
-        this.gravity = (float) ((NumberValue) StarX.moduleManager.getSetting("WaveyCapes", "Gravity")).getValue();
+        this.gravity = (float) ((NumberValue) Reversal.moduleManager.getSetting("WaveyCapes", "Gravity")).getValue();
         final float deltaTime = 0.05f;
         final Vector2 down = new Vector2(0.0f, this.gravity * deltaTime);
         final Vector2 tmp = new Vector2(0.0f, 0.0f);

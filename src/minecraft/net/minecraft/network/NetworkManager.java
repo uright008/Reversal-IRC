@@ -1,7 +1,7 @@
 package net.minecraft.network;
 
-import cn.stars.starx.event.impl.PacketReceiveEvent;
-import cn.stars.starx.event.impl.PacketSendEvent;
+import cn.stars.reversal.event.impl.PacketReceiveEvent;
+import cn.stars.reversal.event.impl.PacketSendEvent;
 import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.viaversion.viaversion.api.connection.UserConnection;

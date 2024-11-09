@@ -4,7 +4,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Set;
 
-import cn.stars.starx.util.StarXLogger;
+import cn.stars.reversal.util.ReversalLogger;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
 import com.logisticscraft.occlusionculling.util.Vec3d;
 import net.minecraft.client.Minecraft;
@@ -38,7 +38,7 @@ public class CullTask implements Runnable {
 
     @Override
     public void run() {
-        StarXLogger.info("[*] Culling task is running!");
+        ReversalLogger.info("[*] Culling task is running!");
         while (client != null) { // not correct, but the running field is hidden
             try {
                 Thread.sleep(sleepDelay);
@@ -120,7 +120,7 @@ public class CullTask implements Runnable {
                 e.printStackTrace();
             }
         }
-        StarXLogger.info("[*] Shutting down culling task!");
+        ReversalLogger.info("[*] Shutting down culling task!");
     }
 
     // 1.8 doesnt know where the heck the camera is... what?!?

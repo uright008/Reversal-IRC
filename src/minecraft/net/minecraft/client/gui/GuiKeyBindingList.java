@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import java.awt.*;
 import java.util.Arrays;
 
-import cn.stars.starx.GameInstance;
+import cn.stars.reversal.GameInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;

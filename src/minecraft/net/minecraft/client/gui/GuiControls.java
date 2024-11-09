@@ -3,9 +3,9 @@ package net.minecraft.client.gui;
 import java.awt.*;
 import java.io.IOException;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RoundedUtil;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;

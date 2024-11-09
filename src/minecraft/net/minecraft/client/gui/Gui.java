@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.util.render.GlUtils;
-import cn.stars.starx.util.render.RenderUtil;
+import cn.stars.reversal.util.render.GlUtils;
+import cn.stars.reversal.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

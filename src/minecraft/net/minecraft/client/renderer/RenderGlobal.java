@@ -1,6 +1,6 @@
 package net.minecraft.client.renderer;
 
-import cn.stars.starx.ui.splash.SplashScreen;
+import cn.stars.reversal.ui.splash.SplashScreen;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

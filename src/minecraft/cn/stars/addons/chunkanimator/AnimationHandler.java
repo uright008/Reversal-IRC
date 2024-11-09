@@ -3,8 +3,8 @@ package cn.stars.addons.chunkanimator;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.setting.impl.NumberValue;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.setting.impl.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -24,7 +24,7 @@ public class AnimationHandler {
         if (timeStamps.containsKey(renderChunk)) {
             AnimationData animationData = timeStamps.get(renderChunk);
             long time = animationData.timeStamp;
-            int mode = (int)((NumberValue)Objects.requireNonNull(StarX.moduleManager.getSetting("ChunkAnimator", "Type"))).getValue();
+            int mode = (int)((NumberValue)Objects.requireNonNull(Reversal.moduleManager.getSetting("ChunkAnimator", "Type"))).getValue();
 
 //            System.out.println(mode);
             if (time == -1L) {
@@ -124,7 +124,7 @@ public class AnimationHandler {
             if (flag) {
                 EnumFacing chunkFacing = null;
 
-                if ((int)((NumberValue)Objects.requireNonNull(StarX.moduleManager.getSetting("ChunkAnimator", "Type"))).getValue() == 3) {
+                if ((int)((NumberValue)Objects.requireNonNull(Reversal.moduleManager.getSetting("ChunkAnimator", "Type"))).getValue() == 3) {
                     Vec3i dif = zeroedPlayerPosition.subtract(zeroedCenteredChunkPos);
 
                     int difX = Math.abs(dif.getX());

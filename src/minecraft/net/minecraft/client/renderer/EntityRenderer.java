@@ -1,14 +1,14 @@
 package net.minecraft.client.renderer;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.event.impl.Render3DEvent;
-import cn.stars.starx.module.impl.addons.FreeLook;
-import cn.stars.starx.module.impl.misc.Protocol;
-import cn.stars.starx.module.impl.render.HurtCam;
-import cn.stars.starx.module.impl.world.TimeTraveller;
-import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.particle.ParticleManager;
-import cn.stars.starx.util.wrapper.WrapperFreeLook;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.event.impl.Render3DEvent;
+import cn.stars.reversal.module.impl.addons.FreeLook;
+import cn.stars.reversal.module.impl.misc.Protocol;
+import cn.stars.reversal.module.impl.render.HurtCam;
+import cn.stars.reversal.module.impl.world.TimeTraveller;
+import cn.stars.reversal.util.misc.ModuleInstance;
+import cn.stars.reversal.util.render.particle.ParticleManager;
+import cn.stars.reversal.util.wrapper.WrapperFreeLook;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 

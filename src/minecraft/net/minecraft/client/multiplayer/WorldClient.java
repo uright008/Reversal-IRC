@@ -1,8 +1,8 @@
 package net.minecraft.client.multiplayer;
 
-import cn.stars.starx.module.impl.render.TrueSights;
-import cn.stars.starx.module.impl.world.TimeTraveller;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.render.TrueSights;
+import cn.stars.reversal.module.impl.world.TimeTraveller;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.collect.Sets;
 import java.util.Random;
 import java.util.Set;

@@ -1,7 +1,7 @@
 package net.minecraft.entity;
 
-import cn.stars.starx.module.impl.misc.Protocol;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.misc.Protocol;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;

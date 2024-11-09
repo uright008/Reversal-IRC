@@ -1,12 +1,12 @@
 package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.skinlayers3d.PlayerEntityModelAccessor;
-import cn.stars.starx.module.impl.addons.MoBends;
-import cn.stars.starx.module.impl.addons.SkinLayers3D;
-import cn.stars.starx.module.impl.player.Dinnerbone;
-import cn.stars.starx.module.impl.player.SmallPlayer;
-import cn.stars.starx.module.impl.player.SelfTag;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.addons.MoBends;
+import cn.stars.reversal.module.impl.addons.SkinLayers3D;
+import cn.stars.reversal.module.impl.player.Dinnerbone;
+import cn.stars.reversal.module.impl.player.SmallPlayer;
+import cn.stars.reversal.module.impl.player.SelfTag;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;

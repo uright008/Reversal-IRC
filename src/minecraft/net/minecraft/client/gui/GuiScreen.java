@@ -1,16 +1,16 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.RainyAPI;
-import cn.stars.starx.StarX;
-import cn.stars.starx.ui.notification.NotificationType;
-import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.misc.VideoUtil;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
-import cn.stars.starx.util.shader.base.ShaderToy;
-import cn.stars.starx.util.shader.impl.BackgroundShader;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.RainyAPI;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.ui.notification.NotificationType;
+import cn.stars.reversal.util.ReversalLogger;
+import cn.stars.reversal.util.misc.VideoUtil;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
+import cn.stars.reversal.util.shader.base.ShaderToy;
+import cn.stars.reversal.util.shader.impl.BackgroundShader;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -55,7 +55,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import static cn.stars.starx.GameInstance.*;
+import static cn.stars.reversal.GameInstance.*;
 
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
@@ -591,7 +591,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             try {
                 drawMenuBackground(screenPartialTicks, this.width, this.height);
             } catch (Exception e) {
-                StarXLogger.error("(GuiScreen) Error while loading background");
+                ReversalLogger.error("(GuiScreen) Error while loading background");
             }
         }
     }
@@ -736,7 +736,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             return;
         }
         if (RainyAPI.isShaderCompatibility) {
-            StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
+            ReversalLogger.warn("Detected <DisableShader> option enabled! The option has forced reversal to disable shader backgrounds.");
             RainyAPI.backgroundId = 9;
             return;
         } else {
@@ -780,7 +780,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         RiseShaders.MAIN_MENU_SHADER.setActive(false);
         GL20.glUseProgram(0);
         if (RainyAPI.isShaderCompatibility) {
-            StarXLogger.warn("Detected <DisableShader> option enabled! The option has forced starx to disable shader backgrounds.");
+            ReversalLogger.warn("Detected <DisableShader> option enabled! The option has forced reversal to disable shader backgrounds.");
             RainyAPI.backgroundId = 9;
             return;
         }
@@ -791,8 +791,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             if (RainyAPI.backgroundId > 0) RainyAPI.backgroundId--;
             else RainyAPI.backgroundId = 9;
         }
-        StarX.notificationManager.registerNotification("Background id changed to: " + RainyAPI.backgroundId, "Main Menu", 2000, NotificationType.SUCCESS);
-        StarXLogger.info("(GuiMainMenuNew) Current background id: " + RainyAPI.backgroundId);
+        Reversal.notificationManager.registerNotification("Background id changed to: " + RainyAPI.backgroundId, "Main Menu", 2000, NotificationType.SUCCESS);
+        ReversalLogger.info("(GuiMainMenuNew) Current background id: " + RainyAPI.backgroundId);
     }
 
     public void updatePostProcessing(boolean pre, float partialTicks) {

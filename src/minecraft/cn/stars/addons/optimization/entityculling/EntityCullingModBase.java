@@ -1,16 +1,10 @@
 package cn.stars.addons.optimization.entityculling;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.util.StarXLogger;
+import cn.stars.reversal.util.ReversalLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.logisticscraft.occlusionculling.OcclusionCullingInstance;
@@ -19,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 
 public abstract class EntityCullingModBase {
 
@@ -44,7 +37,7 @@ public abstract class EntityCullingModBase {
     //public int skippedEntityTicks = 0;
 
     public void onInitialize() {
-        StarXLogger.info("[*] Initializing Entity Culling!");
+        ReversalLogger.info("[*] Initializing Entity Culling!");
         instance = this;
         culling = new OcclusionCullingInstance(128, new Provider());
         cullTask = new CullTask(culling, new HashSet<>(Collections.singletonList("tile.beacon")));

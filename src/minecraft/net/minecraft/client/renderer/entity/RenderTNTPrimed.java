@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
-import cn.stars.starx.module.impl.render.TNTTimer;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.render.TNTTimer;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;

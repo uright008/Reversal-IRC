@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity.layers;
 
-import cn.stars.starx.module.impl.addons.WaveyCapes;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.addons.WaveyCapes;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;

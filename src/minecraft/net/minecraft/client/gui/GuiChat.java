@@ -1,14 +1,14 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.StarX;
-import cn.stars.starx.font.FontManager;
-import cn.stars.starx.font.MFont;
-import cn.stars.starx.module.Category;
-import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.hud.TargetHud;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
-import cn.stars.starx.util.shader.round.RoundedUtils;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.font.FontManager;
+import cn.stars.reversal.font.MFont;
+import cn.stars.reversal.module.Category;
+import cn.stars.reversal.module.Module;
+import cn.stars.reversal.module.impl.hud.TargetHud;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RenderUtils;
+import cn.stars.reversal.util.shader.round.RoundedUtils;
 import com.google.common.collect.Lists;
 
 import java.awt.*;
@@ -64,7 +64,7 @@ public class GuiChat extends GuiScreen
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-        for(Module m : StarX.moduleManager.moduleList){
+        for(Module m : Reversal.moduleManager.moduleList){
             m.setDragging(false);
         }
     }
@@ -72,7 +72,7 @@ public class GuiChat extends GuiScreen
     public void onGuiClosed()
     {
         TargetHud.target = null;
-        for(Module m : StarX.moduleManager.moduleList){
+        for(Module m : Reversal.moduleManager.moduleList){
             m.setDragging(false);
         }
         Keyboard.enableRepeatEvents(false);
@@ -174,11 +174,11 @@ public class GuiChat extends GuiScreen
                 return;
             }
         }
-        for(Module m : StarX.moduleManager.moduleList) {
+        for(Module m : Reversal.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(Reversal.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
 
                 if(isInside) {
                     m.setDragging(true);
@@ -304,11 +304,11 @@ public class GuiChat extends GuiScreen
         {
             this.handleComponentHover(ichatcomponent, mouseX, mouseY);
         }
-        for(Module m : StarX.moduleManager.moduleList) {
+        for(Module m : Reversal.moduleManager.moduleList) {
             if(m.isEnabled() && m.getModuleInfo().category().equals(Category.HUD) && m.isCanBeEdited()) {
 
                 boolean isInside = RenderUtils.isInside(mouseX, mouseY, m.getX(), m.getY(), m.getWidth(), m.getHeight()) &&
-                        Arrays.stream(StarX.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
+                        Arrays.stream(Reversal.moduleManager.moduleList).filter(m2 -> m2.isEnabled() && m2.getModuleInfo().category().equals(Category.HUD) && mouseX >= m2.getX() && mouseX <= m2.getX() + m2.getWidth() && mouseY >= m2.getY() && mouseY <= m2.getY() + m2.getHeight()).findFirst().get().equals(m);
                 m.editOpacityAnimation.setAnimation(isInside ?  255 : 0, 10);
 
                 RoundedUtils.drawRoundOutline(m.getX() - 4, m.getY() - 4, (m.getWidth()) + 8, (m.getHeight()) + 8, 6, 1, new Color(255, 255, 255, 0), new Color(255, 255, 255, (int) m.editOpacityAnimation.getValue()));

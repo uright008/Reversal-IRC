@@ -1,6 +1,5 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.util.render.RenderUtil;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import net.minecraft.client.renderer.GlStateManager;

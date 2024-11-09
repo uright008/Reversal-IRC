@@ -234,7 +234,7 @@ public class MMDModelOpenGL implements IMMDModel
             }
 
             if (mats[materialID].tex == 0)
-                Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("starx/images/white.png"));
+                Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("reversal/images/white.png"));
             else
                 GlStateManager.bindTexture(mats[materialID].tex);
             long startPos = nf.GetSubMeshBeginIndex(model, i) * indexElementSize;

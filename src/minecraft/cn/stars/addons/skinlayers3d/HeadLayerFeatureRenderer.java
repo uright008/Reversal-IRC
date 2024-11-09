@@ -1,6 +1,6 @@
 package cn.stars.addons.skinlayers3d;
 
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.entity.*;
 import java.util.*;

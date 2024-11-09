@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RoundedUtil;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

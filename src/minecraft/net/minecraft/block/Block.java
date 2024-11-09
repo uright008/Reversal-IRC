@@ -3,7 +3,7 @@ package net.minecraft.block;
 import java.util.List;
 import java.util.Random;
 
-import cn.stars.starx.event.impl.BlockCollideEvent;
+import cn.stars.reversal.event.impl.BlockCollideEvent;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;

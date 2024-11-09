@@ -1,8 +1,7 @@
 package net.minecraft.client.network;
 
-import cn.stars.starx.event.impl.TeleportEvent;
-import cn.stars.starx.ui.gui.GuiMainMenu;
-import cn.stars.starx.util.Transformer;
+import cn.stars.reversal.event.impl.TeleportEvent;
+import cn.stars.reversal.ui.gui.GuiMainMenu;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;

@@ -1,6 +1,6 @@
 package cn.stars.addons.optimization.entityculling;
 
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.misc.ModuleInstance;
 
 public class EntityCullingMod extends EntityCullingModBase {
 

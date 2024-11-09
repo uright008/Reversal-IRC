@@ -1,12 +1,12 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.event.impl.PreBlurEvent;
-import cn.stars.starx.event.impl.Render2DEvent;
-import cn.stars.starx.module.impl.hud.PostProcessing;
-import cn.stars.starx.module.impl.render.Crosshair;
-import cn.stars.starx.ui.hud.Hud;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.event.impl.PreBlurEvent;
+import cn.stars.reversal.event.impl.Render2DEvent;
+import cn.stars.reversal.module.impl.hud.PostProcessing;
+import cn.stars.reversal.module.impl.render.Crosshair;
+import cn.stars.reversal.ui.hud.Hud;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -16,7 +16,6 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -309,7 +308,7 @@ public class GuiIngame extends Gui {
         {
             this.renderScoreboard(scoreobjective1, scaledresolution);
         } else {
-            cn.stars.starx.module.impl.hud.Scoreboard scoreboardModule = (cn.stars.starx.module.impl.hud.Scoreboard) ModuleInstance.getModule(cn.stars.starx.module.impl.hud.Scoreboard.class);
+            cn.stars.reversal.module.impl.hud.Scoreboard scoreboardModule = (cn.stars.reversal.module.impl.hud.Scoreboard) ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class);
             scoreboardModule.setWidth(0);
             scoreboardModule.setHeight(0);
         }

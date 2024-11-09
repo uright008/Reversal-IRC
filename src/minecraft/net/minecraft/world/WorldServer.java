@@ -1,6 +1,6 @@
 package net.minecraft.world;
 
-import cn.stars.starx.StarX;
+import cn.stars.reversal.Reversal;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -212,7 +212,7 @@ public class WorldServer extends World implements IThreadListener
         this.theProfiler.endSection();
         this.sendQueuedBlockEvents();
 
-        if (StarX.entityCullingMod != null) StarX.entityCullingMod.doWorldTick();
+        if (Reversal.entityCullingMod != null) Reversal.entityCullingMod.doWorldTick();
     }
 
     public BiomeGenBase.SpawnListEntry getSpawnListEntryForTypeAt(EnumCreatureType creatureType, BlockPos pos)

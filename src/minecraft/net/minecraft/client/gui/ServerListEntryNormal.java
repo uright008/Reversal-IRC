@@ -1,6 +1,6 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
+import cn.stars.reversal.GameInstance;
 import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.buffer.ByteBuf;

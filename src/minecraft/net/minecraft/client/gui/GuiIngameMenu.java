@@ -2,10 +2,9 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cn.stars.starx.util.Transformer;
+import cn.stars.reversal.util.Transformer;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.I18n;
 
 public class GuiIngameMenu extends GuiScreen

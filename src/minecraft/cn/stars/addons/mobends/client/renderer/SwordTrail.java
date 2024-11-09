@@ -9,7 +9,7 @@ import java.util.*;
 import cn.stars.addons.mobends.client.model.ModelRendererBends;
 import cn.stars.addons.mobends.client.model.entity.ModelBendsPlayer;
 import cn.stars.addons.mobends.util.GUtil;
-import cn.stars.starx.module.impl.addons.MoBends;
+import cn.stars.reversal.module.impl.addons.MoBends;
 import net.minecraft.client.*;
 import org.lwjgl.opengl.*;
 import net.minecraft.client.model.*;

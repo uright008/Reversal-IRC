@@ -1,6 +1,5 @@
 package com.kAIS.KAIMyEntity.renderer;
 
-import cn.stars.starx.StarX;
 import com.kAIS.KAIMyEntity.NativeFunc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

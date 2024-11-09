@@ -1,13 +1,12 @@
 package cn.stars.addons.waveycapes;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.StarX;
-import cn.stars.starx.module.Module;
-import cn.stars.starx.module.impl.addons.MoBends;
-import cn.stars.starx.module.impl.addons.WaveyCapes;
-import cn.stars.starx.setting.impl.BoolValue;
-import cn.stars.starx.setting.impl.ModeValue;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.module.Module;
+import cn.stars.reversal.module.impl.addons.WaveyCapes;
+import cn.stars.reversal.setting.impl.BoolValue;
+import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -44,11 +43,11 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
         if (waveyCapes == null || !waveyCapes.isEnabled() || abstractClientPlayer.isInvisible() || !abstractClientPlayer.hasPlayerInfo() || !abstractClientPlayer.isWearing(EnumPlayerModelParts.CAPE) || abstractClientPlayer.getLocationCape() == null) {
             return;
         }
-        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue) Reversal.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             abstractClientPlayer.updateSimulation(abstractClientPlayer, 16);
         }
         this.playerRenderer.bindTexture(abstractClientPlayer.getLocationCape());
-        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Style")).getMode().equals("Smooth")) {
+        if (((ModeValue) Reversal.moduleManager.getSetting("WaveyCapes", "Cape Style")).getMode().equals("Smooth")) {
             this.smoothCapeRenderer.renderSmoothCape(this, abstractClientPlayer, deltaTick);
         } else {
             final ModelRenderer[] parts = this.customCape;
@@ -62,7 +61,7 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
     }
 
     private void modifyPoseStack(final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
-        if (((ModeValue)StarX.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
+        if (((ModeValue) Reversal.moduleManager.getSetting("WaveyCapes", "Cape Movement")).getMode().equals("Basic simulation")) {
             this.modifyPoseStackSimulation(abstractClientPlayer, h, part);
             return;
         }
@@ -123,7 +122,7 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
     }
 
     protected float getNaturalWindSwing(final int part) {
-        if (((BoolValue)StarX.moduleManager.getSetting("WaveyCapes", "Wind")).isEnabled()) {
+        if (((BoolValue) Reversal.moduleManager.getSetting("WaveyCapes", "Wind")).isEnabled()) {
             long highlightedPart = System.currentTimeMillis() / 3L % 360L;
             float relativePart = (part + 1) / 16.0f;
             return (float) (Math.sin(Math.toRadians(relativePart * 360.0f - highlightedPart)) * 3.0);

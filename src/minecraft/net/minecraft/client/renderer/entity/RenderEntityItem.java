@@ -2,7 +2,7 @@ package net.minecraft.client.renderer.entity;
 
 import java.util.Random;
 
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

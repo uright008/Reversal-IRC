@@ -1,8 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
 import cn.stars.addons.optimization.entityculling.EntityRendererInter;
-import cn.stars.starx.module.impl.player.SmallPlayer;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.module.impl.player.SmallPlayer;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

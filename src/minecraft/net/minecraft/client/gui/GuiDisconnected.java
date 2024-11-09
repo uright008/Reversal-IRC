@@ -2,21 +2,25 @@ package net.minecraft.client.gui;
 
 import java.awt.*;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.Transformer;
-import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.ui.gui.GuiMainMenu;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RoundedUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.font.FontManager;
+import cn.stars.reversal.util.Transformer;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.ui.gui.GuiMainMenu;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import net.minecraft.client.multiplayer.GuiConnecting;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 
-import static cn.stars.starx.GameInstance.*;
+import static cn.stars.reversal.GameInstance.*;
 
 public class GuiDisconnected extends GuiScreen
 {
@@ -83,28 +87,48 @@ public class GuiDisconnected extends GuiScreen
 
             if (this.multilineMessage != null) {
                 for (String s : this.multilineMessage) {
-                    maxLength = Math.max(maxLength, regular16.width(s));
+                    maxLength = Math.max(maxLength, regular20.width(s));
                 }
             }
 
-            RoundedUtil.drawRound(this.width / 2 - maxLength / 2 - 30, this.height / 2 - this.field_175353_i / 2 - regular16.height() * 2 - 10, maxLength + 60, 100 + 10 * multilineMessage.size(), 4, new Color(30, 30, 30, 160));
-            RenderUtil.rect(this.width / 2 - maxLength / 2 - 30, this.height / 2 - this.field_175353_i / 2 - regular16.height() * 2 + 10, maxLength + 60, 0.5, new Color(220, 220, 220, 240));
+            RoundedUtil.drawRound(width / 2f - 125, 10, 250, 40, 6, new Color(30, 30, 30, 160));
+            RoundedUtil.drawRound(this.width / 2 - maxLength / 2 - 30, this.height / 2 - this.field_175353_i / 2 - regular20.height() * 2 - 10, maxLength + 60, 100 + 10 * multilineMessage.size(), 4, new Color(30, 30, 30, 160));
+            RenderUtil.rect(this.width / 2 - maxLength / 2 - 30, this.height / 2 - this.field_175353_i / 2 - regular20.height() * 2 + 10, maxLength + 60, 0.5, new Color(220, 220, 220, 240));
+
+            float finalMaxLength = maxLength;
+            GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> {
+                RoundedUtil.drawRound(this.width / 2 - finalMaxLength / 2 - 30, this.height / 2 - this.field_175353_i / 2 - regular20.height() * 2 - 10, finalMaxLength + 60, 100 + 10 * multilineMessage.size(), 4, Color.BLACK);
+                RoundedUtil.drawRound(width / 2f - 125, 10, 250, 40, 6, Color.BLACK);
+            });
 
             for (CuriosityTextButton button : buttons) {
                 button.draw(mouseX, mouseY, partialTicks);
             }
 
-            regular24Bold.drawCenteredString(this.reason, this.width / 2, this.height / 2 - this.field_175353_i / 2 - regular16.height() * 2 - 5, new Color(220, 220, 220, 240).getRGB());
+            regular24Bold.drawCenteredString(this.reason, this.width / 2, this.height / 2 - this.field_175353_i / 2 - regular20.height() * 2 - 5, new Color(220, 220, 220, 240).getRGB());
             int i = this.height / 2 - this.field_175353_i / 2;
 
             if (this.multilineMessage != null) {
                 for (String s : this.multilineMessage) {
-                    regular16.drawCenteredString(s, this.width / 2, i, new Color(220, 220, 220, 240).getRGB());
-                    maxLength = Math.max(maxLength, regular16.width(s));
-                    i += regular16.height();
+                    regular20.drawCenteredString(s, this.width / 2, i, new Color(220, 220, 220, 240).getRGB());
+                    maxLength = Math.max(maxLength, regular20.width(s));
+                    i += regular20.height();
                 }
             }
 
+            String ip = "Unknown";
+
+            final ServerData serverData = mc.getCurrentServerData();
+            if(serverData != null)
+                ip = "IP: " + serverData.serverIP;
+
+            FontManager.getSpecialIcon(80).drawString("b", width / 2f - 115, 17, new Color(220, 220, 220, 240).getRGB());
+            GameInstance.regular24Bold.drawString("SERVER INFORMATION", width / 2f - 55, 18, new Color(220, 220, 220, 240).getRGB());
+            GameInstance.regular20.drawString(ip, width / 2f - 55, 34, new Color(220, 220, 220, 240).getRGB());
+
+            regular20.drawString("Open Source PVP Client By Stars.", 4, height - 30, new Color(220, 220, 220, 240).getRGB());
+            regular20.drawString("https://www.github.com/RinoRika/Reversal", 4, height - 20, new Color(220, 220, 220, 240).getRGB());
+            regular20.drawString(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), 4, height - 10, new Color(220, 220, 220, 240).getRGB());
 
             UI_BLOOM_RUNNABLES.forEach(Runnable::run);
             UI_BLOOM_RUNNABLES.clear();

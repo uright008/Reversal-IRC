@@ -2022,22 +2022,22 @@
       }
     ]
   },
-  "starx.click.nc": {
+  "reversal.click.nc": {
     "category": "master",
     "sounds": [
-      "starx/click/nc"
+      "reversal/click/nc"
     ]
   },
-  "starx.click.jc": {
+  "reversal.click.jc": {
     "category": "master",
     "sounds": [
-      "starx/click/jc"
+      "reversal/click/jc"
     ]
   },
-  "starx.click.dbc": {
+  "reversal.click.dbc": {
     "category": "master",
     "sounds": [
-      "starx/click/dbc"
+      "reversal/click/dbc"
     ]
   }
 }

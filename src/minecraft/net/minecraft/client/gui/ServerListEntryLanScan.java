@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 

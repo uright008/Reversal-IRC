@@ -1,7 +1,7 @@
 package net.minecraft.world;
 
 import cn.stars.addons.optimization.normal.FixedEntityLookHelper;
-import cn.stars.starx.util.misc.ModuleInstance;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

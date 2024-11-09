@@ -7,15 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 
-import cn.stars.starx.GameInstance;
-import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RoundedUtil;
-import cn.stars.starx.util.shader.RiseShaders;
-import cn.stars.starx.util.shader.base.ShaderRenderType;
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.WorldSettings;
@@ -28,8 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
-import static cn.stars.starx.GameInstance.*;
-import static cn.stars.starx.GameInstance.UI_BLOOM_RUNNABLES;
+import static cn.stars.reversal.GameInstance.*;
+import static cn.stars.reversal.GameInstance.UI_BLOOM_RUNNABLES;
 
 public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 {

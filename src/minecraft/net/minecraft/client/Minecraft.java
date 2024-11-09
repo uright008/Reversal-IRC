@@ -1,18 +1,16 @@
 package net.minecraft.client;
 
-import cn.stars.starx.RainyAPI;
-import cn.stars.starx.StarX;
-import cn.stars.starx.event.impl.*;
-import cn.stars.starx.ui.notification.NotificationType;
-import cn.stars.starx.ui.splash.SplashScreen;
-import cn.stars.starx.ui.splash.utils.AsyncGLContentLoader;
-import cn.stars.starx.util.StarXLogger;
-import cn.stars.starx.util.Transformer;
-import cn.stars.starx.ui.curiosity.impl.CuriosityMainMenu;
-import cn.stars.starx.util.math.StopWatch;
-import cn.stars.starx.util.misc.ModuleInstance;
-import cn.stars.starx.util.render.RenderUtil;
-import cn.stars.starx.util.render.RenderUtils;
+import cn.stars.reversal.RainyAPI;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.event.impl.*;
+import cn.stars.reversal.ui.notification.NotificationType;
+import cn.stars.reversal.ui.splash.SplashScreen;
+import cn.stars.reversal.util.Transformer;
+import cn.stars.reversal.ui.curiosity.impl.CuriosityMainMenu;
+import cn.stars.reversal.util.math.StopWatch;
+import cn.stars.reversal.util.misc.ModuleInstance;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RenderUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -55,7 +53,7 @@ import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiIngameMenu;
-import cn.stars.starx.ui.gui.GuiMainMenu;
+import cn.stars.reversal.ui.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMemoryErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSleepMP;
@@ -442,8 +440,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             }
         });
         this.mouseHelper = new MouseHelper();
-        SplashScreen.setProgress(40, "StarX - Client Loading");
-        StarX.start();
+        SplashScreen.setProgress(40, "Reversal - Client Loading");
+        Reversal.start();
         SplashScreen.setProgress(75, "Minecraft - GL Startup");
         this.checkGLError("Pre startup");
         GlStateManager.enableTexture2D();
@@ -489,7 +487,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         else
         {
             this.displayGuiScreen(Transformer.transformMainMenu());
-            StarX.notificationManager.registerNotification(StarX.NAME + " " + StarX.VERSION + ", made with love by " + StarX.AUTHOR + ".", "StarX", NotificationType.NOTIFICATION);
+            Reversal.notificationManager.registerNotification(Reversal.NAME + " " + Reversal.VERSION + ", made with love by " + Reversal.AUTHOR + ".", "Reversal", NotificationType.NOTIFICATION);
         }
 
         this.renderEngine.deleteTexture(this.mojangLogo);
@@ -527,7 +525,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void createDisplay() throws LWJGLException {
         Display.setResizable(true);
-        Display.setTitle("StarX is loading...");
+        Display.setTitle("Reversal is loading...");
 
         Display.create((new PixelFormat()).withDepthBits(24));
 
@@ -560,8 +558,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             try
             {
-                inputstream = this.getClass().getResourceAsStream("/assets/minecraft/starx/images/icon_512x512.png");
-                inputstream1 = this.getClass().getResourceAsStream("/assets/minecraft/starx/images/icon_256x256.png");
+                inputstream = this.getClass().getResourceAsStream("/assets/minecraft/reversal/images/icon_512x512.png");
+                inputstream1 = this.getClass().getResourceAsStream("/assets/minecraft/reversal/images/icon_256x256.png");
 
                 if (inputstream != null && inputstream1 != null)
                 {
@@ -606,7 +604,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public String getVersion()
     {
-        return "StarX/mcp";
+        return "Reversal/mcp";
     }
 
     private void startTimerHackThread()
@@ -633,7 +631,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void crashed(CrashReport crash)
     {
-        StarX.stop();
+        Reversal.stop();
         this.hasCrashed = true;
         this.crashReporter = crash;
     }
@@ -1377,7 +1375,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void shutdown()
     {
-        StarX.stop();
+        Reversal.stop();
         this.running = false;
     }
 
@@ -2203,7 +2201,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();
 
-        if (StarX.entityCullingMod != null) StarX.entityCullingMod.doClientTick();
+        if (Reversal.entityCullingMod != null) Reversal.entityCullingMod.doClientTick();
     }
 
     public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn)

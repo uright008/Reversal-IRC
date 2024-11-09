@@ -2,9 +2,9 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cn.stars.starx.ui.curiosity.CuriosityTextButton;
-import cn.stars.starx.ui.gui.GuiStarXSettings;
-import cn.stars.starx.util.render.UIUtil;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.ui.gui.GuiReversalSettings;
+import cn.stars.reversal.util.render.UIUtil;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
@@ -24,7 +24,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     private GuiButton field_175357_i;
     private GuiLockIconButton field_175356_r;
     protected String field_146442_a = "Options";
-    CuriosityTextButton starxSettings;
+    CuriosityTextButton reversalSettings;
 
     public GuiOptions(GuiScreen p_i1046_1_, GameSettings p_i1046_2_)
     {
@@ -34,8 +34,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 
     public void initGui()
     {
-        starxSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiStarXSettings(this)),
-                "StarX设置", "e", true, 12, 40, 11);
+        reversalSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiReversalSettings(this)),
+                "Reversal设置", "e", true, 12, 40, 11);
         int i = 0;
         this.field_146442_a = I18n.format("options.title", new Object[0]);
 
@@ -137,7 +137,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
                 }
             }
         }
-        if (mc.theWorld == null) UIUtil.onButtonClick(new CuriosityTextButton[] {starxSettings}, mouseX, mouseY, mouseButton);
+        if (mc.theWorld == null) UIUtil.onButtonClick(new CuriosityTextButton[] {reversalSettings}, mouseX, mouseY, mouseButton);
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
@@ -229,7 +229,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 
         if (mc.theWorld == null) {
             updatePostProcessing(true, partialTicks);
-            starxSettings.draw(mouseX, mouseY, partialTicks);
+            reversalSettings.draw(mouseX, mouseY, partialTicks);
         }
 
         this.drawCenteredString(this.fontRendererObj, this.field_146442_a, this.width / 2, 15, 16777215);
