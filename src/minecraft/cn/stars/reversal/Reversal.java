@@ -52,7 +52,7 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.5.1";
+    public static final String VERSION = "v0.6.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -102,7 +102,7 @@ public class Reversal {
             ReversalLogger.info("Client loaded successfully.");
             ReversalLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
-            ReversalLogger.error("An error has occurred while loading Reversal: " + e);
+            ReversalLogger.error("An error has occurred while loading Reversal: ", e);
         }
     }
     public static void stop() {
@@ -159,7 +159,7 @@ public class Reversal {
 
         }
         catch (final Exception e) {
-            ReversalLogger.error("An error has occurred while loading Reversal: " + e);
+            ReversalLogger.error("An error has occurred while loading Reversal: ", e);
         }
 
         try {
@@ -181,7 +181,7 @@ public class Reversal {
                 FileUtil.createDirectory("Cache" + File.separator);
             }
         } catch (final Exception e) {
-            ReversalLogger.error("An error has occurred while loading Reversal: " + e);
+            ReversalLogger.error("An error has occurred while loading Reversal: ", e);
         }
     }
 
@@ -194,32 +194,22 @@ public class Reversal {
 
             if (RainyAPI.hasJavaFX) MusicHandler.load();
 
-            Hud.initializeModules();
-
             if (!FileUtil.exists("Background" + File.separator)) {
                 FileUtil.createDirectory("Background" + File.separator);
             }
 
             File tempFile = new File(Minecraft.getMinecraft().mcDataDir, "Reversal/Background");
             File videoFile = new File(tempFile, "background.mp4");
-            if (!(tempFile.exists() && videoFile.exists())) {
+            if (!tempFile.exists()) {
                 tempFile.mkdir();
-                try {
-                    FileUtil.unpackFile(videoFile, "assets/minecraft/reversal/background.mp4");
-                } catch (IOException e) {
-                    ReversalLogger.error("Failed to unpack background file. Are there any Chinese characters in the boot directory?");
-                    throw new RuntimeException(e);
-                }
             }
-            try {
-                VideoUtil.init(videoFile);
-            } catch (IOException e) {
-                ReversalLogger.error("Failed to load background file.");
-                throw new RuntimeException(e);
+            if (!videoFile.exists()) {
+                FileUtil.unpackFile(videoFile, "assets/minecraft/reversal/background.mp4");
             }
 
+            VideoUtil.init(videoFile);
         } catch (final Exception e) {
-            ReversalLogger.error("An error has occurred while loading Reversal: " + e);
+            ReversalLogger.error("An error has occurred while loading Reversal: ", e);
         }
     }
 

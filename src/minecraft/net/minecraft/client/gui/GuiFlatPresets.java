@@ -1,5 +1,8 @@
 package net.minecraft.client.gui;
 
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.music.ui.TextField;
+import cn.stars.reversal.music.ui.ThemeColor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
@@ -30,7 +33,7 @@ public class GuiFlatPresets extends GuiScreen
     private String field_146436_r;
     private GuiFlatPresets.ListSlot field_146435_s;
     private GuiButton field_146434_t;
-    private GuiTextField field_146433_u;
+    private TextField field_146433_u;
 
     public GuiFlatPresets(GuiCreateFlatWorld p_i46318_1_)
     {
@@ -41,12 +44,11 @@ public class GuiFlatPresets extends GuiScreen
     {
         this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
-        this.presetsTitle = I18n.format("createWorld.customize.presets.title", new Object[0]);
-        this.presetsShare = I18n.format("createWorld.customize.presets.share", new Object[0]);
-        this.field_146436_r = I18n.format("createWorld.customize.presets.list", new Object[0]);
-        this.field_146433_u = new GuiTextField(2, this.fontRendererObj, 50, 40, this.width - 100, 20);
+        this.presetsTitle = I18n.format("createWorld.customize.presets.title");
+        this.presetsShare = I18n.format("createWorld.customize.presets.share");
+        this.field_146436_r = I18n.format("createWorld.customize.presets.list");
+        this.field_146433_u = new TextField(this.width - 100, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.field_146435_s = new GuiFlatPresets.ListSlot();
-        this.field_146433_u.setMaxStringLength(1230);
         this.field_146433_u.setText(this.parentScreen.func_146384_e());
         this.buttonList.add(this.field_146434_t = new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, I18n.format("createWorld.customize.presets.select", new Object[0])));
         this.buttonList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, I18n.format("gui.cancel", new Object[0])));
@@ -72,10 +74,7 @@ public class GuiFlatPresets extends GuiScreen
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        if (!this.field_146433_u.textboxKeyTyped(typedChar, keyCode))
-        {
-            super.keyTyped(typedChar, keyCode);
-        }
+        this.field_146433_u.keyTyped(typedChar, keyCode);
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
@@ -98,13 +97,12 @@ public class GuiFlatPresets extends GuiScreen
         this.drawCenteredString(this.fontRendererObj, this.presetsTitle, this.width / 2, 8, 16777215);
         this.drawString(this.fontRendererObj, this.presetsShare, 50, 30, 10526880);
         this.drawString(this.fontRendererObj, this.field_146436_r, 50, 70, 10526880);
-        this.field_146433_u.drawTextBox(mouseX, mouseY);
+        this.field_146433_u.draw(50, 40, mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     public void updateScreen()
     {
-        this.field_146433_u.updateCursorCounter();
         super.updateScreen();
     }
 

@@ -987,7 +987,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         {
             int i = GL11.glGetError();
 
-            if (i != 0 && i != 1286)
+            if (i != 0 && i != 1286 && i != 1281)
             {
                 String s = GLU.gluErrorString(i);
                 logger.error("########## GL ERROR ##########");

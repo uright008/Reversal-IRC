@@ -1,6 +1,10 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
+
+import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.music.ui.TextField;
+import cn.stars.reversal.music.ui.ThemeColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldInfo;
@@ -9,18 +13,13 @@ import org.lwjgl.input.Keyboard;
 public class GuiRenameWorld extends GuiScreen
 {
     private GuiScreen parentScreen;
-    private GuiTextField field_146583_f;
+    private TextField field_146583_f;
     private final String saveName;
 
     public GuiRenameWorld(GuiScreen parentScreenIn, String saveNameIn)
     {
         this.parentScreen = parentScreenIn;
         this.saveName = saveNameIn;
-    }
-
-    public void updateScreen()
-    {
-        this.field_146583_f.updateCursorCounter();
     }
 
     public void initGui()
@@ -32,7 +31,7 @@ public class GuiRenameWorld extends GuiScreen
         ISaveFormat isaveformat = this.mc.getSaveLoader();
         WorldInfo worldinfo = isaveformat.getWorldInfo(this.saveName);
         String s = worldinfo.getWorldName();
-        this.field_146583_f = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 100, 60, 200, 20);
+        this.field_146583_f = new TextField(200, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.field_146583_f.setFocused(true);
         this.field_146583_f.setText(s);
     }
@@ -61,7 +60,7 @@ public class GuiRenameWorld extends GuiScreen
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        this.field_146583_f.textboxKeyTyped(typedChar, keyCode);
+        this.field_146583_f.keyTyped(typedChar, keyCode);
         ((GuiButton)this.buttonList.get(0)).enabled = this.field_146583_f.getText().trim().length() > 0;
 
         if (keyCode == 28 || keyCode == 156)
@@ -76,12 +75,17 @@ public class GuiRenameWorld extends GuiScreen
         this.field_146583_f.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        this.field_146583_f.mouseDragged(mouseX, mouseY, clickedMouseButton);
+    }
+
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, I18n.format("selectWorld.renameTitle", new Object[0]), this.width / 2, 20, 16777215);
         this.drawString(this.fontRendererObj, I18n.format("selectWorld.enterName", new Object[0]), this.width / 2 - 100, 47, 10526880);
-        this.field_146583_f.drawTextBox(mouseX, mouseY);
+        this.field_146583_f.draw(this.width / 2 - 100, 60,mouseX, mouseY);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

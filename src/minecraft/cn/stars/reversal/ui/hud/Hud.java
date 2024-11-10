@@ -33,13 +33,10 @@ public class Hud implements GameInstance {
     public static final KeystrokeUtil left = new KeystrokeUtil();
     public static final KeystrokeUtil right = new KeystrokeUtil();
     public static final KeystrokeUtil space = new KeystrokeUtil();
-    static Keystrokes keystrokes;
-    static BPSCounter bpsCounter;
-    static Arraylist arraylist;
-    static TextGui textGui;
     static ModuleComparator moduleComparator = new ModuleComparator();
 
     public static void renderKeyStrokes() {
+        Keystrokes keystrokes = (Keystrokes) ModuleInstance.getModule(Keystrokes.class);
         if (keystrokes.isEnabled()) {
 
             final int x = keystrokes.getX() + 35;
@@ -71,6 +68,7 @@ public class Hud implements GameInstance {
     }
 
     private static void renderBPS() {
+        BPSCounter bpsCounter = (BPSCounter) ModuleInstance.getModule(BPSCounter.class);;
         if (!bpsCounter.isEnabled()) return;
 
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
@@ -156,6 +154,7 @@ public class Hud implements GameInstance {
     }
 
     private static void renderArrayList() {
+        Arraylist arraylist = (Arraylist) ModuleInstance.getModule(Arraylist.class);
         if (!arraylist.isEnabled()) return;
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
 
@@ -390,6 +389,7 @@ public class Hud implements GameInstance {
     }
     
     private static void renderClientName() {
+        TextGui textGui = (TextGui) ModuleInstance.getModule(TextGui.class);
         if (!textGui.isEnabled()) return;
         final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
         final boolean useDefaultName = !ModuleInstance.getBool("TextGui", "Custom Name").isEnabled();
@@ -683,17 +683,6 @@ public class Hud implements GameInstance {
                 }
                 break;
             }
-        }
-    }
-
-    public static void initializeModules() {
-        try {
-            keystrokes = (Keystrokes) ModuleInstance.getModule(Keystrokes.class);
-            bpsCounter = (BPSCounter) ModuleInstance.getModule(BPSCounter.class);
-            arraylist = (Arraylist) ModuleInstance.getModule(Arraylist.class);
-            textGui = (TextGui) ModuleInstance.getModule(TextGui.class);
-        } catch (NullPointerException e) {
-            ReversalLogger.fatal("Error while initialize modules for HUD.", e);
         }
     }
 

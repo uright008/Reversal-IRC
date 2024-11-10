@@ -289,6 +289,11 @@ public class MusicPlayerScreen extends GuiScreen {
     }
 
     @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        searchField.mouseDragged(mouseX, mouseY, clickedMouseButton);
+    }
+
+    @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         dragging = false;
         if (player.getMusic() != null) {

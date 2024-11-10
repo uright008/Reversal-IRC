@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.IOException;
 
 import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.music.ui.TextField;
+import cn.stars.reversal.music.ui.ThemeColor;
 import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
 import cn.stars.reversal.util.render.RenderUtil;
 import cn.stars.reversal.util.render.RoundedUtil;
@@ -19,7 +21,7 @@ public class GuiScreenServerList extends GuiScreen
 {
     private final GuiScreen field_146303_a;
     private final ServerData field_146301_f;
-    private GuiTextField field_146302_g;
+    private TextField field_146302_g;
     private CuriosityTextButton selectButton, cancelButton;
     private CuriosityTextButton[] buttons;
 
@@ -27,11 +29,6 @@ public class GuiScreenServerList extends GuiScreen
     {
         this.field_146303_a = p_i1031_1_;
         this.field_146301_f = p_i1031_2_;
-    }
-
-    public void updateScreen()
-    {
-        this.field_146302_g.updateCursorCounter();
     }
 
     public void initGui()
@@ -45,8 +42,7 @@ public class GuiScreenServerList extends GuiScreen
             }
         }, "连接服务器", "", true, 1, 75, 5, 20);
         cancelButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 120 + 12, 200, 20, () -> this.field_146303_a.confirmClicked(false, 0), "取消", "", true, 1, 90, 5, 20);
-        this.field_146302_g = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 100, 116, 200, 20);
-        this.field_146302_g.setMaxStringLength(128);
+        this.field_146302_g = new TextField(200, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.field_146302_g.setFocused(true);
         this.field_146302_g.setText(this.mc.gameSettings.lastServer);
         buttons = new CuriosityTextButton[] {selectButton, cancelButton};
@@ -65,7 +61,7 @@ public class GuiScreenServerList extends GuiScreen
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        this.field_146302_g.textboxKeyTyped(typedChar, keyCode);
+        this.field_146302_g.keyTyped(typedChar, keyCode);
         if (keyCode == 28 || keyCode == 156)
         {
             selectButton.runAction();
@@ -85,6 +81,11 @@ public class GuiScreenServerList extends GuiScreen
             }
         }
         this.field_146302_g.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        this.field_146302_g.mouseDragged(mouseX, mouseY, clickedMouseButton);
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
@@ -112,7 +113,7 @@ public class GuiScreenServerList extends GuiScreen
         GameInstance.regular24Bold.drawCenteredString("直接连接", width / 2f, 16, new Color(220, 220, 220, 240).getRGB());
         GameInstance.regular20.drawString("输入服务器IP", this.width / 2 - 100, 105, new Color(220, 220, 220, 240).getRGB());
 
-        this.field_146302_g.drawTextBox(mouseX, mouseY);
+        this.field_146302_g.draw(this.width / 2 - 100, 116, mouseX, mouseY);
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();

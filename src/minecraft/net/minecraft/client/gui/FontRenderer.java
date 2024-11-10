@@ -703,13 +703,16 @@ public class FontRenderer implements IResourceManagerReloadListener
     public String trimStringToWidth(String text, int width)
     {
         if (ModuleInstance.getModule(BetterFont.class).isEnabled()) {
-            return GameInstance.regular20.trimStringToWidth(text, width, true, false);
+            return GameInstance.regular20.trimStringToWidth(text, width, false, false);
         }
         return this.trimStringToWidth(text, width, false);
     }
 
     public String trimStringToWidth(String text, int width, boolean reverse)
     {
+        if (ModuleInstance.getModule(BetterFont.class).isEnabled()) {
+            return GameInstance.regular20.trimStringToWidth(text, width, true, false);
+        }
         StringBuilder stringbuilder = new StringBuilder();
         float f = 0.0F;
         int i = reverse ? text.length() - 1 : 0;

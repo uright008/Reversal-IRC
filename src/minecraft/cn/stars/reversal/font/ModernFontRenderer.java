@@ -340,72 +340,50 @@ public class ModernFontRenderer extends MFont {
         for (int i = 0; i < length; ++i) {
             final char character = text.charAt(i);
 
-            if ((character == 167) && i + 1 < text.length())
-            {
+            if ((character == 167) && i + 1 < text.length()) {
                 int l = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
 
-                if (l < 16)
-                {
-                    if (l < 0)
-                    {
+                if (l < 16) {
+                    if (l < 0) {
                         l = 15;
                     }
 
-                    if (shadow)
-                    {
+                    if (shadow) {
                         l += 16;
                     }
 
                     int i1 = this.COLOR_CODES[l];
 
-                    if (Config.isCustomColors())
-                    {
+                    if (Config.isCustomColors()) {
                         i1 = CustomColors.getTextColor(l, i1);
                     }
 
-                    GlStateManager.color((float)(i1 >> 16) / 255.0F, (float)(i1 >> 8 & 255) / 255.0F, (float)(i1 & 255) / 255.0F, 1f);
-                }
-                else if (l == 16)
-                {
-                }
-                else if (l == 17)
-                {
-                }
-                else if (l == 18)
-                {
-                }
-                else if (l == 19)
-                {
-                }
-                else if (l == 20)
-                {
-                }
-                else if (l == 21)
-                {
-                    GlStateManager.color((float)(color >> 16) / 255.0F, (float)(color >> 8 & 255) / 255.0F, (float)(color & 255) / 255.0F, 1f);
+                    GlStateManager.color((float) (i1 >> 16) / 255.0F, (float) (i1 >> 8 & 255) / 255.0F, (float) (i1 & 255) / 255.0F, 1f);
+                } else if (l == 21) {
+                    GlStateManager.color((float) (color >> 16) / 255.0F, (float) (color >> 8 & 255) / 255.0F, (float) (color & 255) / 255.0F, 1f);
                 }
 
                 ++i;
             } else {
 
-            if (this.international) {
-                if (internationalCharacters[character] == null) fillCharacters(character, java.awt.Font.PLAIN);
-            }
-
-            try {
-                if (character == '\n') {
-                    x = startX;
-                    y += height() * 2;
-                    continue;
+                if (this.international) {
+                    if (internationalCharacters[character] == null) fillCharacters(character, java.awt.Font.PLAIN);
                 }
 
-                final FontCharacter fontCharacter = characterSet[character];
-                fontCharacter.render((float) x, (float) y);
-                x += fontCharacter.getWidth() - MARGIN_WIDTH * 2;
-            } catch (Exception exception) {
-                System.out.println("Character \"" + character + "\" was out of bounds " +
-                        "(" + ((int) character) + " out of bounds for " + characterSet.length + ")");
-            }
+                try {
+                    if (character == '\n') {
+                        x = startX;
+                        y += height() * 2;
+                        continue;
+                    }
+
+                    final FontCharacter fontCharacter = characterSet[character];
+                    fontCharacter.render((float) x, (float) y);
+                    x += fontCharacter.getWidth() - MARGIN_WIDTH * 2;
+                } catch (Exception exception) {
+                    System.out.println("Character \"" + character + "\" was out of bounds " +
+                            "(" + ((int) character) + " out of bounds for " + characterSet.length + ")");
+                }
             }
         }
 
@@ -415,7 +393,7 @@ public class ModernFontRenderer extends MFont {
         GL11.glPopAttrib();
         GL11.glPopMatrix();
 
-        return (int) (x - givenX);
+        return (float) (x - givenX);
     }
 
     public float width(String text) {
