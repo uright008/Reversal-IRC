@@ -94,7 +94,7 @@ public class TextField {
         float textY = posY + height / 2f - 1.5f;
         float h = height * 0.6f;
         float cursorOffset = Math.min(cursorPosition, visibleText.length());
-        posAnimation.run(textX + offsetX + font.getStringWidth(visibleText.substring(0, (int) cursorOffset)) + 1.5f);
+        posAnimation.run(textX + offsetX + font.getStringWidth(visibleText.substring(0, (int) cursorOffset)) + 1.2f);
 
         // Text
         font.drawString(visibleText, textX + 1f, textY, textColorAnim.getOutput().getRGB());

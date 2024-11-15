@@ -67,52 +67,6 @@ public class Hud implements GameInstance {
         }
     }
 
-    private static void renderBPS() {
-        BPSCounter bpsCounter = (BPSCounter) ModuleInstance.getModule(BPSCounter.class);;
-        if (!bpsCounter.isEnabled()) return;
-
-        final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
-
-        final double x = bpsCounter.getX(), y = bpsCounter.getY() + 15;
-        final String bps = "Speed: " + MathUtil.round(mc.thePlayer.getSpeed(), 2);
-        switch (mode) {
-            case "Minecraft": {
-                Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
-            case "Reversal": {
-                gs.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                gs.drawStringWithShadow("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ,1),(float) x, (float) y - 10f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
-            case "Modern": {
-                psm16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                psm16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
-            case "Simple": {
-                regular16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                regular16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-
-            case "Empathy": {
-                regular16.drawString(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
-                regular16.drawString("X:" + MathUtil.round(mc.thePlayer.posX, 1) + " Y:" + MathUtil.round(mc.thePlayer.posY, 1) + " Z:" + MathUtil.round(mc.thePlayer.posZ, 1), (float) x, (float) y - 8f, ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
-                break;
-            }
-
-            default: {
-                regular16.drawStringWithShadow(bps, (float) x, (float) y, ThemeUtil.getThemeColorInt(ThemeType.GENERAL));
-                break;
-            }
-        }
-    }
-
-
     public static class ModuleComparator implements Comparator<Object> {
         @Override
         public int compare(final Object o1, final Object o2) {
@@ -413,7 +367,6 @@ public class Hud implements GameInstance {
                     }
 
                     off = mc.fontRendererObj.getStringWidth(name);
-                    mc.fontRendererObj.drawStringWithShadow("[" + Reversal.VERSION + "]", textGui.getX() + off + 7, textGui.getY(), ThemeUtil.getThemeColorInt(ThemeType.ARRAYLIST));
                 } else {
                     textGui.setWidth((int) (20 + mc.fontRendererObj.getStringWidth(customName) * 1.5));
                     float off = 0;
@@ -444,7 +397,7 @@ public class Hud implements GameInstance {
             }
 
             case "Simple": {
-                String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
+                String extraText = " | " + mc.getSession().getUsername();
 
                 if (useDefaultName) {
                     final String clientName = "REVERSAL CLIENT";
@@ -583,14 +536,14 @@ public class Hud implements GameInstance {
 
                     if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
-                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, ColorUtil.empathyGlowColor());
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, ColorUtil.empathyGlowColor());
                             RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 
                     if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
-                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 2f, Color.BLACK);
+                            RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
                         });
                     }
                 }
@@ -601,7 +554,7 @@ public class Hud implements GameInstance {
                 int x = textGui.getX() + 5;
                 int y = textGui.getY();
                 float off = 0;
-                String extraText = " | " + Minecraft.getDebugFPS() + " FPS | " + mc.getSession().getUsername();
+                String extraText = " | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
                 if (!ModuleInstance.getBool("ClientSettings", "ThunderHack").isEnabled()) {
@@ -690,7 +643,6 @@ public class Hud implements GameInstance {
         if (Reversal.isDestructed || !ModuleInstance.getModule(HUD.class).isEnabled()) return;
         if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
         renderKeyStrokes();
-        renderBPS();
         renderClientName();
         renderArrayList();
     }

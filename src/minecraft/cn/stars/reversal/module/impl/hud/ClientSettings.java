@@ -12,7 +12,7 @@ import cn.stars.reversal.setting.impl.NumberValue;
 public final class ClientSettings extends Module {
     private final ModeValue mode = new ModeValue("Theme", this, "Simple",
             "Minecraft", "Reversal", "Modern", "Simple", "Empathy");
-    private final ModeValue colorStyle = new ModeValue("Color Type", this, "Rainbow", "Rainbow", "Double", "Fade");
+    private final ModeValue colorStyle = new ModeValue("Color Type", this, "Rainbow", "Rainbow", "Double", "Fade", "Static");
     private final ModeValue list = new ModeValue("List Animation", this, "Reversal", "Reversal", "Slide");
     private final NumberValue red = new NumberValue("Red", this, 19, 0, 255, 1);
     private final NumberValue green = new NumberValue("Green", this, 150, 0, 255, 1);

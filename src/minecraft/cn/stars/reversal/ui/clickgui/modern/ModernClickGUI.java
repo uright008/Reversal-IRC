@@ -160,7 +160,7 @@ public class ModernClickGUI extends GuiScreen {
                 FontManager.getPSB(24).drawString(m.getModuleInfo().name(), m.guiX + 20, m.yAnimation.getValue() + 6, isSpecialModule(m) ? new Color(240,240,10,250).getRGB() : m.isEnabled() ? new Color(240,240,240,250).getRGB() : new Color(160, 160, 160, 200).getRGB());
                 FontManager.getPSR(16).drawString(m.getModuleInfo().chineseDescription().isEmpty() ? m.getModuleInfo().description() : m.getModuleInfo().chineseDescription(),
                         m.guiX + 20, m.yAnimation.getValue() + 20 + (m.getModuleInfo().chineseDescription().isEmpty() ? 0 : 1), new Color(160, 160, 160, 160).getRGB());
-                if (m.expanded || !m.sizeAnimation.isFinished()) {
+                if (m.expanded || (!m.sizeAnimation.isFinished() && m.yAnimation.isFinished())) {
                     m.sizeInGui = 20;
                     settingY += m.sizeInGui;
                     if (m != firstModule) settingY += 15; // IDK why

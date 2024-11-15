@@ -360,7 +360,7 @@ public class ItemRenderer
                 {
                     GlStateManager.translate(ModuleInstance.getNumber("Animations", "Item X").getFloat(), ModuleInstance.getNumber("Animations", "Item Y").getFloat(), ModuleInstance.getNumber("Animations", "Item Z").getFloat());
                     boolean m = ModuleInstance.getModule(Animations.class).isEnabled();
-                    EnumAction enumaction = this.itemToRender.getItemUseAction();
+                    EnumAction enumaction = anythingBlock ? EnumAction.BLOCK : this.itemToRender.getItemUseAction();
 
                     switch (enumaction)
                     {

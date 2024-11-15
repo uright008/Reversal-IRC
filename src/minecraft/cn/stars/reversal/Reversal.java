@@ -52,7 +52,7 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.6.0";
+    public static final String VERSION = "v0.7.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -296,10 +296,12 @@ public class Reversal {
             new BPSCounter(),
             new CPSCounter(),
             new CustomText(),
+            new FPSCounter(),
             new HUD(),
             new Keystrokes(),
             new MusicInfo(),
             new MusicVisualizer(),
+            new PingCounter(),
             new PotionEffects(),
             new PVPStats(),
             new Scoreboard(),
