@@ -6,7 +6,7 @@ package cn.stars.reversal.event.impl;
 
 import cn.stars.reversal.event.Event;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.value.Value;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +16,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ValueChangedEvent extends Event {
     public Module module;
-    public Setting setting;
+    public Value setting;
 }

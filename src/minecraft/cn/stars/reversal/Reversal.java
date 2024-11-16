@@ -43,7 +43,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Copyright (c) 2024 Starlight Team, All rights reserved.
+ * Copyright (c) 2024 Stars, All rights reserved.
  * A Hack-Visual PVP Client, a small dream planted by Stars.
  */
 @NativeObfuscation
@@ -52,7 +52,7 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.7.0";
+    public static final String VERSION = "v0.8.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.DEVELOPMENT;
@@ -236,7 +236,6 @@ public class Reversal {
 
     public static final Module[] modules = new Module[] {
             // Addons
-            new GuiSettings(), // Special Module
             new Optimization(), // Special Module
             new FreeLook(),
             new MoBends(),
@@ -255,6 +254,7 @@ public class Reversal {
             new NoAchievements(),
             new Protocol(),
             // World
+            new TimeTraveller(),
             // Player
             new AutoGG(),
             new Dinnerbone(),
@@ -283,7 +283,6 @@ public class Reversal {
             new ReachDisplay(),
             new TargetESP(),
             new TNTTimer(),
-            new TimeTraveller(),
             new TrueSights(),
             new Particles(),
             new SpeedGraph(),

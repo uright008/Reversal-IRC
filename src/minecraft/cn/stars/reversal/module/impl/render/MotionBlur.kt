@@ -4,7 +4,7 @@ import cn.stars.reversal.event.impl.PreBlurEvent
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.NumberValue
+import cn.stars.reversal.value.impl.NumberValue
 import cn.stars.reversal.util.wrapper.WrapperBufferBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution

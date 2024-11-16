@@ -139,9 +139,6 @@ public class SplashScreen {
 
                         Rect.draw(0, height - 2, animation.getValue(), 2, ColorUtil.hexColor(255,255,255, 150 + (int) animation2.getValue()), Rect.RectType.EXPAND);
 
-                        String text = (int)animation2.getValue() + "%";
-                        FontManager.getRegular(32).drawString(text, animation.getValue() - 4 - FontManager.getRegular(32).width(text), height - 17, ColorUtil.hexColor(255,255,255, 150 + (int) animation2.getValue()));
-
                         GlStateManager.enableAlpha();
                         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
                         Display.update();

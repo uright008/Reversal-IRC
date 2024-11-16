@@ -3,7 +3,8 @@ package cn.stars.reversal.module;
 import cn.stars.reversal.GameInstance;
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.event.impl.*;
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.module.impl.hud.ClientSettings;
+import cn.stars.reversal.value.Value;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.animation.rise.Animation;
 import cn.stars.reversal.util.animation.rise.Easing;
@@ -14,7 +15,9 @@ import lombok.Setter;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
@@ -53,7 +56,9 @@ public abstract class Module implements GameInstance {
     public SimpleAnimation boxAnimation = new SimpleAnimation(0.0F);
 
     //Module Settings
-    public List<Setting> settings = new ArrayList<>();
+    public List<Value> settings = new ArrayList<>();
+    public Map<String, Value> settingsMap = new HashMap<>();
+
     private ModuleInfo moduleInfo;
 
     public Module() {
@@ -86,12 +91,12 @@ public abstract class Module implements GameInstance {
     }
 
     public void addChatMessage(String s) {
-        Reversal.showMsg(s);
+        Reversal.showCustomMsg(s);
     }
 
     public boolean toggleModule() {
         if (Reversal.isDestructed) return false;
-        boolean canNoti = ModuleInstance.getBool("ClientSettings", "Show Notifications").isEnabled() && shouldCallNotification;
+        boolean canNoti = ModuleInstance.getModule(ClientSettings.class).showNotifications.enabled && shouldCallNotification;
         enabled = !enabled;
 
         if (enabled) {
@@ -115,26 +120,12 @@ public abstract class Module implements GameInstance {
         return enabled;
     }
 
-    public Module getModule(String module) {
-        return ModuleInstance.getModule(module);
-    }
-
-    public Module getModule(Class module) {
-        return ModuleInstance.getModule(module);
-    }
-
     public boolean hasSuffix() {
         return suffix != null;
     }
 
-    // Control the whole module elements
-    public boolean canBlur() {
-        return ModuleInstance.getBool("PostProcessing", "Blur").isEnabled();
-    }
-
-    public boolean toggleNoEvent() {
+    public void toggleNoEvent() {
         enabled = !enabled;
-        return enabled;
     }
 
     protected void onEnable() {
@@ -143,18 +134,12 @@ public abstract class Module implements GameInstance {
     protected void onDisable() {
     }
 
-    public Setting getSetting(final String name) {
-        for (final Setting setting : settings) {
-            if (setting.name.equalsIgnoreCase(name)) {
-                return setting;
-            }
-        }
-
-        return null;
+    public Value getSetting(final String name) {
+        return settingsMap.get(name.toLowerCase());
     }
 
-    public Setting getSettingAlternative(final String name) {
-        for (final Setting setting : settings) {
+    public Value getSettingAlternative(final String name) {
+        for (final Value setting : settings) {
             final String comparingName = setting.name.replaceAll(" ", "");
 
             if (comparingName.equalsIgnoreCase(name)) {
@@ -163,14 +148,6 @@ public abstract class Module implements GameInstance {
         }
 
         return null;
-    }
-
-    protected double randomDouble(final double min, final double max) {
-        return ThreadLocalRandom.current().nextDouble(min, max);
-    }
-
-    protected int randomInt(final int min, final int max) {
-        return ThreadLocalRandom.current().nextInt(min, max);
     }
 
     protected double random() {

@@ -5,8 +5,8 @@ import cn.stars.reversal.event.impl.Render3DEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.math.TimeUtil;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
@@ -16,7 +16,7 @@ import net.minecraft.network.play.server.S2BPacketChangeGameState;
 public class TimeTraveller extends Module {
     private final NumberValue time = new NumberValue("Time", this, 0, 0, 22999, 1);
     private final NumberValue timeSpeed = new NumberValue("Time Speed", this, 0, 0, 20, 0.1);
-    private final ModeValue weather = new ModeValue("Weather", this, "None", "None", "Sun", "Rain", "Thunder", "Snow", "Light Snow", "Nether");
+    public final ModeValue weather = new ModeValue("Weather", this, "None", "None", "Sun", "Rain", "Thunder", "Snow", "Light Snow", "Nether");
     private final NumberValue weatherSt = new NumberValue("Weather Strength", this, 1, 0, 1, 0.1);
     private final NumberValue lnSt = new NumberValue("Lightning Strength", this, 1, 0, 1, 0.1);
 

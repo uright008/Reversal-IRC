@@ -6,7 +6,7 @@ import cn.stars.reversal.event.impl.WorldEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.animation.advanced.Animation;
 import cn.stars.reversal.util.animation.advanced.Direction;
 import cn.stars.reversal.util.animation.advanced.impl.SmoothStepAnimation;
@@ -21,7 +21,7 @@ import java.awt.*;
 
 @ModuleInfo(name = "TargetESP", chineseName = "敌人标记", description = "Display a ESP when you hit targets", chineseDescription = "当你攻击目标时渲染ESP", category = Category.RENDER)
 public class TargetESP extends Module {
-    private final ModeValue mode = new ModeValue("Mode", this, "Rectangle", "Rectangle", "Round");
+    public final ModeValue mode = new ModeValue("Mode", this, "Rectangle", "Rectangle", "Round");
     EntityLivingBase attackedEntity;
     private final Animation auraESPAnim = new SmoothStepAnimation(650, 1);
 

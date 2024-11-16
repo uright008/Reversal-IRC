@@ -353,7 +353,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer, Entit
             GlStateManager.pushMatrix();
             GlStateManager.translate((float)x + 0.0F, (float)y + entityIn.height + 0.5F, (float)z);
             if (ModuleInstance.getModule(SmallPlayer.class).isEnabled() && entityIn instanceof EntityPlayer) {
-                if (!ModuleInstance.getBool("SmallPlayer", "Self").isEnabled()) {
+                if (!ModuleInstance.getModule(SmallPlayer.class).self.isEnabled()) {
                     GlStateManager.translate(0.0F, -1f, 0.0F);
                 } else if (entityIn == Minecraft.getMinecraft().thePlayer) {
                     GlStateManager.translate(0.0F, -1f, 0.0F);

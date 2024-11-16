@@ -5,7 +5,7 @@ import cn.stars.reversal.event.impl.Shader3DEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.animation.rise.Animation;
 import cn.stars.reversal.util.animation.rise.Easing;
 import cn.stars.reversal.util.render.RenderUtil;

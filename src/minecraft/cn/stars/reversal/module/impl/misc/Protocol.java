@@ -5,7 +5,7 @@ import cn.stars.reversal.event.impl.PacketSendEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
+import cn.stars.reversal.value.impl.BoolValue;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.block.Block;

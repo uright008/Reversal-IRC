@@ -5,8 +5,8 @@ import cn.stars.reversal.event.impl.Shader3DEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.render.RenderUtil;
 import cn.stars.reversal.util.render.blur.KawaseBloom;
 import cn.stars.reversal.util.render.blur.KawaseBlur;
@@ -15,10 +15,10 @@ import net.minecraft.client.shader.Framebuffer;
 @ModuleInfo(name = "PostProcessing", chineseName = "后处理", description = "Add blur and bloom effects", chineseDescription = "增加模糊和阴影的后处理效果", category = Category.HUD)
 public class PostProcessing extends Module
 {
-    private final BoolValue blur = new BoolValue("Blur", this, true);
+    public final BoolValue blur = new BoolValue("Blur", this, true);
     private final NumberValue iterations = new NumberValue("Blur Iterations", this, 2, 1, 8, 1);
     private final NumberValue offset = new NumberValue("Blur Offset", this, 2, 1, 10, 1);
-    private final BoolValue bloom = new BoolValue("Bloom", this, true);
+    public final BoolValue bloom = new BoolValue("Bloom", this, true);
     private final NumberValue shadowRadius = new NumberValue("Bloom Iterations", this, 2, 1, 8, 1);
     private final NumberValue shadowOffset = new NumberValue("Bloom Offset", this, 1, 1, 10, 1);
 

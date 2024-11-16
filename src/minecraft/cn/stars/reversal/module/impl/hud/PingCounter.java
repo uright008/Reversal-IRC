@@ -1,21 +1,17 @@
 package cn.stars.reversal.module.impl.hud;
 
-import cn.stars.reversal.event.impl.ClickEvent;
 import cn.stars.reversal.event.impl.Render2DEvent;
 import cn.stars.reversal.event.impl.Shader3DEvent;
-import cn.stars.reversal.event.impl.TickEvent;
 import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.font.MFont;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.render.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @ModuleInfo(name = "PingCounter", chineseName = "延迟显示", description = "Show your ping on screen",
         chineseDescription = "显示你的网络延迟", category = Category.HUD)

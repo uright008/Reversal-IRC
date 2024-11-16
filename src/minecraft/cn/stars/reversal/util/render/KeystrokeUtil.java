@@ -1,6 +1,8 @@
 package cn.stars.reversal.util.render;
 
 import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.module.impl.hud.Keystrokes;
+import cn.stars.reversal.module.impl.hud.PostProcessing;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -19,8 +21,8 @@ public class KeystrokeUtil implements GameInstance {
     }
 
     public void drawButton(final double x, final double y, final double width) {
-        final boolean rainbow = ModuleInstance.getBool("Keystrokes", "Rainbow when key down").isEnabled();
-        final boolean shadow = ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled();
+        final boolean rainbow = ModuleInstance.getModule(Keystrokes.class).rainbow.enabled;
+        final boolean shadow = ModuleInstance.getModule(PostProcessing.class).bloom.enabled;
         final String keyName = Keyboard.getKeyName(key.getKeyCode());
 
         float offset = -5;

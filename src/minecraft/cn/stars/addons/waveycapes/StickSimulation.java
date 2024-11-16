@@ -1,7 +1,7 @@
 package cn.stars.addons.waveycapes;
 
 import cn.stars.reversal.Reversal;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.NumberValue;
 
 import java.util.ArrayList;
 import java.util.List;

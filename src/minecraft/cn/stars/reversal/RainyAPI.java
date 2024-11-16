@@ -44,6 +44,7 @@ public class RainyAPI {
     public static boolean isLicenseReviewed = false;
     public static boolean mainMenuDate = false;
     public static boolean guiSnow = false;
+    public static boolean backgroundBlur = false;
 
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -54,7 +55,8 @@ public class RainyAPI {
                     "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
     // 随机标题
     public static final String[] wittyTitle = new String[]
-            { "我有鱼鱼症", "我们因缘分而相遇，因共同而相聚", "人生有欢喜也有悲剧,一切已是命中注定", "在那灿烂的群星中,总有一颗代表我正与你对视"};
+            {"我们因缘分而相遇，因共同而相聚。", "人生有欢喜也有悲剧,一切已是命中注定。", "在那灿烂的群星中,总有一颗代表我正与你对视。", "东风初开小桃杏，万里故人应有情。", "躲进小楼成一统，管他冬夏与春秋。", "庭院深深花初开，欲寄相思无雁来。", "十年生死两茫茫，不思量，自难忘。",
+            "When hope fade into less, it becomes hopeless.", "去年花里逢君别，今日花开又一年。", "曾经沧海难为水，除却巫山不是云。", "vanitas vanitatum et omnia vanitas."};
 
     public static String getRandomTitle() {
         return wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)];
@@ -62,7 +64,7 @@ public class RainyAPI {
 
     public static boolean canDrawHUD() {
         if (ModuleInstance.getModule(HUD.class).isEnabled()) {
-            if (ModuleInstance.getBool("HUD", "Display when debugging").isEnabled()) {
+            if (ModuleInstance.getModule(HUD.class).display_when_debugging.enabled) {
                 return true;
             } else return !mc.gameSettings.showDebugInfo;
         }
@@ -150,6 +152,9 @@ public class RainyAPI {
             if (split[0].contains("GuiSnow")) {
                 guiSnow = Boolean.parseBoolean(split[1]);
             }
+            if (split[0].contains("BackgroundBlur")) {
+                backgroundBlur = Boolean.parseBoolean(split[1]);
+            }
             if (split[0].contains("CustomText")) {
                 Reversal.customText = split[1];
             }
@@ -164,6 +169,7 @@ public class RainyAPI {
         clientBuilder.append("LicenseReviewed_").append(isLicenseReviewed).append("\r\n");
         clientBuilder.append("MainMenuDate_").append(mainMenuDate).append("\r\n");
         clientBuilder.append("GuiSnow_").append(guiSnow).append("\r\n");
+        clientBuilder.append("BackgroundBlur_").append(backgroundBlur).append("\r\n");
         clientBuilder.append("CustomText_").append(Reversal.customText).append("\r\n");
 
         FileUtil.saveFile("client.txt", true, clientBuilder.toString());

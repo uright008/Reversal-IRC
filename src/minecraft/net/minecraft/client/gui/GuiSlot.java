@@ -1,7 +1,11 @@
 package net.minecraft.client.gui;
 
+import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.util.animation.SmoothScrolling;
+import cn.stars.reversal.util.animation.rise.Animation;
+import cn.stars.reversal.util.animation.rise.Easing;
 import cn.stars.reversal.util.misc.ModuleInstance;
+import cn.stars.reversal.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -9,6 +13,8 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
+
+import java.awt.*;
 
 public abstract class GuiSlot {
     protected final Minecraft mc;
@@ -133,7 +139,7 @@ public abstract class GuiSlot {
     }
 
     protected boolean shouldRenderContainer() {
-        return !ModuleInstance.getBool("GuiSettings", "Shader In All Guis").isEnabled();
+        return true;
     }
 
     /** Handles drawing a list's header row. */
@@ -421,39 +427,30 @@ public abstract class GuiSlot {
     /**
      * Draws the selection box around the selected slot element.
      */
-    protected void drawSelectionBox(int insideLeft, int insideTop, int mouseXIn, int mouseYIn, float partialTicks) {
-        int i = this.getSize();
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
+    private final Animation animation = new Animation(Easing.EASE_OUT_EXPO, 200);
+    protected void drawSelectionBox(int listLeftX, int listTopY, int mouseX, int mouseY, float partialTicks) {
+        int totalItems = this.getSize();
 
-        for (int j = 0; j < i; ++j) {
-            int k = insideTop + j * this.slotHeight + this.headerPadding;
-            int l = this.slotHeight - 4;
+        for (int itemIndex = 0; itemIndex < totalItems; ++itemIndex) {
+            int itemTopY = listTopY + itemIndex * this.slotHeight + this.headerPadding;
+            int itemHeight = this.slotHeight - 4;
 
-            if (k > this.bottom || k + l < this.top) {
-                this.updateItemPos(j, insideLeft, k, partialTicks);
+            if (itemTopY > this.bottom || itemTopY + itemHeight < this.top) {
+                this.updateItemPos(itemIndex, listLeftX, itemTopY, partialTicks);
             }
 
-            if (this.showSelectionBox && this.isSelected(j)) {
-                int i1 = this.left + (this.width / 2 - this.getListWidth() / 2);
-                int j1 = this.left + this.width / 2 + this.getListWidth() / 2;
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                GlStateManager.disableTexture2D();
-                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                bufferbuilder.pos(i1, k + l + 2, 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-                bufferbuilder.pos(j1, k + l + 2, 0.0D).tex(1.0D, 1.0D).color(128, 128, 128, 255).endVertex();
-                bufferbuilder.pos(j1, k - 2, 0.0D).tex(1.0D, 0.0D).color(128, 128, 128, 255).endVertex();
-                bufferbuilder.pos(i1, k - 2, 0.0D).tex(0.0D, 0.0D).color(128, 128, 128, 255).endVertex();
-                bufferbuilder.pos(i1 + 1, k + l + 1, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-                bufferbuilder.pos(j1 - 1, k + l + 1, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-                bufferbuilder.pos(j1 - 1, k - 1, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-                bufferbuilder.pos(i1 + 1, k - 1, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-                tessellator.draw();
-                GlStateManager.enableTexture2D();
+            if (this.showSelectionBox && this.isSelected(itemIndex)) {
+                animation.run(itemTopY);
+                int selectionBoxLeftX = this.left + (this.width / 2 - this.getListWidth() / 2);
+                int selectionBoxWidth = this.getListWidth();
+                RenderUtil.roundedRectangle(selectionBoxLeftX, animation.getValue() - 2, selectionBoxWidth, itemHeight + 4, 2f, new Color(20, 20, 20, 100));
+                RenderUtil.roundedOutlineRectangle(selectionBoxLeftX, animation.getValue() - 2, selectionBoxWidth, itemHeight + 4, 2f, 1f, new Color(220, 220, 220, 240));
+
+                FontManager.getCheck(24).drawString("o", selectionBoxLeftX + selectionBoxWidth - 20, animation.getValue() + itemHeight / 2f - 4, new Color(220, 220, 220, 240).getRGB());
             }
 
-            if (!(this instanceof GuiResourcePackList) || k >= this.top - this.slotHeight && k <= this.bottom) {
-                this.drawSlot(j, insideLeft, k, l, mouseXIn, mouseYIn);
+            if (!(this instanceof GuiResourcePackList) || itemTopY >= this.top - this.slotHeight && itemTopY <= this.bottom) {
+                this.drawSlot(itemIndex, listLeftX, itemTopY, itemHeight, mouseX, mouseY);
             }
         }
     }
@@ -470,7 +467,6 @@ public abstract class GuiSlot {
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         worldrenderer.pos(this.left, endY, 0.0D).tex(0.0D, (float)endY / 32.0F).color(64, 64, 64, endAlpha).endVertex();
         worldrenderer.pos(this.left + this.width, endY, 0.0D).tex((float)this.width / 32.0F, (float)endY / 32.0F).color(64, 64, 64, endAlpha).endVertex();

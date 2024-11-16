@@ -1,7 +1,7 @@
-package cn.stars.reversal.setting.impl;
+package cn.stars.reversal.value.impl;
 
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.value.Value;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public final class ModeValue extends Setting {
+public final class ModeValue extends Value {
 
     public int index;
     public List<String> modes;
@@ -18,6 +18,7 @@ public final class ModeValue extends Setting {
     public ModeValue(final String name, final Module parent, final String defaultMode, final String... modes) {
         this.name = name;
         parent.settings.add(this);
+        parent.settingsMap.put(name.toLowerCase(), this);
         this.modes = Arrays.asList(modes);
         index = this.modes.indexOf(defaultMode);
     }

@@ -1,7 +1,7 @@
-package cn.stars.reversal.setting.impl;
+package cn.stars.reversal.value.impl;
 
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.value.Value;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public final class NumberValue extends Setting {
+public final class NumberValue extends Value {
     public double value, minimum, maximum, increment;
     public double renderPercentage, percentage;
     List<String> replacements;
@@ -18,6 +18,7 @@ public final class NumberValue extends Setting {
     public NumberValue(final String name, final Module parent, final double value, final double minimum, final double maximum, final double increment) {
         this.name = name;
         parent.settings.add(this);
+        parent.settingsMap.put(name.toLowerCase(), this);
         this.value = value;
         this.minimum = minimum;
         this.maximum = maximum;
@@ -27,6 +28,7 @@ public final class NumberValue extends Setting {
     public NumberValue(final String name, final Module parent, final double value, final double minimum, final double maximum, final double increment, final String... replacements) {
         this.name = name;
         parent.settings.add(this);
+        parent.settingsMap.put(name.toLowerCase(), this);
         this.value = value;
         this.minimum = minimum;
         this.maximum = maximum;
@@ -36,9 +38,6 @@ public final class NumberValue extends Setting {
 
     public float getFloat() {
         return (float) this.value;
-    }
-    public double getDouble() {
-        return (double) this.value;
     }
     public int getInt() {
         return (int) this.value;

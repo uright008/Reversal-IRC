@@ -4,6 +4,7 @@ import cn.stars.reversal.GameInstance;
 import cn.stars.reversal.event.impl.Render3DEvent;
 import cn.stars.reversal.module.impl.addons.FreeLook;
 import cn.stars.reversal.module.impl.misc.Protocol;
+import cn.stars.reversal.module.impl.render.Animations;
 import cn.stars.reversal.module.impl.render.HurtCam;
 import cn.stars.reversal.module.impl.world.TimeTraveller;
 import cn.stars.reversal.util.misc.ModuleInstance;
@@ -138,7 +139,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private boolean renderHand = true;
     private boolean drawBlockOutline = true;
     private long prevFrameTime = Minecraft.getSystemTime();
-    private long renderEndNanoTime;
     private final DynamicTexture lightmapTexture;
     private final int[] lightmapColors;
     private final ResourceLocation locationLightMap;
@@ -157,8 +157,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private int debugViewDirection = 0;
     private boolean debugView = false;
     private double cameraZoom = 1.0D;
-    private double cameraYaw;
-    private double cameraPitch;
     private ShaderGroup theShaderGroup;
     private static final ResourceLocation[] shaderResourceLocations = new ResourceLocation[] {new ResourceLocation("shaders/post/notch.json"), new ResourceLocation("shaders/post/fxaa.json"), new ResourceLocation("shaders/post/art.json"), new ResourceLocation("shaders/post/bumpy.json"), new ResourceLocation("shaders/post/blobs2.json"), new ResourceLocation("shaders/post/pencil.json"), new ResourceLocation("shaders/post/color_convolve.json"), new ResourceLocation("shaders/post/deconverge.json"), new ResourceLocation("shaders/post/flip.json"), new ResourceLocation("shaders/post/invert.json"), new ResourceLocation("shaders/post/ntsc.json"), new ResourceLocation("shaders/post/outline.json"), new ResourceLocation("shaders/post/phosphor.json"), new ResourceLocation("shaders/post/scan_pincushion.json"), new ResourceLocation("shaders/post/sobel.json"), new ResourceLocation("shaders/post/bits.json"), new ResourceLocation("shaders/post/desaturate.json"), new ResourceLocation("shaders/post/green.json"), new ResourceLocation("shaders/post/blur.json"), new ResourceLocation("shaders/post/wobble.json"), new ResourceLocation("shaders/post/blobs.json"), new ResourceLocation("shaders/post/antialias.json"), new ResourceLocation("shaders/post/creeper.json"), new ResourceLocation("shaders/post/spider.json")};
     public static final int shaderCount = shaderResourceLocations.length;
@@ -167,15 +165,11 @@ public class EntityRenderer implements IResourceManagerReloadListener
     public int frameCount;
     private boolean initialized = false;
     private World updatedWorld = null;
-    private boolean showDebugInfo = false;
     public boolean fogStandard = false;
     private float clipDistance = 128.0F;
     private long lastServerTime = 0L;
     private int lastServerTicks = 0;
     private int serverWaitTime = 0;
-    private int serverWaitTimeCurrent = 0;
-    private float avgServerTimeDiff = 0.0F;
-    private float avgServerTickDiff = 0.0F;
     private ShaderGroup[] fxaaShaders = new ShaderGroup[10];
     private boolean loadVisibleChunks = false;
     public final ParticleManager particleManager = new ParticleManager();
@@ -370,9 +364,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
         this.fogColor1 += (f4 - this.fogColor1) * 0.1F;
         ++this.rendererUpdateCount;
         this.itemRenderer.updateEquippedItem();
-        TimeTraveller timeTraveller = (TimeTraveller) ModuleInstance.getModule(TimeTraveller.class);
+        TimeTraveller timeTraveller = ModuleInstance.getModule(TimeTraveller.class);
 
-        String weather = ModuleInstance.getMode("TimeTraveller", "Weather").getMode();
+        String weather = timeTraveller.weather.getMode();
         if (!timeTraveller.isEnabled() || !(weather.equals("Snow") || weather.equals("Light Snow") || weather.equals("Nether"))) this.addRainParticles();
         this.bossColorModifierPrev = this.bossColorModifier;
 
@@ -600,7 +594,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     private void hurtCameraEffect(float partialTicks)
     {
-        switch (ModuleInstance.getMode("HurtCam", "Mode").getMode()) {
+        switch (ModuleInstance.getModule(HurtCam.class).getMode().getMode()) {
             case "Vanilla": {
                 if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
                     EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
@@ -659,7 +653,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private void orientCamera(float partialTicks)
     {
         Entity entity = this.mc.getRenderViewEntity();
-        float f = (ModuleInstance.getBool("Animations", "Old Sneak").isEnabled() && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight();
+        float f = (ModuleInstance.getModule(Animations.class).oldSneak.isEnabled() && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight();
         double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double)partialTicks;
         double d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double)partialTicks + (double)f;
         double d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double)partialTicks;
@@ -696,7 +690,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
         else if (this.mc.gameSettings.thirdPersonView > 0)
         {
-            double d3 = (double)(this.thirdPersonDistanceTemp + (this.thirdPersonDistance - this.thirdPersonDistanceTemp) * partialTicks);
+            double d3 = this.thirdPersonDistanceTemp + (this.thirdPersonDistance - this.thirdPersonDistanceTemp) * partialTicks;
 
             if (this.mc.gameSettings.debugCamEnable)
             {
@@ -845,7 +839,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
         if (this.cameraZoom != 1.0D)
         {
-            GlStateManager.translate((float)this.cameraYaw, (float)(-this.cameraPitch), 0.0F);
             GlStateManager.scale(this.cameraZoom, this.cameraZoom, 1.0D);
         }
 
@@ -1293,7 +1286,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     this.mc.getFramebuffer().bindFramebuffer(true);
                 }
 
-                this.renderEndNanoTime = System.nanoTime();
                 this.mc.mcProfiler.endStartSection("gui");
 
                 if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null)
@@ -1322,7 +1314,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 GlStateManager.matrixMode(5888);
                 GlStateManager.loadIdentity();
                 this.setupOverlayRendering();
-                this.renderEndNanoTime = System.nanoTime();
                 TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
                 TileEntityRendererDispatcher.instance.fontRenderer = this.mc.fontRendererObj;
             }
@@ -1435,7 +1426,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
             GlStateManager.matrixMode(5888);
             GlStateManager.loadIdentity();
             this.orientCamera(partialTicks);
-            GlStateManager.translate(0.0F, (ModuleInstance.getBool("Animations", "Old Sneak").isEnabled() && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight(), 0.0F);
+            GlStateManager.translate(0.0F, (ModuleInstance.getModule(Animations.class).oldSneak.enabled && entity == mc.thePlayer)? (entity.isSneaking()? 1.54f : 1.62f) : entity.getEyeHeight(), 0.0F);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.005D, 1.0E-4D, 1.0E-4D), 255, 0, 0, 255);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 1.0E-4D, 0.005D), 0, 0, 255, 255);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 0.0033D, 1.0E-4D), 0, 255, 0, 255);
@@ -2065,8 +2056,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
                             blockpos$mutableblockpos.set(l1, k2, k1);
                             float f1 = biomegenbase.getFloatTemperature(blockpos$mutableblockpos);
 
-                            TimeTraveller timeTraveller = (TimeTraveller) ModuleInstance.getModule(TimeTraveller.class);
-                            String weather = ModuleInstance.getMode("TimeTraveller", "Weather").getMode();
+                            TimeTraveller timeTraveller = ModuleInstance.getModule(TimeTraveller.class);
+                            String weather = timeTraveller.weather.getMode();
                             if (world.getWorldChunkManager().getTemperatureAtHeight(f1, j2) >= 0.15F && (!timeTraveller.isEnabled() || !(weather.equals("Snow") || weather.equals("Light Snow") || weather.equals("Nether"))))
                             {
                                 if (j1 != 0)
@@ -2517,7 +2508,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     private void waitForServerThread()
     {
-        this.serverWaitTimeCurrent = 0;
 
         if (Config.isSmoothWorld() && Config.isSingleProcessor())
         {
@@ -2536,7 +2526,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                             Lagometer.timerServer.start();
                             Config.sleep((long)this.serverWaitTime);
                             Lagometer.timerServer.end();
-                            this.serverWaitTimeCurrent = this.serverWaitTime;
                         }
 
                         long i = System.nanoTime() / 1000000L;
@@ -2559,7 +2548,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
                                 if (l < 0)
                                 {
-                                    this.lastServerTicks = k;
                                     l = 0;
                                 }
 
@@ -2580,8 +2568,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                         {
                             this.lastServerTime = i;
                             this.lastServerTicks = integratedserver.getTickCounter();
-                            this.avgServerTickDiff = 1.0F;
-                            this.avgServerTimeDiff = 50.0F;
                         }
                     }
                     else

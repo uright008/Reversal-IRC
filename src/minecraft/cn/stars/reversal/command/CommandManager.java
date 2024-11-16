@@ -2,10 +2,10 @@ package cn.stars.reversal.command;
 
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.misc.ClassUtil;
 
@@ -45,7 +45,7 @@ public final class CommandManager {
                 if (spit.length > 1) {
 
                     if (module.getSettingAlternative(spit[1]) != null) {
-                        final Setting setting = module.getSettingAlternative(spit[1]);
+                        final Value setting = module.getSettingAlternative(spit[1]);
 
                         try {
                             try {

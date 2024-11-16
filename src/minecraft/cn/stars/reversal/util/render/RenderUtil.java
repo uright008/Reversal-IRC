@@ -1,6 +1,7 @@
 package cn.stars.reversal.util.render;
 
 import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.module.impl.render.TargetESP;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import cn.stars.reversal.util.shader.RiseShaders;
 import lombok.experimental.UtilityClass;
@@ -313,7 +314,7 @@ public final class RenderUtil implements GameInstance {
     }
 
     private ResourceLocation getESPImage() {
-        switch (ModuleInstance.getMode("TargetESP", "Mode").getMode()) {
+        switch (ModuleInstance.getModule(TargetESP.class).mode.getMode()) {
             case "Round":
                 return new ResourceLocation("reversal/images/round.png");
             case "Rectangle":

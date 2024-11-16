@@ -19,7 +19,7 @@ import static cn.stars.reversal.GameInstance.*;
 
 public class GuiReversalSettings extends GuiScreen {
     public GuiScreen parent;
-    private CuriosityTextButton exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton;
+    private CuriosityTextButton exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton, backgroundBlurButton;
     private CuriosityTextButton[] buttons;
 
     public GuiReversalSettings(GuiScreen parent) {
@@ -49,13 +49,17 @@ public class GuiReversalSettings extends GuiScreen {
         regular20Bold.drawString("Via Version", width / 2f - 490, 110, new Color(220, 220, 220, 240).getRGB());
         regular16.drawString("开启这个选项后，将允许客户端进行跨版本。\n如果你的客户端偶现无法加载，可以尝试关闭。", width / 2f - 490, 125, new Color(220, 220, 220, 240).getRGB());
 
-        // MainMenuDate
+        // MainMenu Date
         regular20Bold.drawString("Main Menu Date", width / 2f - 490, 180, new Color(220, 220, 220, 240).getRGB());
         regular16.drawString("使你的主菜单最上方增加日期显示。", width / 2f - 490, 195, new Color(220, 220, 220, 240).getRGB());
 
-        // MainMenuDate
+        // Gui Snow
         regular20Bold.drawString("Gui Snow", width / 2f - 490, 250, new Color(220, 220, 220, 240).getRGB());
         regular16.drawString("使你的界面有类似下雪的效果。", width / 2f - 490, 265, new Color(220, 220, 220, 240).getRGB());
+
+        // Background Blur
+        regular20Bold.drawString("Background Blur", width / 2f - 490, 320, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("使你的背景有模糊效果。", width / 2f - 490, 335, new Color(220, 220, 220, 240).getRGB());
 
         updatePostProcessing(false, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -68,14 +72,14 @@ public class GuiReversalSettings extends GuiScreen {
 
         createButton();
 
-        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton};
+        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton, backgroundBlurButton};
     }
 
     private void switchOption(Runnable runnable) {
         runnable.run();
         createButton();
         RainyAPI.processAPI();
-        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton};
+        buttons = new CuriosityTextButton[]{exitButton, shaderButton, viaButton, mainMenuDateButton, guiSnowButton, backgroundBlurButton};
     }
 
     private void createButton() {
@@ -105,6 +109,13 @@ public class GuiReversalSettings extends GuiScreen {
                     "开", "9", true, 10, 34, 7);
         } else {
             this.guiSnowButton = new CuriosityTextButton(width / 2f - 490, 285, 60, 25, () -> switchOption(() -> RainyAPI.guiSnow = !RainyAPI.guiSnow),
+                    "关", "0", true, 10, 34, 7);
+        }
+        if (RainyAPI.backgroundBlur) {
+            this.backgroundBlurButton = new CuriosityTextButton(width / 2f - 490, 355, 60, 25, () -> switchOption(() -> RainyAPI.backgroundBlur = !RainyAPI.backgroundBlur),
+                    "开", "9", true, 10, 34, 7);
+        } else {
+            this.backgroundBlurButton = new CuriosityTextButton(width / 2f - 490, 355, 60, 25, () -> switchOption(() -> RainyAPI.backgroundBlur = !RainyAPI.backgroundBlur),
                     "关", "0", true, 10, 34, 7);
         }
     }

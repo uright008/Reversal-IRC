@@ -4,10 +4,10 @@ import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.ReversalLogger;
 import cn.stars.reversal.util.misc.FileUtil;
@@ -44,7 +44,7 @@ public final class ConfigHandler {
                 configBuilder.append("PositionY_").append(moduleName).append("_").append(m.getY()).append("\r\n");
             }
 
-            for (final Setting setting : m.getSettings()) {
+            for (final Value setting : m.getSettings()) {
                 if (setting instanceof BoolValue) {
                     configBuilder.append("BoolValue_").append(moduleName).append("_").append(setting.name).append("_").append(((BoolValue) setting).enabled).append("\r\n");
                 }
@@ -150,7 +150,7 @@ public final class ConfigHandler {
                 Objects.requireNonNull(Reversal.moduleManager.getModule(split[1])).setY(Integer.parseInt(split[2]));
             }
 
-            final Setting setting = Reversal.moduleManager.getSetting(split[1], split[2]);
+            final Value setting = Reversal.moduleManager.getSetting(split[1], split[2]);
 
             if (Reversal.moduleManager.getModule(split[1]) != null) {
 
@@ -230,7 +230,7 @@ public final class ConfigHandler {
                 }
             }
 
-            final Setting setting = Reversal.moduleManager.getSetting(split[1], split[2]);
+            final Value setting = Reversal.moduleManager.getSetting(split[1], split[2]);
 
             if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
                 if (split[3].contains("true")) {
@@ -335,7 +335,7 @@ public final class ConfigHandler {
                 }
             }
 
-            final Setting setting = Reversal.moduleManager.getSetting(spit[1], spit[2]);
+            final Value setting = Reversal.moduleManager.getSetting(spit[1], spit[2]);
 
             if (spit[0].contains("BoolValue") && setting instanceof BoolValue) {
                 if (spit[3].contains("true")) {

@@ -7,7 +7,7 @@ package cn.stars.reversal.module.impl.misc;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.NoteValue;
+import cn.stars.reversal.value.impl.NoteValue;
 
 @ModuleInfo(name = "CustomName", chineseName = "自定义名称", description = "Customize your minecraft name", chineseDescription = "自定义你的我的世界名称", category = Category.MISC)
 public class CustomName extends Module {

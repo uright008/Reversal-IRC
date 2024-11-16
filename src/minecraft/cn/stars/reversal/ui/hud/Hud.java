@@ -1,14 +1,13 @@
 package cn.stars.reversal.ui.hud;
 
 import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.impl.hud.*;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.util.ReversalLogger;
-import cn.stars.reversal.util.math.MathUtil;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.math.TimeUtil;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import cn.stars.reversal.util.render.*;
@@ -25,7 +24,7 @@ public class Hud implements GameInstance {
     public static float ticks, ticksSinceClickgui;
     public static float positionOfLastModule;
     public static String key;
-    static List<Object> modules;
+    public static List<Module> modules;
     private static final TimeUtil timer2 = new TimeUtil();
     private static final TimeUtil timer = new TimeUtil();
     public static final KeystrokeUtil forward = new KeystrokeUtil();
@@ -70,7 +69,7 @@ public class Hud implements GameInstance {
     public static class ModuleComparator implements Comparator<Object> {
         @Override
         public int compare(final Object o1, final Object o2) {
-            ModeValue setting = ModuleInstance.getMode("ClientSettings", "Theme");
+            ModeValue setting = ModuleInstance.getModule(ClientSettings.class).theme;
 
             if (setting == null) return 1;
 
@@ -79,9 +78,9 @@ public class Hud implements GameInstance {
 //            final String name = o1 instanceof Module ? ((Module) o1).getModuleInfo().name() : ((Script) o1).getName();
 //            final String name2 = o2 instanceof Module ? ((Module) o2).getModuleInfo().name() : ((Script) o2).getName();
 
-            final String name = (mode.equals("Simple") || mode.equals("Minecraft")) && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) o1).getModuleInfo().chineseName().isEmpty() ? ((Module) o1).getModuleInfo().chineseName() : ((Module) o1).getModuleInfo().name();
+            final String name = (mode.equals("Simple") || mode.equals("Minecraft")) && ModuleInstance.getModule(Arraylist.class).chinese.isEnabled() && !((Module) o1).getModuleInfo().chineseName().isEmpty() ? ((Module) o1).getModuleInfo().chineseName() : ((Module) o1).getModuleInfo().name();
             final String name2 = (mode.equals("Simple") || mode.equals("Minecraft"))
-                    && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) o2).getModuleInfo().chineseName().isEmpty() ? ((Module) o2).getModuleInfo().chineseName() : ((Module) o2).getModuleInfo().name();
+                    && ModuleInstance.getModule(Arraylist.class).chinese.isEnabled() && !((Module) o2).getModuleInfo().chineseName().isEmpty() ? ((Module) o2).getModuleInfo().chineseName() : ((Module) o2).getModuleInfo().name();
 
             switch (mode) {
                 case "Minecraft": {
@@ -92,14 +91,11 @@ public class Hud implements GameInstance {
                     return Float.compare(gs.getWidth(name2), gs.getWidth(name));
                 }
 
-                case "Simple": {
-                    return Float.compare(regular16.getWidth(name2), regular16.getWidth(name));
-                }
-
                 case "Modern": {
                     return Float.compare(psm17.getWidth(name2), psm17.getWidth(name));
                 }
 
+                case "Simple":
                 default: {
                     return Float.compare(regular16.getWidth(name2), regular16.getWidth(name));
                 }
@@ -108,36 +104,33 @@ public class Hud implements GameInstance {
     }
 
     private static void renderArrayList() {
-        Arraylist arraylist = (Arraylist) ModuleInstance.getModule(Arraylist.class);
+        Arraylist arraylist = ModuleInstance.getModule(Arraylist.class);
         if (!arraylist.isEnabled()) return;
-        final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
+        final String mode = ModuleInstance.getModule(ClientSettings.class).theme.getMode();
 
         final float offset = 6;
 
         final float arraylistX = arraylist.getX() + arraylist.getWidth();
 
         modules = new ArrayList<>();
-
         modules.addAll(Reversal.moduleManager.getEnabledModules());
-
         modules.sort(moduleComparator);
 
         int moduleCount = 0;
 
-        for (final Object n : modules) {
+        for (final Module module : modules) {
 
             float posOnArraylist = offset + moduleCount * 10.8f * (mode.equals("Empathy") ? 1.25f : 1f);
-
-            assert n instanceof Module;
-            final String name = (mode.equals("Simple") || mode.equals("Minecraft")) && ModuleInstance.getBool("Arraylist", "Simple Chinese").isEnabled() && !((Module) n).getModuleInfo().chineseName().isEmpty() ? ((Module) n).getModuleInfo().chineseName() : ((Module) n).getModuleInfo().name();
+            
+            final String name = (mode.equals("Simple") || mode.equals("Minecraft")) && ModuleInstance.getModule(Arraylist.class).chinese.isEnabled() && !((Module) module).getModuleInfo().chineseName().isEmpty() ? ((Module) module).getModuleInfo().chineseName() : ((Module) module).getModuleInfo().name();
 
             float finalX = 0;
             final float speed = 6;
 
-            final float renderX = ((Module) n).getRenderX();
-            final float renderY = arraylist.getY() + ((Module) n).getRenderY();
+            final float renderX = module.getRenderX();
+            final float renderY = arraylist.getY() + module.getRenderY();
 
-            if (((Module) n).getModuleInfo().category().equals(Category.RENDER) && ModuleInstance.getBool("Arraylist", "No Render Modules").isEnabled())
+            if (module.getModuleInfo().category().equals(Category.RENDER) && ModuleInstance.getModule(Arraylist.class).noRenderModules.isEnabled())
                 continue;
 
             switch (mode) {
@@ -163,14 +156,14 @@ public class Hud implements GameInstance {
                     regular16.drawString(name, renderX, renderY + 2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
 
                     final int mC = moduleCount;
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
                             RenderUtil.rect(renderX - offsetX + stringWidth + offsetX * 1.5 + 1, renderY - offsetY + 0.4, 1, 8.8 + offsetY, ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST));
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.rect(renderX - offsetX, renderY - offsetY + 0.5, stringWidth + offsetX * 1.5 + 1, 8.8 + offsetY, Color.BLACK);
                         });
@@ -195,7 +188,7 @@ public class Hud implements GameInstance {
                     RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, ColorUtil.empathyColor());
                     FontManager.getIcon(16).drawString("j", renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 12, renderY + 2.2, ThemeUtil.getThemeColorInt(moduleCount, ThemeType.ARRAYLIST));
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, nameWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, ColorUtil.empathyGlowColor());
                             RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, ColorUtil.empathyGlowColor());
@@ -203,7 +196,7 @@ public class Hud implements GameInstance {
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(renderX - offsetX - 15, renderY - offsetY + 0.5, nameWidth + offsetX * 1.5 + 1, 9.15 + offsetY, 2f, Color.BLACK);
                             RenderUtil.roundedRectangle(renderX - offsetX + nameWidth + offsetX * 1.5 + 0.5 - 13, renderY - offsetY + 0.5, 10, 9.15 + offsetY, 2f, Color.BLACK);
@@ -236,10 +229,10 @@ public class Hud implements GameInstance {
                     final double stringWidth = psm17.getWidth(name);
                     final int mC = moduleCount;
 
-                    if (!ModuleInstance.getBool("ClientSettings", "ThunderHack").isEnabled()) {
+                    if (!ModuleInstance.getModule(ClientSettings.class).thunderHack.isEnabled()) {
                         Runnable shadowRunnable = () -> {
                             RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5,
-                                    ModuleInstance.getBool("Arraylist", "Glow Shadow").isEnabled() ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
+                                    ModuleInstance.getModule(Arraylist.class).glowShadow.enabled ? ThemeUtil.getThemeColor(mC, ThemeType.ARRAYLIST) : Color.BLACK);
                             RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
                         };
 
@@ -250,11 +243,11 @@ public class Hud implements GameInstance {
                         RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, new Color(0, 0, 0, 80));
                         RenderUtil.roundedRectangle(renderX + stringWidth, renderY - offsetY, 2, 10.3 + offsetY - 0.5, 2.5, ColorUtil.liveColorBrighter(new Color(0, 255, 255), 1f));
 
-                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                             MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
                         }
 
-                        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                             MODERN_BLUR_RUNNABLES.add(blurRunnable);
                         }
 
@@ -270,11 +263,11 @@ public class Hud implements GameInstance {
                             RenderUtil.rect(renderX - offsetX - 1, renderY - offsetY + 0.2, stringWidth + offsetX * 1.5 + 1, 10.3 + offsetY - 1.5, Color.BLACK);
                         };
 
-                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                             MODERN_BLOOM_RUNNABLES.add(shadowRunnable);
                         }
 
-                        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                             MODERN_BLUR_RUNNABLES.add(blurRunnable);
                         }
 
@@ -290,23 +283,22 @@ public class Hud implements GameInstance {
 
             moduleCount++;
 
-            final String animationMode = ((ModeValue) Objects.requireNonNull(Reversal.moduleManager.getSetting("ClientSettings", "List Animation"))).getMode();
-
-            final Module m = ((Module) n);
+            final String animationMode = ModuleInstance.getModule(ClientSettings.class).listAnimation.getMode();
+            
             if (timer2.hasReached(1000 / 100)) {
                 switch (animationMode) {
                     case "Reversal":
-                        m.renderX = (m.renderX * (speed - 1) + finalX) / speed;
-                        m.renderY = (m.renderY * (speed - 1) + posOnArraylist) / speed;
+                        module.renderX = (module.renderX * (speed - 1) + finalX) / speed;
+                        module.renderY = (module.renderY * (speed - 1) + posOnArraylist) / speed;
 
                         break;
                     case "Slide":
-                        m.renderX = (m.renderX * (speed - 1) + finalX) / speed;
+                        module.renderX = (module.renderX * (speed - 1) + finalX) / speed;
 
-                        if (m.renderY < positionOfLastModule) {
-                            m.renderY = posOnArraylist;
+                        if (module.renderY < positionOfLastModule) {
+                            module.renderY = posOnArraylist;
                         } else {
-                            m.renderY = (m.renderY * (speed - 1) + posOnArraylist) / (speed);
+                            module.renderY = (module.renderY * (speed - 1) + posOnArraylist) / (speed);
                         }
                         break;
                 }
@@ -345,8 +337,8 @@ public class Hud implements GameInstance {
     private static void renderClientName() {
         TextGui textGui = (TextGui) ModuleInstance.getModule(TextGui.class);
         if (!textGui.isEnabled()) return;
-        final String mode = ModuleInstance.getMode("ClientSettings", "Theme").getMode();
-        final boolean useDefaultName = !ModuleInstance.getBool("TextGui", "Custom Name").isEnabled();
+        final String mode = ModuleInstance.getModule(ClientSettings.class).theme.getMode();
+        final boolean useDefaultName = !ModuleInstance.getModule(TextGui.class).custom.isEnabled();
 
         final float offset;
         String name = Reversal.NAME, customName = ThemeUtil.getCustomClientName();
@@ -423,13 +415,13 @@ public class Hud implements GameInstance {
                     
                     regular18.drawString(extraText, x + 4 + regular20Bold.width(clientName), y + 4,  new Color(250, 250, 250, 200).getRGB());
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
                         });
@@ -459,13 +451,13 @@ public class Hud implements GameInstance {
 
                     regular18.drawString(extraText, x + 4 + off, y + 4, new Color(250, 250, 250, 200).getRGB());
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.rect(x, y, regular20Bold.width(clientName) + regular18.width(extraText) + 6, regular20Bold.height() + 1.5, Color.BLACK);
                         });
@@ -498,14 +490,14 @@ public class Hud implements GameInstance {
                         off += regular20Bold.width(character);
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, ColorUtil.empathyGlowColor());
                             RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
                         });
@@ -534,14 +526,14 @@ public class Hud implements GameInstance {
                         off += regular20Bold.width(character);
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, ColorUtil.empathyGlowColor());
                             RenderUtil.roundedRectangle(x - 0.5, y + 2.5, 1.5, regular20Bold.height() - 3.5, 1f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
                         });
                     }
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(x, y, regular20Bold.width(clientName) + 8, regular20Bold.height() + 1.5, 3f, Color.BLACK);
                         });
@@ -557,8 +549,8 @@ public class Hud implements GameInstance {
                 String extraText = " | " + mc.getSession().getUsername();
                 float extraWidth = psm18.getWidth(extraText);
 
-                if (!ModuleInstance.getBool("ClientSettings", "ThunderHack").isEnabled()) {
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                if (!ModuleInstance.getModule(ClientSettings.class).thunderHack.isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RoundedUtil.drawRound(x + 1, y + 1, 33 + extraWidth, 12, 4, Color.BLACK);
                         });
@@ -570,7 +562,7 @@ public class Hud implements GameInstance {
                 //            ModuleInstance.getBool("TextGui", "Rainbow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.ARRAYLIST) : new Color(250, 250, 250, 200));
                     psm18.drawString(extraText, x + 43.5, y + 4f, new Color(250, 250, 250, 200).getRGB());
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             psm18.drawString(extraText, x + 43.5, y + 4f, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST).getRGB());
                             RoundedUtil.drawRound(x + 1, y + 1, 46 + extraWidth, 12, 4, ThemeUtil.getThemeColor(ThemeType.ARRAYLIST));
@@ -591,7 +583,7 @@ public class Hud implements GameInstance {
                     }
                 } else {
 
-                    if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RoundedUtil.drawGradientRound(x - 0.5f, y - 0.5f, 94 + extraWidth, 15, 3,
                                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
@@ -612,7 +604,7 @@ public class Hud implements GameInstance {
 
                     psm18.drawString(extraText, x + 90, y + 4f, new Color(200, 200, 200, 240).getRGB());
 
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RoundedUtil.drawGradientRound(x - 0.5f, y - 0.5f, 94 + extraWidth, 15, 3,
                                     ColorUtils.INSTANCE.interpolateColorsBackAndForth(3, 1000, Color.WHITE, Color.BLACK, true),
@@ -640,10 +632,10 @@ public class Hud implements GameInstance {
     }
 
     public static void renderGameOverlay() {
-        if (Reversal.isDestructed || !ModuleInstance.getModule(HUD.class).isEnabled()) return;
-        if (!ModuleInstance.getBool("HUD", "Display when debugging").isEnabled() && mc.gameSettings.showDebugInfo) return;
-        renderKeyStrokes();
-        renderClientName();
-        renderArrayList();
+        if (RainyAPI.canDrawHUD()) {
+            renderKeyStrokes();
+            renderClientName();
+            renderArrayList();
+        }
     }
 }

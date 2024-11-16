@@ -5,7 +5,7 @@ import cn.stars.reversal.event.impl.PacketSendEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.ui.notification.NotificationType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.gui.ScaledResolution;

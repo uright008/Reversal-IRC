@@ -13,10 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 public class Transformer implements GameInstance {
     public static GuiScreen transformMainMenu() {
         if (RainyAPI.isLicenseReviewed) {
-            if (ModuleInstance.getBool("GuiSettings", "Curiosity Style").isEnabled()) {
-                return new CuriosityMainMenu();
-            }
-            return new GuiMainMenu();
+            return new CuriosityMainMenu();
         } else {
             return new GuiLicense();
         }

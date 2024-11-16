@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 
 import cn.stars.reversal.Reversal;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.chunk.RenderChunk;

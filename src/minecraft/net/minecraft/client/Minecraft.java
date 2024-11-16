@@ -3,6 +3,7 @@ package net.minecraft.client;
 import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.event.impl.*;
+import cn.stars.reversal.module.impl.render.Animations;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.ui.splash.SplashScreen;
 import cn.stars.reversal.util.Transformer;
@@ -361,7 +362,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
                 this.freeMemory();
-                logger.fatal("Reported exception thrown!", reportedexception);
+                logger.fatal("存在报告的错误抛出! 游戏崩溃!", reportedexception);
                 this.displayCrashReport(reportedexception.getCrashReport());
                 break;
             }
@@ -369,7 +370,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 CrashReport crashreport1 = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
                 this.freeMemory();
-                logger.fatal("Unreported exception thrown!", throwable1);
+                logger.fatal("未知的错误抛出! 游戏崩溃!", throwable1);
                 this.displayCrashReport(crashreport1);
                 break;
             }
@@ -523,9 +524,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class);
     }
 
-    private void createDisplay() throws LWJGLException {
+    private void createDisplay() {
         Display.setResizable(true);
-        Display.setTitle("Reversal is loading...");
+        Display.setTitle(RainyAPI.getRandomTitle());
 
         Display.create((new PixelFormat()).withDepthBits(24));
 
@@ -1439,8 +1440,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 this.playerController.resetBlockRemoving();
             }
-        } else if (leftClick && this.leftClickCounter <= 0 && ModuleInstance.getBool("Animations", "Interact While Swing").isEnabled()) {
-            this.thePlayer.swingItem();
+        } else if (leftClick && this.leftClickCounter <= 0 && ModuleInstance.getModule(Animations.class).interactWhileSwing.isEnabled()) {
+            this.thePlayer.swingItemAnim();
             if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
@@ -1463,7 +1464,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             if (this.objectMouseOver == null)
             {
-                logger.error("Null returned as \'hitResult\', this shouldn\'t happen!");
+                logger.error("Null returned as 'hitResult', this shouldn't happen!");
 
                 if (this.playerController.isNotCreative())
                 {

@@ -5,18 +5,17 @@ import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.font.MFont;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.module.impl.addons.GuiSettings;
 import cn.stars.reversal.module.impl.addons.Optimization;
 import cn.stars.reversal.module.impl.addons.SkinLayers3D;
 import cn.stars.reversal.module.impl.hud.ClientSettings;
 import cn.stars.reversal.module.impl.hud.PostProcessing;
 import cn.stars.reversal.module.impl.render.ClickGui;
 import cn.stars.reversal.module.impl.render.HurtCam;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NoteValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NoteValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.animation.advanced.impl.DecelerateAnimation;
 import cn.stars.reversal.util.animation.rise.Animation;
 import cn.stars.reversal.util.animation.rise.Easing;
@@ -128,7 +127,7 @@ public class MMTClickGUI extends GuiScreen {
                     m.sizeInGui = 20;
                     GL11.glEnable(GL11.GL_SCISSOR_TEST);
                     RenderUtil.scissor(x + 260, y + 30, 260, 290);
-                    for (final Setting setting : m.getSettings()) {
+                    for (final Value setting : m.getSettings()) {
                         if (!setting.isHidden()) {
                             if (setting instanceof NoteValue) {
                                 psr18.drawString(psr18.autoReturn(setting.name, 240, 5), setting.guiX, setting.guiY - 12 * psr18.autoReturnCount(setting.name, 240, 5) - 3, new Color(76,91,110,255).getRGB());
@@ -262,7 +261,7 @@ public class MMTClickGUI extends GuiScreen {
             timer.reset();
             for (final Module m : Reversal.moduleManager.getModuleList()) {
                 m.alphaAnimation.run(m.isEnabled() ? 50 : 0);
-                for (final Setting s : m.getSettings()) {
+                for (final Value s : m.getSettings()) {
                     if (s instanceof NumberValue) {
                         final NumberValue NumberValue = ((NumberValue) s);
 
@@ -339,7 +338,7 @@ public class MMTClickGUI extends GuiScreen {
                         m.expanded = true;
                     }
                 }
-                for (final Setting setting : m.getSettings()) {
+                for (final Value setting : m.getSettings()) {
                     if (m.expanded) {
                         if (!setting.isHidden()) {
                             if (setting instanceof NoteValue) {
@@ -427,7 +426,7 @@ public class MMTClickGUI extends GuiScreen {
 
         final float wheel = Mouse.getDWheel();
 
-        scrollAmount += wheel / (11f - ModuleInstance.getNumber("ClickGui", "Scroll Speed").getValue()) * 100;
+        scrollAmount += wheel / (11f - ModuleInstance.getModule(ClickGui.class).scrollSpeed.getValue()) * 100;
 
         if (wheel == 0) {
             scrollAmount -= (lastLastScrollAmount - scrollAmount) * 0.6;
@@ -491,14 +490,14 @@ public class MMTClickGUI extends GuiScreen {
     }
 
     public boolean canUseChinese(Module module) {
-        if (ModuleInstance.getBool("ClientSettings", "Chinese Description").isEnabled()) {
+        if (ModuleInstance.getModule(ClientSettings.class).chineseDescription.isEnabled()) {
             return !module.getModuleInfo().chineseDescription().isEmpty();
         }
         return false;
     }
 
     public boolean isSpecialModule(Module module) {
-        if (module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof GuiSettings || module instanceof HurtCam || module instanceof Optimization) {
+        if (module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof HurtCam || module instanceof Optimization) {
             return true;
         }
         return false;

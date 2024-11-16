@@ -1,14 +1,16 @@
 package cn.stars.reversal.module;
 
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.module.impl.hud.Arraylist;
+import cn.stars.reversal.module.impl.hud.ClientSettings;
+import cn.stars.reversal.ui.hud.Hud;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.util.ReversalLogger;
 import cn.stars.reversal.util.misc.ClassUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Getter
@@ -16,13 +18,15 @@ import java.util.stream.Stream;
 public final class ModuleManager {
     public Module[] moduleList = new Module[0];
     ArrayList<Module> modulesToAdd = new ArrayList<>();
+    private Map<String, Module> moduleCache = new HashMap<>();
+    private Map<Class<? extends Module>, Module> classModuleCache = new HashMap<>();
 
 
     private Module lastGetModule;
     private String lastGetModuleName;
 
     private String getSettingName, getSettingSettingName;
-    private Setting getSettingSetting;
+    private Value getSettingSetting;
 
     private List<Module> enabledModules = new ArrayList<>();
     private boolean edited = true;
@@ -46,6 +50,8 @@ public final class ModuleManager {
         moduleList = modules;
 
         for (Module module : moduleList) {
+            classModuleCache.put(module.getClass(), module);
+            moduleCache.put(module.getModuleInfo().name().toLowerCase(), module);
             module.onLoad();
         }
     }
@@ -66,21 +72,8 @@ public final class ModuleManager {
         return enabledModules;
     }
 
-    public Module getByClass(Class<? extends Module> MClass) {
-        for (Module module : moduleList) {
-            if (module.getClass() == MClass)
-                return module;
-        }
-        return null;
-    }
-
-    public <T extends Module> T getModule(final Class<T> cls) {
-        for (final Module m : this.moduleList) {
-            if (m.getClass() == cls) {
-                return (T)m;
-            }
-        }
-        return null;
+    public Module getByClass(Class<? extends Module> clazz) {
+        return classModuleCache.get(clazz);
     }
 
     public List<Module> getModulesByCategory(final Category category) {
@@ -117,34 +110,21 @@ public final class ModuleManager {
     }
 
     /**
-     * This method gets the requested setting from the module given as a parameter.
-     *
-     * @param moduleName  The module the setting will be gotten from.
-     * @param settingName The requested settings name.
-     * @return The setting.
+     * Use HashMap to get modules and settings.
+     * More effective than for.
      */
-    public Setting getSetting(final String moduleName, final String settingName) {
-    /*    if (getSettingName != null && getSettingSettingName != null && getSettingSetting != null) {
-            if (getSettingName.equals(moduleName) && getSettingSettingName.equals(settingName)) {
-                return getSettingSetting;
-            }
-        } */
+    public Value getSetting(final String moduleName, final String settingName) {
+        Module module = moduleCache.get(moduleName.toLowerCase());
+        if (module != null) {
+            Value setting = module.getSetting(settingName.toLowerCase());
+            if (setting != null) {
+                getSettingName = moduleName;
+                getSettingSettingName = settingName;
+                getSettingSetting = setting;
 
-        for (final Module m : moduleList) {
-            if (m.getModuleInfo().name().equalsIgnoreCase(moduleName)) {
-                for (final Setting s : m.getSettings()) {
-                    if (s.getName().equalsIgnoreCase(settingName)) {
-                        getSettingName = moduleName;
-                        getSettingSettingName = settingName;
-                        getSettingSetting = s;
-
-                        return s;
-                    }
-                }
-
+                return setting;
             }
         }
-
         return null;
     }
 }

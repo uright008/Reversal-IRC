@@ -9,6 +9,7 @@ import cn.stars.reversal.music.ui.ThemeColor;
 import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
 import cn.stars.reversal.util.render.RenderUtil;
 import cn.stars.reversal.util.render.RoundedUtil;
+import cn.stars.reversal.util.render.UIUtil;
 import cn.stars.reversal.util.shader.RiseShaders;
 import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import net.minecraft.client.multiplayer.ServerData;
@@ -35,13 +36,13 @@ public class GuiScreenServerList extends GuiScreen
     {
         Keyboard.enableRepeatEvents(true);
         this.buttonList.clear();
-        selectButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96 + 12, 200, 20, () -> {
+        selectButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96 + 62, 200, 20, () -> {
             if (!this.field_146302_g.getText().isEmpty()) {
                 this.field_146301_f.serverIP = this.field_146302_g.getText();
                 this.field_146303_a.confirmClicked(true, 0);
             }
         }, "连接服务器", "", true, 1, 75, 5, 20);
-        cancelButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 120 + 12, 200, 20, () -> this.field_146303_a.confirmClicked(false, 0), "取消", "", true, 1, 90, 5, 20);
+        cancelButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 120 + 62, 200, 20, () -> this.field_146303_a.confirmClicked(false, 0), "取消", "", true, 1, 90, 5, 20);
         this.field_146302_g = new TextField(200, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.field_146302_g.setFocused(true);
         this.field_146302_g.setText(this.mc.gameSettings.lastServer);
@@ -71,15 +72,7 @@ public class GuiScreenServerList extends GuiScreen
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (mouseButton == 0) {
-            for (CuriosityTextButton menuButton : this.buttons) {
-                if (RenderUtil.isHovered(menuButton.getX(), menuButton.getY(), menuButton.getWidth(), menuButton.getHeight(), mouseX, mouseY)) {
-                    mc.getSoundHandler().playButtonPress();
-                    menuButton.runAction();
-                    break;
-                }
-            }
-        }
+        UIUtil.onButtonClick(buttons, mouseX, mouseY, mouseButton);
         this.field_146302_g.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
@@ -102,18 +95,18 @@ public class GuiScreenServerList extends GuiScreen
 
         GameInstance.clearRunnables();
 
-        RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, new Color(30, 30, 30, 160));
-        GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 10, 450, height - 15, 4, Color.BLACK));
-        RenderUtil.rect(width / 2f - 225, 30, 450, 0.5, new Color(220, 220, 220, 240));
+        RoundedUtil.drawRound(width / 2f - 225, 150, 450, 300, 4, new Color(30, 30, 30, 160));
+        GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 150, 450, 300, 4, Color.BLACK));
+        RenderUtil.rect(width / 2f - 225, 170, 450, 0.5, new Color(220, 220, 220, 240));
 
         for (CuriosityTextButton button : buttons) {
             button.draw(mouseX, mouseY, partialTicks);
         }
 
-        GameInstance.regular24Bold.drawCenteredString("直接连接", width / 2f, 16, new Color(220, 220, 220, 240).getRGB());
-        GameInstance.regular20.drawString("输入服务器IP", this.width / 2 - 100, 105, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular24Bold.drawCenteredString("直接连接", width / 2f, 157, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular20.drawString("输入服务器IP", this.width / 2 - 100, 245, new Color(220, 220, 220, 240).getRGB());
 
-        this.field_146302_g.draw(this.width / 2 - 100, 116, mouseX, mouseY);
+        this.field_146302_g.draw(this.width / 2 - 100, 256, mouseX, mouseY);
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();

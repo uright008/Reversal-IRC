@@ -1,6 +1,7 @@
 package cn.stars.reversal.util.render;
 
 import cn.stars.reversal.Reversal;
+import cn.stars.reversal.module.impl.hud.ClientSettings;
 import cn.stars.reversal.ui.theme.Theme;
 import cn.stars.reversal.util.animation.simple.SimpleAnimation;
 import cn.stars.reversal.util.math.MathUtil;
@@ -50,7 +51,7 @@ public final class ColorUtil {
     }
 
     public static Color empathyGlowColor() {
-        return ModuleInstance.getBool("ClientSettings", "Empathy Glow").isEnabled() ? ThemeUtil.getThemeColor(ThemeType.ARRAYLIST) : Color.BLACK;
+        return ModuleInstance.getModule(ClientSettings.class).empathyGlow.enabled ? ThemeUtil.getThemeColor(ThemeType.ARRAYLIST) : Color.BLACK;
     }
 
     public static Color empathyColor() {

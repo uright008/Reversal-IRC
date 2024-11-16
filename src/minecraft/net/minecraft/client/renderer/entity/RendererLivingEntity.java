@@ -6,6 +6,7 @@ import cn.stars.reversal.module.impl.addons.SkinLayers3D;
 import cn.stars.reversal.module.impl.player.Dinnerbone;
 import cn.stars.reversal.module.impl.player.SmallPlayer;
 import cn.stars.reversal.module.impl.player.SelfTag;
+import cn.stars.reversal.module.impl.render.Animations;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
@@ -355,7 +356,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         if (flag || flag1)
         {
             if (ModuleInstance.getModule(SmallPlayer.class).isEnabled() && entitylivingbaseIn instanceof EntityPlayer) {
-                if (!ModuleInstance.getBool("SmallPlayer", "Self").isEnabled()) {
+                if (!ModuleInstance.getModule(SmallPlayer.class).self.isEnabled()) {
                     float f = 0.5f;
                     GlStateManager.scale(f, f, f);
                     GlStateManager.translate(0.0F, 24.0F * scaleFactor, 0.0F);
@@ -364,8 +365,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     GlStateManager.scale(f, f, f);
                     GlStateManager.translate(0.0F, 24.0F * scaleFactor, 0.0F);
                 }
-                if (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && entitylivingbaseIn instanceof EntityPlayer) {
-                    if (!ModuleInstance.getBool("Dinnerbone", "Self").isEnabled()) {
+                if (ModuleInstance.getModule(Dinnerbone.class).isEnabled()) {
+                    if (!ModuleInstance.getModule(Dinnerbone.class).self.isEnabled()) {
                         GlStateManager.translate(0.0F, -30.0F * scaleFactor, 0.0F);
                     } else if (entitylivingbaseIn == Minecraft.getMinecraft().thePlayer) {
                         GlStateManager.translate(0.0F, -30.0F * scaleFactor, 0.0F);
@@ -480,7 +481,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             if (flag1)
             {
-                if (ModuleInstance.getBool("Animations", "Custom Hit Color").isEnabled()) {
+                if (ModuleInstance.getModule(Animations.class).customHitColor.enabled) {
                     this.brightnessBuffer.put(dmgRed);
                     this.brightnessBuffer.put(dmgGreen);
                     this.brightnessBuffer.put(dmgBlue);
@@ -518,7 +519,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
 
             this.brightnessBuffer.flip();
-            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, (FloatBuffer)this.brightnessBuffer);
+            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, this.brightnessBuffer);
             GlStateManager.setActiveTexture(OpenGlHelper.GL_TEXTURE2);
             GlStateManager.enableTexture2D();
             GlStateManager.bindTexture(textureBrightness.getGlTextureId());
@@ -608,7 +609,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getName());
 
             if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm") ||
-                    (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && bat instanceof EntityPlayer && ((ModuleInstance.getBool("Dinnerbone", "Self").isEnabled() && bat == Minecraft.getMinecraft().thePlayer) || !ModuleInstance.getBool("Dinnerbone", "Self").isEnabled())))
+                    (ModuleInstance.getModule(Dinnerbone.class).isEnabled() && bat instanceof EntityPlayer && ((ModuleInstance.getModule(Dinnerbone.class).self.enabled && bat == Minecraft.getMinecraft().thePlayer) || !ModuleInstance.getModule(Dinnerbone.class).self.enabled)))
                     && (!(bat instanceof EntityPlayer) || ((EntityPlayer)bat).isWearing(EnumPlayerModelParts.CAPE)))
             {
                 GlStateManager.translate(0.0F, bat.height + 0.1F, 0.0F);

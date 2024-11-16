@@ -4,18 +4,17 @@ import cn.stars.reversal.Reversal;
 import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.module.impl.addons.GuiSettings;
 import cn.stars.reversal.module.impl.addons.Optimization;
 import cn.stars.reversal.module.impl.addons.SkinLayers3D;
 import cn.stars.reversal.module.impl.hud.ClientSettings;
 import cn.stars.reversal.module.impl.hud.PostProcessing;
 import cn.stars.reversal.module.impl.render.ClickGui;
 import cn.stars.reversal.module.impl.render.HurtCam;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NoteValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NoteValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.ReversalLogger;
 import cn.stars.reversal.util.animation.advanced.Direction;
 import cn.stars.reversal.util.animation.advanced.impl.DecelerateAnimation;
@@ -73,7 +72,7 @@ public class ModernClickGUI extends GuiScreen {
         RenderUtil.scaleStart(x + 260, y + 160, windowAnim.getOutput().floatValue());
 
         // Background
-        if (ModuleInstance.getBool("PostProcessing", "Blur").isEnabled() && windowAnim.finished(Direction.FORWARDS)) {
+        if (ModuleInstance.getModule(PostProcessing.class).blur.enabled && windowAnim.finished(Direction.FORWARDS)) {
             MODERN_BLUR_RUNNABLES.add(() -> {
                 RenderUtil.roundedRectangle(x, y, 520, 320, 2, Color.BLACK);
             });
@@ -89,7 +88,7 @@ public class ModernClickGUI extends GuiScreen {
         RenderUtil.rectangle(x + 5, y + 62, 105, 0.7, new Color(200,200,200,100));
 
         // Shadow
-        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled() && windowAnim.finished(Direction.FORWARDS)) {
+        if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled && windowAnim.finished(Direction.FORWARDS)) {
             MODERN_BLOOM_RUNNABLES.add(() -> {
                 RenderUtil.roundedRectangle(x, y, 520, 320, 8, backgroundColor);
             });
@@ -165,7 +164,7 @@ public class ModernClickGUI extends GuiScreen {
                     settingY += m.sizeInGui;
                     if (m != firstModule) settingY += 15; // IDK why
 
-                    for (final Setting setting : m.getSettings()) {
+                    for (final Value setting : m.getSettings()) {
                         if (!setting.isHidden()) {
                             if (setting instanceof NoteValue) {
                                 FontManager.getPSR(18).drawString(setting.name, setting.guiX, setting.yAnimation.getValue() - 15, new Color(150, 150, 150, 150).getRGB());
@@ -272,7 +271,7 @@ public class ModernClickGUI extends GuiScreen {
                 } else {
                     m.alphaAnimation.run(0);
                 }
-                for (final Setting s : m.getSettings()) {
+                for (final Value s : m.getSettings()) {
                     if (s instanceof NumberValue) {
                         final NumberValue NumberValue = ((NumberValue) s);
 
@@ -291,7 +290,7 @@ public class ModernClickGUI extends GuiScreen {
             }
 
             if (firstModule != null && lastModuleY - y - 320 < -40 && !(lastModuleY == firstModule.guiY)) {
-                if (!(lastModuleY - firstModule.guiY < 280)) scrollAmount *= 0.99;
+                if (!(lastModuleY - firstModule.guiY < 280)) scrollAmount *= 0.99f;
                 else scrollAmount = -5;
             }
         }
@@ -351,7 +350,7 @@ public class ModernClickGUI extends GuiScreen {
                     }
                     else if (mouseButton == 1) m.expanded = !m.expanded;
                 }
-                for (final Setting setting : m.getSettings()) {
+                for (final Value setting : m.getSettings()) {
                     if (m.expanded) {
                         if (!setting.isHidden()) {
                             if (setting instanceof NoteValue) {
@@ -420,22 +419,9 @@ public class ModernClickGUI extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        int x = width / 2 - 260;
-        int y = height / 2 - 160;
-    /*    if (Mouse.hasWheel()) {
-            if (firstModule == null || firstModule.guiY - y >= 20) {
-                scrollAmount -= 10;
-            } else if (lastModuleY - y - 320 < -40) {
-                if (!(lastModuleY - firstModule.guiY < 280)) scrollAmount += 10;
-                else scrollAmount = -5;
-            } else {
-                scrollAmount += Mouse.getDWheel() / 5;
-            }
-        } */
         final float wheel = Mouse.getDWheel();
 
-        scrollAmount += wheel / (11f - ModuleInstance.getNumber("ClickGui", "Scroll Speed").getValue()) * 200;
-    //    Reversal.showMsg(Mouse.getDWheel() / 5);
+        scrollAmount += wheel / (11f - ModuleInstance.getModule(ClickGui.class).scrollSpeed.getValue()) * 200;
     }
 
     @Override
@@ -517,9 +503,6 @@ public class ModernClickGUI extends GuiScreen {
     }
 
     public boolean isSpecialModule(Module module) {
-        if (module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof GuiSettings || module instanceof HurtCam || module instanceof Optimization) {
-            return true;
-        }
-        return false;
+        return module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof HurtCam || module instanceof Optimization;
     }
 }

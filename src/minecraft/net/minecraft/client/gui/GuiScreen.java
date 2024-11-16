@@ -14,7 +14,8 @@ import cn.stars.reversal.util.shader.impl.BackgroundShader;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -590,6 +591,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         else {
             try {
                 drawMenuBackground(screenPartialTicks, this.width, this.height);
+                if (RainyAPI.backgroundBlur) {
+                    NORMAL_BLUR_RUNNABLES.add(() -> RenderUtil.rect(0,0, this.width, this.height, Color.BLACK));
+                    RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, screenPartialTicks, NORMAL_BLUR_RUNNABLES);
+                }
             } catch (Exception e) {
                 ReversalLogger.error("(GuiScreen) Error while loading background");
             }
@@ -642,7 +647,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
         catch (Throwable throwable)
         {
-            LOGGER.error("Couldn\'t open link", throwable);
+            LOGGER.error("Couldn't open link", throwable);
         }
     }
 
@@ -729,7 +734,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         GlStateManager.enableAlpha();
     }
 
-    public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) throws IOException {
+    public void drawMenuBackground(float partialTicks, int mouseX, int mouseY) {
         if (RainyAPI.backgroundId > 9 || RainyAPI.backgroundId < 0) RainyAPI.backgroundId = 9;
         if (RainyAPI.backgroundId == 9) {
             VideoUtil.render(0, 0, width, height);

@@ -1,5 +1,6 @@
 package cn.stars.addons.skinlayers3d;
 
+import cn.stars.reversal.module.impl.addons.SkinLayers3D;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.entity.*;
@@ -36,7 +37,7 @@ public class BodyLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
             return;
         }
         if (BodyLayerFeatureRenderer.mc.thePlayer.getPositionVector().squareDistanceTo(player.getPositionVector()) >
-                ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt() * ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt()) {
+                ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt() * ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt()) {
             return;
         }
         if (((PlayerSettings) player).getSkinLayers() == null && !this.setupModel(player, (PlayerSettings)player)) {
@@ -57,9 +58,9 @@ public class BodyLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
         if (layers == null) {
             return;
         }
-        float pixelScaling = ModuleInstance.getNumber("SkinLayers3D", "Voxel Size").getFloat();
+        float pixelScaling = ModuleInstance.getModule(SkinLayers3D.class).baseVoxelSize.getFloat();
         float heightScaling = 1.035f;
-        float widthScaling = ModuleInstance.getNumber("SkinLayers3D", "Voxel Size").getFloat();
+        float widthScaling;
         boolean redTint = abstractClientPlayer.hurtTime > 0 || abstractClientPlayer.deathTime > 0;
         for (final Layer layer : this.bodyLayers) {
             if (abstractClientPlayer.isWearing(layer.modelPart) && !layer.vanillaGetter.get().isHidden) {
@@ -75,10 +76,10 @@ public class BodyLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
                     layers[layer.layersId].x = 7.984f;
                 }
                 if (layer.shape == Shape.BODY) {
-                    widthScaling = ModuleInstance.getNumber("SkinLayers3D", "Torso Voxel Width").getFloat();
+                    widthScaling = ModuleInstance.getModule(SkinLayers3D.class).bodyVoxelSize.getFloat();
                 }
                 else {
-                    widthScaling = ModuleInstance.getNumber("SkinLayers3D", "Voxel Size").getFloat();
+                    widthScaling = ModuleInstance.getModule(SkinLayers3D.class).baseVoxelSize.getFloat();
                 }
                 if (layer.mirrored) {
                     final CustomizableModelPart customizableModelPart = layers[layer.layersId];

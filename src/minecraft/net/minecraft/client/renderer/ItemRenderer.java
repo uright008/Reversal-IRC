@@ -297,13 +297,13 @@ public class ItemRenderer
         }
 
         GlStateManager.translate(f1 * 0.0F, f1 * 0.0F, f1 * 0.1F);
-        if (ModuleInstance.getBool("Animations", "Bow Swing").isEnabled()) {
+        if (ModuleInstance.getModule(Animations.class).bowSwing.enabled) {
             GlStateManager.rotate(-335.0F, 0.0F, 0.0F, 1.0F);
             GlStateManager.rotate(-50.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.translate(0.0F, 0.5F, 0.0F);
         }
         GlStateManager.scale(1.0F, 1.0F, 1.0F + f1 * 0.2F);
-        if (ModuleInstance.getBool("Animations", "Bow Swing").isEnabled()) {
+        if (ModuleInstance.getModule(Animations.class).bowSwing.enabled) {
             GlStateManager.translate(0.0F, -0.5F, 0.0F);
             GlStateManager.rotate(50.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(335.0F, 0.0F, 0.0F, 1.0F);
@@ -331,7 +331,7 @@ public class ItemRenderer
     {
         if (!Config.isShaders() || !Shaders.isSkipRenderHand())
         {
-            boolean anythingBlock = ModuleInstance.getBool("Animations", "Anything Block").isEnabled();
+            boolean anythingBlock = ModuleInstance.getModule(Animations.class).anythingBlock.enabled;
             float f = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
             AbstractClientPlayer abstractclientplayer = this.mc.thePlayer;
             float f1 = abstractclientplayer.getSwingProgress(partialTicks);
@@ -343,7 +343,7 @@ public class ItemRenderer
             GlStateManager.enableRescaleNormal();
             GlStateManager.pushMatrix();
 
-            if (ModuleInstance.getBool("Animations", "Left Hand").isEnabled()) {
+            if (ModuleInstance.getModule(Animations.class).leftHand.enabled) {
                 GL11.glScaled(-1.0, 1.0, 1.0);
                 GlStateManager.disableCull();
             } else {
@@ -358,7 +358,7 @@ public class ItemRenderer
                 }
                 else if (abstractclientplayer.getItemInUseCount() > 0 || (mc.gameSettings.keyBindUseItem.isKeyDown() && anythingBlock))
                 {
-                    GlStateManager.translate(ModuleInstance.getNumber("Animations", "Item X").getFloat(), ModuleInstance.getNumber("Animations", "Item Y").getFloat(), ModuleInstance.getNumber("Animations", "Item Z").getFloat());
+                    GlStateManager.translate(ModuleInstance.getModule(Animations.class).itemX.getFloat(), ModuleInstance.getModule(Animations.class).itemY.getFloat(), ModuleInstance.getModule(Animations.class).itemZ.getFloat());
                     boolean m = ModuleInstance.getModule(Animations.class).isEnabled();
                     EnumAction enumaction = anythingBlock ? EnumAction.BLOCK : this.itemToRender.getItemUseAction();
 
@@ -370,24 +370,24 @@ public class ItemRenderer
 
                         case EAT:
                             this.performDrinking(abstractclientplayer, partialTicks);
-                            if (m && ModuleInstance.getBool("Animations", "Food Swing").isEnabled())
+                            if (m && ModuleInstance.getModule(Animations.class).foodSwing.isEnabled())
                                 this.transformFirstPersonItem(f, f1);
                             //    this.transformFirstPersonFood(f, f1);
                             break;
 
                         case DRINK:
                             this.performDrinking(abstractclientplayer, partialTicks);
-                            if (m && ModuleInstance.getBool("Animations", "Drink Swing").isEnabled())
+                            if (m && ModuleInstance.getModule(Animations.class).drinkSwing.isEnabled())
                                 this.transformFirstPersonItem(f, f1);
                             else
                                 this.transformFirstPersonItem(f, 0.0F);
                             break;
 
                         case BLOCK:
-                            if (m && ModuleInstance.getBool("Animations", "Sword Swing").isEnabled())
+                            if (m && ModuleInstance.getModule(Animations.class).swordSwing.isEnabled())
                             {
                                 final float convertedProgress = MathHelper.sin(MathHelper.sqrt_float(f1) * (float) Math.PI);
-                                switch (ModuleInstance.getMode("Animations", "Sword Mode").getMode()) {
+                                switch (ModuleInstance.getModule(Animations.class).swordMode.getMode()) {
                                     case "None": {
                                         transformFirstPersonItem(f, 0.0f);
                                         break;
@@ -504,22 +504,22 @@ public class ItemRenderer
                             break;
 
                         case BOW:
-                            if (m && ModuleInstance.getBool("Animations", "Bow Swing").isEnabled())
+                            if (m && ModuleInstance.getModule(Animations.class).bowSwing.isEnabled())
                                 this.transformFirstPersonItem(f, f1);
                             else
                                 this.transformFirstPersonItem(f, 0.0F);
                             this.doBowTransformations(partialTicks, abstractclientplayer);
                     }
-                    float blockY = ModuleInstance.getNumber("Animations", "Block Y").getFloat();
+                    float blockY = ModuleInstance.getModule(Animations.class).blockY.getFloat();
                     GlStateManager.translate(-blockY, blockY, blockY);
-                    GlStateManager.scale(ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat());
+                    GlStateManager.scale(ModuleInstance.getModule(Animations.class).itemScale.getFloat(), ModuleInstance.getModule(Animations.class).itemScale.getFloat(), ModuleInstance.getModule(Animations.class).itemScale.getFloat());
                 }
                 else
                 {
-                    GlStateManager.translate(ModuleInstance.getNumber("Animations", "Item X").getFloat(), ModuleInstance.getNumber("Animations", "Item Y").getFloat(), ModuleInstance.getNumber("Animations", "Item Z").getFloat());
-                    if (!ModuleInstance.getBool("Animations", "Swing Animation").isEnabled()) this.doItemUsedTransformations(f1);
+                    GlStateManager.translate(ModuleInstance.getModule(Animations.class).itemX.getFloat(), ModuleInstance.getModule(Animations.class).itemY.getFloat(), ModuleInstance.getModule(Animations.class).itemZ.getFloat());
+                    if (!ModuleInstance.getModule(Animations.class).swingAnim.enabled) this.doItemUsedTransformations(f1);
                     this.transformFirstPersonItem(f, f1);
-                    GlStateManager.scale(ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat(), ModuleInstance.getNumber("Animations", "Item Scale").getFloat());
+                    GlStateManager.scale(ModuleInstance.getModule(Animations.class).itemScale.getFloat(), ModuleInstance.getModule(Animations.class).itemScale.getFloat(), ModuleInstance.getModule(Animations.class).itemScale.getFloat());
                 }
                 this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
             }

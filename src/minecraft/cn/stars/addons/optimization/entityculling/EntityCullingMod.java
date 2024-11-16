@@ -1,5 +1,6 @@
 package cn.stars.addons.optimization.entityculling;
 
+import cn.stars.reversal.module.impl.addons.Optimization;
 import cn.stars.reversal.util.misc.ModuleInstance;
 
 public class EntityCullingMod extends EntityCullingModBase {
@@ -13,11 +14,11 @@ public class EntityCullingMod extends EntityCullingModBase {
     }
 
     public void doClientTick() {
-        if (ModuleInstance.getBool("Optimization", "Entity Culling").isEnabled()) this.clientTick();
+        if (ModuleInstance.getModule(Optimization.class).entityCulling.enabled) this.clientTick();
     }
 
     public void doWorldTick() {
-        if (ModuleInstance.getBool("Optimization", "Entity Culling").isEnabled()) this.worldTick();
+        if (ModuleInstance.getModule(Optimization.class).entityCulling.enabled) this.worldTick();
     }
 
 }

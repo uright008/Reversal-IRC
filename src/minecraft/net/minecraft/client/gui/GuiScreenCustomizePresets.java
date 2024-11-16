@@ -63,6 +63,11 @@ public class GuiScreenCustomizePresets extends GuiScreen
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        this.field_175317_i.mouseDragged(mouseX, mouseY, clickedMouseButton);
+    }
+
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
         this.field_175317_i.keyTyped(typedChar, keyCode);

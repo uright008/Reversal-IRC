@@ -5,8 +5,8 @@ import cn.stars.reversal.event.impl.*;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.math.MathUtil;
 import cn.stars.reversal.util.math.TimeUtil;
 import cn.stars.reversal.util.misc.ModuleInstance;
@@ -114,12 +114,12 @@ public final class TargetHud extends Module {
                 //Background
                 if (backGround.isEnabled()) {
                     RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 48, 8, new Color(0, 0, 0, 110));
-                    if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                         MODERN_BLOOM_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 48, 8, Color.BLACK);
                         });
                     }
-                    if (canBlur()) {
+                    if (ModuleInstance.getModule(PostProcessing.class).blur.enabled) {
                         MODERN_BLUR_RUNNABLES.add(() -> {
                             RenderUtil.roundedRectangle(posX + 38 + 2, posY - 34, 129, 47, 8, Color.BLACK);
                         });
@@ -191,7 +191,7 @@ public final class TargetHud extends Module {
                 }
 
                 // Get the current theme of the client.
-                final ModeValue setting = ((ModeValue) Reversal.moduleManager.getSetting("ClientSettings", "Theme"));
+                final ModeValue setting = ModuleInstance.getModule(ClientSettings.class).theme;
 
                 // If the setting was null return to prevent crashes bc shit setting system.
                 if (setting == null) return;
@@ -206,7 +206,7 @@ public final class TargetHud extends Module {
                         float finalOffset = offset;
                         Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, color);
 
-                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                             MODERN_BLOOM_RUNNABLES.add(() -> {
                                 Gui.drawRect(drawBarPosX + finalOffset, posY + 5, drawBarPosX + 1 + finalOffset * 1.25, posY + 10, color);
                             });
@@ -434,7 +434,7 @@ public final class TargetHud extends Module {
                         final float o = (float) (Math.abs(Math.sin((ticks * 0.006 + i * 0.005) * (((EntityPlayer) target).hurtTime / 8.0F + 2))) / 2) + 1;
 
                         // Get the current theme of the client.
-                        final ModeValue setting = ((ModeValue) Reversal.moduleManager.getSetting("ClientSettings", "Theme"));
+                        final ModeValue setting = ModuleInstance.getModule(ClientSettings.class).theme;
 
                         // If the setting was null return to prevent crashes bc shit setting system.
                         if (setting == null) return;
@@ -443,7 +443,7 @@ public final class TargetHud extends Module {
 
                         Gui.drawRect(drawBarPosX + offset, posY, drawBarPosX + 1 + offset, posY + 10, color);
 
-                        if (ModuleInstance.getBool("PostProcessing", "Bloom").isEnabled()) {
+                        if (ModuleInstance.getModule(PostProcessing.class).bloom.enabled) {
                             float finalOffset = offset;
                             int finalColor = color;
                             MODERN_BLOOM_RUNNABLES.add(() -> Gui.drawRect(drawBarPosX + finalOffset, posY, drawBarPosX + 1 + finalOffset, posY + 10, finalColor));

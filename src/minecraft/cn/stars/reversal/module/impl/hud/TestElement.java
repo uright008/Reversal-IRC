@@ -5,8 +5,8 @@ import cn.stars.reversal.event.impl.Shader3DEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.NoteValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.NoteValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.render.ColorUtils;
 import cn.stars.reversal.util.render.RoundedUtil;
 

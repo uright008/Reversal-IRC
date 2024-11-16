@@ -7,7 +7,7 @@ import cn.stars.reversal.font.MFont;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
+import cn.stars.reversal.value.impl.BoolValue;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.math.TimeUtil;
 import cn.stars.reversal.util.render.ColorUtil;

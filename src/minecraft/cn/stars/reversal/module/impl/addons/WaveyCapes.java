@@ -3,9 +3,9 @@ package cn.stars.reversal.module.impl.addons;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 
 @ModuleInfo(name = "WaveyCapes", chineseName = "飘扬披风", description = "Make your cape waving look better",
         chineseDescription = "使你的披风飘动更真实", category = Category.ADDONS)

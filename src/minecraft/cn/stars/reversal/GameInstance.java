@@ -3,10 +3,10 @@ package cn.stars.reversal;
 import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.font.MFont;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.shader.RiseShaders;
 import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import net.minecraft.client.Minecraft;
@@ -89,86 +89,5 @@ public interface GameInstance {
         NORMAL_PRE_RENDER_RUNNABLES.clear();
         NORMAL_POST_RENDER_RUNNABLES.clear();
         UI_POST_BLOOM_RUNNABLES.clear();
-    }
-
-    default Module getModule(final Class<? extends Module> clazz) {
-        for (final Module module : Reversal.moduleManager.getModuleList()) {
-            if (module.getClass() == clazz) {
-                return module;
-            }
-        }
-
-        return null;
-    }
-
-    public static Module getModuleS(final Class<? extends Module> clazz) {
-        for (final Module module : Reversal.moduleManager.getModuleList()) {
-            if (module.getClass() == clazz) {
-                return module;
-            }
-        }
-
-        return null;
-    }
-
-
-    default boolean getBoolean(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : this.getModule(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((BoolValue) setting).isEnabled();
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean getBooleanS(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : getModuleS(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((BoolValue) setting).isEnabled();
-            }
-        }
-
-        return false;
-    }
-
-    default String getMode(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : this.getModule(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((ModeValue) setting).getMode();
-            }
-        }
-
-        return null;
-    }
-
-    public static String getModeS(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : getModuleS(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((ModeValue) setting).getMode();
-            }
-        }
-
-        return null;
-    }
-
-    default double getNumber(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : this.getModule(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((NumberValue) setting).getValue();
-            }
-        }
-
-        return 0;
-    }
-
-    public static double getNumberS(final Class<? extends Module> clazz, final String name) {
-        for (final Setting setting : getModuleS(clazz).getSettings()) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return ((NumberValue) setting).getValue();
-            }
-        }
-
-        return 0;
     }
 }

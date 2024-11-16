@@ -4,8 +4,8 @@ import cn.stars.reversal.event.impl.Render2DEvent
 import cn.stars.reversal.module.Category
 import cn.stars.reversal.module.Module
 import cn.stars.reversal.module.ModuleInfo
-import cn.stars.reversal.setting.impl.ModeValue
-import cn.stars.reversal.setting.impl.NumberValue
+import cn.stars.reversal.value.impl.ModeValue
+import cn.stars.reversal.value.impl.NumberValue
 import cn.stars.reversal.util.render.RenderUtil
 import net.minecraft.client.gui.ScaledResolution
 import java.awt.Color
@@ -13,7 +13,7 @@ import java.awt.Color
 
 @ModuleInfo(name = "HurtCam", chineseName = "受伤抖动", description = "Modify the shake when you get hurt", chineseDescription = "修改你受伤时的抖动效果", category = Category.RENDER)
 class HurtCam : Module() {
-    private val mode = ModeValue("Mode", this, "Vanilla", "Cancel", "Vanilla", "FPS")
+    val mode = ModeValue("Mode", this, "Vanilla", "Cancel", "Vanilla", "FPS")
     private val fpsTimeValue = NumberValue("FPS Time", this, 1000.0, 0.0, 1500.0, 1.0)
     private val fpsHeightValue = NumberValue("FPS Height", this,25.0, 10.0, 50.0, 1.0)
     private var sr = ScaledResolution(mc)

@@ -61,6 +61,11 @@ public class GuiFlatPresets extends GuiScreen
         this.field_146435_s.handleMouseInput();
     }
 
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        this.field_146433_u.mouseDragged(mouseX, mouseY, clickedMouseButton);
+    }
+
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);

@@ -3,12 +3,23 @@ package net.minecraft.client.gui;
 import cn.stars.reversal.GameInstance;
 import cn.stars.reversal.music.ui.TextField;
 import cn.stars.reversal.music.ui.ThemeColor;
+import cn.stars.reversal.ui.curiosity.CuriosityTextButton;
+import cn.stars.reversal.util.render.RenderUtil;
+import cn.stars.reversal.util.render.RoundedUtil;
+import cn.stars.reversal.util.render.UIUtil;
+import cn.stars.reversal.util.shader.RiseShaders;
+import cn.stars.reversal.util.shader.base.ShaderRenderType;
 import com.google.common.base.Predicate;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.IDN;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
+
+import static cn.stars.reversal.GameInstance.*;
+import static cn.stars.reversal.GameInstance.UI_BLOOM_RUNNABLES;
 
 public class GuiScreenAddServer extends GuiScreen
 {
@@ -16,38 +27,8 @@ public class GuiScreenAddServer extends GuiScreen
     private final ServerData serverData;
     private TextField serverIPField;
     private TextField serverNameField;
-    private GuiButton serverResourcePacks;
-    private Predicate<String> field_181032_r = new Predicate<String>()
-    {
-        public boolean apply(String p_apply_1_)
-        {
-            if (p_apply_1_.length() == 0)
-            {
-                return true;
-            }
-            else
-            {
-                String[] astring = p_apply_1_.split(":");
-
-                if (astring.length == 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    try
-                    {
-                        IDN.toASCII(astring[0]);
-                        return true;
-                    }
-                    catch (IllegalArgumentException var4)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-    };
+    CuriosityTextButton addButton, cancelButton;
+    private CuriosityTextButton[] buttons;
 
     public GuiScreenAddServer(GuiScreen p_i1033_1_, ServerData p_i1033_2_)
     {
@@ -58,16 +39,20 @@ public class GuiScreenAddServer extends GuiScreen
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 18, I18n.format("addServer.add", new Object[0])));
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 18, I18n.format("gui.cancel", new Object[0])));
-        this.buttonList.add(this.serverResourcePacks = new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72, I18n.format("addServer.resourcePack", new Object[0]) + ": " + this.serverData.getResourceMode().getMotd().getFormattedText()));
+        addButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 96 + 68, 200, 20, () -> {
+            this.serverData.serverName = this.serverNameField.getText();
+            this.serverData.serverIP = this.serverIPField.getText();
+            this.parentScreen.confirmClicked(true, 0);
+        }, "添加服务器", "", true, 1, 75, 5, 20);
+        cancelButton = new CuriosityTextButton(this.width / 2 - 100, this.height / 4 + 120 + 68, 200, 20, () -> {
+            this.parentScreen.confirmClicked(false, 0);
+        }, "取消", "", true, 1, 90, 5, 20);
         this.serverNameField = new TextField(200, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.serverNameField.setFocused(true);
         this.serverNameField.setText(this.serverData.serverName);
         this.serverIPField = new TextField(200, 20, GameInstance.regular16, ThemeColor.bgColor, ThemeColor.outlineColor);
         this.serverIPField.setText(this.serverData.serverIP);
-        ((GuiButton)this.buttonList.get(0)).enabled = !this.serverIPField.getText().isEmpty() && this.serverIPField.getText().split(":").length > 0 && !this.serverNameField.getText().isEmpty();
+        buttons = new CuriosityTextButton[] {addButton, cancelButton};
     }
 
     public void onGuiClosed()
@@ -77,24 +62,6 @@ public class GuiScreenAddServer extends GuiScreen
 
     protected void actionPerformed(GuiButton button) throws IOException
     {
-        if (button.enabled)
-        {
-            if (button.id == 2)
-            {
-                this.serverData.setResourceMode(ServerData.ServerResourceMode.values()[(this.serverData.getResourceMode().ordinal() + 1) % ServerData.ServerResourceMode.values().length]);
-                this.serverResourcePacks.displayString = I18n.format("addServer.resourcePack", new Object[0]) + ": " + this.serverData.getResourceMode().getMotd().getFormattedText();
-            }
-            else if (button.id == 1)
-            {
-                this.parentScreen.confirmClicked(false, 0);
-            }
-            else if (button.id == 0)
-            {
-                this.serverData.serverName = this.serverNameField.getText();
-                this.serverData.serverIP = this.serverIPField.getText();
-                this.parentScreen.confirmClicked(true, 0);
-            }
-        }
     }
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException
@@ -107,18 +74,12 @@ public class GuiScreenAddServer extends GuiScreen
             this.serverNameField.setFocused(!this.serverNameField.isFocused());
             this.serverIPField.setFocused(!this.serverIPField.isFocused());
         }
-
-        if (keyCode == 28 || keyCode == 156)
-        {
-            this.actionPerformed((GuiButton)this.buttonList.get(0));
-        }
-
-        ((GuiButton)this.buttonList.get(0)).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
     }
 
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
         super.mouseClicked(mouseX, mouseY, mouseButton);
+        UIUtil.onButtonClick(buttons, mouseX, mouseY, mouseButton);
         this.serverIPField.mouseClicked(mouseX, mouseY, mouseButton);
         this.serverNameField.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -132,11 +93,34 @@ public class GuiScreenAddServer extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, I18n.format("addServer.title"), this.width / 2, 17, 16777215);
-        this.drawString(this.fontRendererObj, I18n.format("addServer.enterName"), this.width / 2 - 100, 53, 10526880);
-        this.drawString(this.fontRendererObj, I18n.format("addServer.enterIp"), this.width / 2 - 100, 94, 10526880);
-        this.serverNameField.draw(this.width / 2 - 100, 66, mouseX, mouseY);
-        this.serverIPField.draw(this.width / 2 - 100, 106, mouseX, mouseY);
+        // blur
+        RiseShaders.GAUSSIAN_BLUR_SHADER.update();
+        RiseShaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_BLUR_RUNNABLES);
+
+        // bloom
+        RiseShaders.POST_BLOOM_SHADER.update();
+        RiseShaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, partialTicks, NORMAL_POST_BLOOM_RUNNABLES);
+
+        GameInstance.clearRunnables();
+
+        RoundedUtil.drawRound(width / 2f - 225, 150, 450, 300, 4, new Color(30, 30, 30, 160));
+        GameInstance.NORMAL_BLUR_RUNNABLES.add(() -> RoundedUtil.drawRound(width / 2f - 225, 150, 450, 300, 4, Color.BLACK));
+        RenderUtil.rect(width / 2f - 225, 170, 450, 0.5, new Color(220, 220, 220, 240));
+
+        for (CuriosityTextButton button : buttons) {
+            button.draw(mouseX, mouseY, partialTicks);
+        }
+
+        GameInstance.regular24Bold.drawCenteredString("添加服务器", width / 2f, 157, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular20.drawString("输入服务器名称", this.width / 2 - 100, 193, new Color(220, 220, 220, 240).getRGB());
+        GameInstance.regular20.drawString("输入服务器IP", this.width / 2 - 100, 234, new Color(220, 220, 220, 240).getRGB());
+
+        this.serverNameField.draw(this.width / 2 - 100, 206, mouseX, mouseY);
+        this.serverIPField.draw(this.width / 2 - 100, 246, mouseX, mouseY);
+
+        UI_BLOOM_RUNNABLES.forEach(Runnable::run);
+        UI_BLOOM_RUNNABLES.clear();
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

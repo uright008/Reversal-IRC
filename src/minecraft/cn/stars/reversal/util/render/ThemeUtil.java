@@ -2,7 +2,8 @@ package cn.stars.reversal.util.render;
 
 import cn.stars.reversal.GameInstance;
 import cn.stars.reversal.Reversal;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.module.impl.hud.ClientSettings;
+import cn.stars.reversal.value.impl.ModeValue;
 import cn.stars.reversal.util.math.TimeUtil;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public final class ThemeUtil implements GameInstance {
     private final Color color2 = new Color(71, 253, 160);
     private Color color;
     private String theme;
+    private String colorType;
     private boolean switcher;
 
     private final TimeUtil timer = new TimeUtil();
@@ -53,53 +55,64 @@ public final class ThemeUtil implements GameInstance {
     public Color getThemeColor(float colorOffset, final ThemeType type, final float timeMultiplier) {
         if (timer.hasReached(50 * 5)) {
             timer.reset();
-            theme = ((ModeValue) Objects.requireNonNull(Reversal.moduleManager.getSetting("ClientSettings", "Theme"))).getMode();
+            theme = ModuleInstance.getModule(ClientSettings.class).theme.getMode();
+            colorType = ModuleInstance.getModule(ClientSettings.class).colorType.getMode();
             color = new Color(Reversal.CLIENT_THEME_COLOR);
         }
 
-        if (theme == null || color == null) return color;
+        if (theme == null || color == null || colorType == null) return color;
 
         float colorOffsetMultiplier = 1;
 
         if (type == ThemeType.GENERAL) {
-            if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
+            if (colorType.equals("Rainbow")) {
                 colorOffsetMultiplier = 5f;
-            } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
+            } else if (colorType.equals("Fade")) {
                 colorOffsetMultiplier = 2.2f;
             }
         }
 
-        colorOffsetMultiplier *= (float) ModuleInstance.getNumber("ClientSettings", "Index Times").getValue();
+        colorOffsetMultiplier *= ModuleInstance.getModule(ClientSettings.class).indexTimes.getFloat();
         colorOffset *= colorOffsetMultiplier;
-        float speed = (float) ModuleInstance.getNumber("ClientSettings", "Index Speed").getValue();
+        float speed = ModuleInstance.getModule(ClientSettings.class).indexSpeed.getFloat();
 
         final double timer = (System.currentTimeMillis() / 1E+8 * timeMultiplier) * 4E+5;
 
         switch (type) {
             case GENERAL:
             case ARRAYLIST: {
-                if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
-                    color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
-                } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
-                    final float offset1 = (float) (Math.abs(Math.sin(timer * 0.5 * speed + colorOffset * 0.45)) / 2.2f) + 1f;
-                    color = ColorUtil.liveColorBrighter(new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT), offset1);
-                } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Double")) {
-                    color = ColorUtils.INSTANCE.interpolateColorsBackAndForth((int) (20 * (1 / speed)), (int) colorOffset * 4, new Color(Reversal.CLIENT_THEME_COLOR), new Color(Reversal.CLIENT_THEME_COLOR_2), true);
-                } else {
-                    color = new Color(Reversal.CLIENT_THEME_COLOR);
+                switch (colorType) {
+                    case "Rainbow":
+                        color = new Color(ColorUtil.getColor(-(1 + colorOffset * 1.7f), 0.7f, 1));
+                        break;
+                    case "Fade":
+                        final float offset1 = (float) (Math.abs(Math.sin(timer * 0.5 * speed + colorOffset * 0.45)) / 2.2f) + 1f;
+                        color = ColorUtil.liveColorBrighter(new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT), offset1);
+                        break;
+                    case "Double":
+                        color = ColorUtils.INSTANCE.interpolateColorsBackAndForth((int) (20 * (1 / speed)), (int) colorOffset * 4, new Color(Reversal.CLIENT_THEME_COLOR), new Color(Reversal.CLIENT_THEME_COLOR_2), true);
+                        break;
+                    default:
+                        color = new Color(Reversal.CLIENT_THEME_COLOR);
+                        break;
                 }
                 break;
             }
 
             case LOGO: {
-                if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Rainbow")) {
-                    color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
-                } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Fade")) {
-                    color = new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT);
-                } else if (ModuleInstance.getMode("ClientSettings", "Color Type").getMode().equals("Double")) {
-                    color = ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1, new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT), new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT_2), true);
-                } else {
-                    color = new Color(Reversal.CLIENT_THEME_COLOR);
+                switch (colorType) {
+                    case "Rainbow":
+                        color = new Color(ColorUtil.getColor(1 + colorOffset * 1.4f, 0.5f, 1));
+                        break;
+                    case "Fade":
+                        color = new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT);
+                        break;
+                    case "Double":
+                        color = ColorUtils.INSTANCE.interpolateColorsBackAndForth(4, 1, new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT), new Color(Reversal.CLIENT_THEME_COLOR_BRIGHT_2), true);
+                        break;
+                    default:
+                        color = new Color(Reversal.CLIENT_THEME_COLOR);
+                        break;
                 }
                 break;
             }

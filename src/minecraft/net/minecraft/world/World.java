@@ -1,6 +1,7 @@
 package net.minecraft.world;
 
 import cn.stars.addons.optimization.normal.FixedEntityLookHelper;
+import cn.stars.reversal.module.impl.addons.Optimization;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -1021,7 +1022,7 @@ public abstract class World implements IBlockAccess
         if (entityIn instanceof EntityLiving)
         {
             EntityLiving living = (EntityLiving) entityIn;
-            if (ModuleInstance.getBool("Optimization", "AI Improvements - Look AI").isEnabled() || ModuleInstance.getBool("Optimization", "AI Improvements - Look Idle").isEnabled())
+            if (ModuleInstance.getModule(Optimization.class).ai_lookAI.enabled || ModuleInstance.getModule(Optimization.class).ai_lookIdle.enabled)
             {
                 Iterator<EntityAITasks.EntityAITaskEntry> it = living.tasks.taskEntries.iterator();
                 while (it.hasNext())
@@ -1029,11 +1030,11 @@ public abstract class World implements IBlockAccess
                     EntityAITasks.EntityAITaskEntry obj = it.next();
                     if (obj != null)
                     {
-                        if (ModuleInstance.getBool("Optimization", "AI Improvements - Look AI").isEnabled() && obj.action instanceof EntityAIWatchClosest)
+                        if (ModuleInstance.getModule(Optimization.class).ai_lookAI.enabled && obj.action instanceof EntityAIWatchClosest)
                         {
                             it.remove();
                         }
-                        else if (ModuleInstance.getBool("Optimization", "AI Improvements - Look Idle").isEnabled() && obj.action instanceof EntityAILookIdle)
+                        else if (ModuleInstance.getModule(Optimization.class).ai_lookIdle.enabled && obj.action instanceof EntityAILookIdle)
                         {
                             it.remove();
                         }
@@ -1042,7 +1043,7 @@ public abstract class World implements IBlockAccess
             }
 
             //Only replace vanilla look helper to avoid overlapping mods
-            if (ModuleInstance.getBool("Optimization", "AI Improvements - Look Helper").isEnabled() && (living.getLookHelper() == null || living.getLookHelper().getClass() == EntityLookHelper.class))
+            if (ModuleInstance.getModule(Optimization.class).ai_lookHelper.enabled && (living.getLookHelper() == null || living.getLookHelper().getClass() == EntityLookHelper.class))
             {
                 EntityLookHelper oldHelper = living.lookHelper;
                 living.lookHelper = new FixedEntityLookHelper(living);

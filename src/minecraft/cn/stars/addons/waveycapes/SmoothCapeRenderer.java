@@ -1,7 +1,7 @@
 package cn.stars.addons.waveycapes;
 
 import cn.stars.reversal.Reversal;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

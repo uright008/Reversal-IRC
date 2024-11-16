@@ -4,10 +4,10 @@ import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.Reversal;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.ModeValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.Value;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.ModeValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.misc.FileUtil;
 import cn.stars.reversal.util.render.ThemeUtil;
@@ -89,7 +89,7 @@ public class DefaultHandler {
                     module.setY(Integer.parseInt(split[2]));
                 }
 
-                final Setting setting = Reversal.moduleManager.getSetting(split[1], split[2]);
+                final Value setting = Reversal.moduleManager.getSetting(split[1], split[2]);
 
                 if (split[0].contains("BoolValue") && setting instanceof BoolValue) {
                     if (split[3].contains("true")) {
@@ -137,7 +137,7 @@ public class DefaultHandler {
                     configBuilder.append("PositionX_").append(moduleName).append("_").append(m.getX()).append("\r\n");
                     configBuilder.append("PositionY_").append(moduleName).append("_").append(m.getY()).append("\r\n");
                 }
-                for (final Setting s : m.getSettings()) {
+                for (final Value s : m.getSettings()) {
                     if (s instanceof BoolValue) {
                         configBuilder.append("BoolValue_").append(moduleName).append("_").append(s.name).append("_").append(((BoolValue) s).enabled).append("\r\n");
                     }

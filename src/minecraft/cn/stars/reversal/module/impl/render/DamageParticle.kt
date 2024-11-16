@@ -7,8 +7,8 @@ import cn.stars.reversal.event.impl.WorldEvent
 import cn.stars.reversal.module.Category
 import cn.stars.reversal.module.Module
 import cn.stars.reversal.module.ModuleInfo
-import cn.stars.reversal.setting.impl.BoolValue
-import cn.stars.reversal.setting.impl.NumberValue
+import cn.stars.reversal.value.impl.BoolValue
+import cn.stars.reversal.value.impl.NumberValue
 import cn.stars.reversal.util.render.ColorUtil
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.EntityLivingBase

@@ -1,5 +1,6 @@
 package cn.stars.addons.skinlayers3d;
 
+import cn.stars.reversal.module.impl.addons.SkinLayers3D;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.entity.*;
@@ -30,7 +31,7 @@ public class HeadLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
             return;
         }
         if (HeadLayerFeatureRenderer.mc.thePlayer.getPositionVector().squareDistanceTo(player.getPositionVector()) >
-                ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt() * ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt()) {
+                ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt() * ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt()) {
             return;
         }
         final ItemStack itemStack = player.getEquipmentInSlot(1);
@@ -48,7 +49,7 @@ public class HeadLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
             return;
         }
         if (HeadLayerFeatureRenderer.mc.thePlayer.getPositionVector().squareDistanceTo(player.getPositionVector()) >
-                ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt() * ModuleInstance.getNumber("SkinLayers3D", "Level Of Detail Distance").getInt()) {
+                ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt() * ModuleInstance.getModule(SkinLayers3D.class).renderDistance.getInt()) {
             return;
         }
         final ItemStack itemStack = player.getEquipmentInSlot(1);
@@ -76,7 +77,7 @@ public class HeadLayerFeatureRenderer implements LayerRenderer<AbstractClientPla
         if (this.playerRenderer.getMainModel().bipedHead.isHidden) {
             return;
         }
-        float voxelSize = ModuleInstance.getNumber("SkinLayers3D", "Head Voxel Size").getFloat();
+        float voxelSize = ModuleInstance.getModule(SkinLayers3D.class).headVoxelSize.getFloat();
         GlStateManager.pushMatrix();
         if (abstractClientPlayer.isSneaking()) {
             GlStateManager.translate(0.0f, 0.2f, 0.0f);

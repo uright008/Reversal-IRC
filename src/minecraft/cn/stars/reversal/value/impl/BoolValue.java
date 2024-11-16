@@ -1,19 +1,20 @@
-package cn.stars.reversal.setting.impl;
+package cn.stars.reversal.value.impl;
 
 import cn.stars.reversal.module.Module;
-import cn.stars.reversal.setting.Setting;
+import cn.stars.reversal.value.Value;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BoolValue extends Setting {
+public class BoolValue extends Value {
 
     public boolean enabled;
 
     public BoolValue(final String name, final Module parent, final boolean enabled) {
         this.name = name;
         parent.settings.add(this);
+        parent.settingsMap.put(name.toLowerCase(), this);
         this.enabled = enabled;
     }
 

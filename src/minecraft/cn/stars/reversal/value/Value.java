@@ -1,4 +1,4 @@
-package cn.stars.reversal.setting;
+package cn.stars.reversal.value;
 
 import cn.stars.reversal.util.animation.rise.Animation;
 import cn.stars.reversal.util.animation.rise.Easing;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Setting {
+public abstract class Value {
     public String name;
     public boolean hidden;
 

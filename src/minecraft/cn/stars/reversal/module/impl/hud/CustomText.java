@@ -10,9 +10,9 @@ import cn.stars.reversal.font.FontManager;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.BoolValue;
-import cn.stars.reversal.setting.impl.NoteValue;
-import cn.stars.reversal.setting.impl.NumberValue;
+import cn.stars.reversal.value.impl.BoolValue;
+import cn.stars.reversal.value.impl.NoteValue;
+import cn.stars.reversal.value.impl.NumberValue;
 import cn.stars.reversal.util.render.ThemeType;
 import cn.stars.reversal.util.render.ThemeUtil;
 

@@ -35,7 +35,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     public void initGui()
     {
         reversalSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiReversalSettings(this)),
-                "Reversal设置", "e", true, 12, 40, 11);
+                "Reversal设置", "e", true, 12, 30, 11);
         int i = 0;
         this.field_146442_a = I18n.format("options.title", new Object[0]);
 

@@ -4,7 +4,7 @@ import cn.stars.reversal.event.impl.PreMotionEvent;
 import cn.stars.reversal.module.Category;
 import cn.stars.reversal.module.Module;
 import cn.stars.reversal.module.ModuleInfo;
-import cn.stars.reversal.setting.impl.ModeValue;
+import cn.stars.reversal.value.impl.ModeValue;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
