@@ -52,7 +52,7 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.8.0";
+    public static final String VERSION = "v0.8.1";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.DEVELOPMENT;

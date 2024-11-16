@@ -93,7 +93,7 @@ public class GuiConnecting extends GuiScreen
                         return;
                     }
 
-                    GuiConnecting.logger.error((String)"Couldn\'t connect to server", (Throwable)unknownhostexception);
+                    GuiConnecting.logger.error((String)"Couldn't connect to server", (Throwable)unknownhostexception);
                     GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", "Unknown host")));
                 }
                 catch (Exception exception)
@@ -103,7 +103,7 @@ public class GuiConnecting extends GuiScreen
                         return;
                     }
 
-                    GuiConnecting.logger.error((String)"Couldn\'t connect to server", (Throwable)exception);
+                    GuiConnecting.logger.error((String)"Couldn't connect to server", (Throwable)exception);
                     String s = exception.toString();
 
                     if (inetaddress != null)
@@ -229,9 +229,9 @@ public class GuiConnecting extends GuiScreen
 
         regular24Bold.drawCenteredString("正在连接至服务器...", this.width / 2, this.height / 2 + 70, new Color(220, 220, 220, 220).getRGB());
 
-        regular20.drawString("Open Source PVP Client By Stars.", 4, height - 30, new Color(220, 220, 220, 240).getRGB());
-        regular20.drawString("https://www.github.com/RinoRika/Reversal", 4, height - 20, new Color(220, 220, 220, 240).getRGB());
-        regular20.drawString(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), 4, height - 10, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("Open Source PVP Client By Stars.", 4, height - 30, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString("https://www.github.com/RinoRika/Reversal", 4, height - 20, new Color(220, 220, 220, 240).getRGB());
+        regular16.drawString(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), 4, height - 10, new Color(220, 220, 220, 240).getRGB());
 
         UI_BLOOM_RUNNABLES.forEach(Runnable::run);
         UI_BLOOM_RUNNABLES.clear();

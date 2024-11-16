@@ -21,7 +21,7 @@ import java.awt.*;
 
 @ModuleInfo(name = "Hotbar", chineseName = "物品栏", description = "Change game hotbar", chineseDescription = "改变物品栏", category = Category.RENDER)
 public class Hotbar extends Module {
-    private final ModeValue mode = new ModeValue("Mode", this, "Vanilla", "Vanilla", "Modern");
+    public final ModeValue mode = new ModeValue("Mode", this, "Vanilla", "Vanilla", "Modern");
     private static final ResourceLocation widgetsTexPath = new ResourceLocation("textures/gui/widgets.png");
     private ScaledResolution sr = new ScaledResolution(mc);
     EntityPlayer entityplayer;
@@ -38,8 +38,7 @@ public class Hotbar extends Module {
             entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
             sr = event.getScaledResolution();
             animation.run(entityplayer.inventory.currentItem * 20);
-            if (mode.getMode().equals("Vanilla")) renderMinecraftTooltip(sr, event.getPartialTicks());
-            else renderModernTooltip(sr, event.getPartialTicks());
+            if (!mode.getMode().equals("Vanilla")) renderModernTooltip(sr, event.getPartialTicks());
         }
     }
 
@@ -58,7 +57,8 @@ public class Hotbar extends Module {
         RenderUtil.roundedRectangle(x - 91 + animation.getValue(), sr.getScaledHeight() - 22, 22, 22, 3, new Color(0,0,0,80));
     }
 
-    private void renderMinecraftTooltip(ScaledResolution sr, float partialTicks) {
+    public void renderMinecraftTooltip(ScaledResolution sr, float partialTicks) {
+        if (entityplayer == null) return;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(widgetsTexPath);
         int x = sr.getScaledWidth() / 2;
@@ -84,6 +84,7 @@ public class Hotbar extends Module {
     }
 
     private void renderModernTooltip(ScaledResolution sr, float partialTicks) {
+        if (entityplayer == null) return;
         float f = Gui.zLevel;
         Gui.zLevel = -90.0F;
         drawSection(sr);

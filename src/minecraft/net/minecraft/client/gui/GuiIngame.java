@@ -5,6 +5,7 @@ import cn.stars.reversal.event.impl.PreBlurEvent;
 import cn.stars.reversal.event.impl.Render2DEvent;
 import cn.stars.reversal.module.impl.hud.PostProcessing;
 import cn.stars.reversal.module.impl.render.Crosshair;
+import cn.stars.reversal.module.impl.render.Hotbar;
 import cn.stars.reversal.ui.hud.Hud;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
@@ -137,7 +138,7 @@ public class GuiIngame extends Gui {
         }
         else
         {
-            // Hotbar.java
+            if (ModuleInstance.getModule(Hotbar.class).mode.getMode().equals("Vanilla")) ModuleInstance.getModule(Hotbar.class).renderMinecraftTooltip(scaledresolution, partialTicks);
         }
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -308,7 +309,7 @@ public class GuiIngame extends Gui {
         {
             this.renderScoreboard(scoreobjective1, scaledresolution);
         } else {
-            cn.stars.reversal.module.impl.hud.Scoreboard scoreboardModule = (cn.stars.reversal.module.impl.hud.Scoreboard) ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class);
+            cn.stars.reversal.module.impl.hud.Scoreboard scoreboardModule = ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class);
             scoreboardModule.setWidth(0);
             scoreboardModule.setHeight(0);
         }
