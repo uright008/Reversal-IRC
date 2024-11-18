@@ -4,6 +4,7 @@ import cn.stars.reversal.GameInstance;
 import cn.stars.reversal.event.impl.PreBlurEvent;
 import cn.stars.reversal.event.impl.Render2DEvent;
 import cn.stars.reversal.module.impl.hud.PostProcessing;
+import cn.stars.reversal.module.impl.render.AppleSkin;
 import cn.stars.reversal.module.impl.render.Crosshair;
 import cn.stars.reversal.module.impl.render.Hotbar;
 import cn.stars.reversal.ui.hud.Hud;
@@ -600,7 +601,7 @@ public class GuiIngame extends Gui {
 
             this.playerHealth = i;
             int j = this.lastPlayerHealth;
-            this.rand.setSeed((long)(this.updateCounter * 312871));
+            this.rand.setSeed(this.updateCounter * 312871L);
             boolean flag1 = false;
             FoodStats foodstats = entityplayer.getFoodStats();
             int k = foodstats.getFoodLevel();
@@ -856,6 +857,8 @@ public class GuiIngame extends Gui {
                     }
                 }
             }
+
+            ModuleInstance.getModule(AppleSkin.class).renderOverlay();
 
             this.mc.mcProfiler.endSection();
         }

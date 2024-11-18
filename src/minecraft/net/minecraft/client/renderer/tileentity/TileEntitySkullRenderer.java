@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntitySkull>
 {
@@ -81,7 +82,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
 
                         if (map.containsKey(Type.SKIN))
                         {
-                            resourcelocation = minecraft.getSkinManager().loadSkin((MinecraftProfileTexture)map.get(Type.SKIN), Type.SKIN);
+                            resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
                         }
                         else
                         {
@@ -134,7 +135,9 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
         GlStateManager.enableAlpha();
-        modelbase.render((Entity)null, 0.0F, 0.0F, 0.0F, p_180543_5_, 0.0F, f);
+        modelbase.render(null, 0.0F, 0.0F, 0.0F, p_180543_5_, 0.0F, f);
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.popMatrix();
 
         if (p_180543_8_ >= 0)

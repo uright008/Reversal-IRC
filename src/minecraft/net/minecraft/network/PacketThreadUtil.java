@@ -1,5 +1,6 @@
 package net.minecraft.network;
 
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S07PacketRespawn;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
@@ -19,7 +20,13 @@ public class PacketThreadUtil
                 public void run()
                 {
                     PacketThreadUtil.clientPreProcessPacket(p_180031_0_);
-                    p_180031_0_.processPacket(p_180031_1_);
+                    if (p_180031_1_ instanceof NetHandlerPlayClient) {
+                        if (((NetHandlerPlayClient) p_180031_1_).getNetworkManager().isChannelOpen()) {
+                            p_180031_0_.processPacket(p_180031_1_);
+                        }
+                    } else {
+                        p_180031_0_.processPacket(p_180031_1_);
+                    }
                 }
             });
             throw ThreadQuickExitException.INSTANCE;

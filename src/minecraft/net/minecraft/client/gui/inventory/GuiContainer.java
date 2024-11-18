@@ -276,6 +276,10 @@ public abstract class GuiContainer extends GuiScreen
             for (Slot slot : this.dragSplittingSlots)
             {
                 ItemStack itemstack1 = itemstack.copy();
+                if (this.dragSplittingButton == 2) {
+                    this.dragSplittingRemnant = mc.thePlayer.inventory.getItemStack().getMaxStackSize();
+                    return;
+                }
                 int i = slot.getStack() == null ? 0 : slot.getStack().stackSize;
                 Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack1, i);
 

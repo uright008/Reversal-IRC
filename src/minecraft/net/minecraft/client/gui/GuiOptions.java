@@ -32,6 +32,11 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         this.game_settings_1 = p_i1046_2_;
     }
 
+    @Override
+    public void onGuiClosed() {
+        mc.gameSettings.saveOptions();
+    }
+
     public void initGui()
     {
         reversalSettings = new CuriosityTextButton(10, 10, 120, 35, () -> mc.displayGuiScreen(new GuiReversalSettings(this)),

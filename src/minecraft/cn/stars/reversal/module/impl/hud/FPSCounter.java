@@ -94,7 +94,7 @@ public class FPSCounter extends Module {
             }
         }
         if (mode.getMode().equals("Minecraft")) {
-            mc.fontRendererObj.drawStringWithShadow(fpsString, getX() + 2, getY() + 2, new Color(250, 250, 250, 200).getRGB());
+            mc.fontRendererObj.drawStringWithShadow(fpsString, getX() + 2, getY() + 2, Color.WHITE.getRGB());
         } else {
             icon.drawString("e", getX() + 4, getY() + 4, new Color(250, 250, 250, 200).getRGB());
             psm.drawString(fpsString, getX() + 17, getY() + 2.5f, new Color(250, 250, 250, 200).getRGB());

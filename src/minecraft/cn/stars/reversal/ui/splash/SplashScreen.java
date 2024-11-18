@@ -266,8 +266,7 @@ public class SplashScreen {
     public static void setProgress(int progress, String detail) {
         SplashScreen.progress = progress;
         SplashScreen.progressText = detail;
-        int width = Display.getWidth();
-
+        mc.updateDisplay();
         ReversalLogger.info("[Startup] " + progress + "% - " + detail);
     }
 

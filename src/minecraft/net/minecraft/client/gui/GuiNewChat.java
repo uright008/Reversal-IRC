@@ -1,11 +1,13 @@
 package net.minecraft.client.gui;
 
 import cn.stars.reversal.module.impl.hud.ClientSettings;
+import cn.stars.reversal.module.impl.misc.Chat;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.collect.Lists;
 import java.util.Iterator;
 import java.util.List;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +26,8 @@ public class GuiNewChat extends Gui
     private final List<ChatLine> drawnChatLines = Lists.<ChatLine>newArrayList();
     private int scrollPos;
     private boolean isScrolled;
+    private String lastMessage = "";
+    private int sameMessageAmount, line;
 
     public GuiNewChat(Minecraft mcIn)
     {
@@ -82,7 +86,7 @@ public class GuiNewChat extends Gui
                             {
                                 int i2 = 0;
                                 int j2 = -i1 * 9;
-                                if (ModuleInstance.getModule(ClientSettings.class).chatBackground.isEnabled())
+                                if (ModuleInstance.getModule(Chat.class).chatBackground.isEnabled())
                                     drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
@@ -124,9 +128,31 @@ public class GuiNewChat extends Gui
         this.sentMessages.clear();
     }
 
-    public void printChatMessage(IChatComponent chatComponent)
-    {
-        this.printChatMessageWithOptionalDeletion(chatComponent, 0);
+    public void printChatMessage(IChatComponent component) {
+        if (ModuleInstance.getModule(Chat.class).combineRepeatedMsg.enabled) {
+
+            if (component.getUnformattedText().equals(lastMessage)) {
+                mc.ingameGUI.getChatGUI().deleteChatLine(line);
+                sameMessageAmount++;
+                lastMessage = component.getUnformattedText();
+                component.appendText(ChatFormatting.WHITE + " [x" + sameMessageAmount + "]");
+            } else {
+                sameMessageAmount = 1;
+                lastMessage = component.getUnformattedText();
+            }
+
+            line++;
+
+            if (line > 256) {
+                line = 0;
+            }
+
+            printChatMessageWithOptionalDeletion(component, line);
+
+            return;
+        }
+
+        printChatMessageWithOptionalDeletion(component, 0);
     }
 
     public void printChatMessageWithOptionalDeletion(IChatComponent chatComponent, int chatLineId)

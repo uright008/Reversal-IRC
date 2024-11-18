@@ -104,7 +104,7 @@ public class CPSCounter extends Module {
             }
         }
         if (mode.getMode().equals("Minecraft")) {
-            mc.fontRendererObj.drawStringWithShadow(cpsString, getX() + 2, getY() + 2, new Color(250, 250, 250, 200).getRGB());
+            mc.fontRendererObj.drawStringWithShadow(cpsString, getX() + 2, getY() + 2, Color.WHITE.getRGB());
         } else {
             icon.drawString("P", getX() + 3.5, getY() + 2, new Color(250, 250, 250, 200).getRGB());
             psm.drawString(cpsString, getX() + 17, getY() + 2.5f, new Color(250, 250, 250, 200).getRGB());

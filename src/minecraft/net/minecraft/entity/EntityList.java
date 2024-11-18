@@ -88,7 +88,7 @@ public class EntityList
     public static final Map<Integer, EntityList.EntityEggInfo> entityEggs = Maps.<Integer, EntityList.EntityEggInfo>newLinkedHashMap();
     private static final Map<Class<? extends Entity>, Constructor<?>> MICROOPTIMIZATIONS$CLASS_TO_CONSTRUCTOR = new HashMap<>();
 
-    private static Constructor<?> microoptimizations$getConstructor(Class<? extends Entity> entityClass) {
+    private static Constructor<?> getConstructor(Class<? extends Entity> entityClass) {
         Constructor<?> constructor = MICROOPTIMIZATIONS$CLASS_TO_CONSTRUCTOR.get(entityClass);
         if (constructor == null) {
             try {
@@ -146,7 +146,7 @@ public class EntityList
 
             if (oclass != null)
             {
-                entity = (Entity) microoptimizations$getConstructor(oclass).newInstance(new Object[] {worldIn});
+                entity = (Entity) getConstructor(oclass).newInstance(new Object[] {worldIn});
             }
         }
         catch (Exception exception)
@@ -173,7 +173,7 @@ public class EntityList
 
             if (oclass != null)
             {
-                entity = (Entity) microoptimizations$getConstructor(oclass).newInstance(new Object[] {worldIn});
+                entity = (Entity) getConstructor(oclass).newInstance(new Object[] {worldIn});
             }
         }
         catch (Exception exception)
@@ -203,7 +203,7 @@ public class EntityList
 
             if (oclass != null)
             {
-                entity = (Entity) microoptimizations$getConstructor(oclass).newInstance(new Object[] {worldIn});
+                entity = (Entity) getConstructor(oclass).newInstance(new Object[] {worldIn});
             }
         }
         catch (Exception exception)

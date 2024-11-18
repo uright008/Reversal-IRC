@@ -4,7 +4,15 @@
  */
 package cn.stars.reversal;
 
+import cn.stars.reversal.module.Module;
+import cn.stars.reversal.module.impl.addons.Optimization;
+import cn.stars.reversal.module.impl.addons.SkinLayers3D;
+import cn.stars.reversal.module.impl.hud.ClientSettings;
 import cn.stars.reversal.module.impl.hud.HUD;
+import cn.stars.reversal.module.impl.hud.PostProcessing;
+import cn.stars.reversal.module.impl.misc.Chat;
+import cn.stars.reversal.module.impl.render.ClickGui;
+import cn.stars.reversal.module.impl.render.HurtCam;
 import cn.stars.reversal.ui.curiosity.impl.CuriosityMainMenu;
 import cn.stars.reversal.ui.notification.NotificationType;
 import cn.stars.reversal.util.ReversalLogger;
@@ -161,7 +169,9 @@ public class RainyAPI {
         }
     }
 
-    // 保存客户端设置
+    /**
+     * 保存客户端设置
+     */
     public static void processAPI() {
         final StringBuilder clientBuilder = new StringBuilder();
         clientBuilder.append("DisableShader_").append(isShaderCompatibility).append("\r\n");
@@ -173,5 +183,12 @@ public class RainyAPI {
         clientBuilder.append("CustomText_").append(Reversal.customText).append("\r\n");
 
         FileUtil.saveFile("client.txt", true, clientBuilder.toString());
+    }
+
+    /**
+     * 客户端特殊功能
+     */
+    public static boolean isSpecialModule(Module module) {
+        return module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof HurtCam || module instanceof Optimization || module instanceof Chat;
     }
 }

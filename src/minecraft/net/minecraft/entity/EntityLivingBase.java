@@ -1,6 +1,7 @@
 package net.minecraft.entity;
 
 import cn.stars.reversal.module.impl.misc.Protocol;
+import cn.stars.reversal.module.impl.render.Animations;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -1135,7 +1137,8 @@ public abstract class EntityLivingBase extends Entity
 
     private int getArmSwingAnimationEnd()
     {
-        return this.isPotionActive(Potion.digSpeed) ? 6 - (1 + this.getActivePotionEffect(Potion.digSpeed).getAmplifier()) * 1 : (this.isPotionActive(Potion.digSlowdown) ? 6 + (1 + this.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
+        int targetValue = this.isPotionActive(Potion.digSpeed) ? 6 - (1 + this.getActivePotionEffect(Potion.digSpeed).getAmplifier()) : (this.isPotionActive(Potion.digSlowdown) ? 6 + (1 + this.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
+        return targetValue * ModuleInstance.getModule(Animations.class).swingSpeed.getInt();
     }
 
     public void swingItem()
@@ -1902,6 +1905,10 @@ public abstract class EntityLivingBase extends Entity
 
     public Vec3 getLook(float partialTicks)
     {
+        if (this instanceof EntityPlayerSP) {
+            return super.getLook(partialTicks);
+        }
+
         if (partialTicks == 1.0F)
         {
             return this.getVectorForRotation(this.rotationPitch, this.rotationYawHead);

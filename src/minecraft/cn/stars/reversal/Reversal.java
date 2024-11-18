@@ -6,6 +6,7 @@ import cn.stars.addons.optimization.util.FastTrig;
 import cn.stars.reversal.command.Command;
 import cn.stars.reversal.command.CommandManager;
 import cn.stars.reversal.command.impl.*;
+import cn.stars.reversal.command.impl.Chat;
 import cn.stars.reversal.config.DefaultHandler;
 import cn.stars.reversal.config.MusicHandler;
 import cn.stars.reversal.module.*;
@@ -34,6 +35,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ChatComponentText;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import tech.skidonion.obfuscator.annotations.NativeObfuscation;
 import tech.skidonion.obfuscator.annotations.StringEncryption;
@@ -52,10 +54,10 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.8.1";
+    public static final String VERSION = "v0.9.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
-    public static final Branch BRANCH = Branch.DEVELOPMENT;
+    public static final Branch BRANCH = Branch.PRE_RELEASE;
 
     // Init
     public static Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -98,7 +100,7 @@ public class Reversal {
 
         //    Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH) + " | " + RainyAPI.getRandomTitle());
         //    Display.setTitle(NAME + " " + VERSION + " " + Branch.getBranchName(BRANCH));
-            Display.setTitle(NAME + " (" + VERSION + "/" + BRANCH.name() + "/RainyAPI)");
+            Display.setTitle(NAME + " (" + VERSION + "/" + BRANCH.name() + "/RainyAPI/LWJGL " + Sys.getVersion() + ")");
             ReversalLogger.info("Client loaded successfully.");
             ReversalLogger.info(NAME + " " + VERSION + " (Minecraft " + MINECRAFT_VERSION + "), made with love by " + AUTHOR + ".");
         } catch (Exception e) {
@@ -249,6 +251,7 @@ public class Reversal {
             // Movement
             new Sprint(),
             // Misc
+            new cn.stars.reversal.module.impl.misc.Chat(),
             new ClientSpoofer(),
             new CustomName(),
             new NoAchievements(),
@@ -264,6 +267,7 @@ public class Reversal {
             new SmallPlayer(),
             // Render
             new Animations(),
+            new AppleSkin(),
             new BAHalo(),
             new BetterFont(),
             new BlockOverlay(),

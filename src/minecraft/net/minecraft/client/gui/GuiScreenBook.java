@@ -462,6 +462,7 @@ public class GuiScreenBook extends GuiScreen
                 if (ichatcomponent1 != null)
                 {
                     this.handleComponentHover(ichatcomponent1, mouseX, mouseY);
+                    return;
                 }
             }
         }

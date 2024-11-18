@@ -408,20 +408,11 @@ public class ItemRenderer
                                         GlStateManager.rotate(-y * 20.0F, 1.0F, 0.5F, 1.0F);
                                         break;
                                     }
-                                    case "Stab": {
-                                        GlStateManager.translate(0.6f, 0.3f, -0.6f + -convertedProgress * 0.7);
-                                        GlStateManager.rotate(6090, 0.0f, 0.0f, 0.1f);
-                                        GlStateManager.rotate(6085, 0.0f, 0.1f, 0.0f);
-                                        GlStateManager.rotate(6110, 0.1f, 0.0f, 0.0f);
-                                        transformFirstPersonItem(0.0F, 0.0f);
-                                        break;
-                                    }
                                     case "Spin": {
                                         transformFirstPersonItem(f, 0.0F);
                                         GlStateManager.translate(0, 0.2F, -1);
                                         GlStateManager.rotate(-59, -1, 0, 3);
-                                        // Don't make the /2 a float it causes the animation to break
-                                        GlStateManager.rotate(-(System.currentTimeMillis() / 2 % 360), 1, 0, 0.0F);
+                                        GlStateManager.rotate(-(System.currentTimeMillis() / 2f % 360), 1, 0, 0.0F);
                                         GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
                                         break;
                                     }
@@ -442,46 +433,6 @@ public class ItemRenderer
                                         GlStateManager.translate(0.0F, 0.3F, -0.0F);
                                         GlStateManager.rotate(-convertedProgress * 31.0F, 1.0F, 0.0F, 2.0F);
                                         GlStateManager.rotate(-convertedProgress * 33.0F, 1.5F, (convertedProgress / 1.1F), 0.0F);
-                                        break;
-                                    }
-                                    case "Wood": {
-                                        transformFirstPersonItem(f / 2.0F, 0.0F);
-                                        GlStateManager.translate(0.0F, 0.3F, -0.0F);
-                                        GlStateManager.rotate(-convertedProgress * 30.0F, 1.0F, 0.0F, 2.0F);
-                                        GlStateManager.rotate(-convertedProgress * 44.0F, 1.5F, (convertedProgress / 1.2F), 0.0F);
-                                        break;
-                                    }
-                                    case "Swong": {
-                                        transformFirstPersonItem(f / 2.0F, f1);
-                                        GlStateManager.rotate(convertedProgress * 30.0F / 2.0F, -convertedProgress, -0.0F, 9.0F);
-                                        GlStateManager.rotate(convertedProgress * 40.0F, 1.0F, -convertedProgress / 2.0F, -0.0F);
-                                        GlStateManager.translate(0.0F, 0.2F, 0.0F);
-                                        break;
-                                    }
-                                    case "Chill": {
-                                        transformFirstPersonItem(f / 1.5F, 0.0F);
-                                        GlStateManager.translate(-0.05F, 0.3F, 0.3F);
-                                        GlStateManager.rotate(-convertedProgress * 140.0F, 8.0F, 0.0F, 8.0F);
-                                        GlStateManager.rotate(convertedProgress * 90.0F, 8.0F, 0.0F, 8.0F);
-                                        break;
-                                    }
-                                    case "Komorebi": {
-                                        transformFirstPersonItem(-0.25F, 1.0F + convertedProgress / 10.0F);
-                                        GL11.glRotated(-convertedProgress * 25.0F, 1.0F, 0.0F, 0.0F);
-                                        break;
-                                    }
-                                    case "Rhys": {
-                                        GlStateManager.translate(0.41F, -0.25F, -0.5555557F);
-                                        GlStateManager.translate(0.0F, 0, 0.0F);
-                                        GlStateManager.rotate(35.0F, 0f, 1.5F, 0.0F);
-                                        final float sinned = MathHelper.sin(f1 * f1 / 64 * (float) Math.PI);
-                                        GlStateManager.rotate(sinned * -5.0F, 0.0F, 0.0F, 0.0F);
-                                        GlStateManager.rotate(convertedProgress * -12.0F, 0.0F, 0.0F, 1.0F);
-                                        GlStateManager.rotate(convertedProgress * -65.0F, 1.0F, 0.0F, 0.0F);
-                                        break;
-                                    }
-                                    case "Allah": {
-                                        GlStateManager.translate(-0.3F, -0.1F, -0.0F);
                                         break;
                                     }
                                     case "SlideDown": {

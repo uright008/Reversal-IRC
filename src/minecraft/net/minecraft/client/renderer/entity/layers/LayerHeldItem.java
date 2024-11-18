@@ -1,7 +1,11 @@
 package net.minecraft.client.renderer.entity.layers;
 
+import cn.stars.reversal.Reversal;
+import cn.stars.reversal.module.impl.render.Animations;
+import cn.stars.reversal.util.misc.ModuleInstance;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -9,6 +13,7 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -48,6 +53,23 @@ public class LayerHeldItem implements LayerRenderer<EntityLivingBase>
 
             Item item = itemstack.getItem();
             Minecraft minecraft = Minecraft.getMinecraft();
+
+            if (!ModuleInstance.getModule(Animations.class).swordMode.getMode().equals("None")) {
+                AbstractClientPlayer player = null;
+                if (entitylivingbaseIn instanceof AbstractClientPlayer) {
+                    player = (AbstractClientPlayer) entitylivingbaseIn;
+                }
+                EnumAction var26;
+                if (player != null && player.getItemInUseCount() > 0) {
+                    var26 = itemstack.getItemUseAction();
+                    if (var26 == EnumAction.BLOCK) {
+                        GlStateManager.translate(0.05F, 0.0F, -0.1F);
+                        GlStateManager.rotate(-50.0F, 0.0F, 1.0F, 0.0F);
+                        GlStateManager.rotate(-10.0F, 1.0F, 0.0F, 0.0F);
+                        GlStateManager.rotate(-60.0F, 0.0F, 0.0F, 1.0F);
+                    }
+                }
+            }
 
             if (item instanceof ItemBlock && Block.getBlockFromItem(item).getRenderType() == 2)
             {

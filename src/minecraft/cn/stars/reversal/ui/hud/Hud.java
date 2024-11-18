@@ -133,6 +133,9 @@ public class Hud implements GameInstance {
             if (module.getModuleInfo().category().equals(Category.RENDER) && ModuleInstance.getModule(Arraylist.class).noRenderModules.isEnabled())
                 continue;
 
+            if (RainyAPI.isSpecialModule(module))
+                continue;
+
             switch (mode) {
                 case "Minecraft": {
                     finalX = arraylistX - mc.fontRendererObj.getStringWidth(name);

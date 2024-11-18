@@ -13,7 +13,7 @@ public class ItemFood extends Item
     private final float saturationModifier;
     private final boolean isWolfsFavoriteMeat;
     private boolean alwaysEdible;
-    private int potionId;
+    public int potionId;
     private int potionDuration;
     private int potionAmplifier;
     private float potionEffectProbability;

@@ -23,9 +23,8 @@ public final class ClientSettings extends Module {
     public final NumberValue indexTimes = new NumberValue("Index Times", this, 1, 1, 10, 0.1);
     public final NumberValue indexSpeed = new NumberValue("Index Speed", this, 1, 1, 5, 0.1);
 
-    public final BoolValue chatBackground = new BoolValue("Chat Background", this, false);
     public final BoolValue showNotifications = new BoolValue("Show Notifications", this, false);
-    public final BoolValue chineseDescription = new BoolValue("Chinese Description", this, true);
+    public final BoolValue chinese = new BoolValue("Chinese", this, false);
     public final BoolValue thunderHack = new BoolValue("ThunderHack", this, true);
     public final BoolValue empathyGlow = new BoolValue("Empathy Glow", this, true);
 

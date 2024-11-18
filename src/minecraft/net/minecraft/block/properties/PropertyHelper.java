@@ -2,15 +2,18 @@ package net.minecraft.block.properties;
 
 import com.google.common.base.Objects;
 
-public abstract class PropertyHelper<T extends Comparable<T>> implements IProperty<T>
+public abstract class PropertyHelper<T extends Comparable<T>> implements IProperty<T>, ICachedHashcode
 {
     private final Class<T> valueClass;
     private final String name;
+
+    private int cachedHashcode;
 
     protected PropertyHelper(String name, Class<T> valueClass)
     {
         this.valueClass = valueClass;
         this.name = name;
+        this.cachedHashcode = this.hashCode();
     }
 
     public String getName()
@@ -47,6 +50,11 @@ public abstract class PropertyHelper<T extends Comparable<T>> implements IProper
 
     public int hashCode()
     {
-        return 31 * this.valueClass.hashCode() + this.name.hashCode();
+        return this.cachedHashcode;
+    }
+
+    @Override
+    public int getCachedHashcode() {
+        return this.cachedHashcode;
     }
 }

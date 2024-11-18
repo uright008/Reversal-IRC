@@ -57,8 +57,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
             }
 
             nbttagcompound = CompressedStreamTools.read(datainputstream);
-
-            datainputstream.close();
+            datainputstream.close(); // Closing input stream to prevent resource leaks
         }
 
         return this.checkedReadChunkFromNBT(worldIn, x, z, nbttagcompound);

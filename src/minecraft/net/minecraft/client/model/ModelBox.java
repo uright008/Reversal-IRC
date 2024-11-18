@@ -1,6 +1,7 @@
 package net.minecraft.client.model;
 
 import net.minecraft.client.renderer.WorldRenderer;
+import org.lwjgl.opengl.GL11;
 
 public class ModelBox
 {
@@ -144,14 +145,20 @@ public class ModelBox
 
     public void render(WorldRenderer renderer, float scale)
     {
-        for (int i = 0; i < this.quadList.length; ++i)
-        {
-            TexturedQuad texturedquad = this.quadList[i];
+        boolean b = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 
-            if (texturedquad != null)
-            {
-                texturedquad.draw(renderer, scale);
-            }
+        if(b) {
+            draw( renderer, scale);
+        }else {
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            draw(renderer, scale);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+        }
+    }
+
+    private void draw(WorldRenderer renderer, float scale) {
+        for (TexturedQuad texturedQuad : this.quadList) {
+            texturedQuad.draw(renderer, scale);
         }
     }
 

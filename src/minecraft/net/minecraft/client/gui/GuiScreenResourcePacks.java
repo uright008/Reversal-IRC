@@ -11,11 +11,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.ResourcePackListEntry;
-import net.minecraft.client.resources.ResourcePackListEntryDefault;
-import net.minecraft.client.resources.ResourcePackListEntryFound;
-import net.minecraft.client.resources.ResourcePackRepository;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.*;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,12 +116,12 @@ public class GuiScreenResourcePacks extends GuiScreen
                     }
                     catch (IOException ioexception1)
                     {
-                        logger.error((String)"Couldn\'t open file", (Throwable)ioexception1);
+                        logger.error("Couldn't open file", ioexception1);
                     }
                 }
                 else if (Util.getOSType() == Util.EnumOS.WINDOWS)
                 {
-                    String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", new Object[] {s});
+                    String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", s);
 
                     try
                     {
@@ -132,7 +130,7 @@ public class GuiScreenResourcePacks extends GuiScreen
                     }
                     catch (IOException ioexception)
                     {
-                        logger.error((String)"Couldn\'t open file", (Throwable)ioexception);
+                        logger.error("Couldn't open file", ioexception);
                     }
                 }
 
@@ -141,12 +139,12 @@ public class GuiScreenResourcePacks extends GuiScreen
                 try
                 {
                     Class<?> oclass = Class.forName("java.awt.Desktop");
-                    Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
-                    oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {file1.toURI()});
+                    Object object = oclass.getMethod("getDesktop", new Class[0]).invoke(null);
+                    oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, file1.toURI());
                 }
                 catch (Throwable throwable)
                 {
-                    logger.error("Couldn\'t open link", throwable);
+                    logger.error("Couldn't open link", throwable);
                     flag = true;
                 }
 
@@ -171,6 +169,15 @@ public class GuiScreenResourcePacks extends GuiScreen
                     }
 
                     Collections.reverse(list);
+
+                    ResourcePackRepository repository = Minecraft.getMinecraft().getResourcePackRepository();
+                    for (ResourcePackRepository.Entry entry : repository.getRepositoryEntries()) {
+                        IResourcePack current = repository.getResourcePackInstance();
+                        if (current == null || !entry.getResourcePackName().equals(current.getPackName())) {
+                            entry.closeResourcePack();
+                        }
+                    }
+                    
                     this.mc.getResourcePackRepository().setRepositories(list);
                     this.mc.gameSettings.resourcePacks.clear();
                     this.mc.gameSettings.incompatibleResourcePacks.clear();

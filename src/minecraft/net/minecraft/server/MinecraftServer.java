@@ -542,29 +542,23 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         }
     }
 
-    private void addFaviconToStatusResponse(ServerStatusResponse response)
-    {
+    private void addFaviconToStatusResponse(ServerStatusResponse response) {
         File file1 = this.getFile("server-icon.png");
 
-        if (file1.isFile())
-        {
+        if (file1.isFile()) {
             ByteBuf bytebuf = Unpooled.buffer();
 
-            try
-            {
+            try {
                 BufferedImage bufferedimage = ImageIO.read(file1);
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide", new Object[0]);
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high", new Object[0]);
                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
                 response.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
-            }
-            catch (Exception exception)
-            {
-                logger.error((String)"Couldn\'t load server icon", (Throwable)exception);
-            }
-            finally
-            {
+                bytebuf1.release(); // Injected code to release bytebuf1 as per MixinMinecraftServer
+            } catch (Exception exception) {
+                logger.error("Couldn't load server icon", exception);
+            } finally {
                 bytebuf.release();
             }
         }

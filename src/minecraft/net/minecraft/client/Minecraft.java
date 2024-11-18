@@ -400,6 +400,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.setInitialDisplayMode();
         this.createDisplay();
         OpenGlHelper.initializeTextures();
+        SplashScreen.init();
+        SplashScreen.setProgress(10, "Minecraft - Display");
         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);
         this.framebufferMc.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
         this.registerMetadataSerializers();
@@ -410,8 +412,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-        SplashScreen.init();
-        SplashScreen.setProgress(10, "Minecraft - Init");
+        SplashScreen.setProgress(20, "Minecraft - Init");
 
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
@@ -425,7 +426,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
-        SplashScreen.setProgress(20, "Minecraft - Font Renderer");
+        SplashScreen.setProgress(30, "Minecraft - Font Renderer");
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.foliageColorReloadListener = new FoliageColorReloadListener();
         this.grassColorReloadListener = new GrassColorReloadListener();
@@ -443,7 +444,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mouseHelper = new MouseHelper();
         SplashScreen.setProgress(40, "Reversal - Client Loading");
         Reversal.start();
-        SplashScreen.setProgress(75, "Minecraft - GL Startup");
+        SplashScreen.setProgress(60, "Minecraft - GL Startup");
         this.checkGLError("Pre startup");
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(7425);
@@ -457,7 +458,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         GlStateManager.loadIdentity();
         GlStateManager.matrixMode(5888);
         this.checkGLError("Startup");
-        SplashScreen.setProgress(100, "Minecraft - Textures");
+        SplashScreen.setProgress(65, "Minecraft - Texture Renderer");
         this.textureMapBlocks = new TextureMap("textures");
         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
@@ -465,20 +466,26 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
         this.modelManager = new ModelManager(this.textureMapBlocks);
         this.mcResourceManager.registerReloadListener(this.modelManager);
+        SplashScreen.setProgress(70, "Minecraft - Item Renderer");
         this.renderItem = new RenderItem(this.renderEngine, this.modelManager);
         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
         this.itemRenderer = new ItemRenderer(this);
         this.mcResourceManager.registerReloadListener(this.renderItem);
+        SplashScreen.setProgress(75, "Minecraft - Entity Renderer");
         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.entityRenderer);
+        SplashScreen.setProgress(80, "Minecraft - Block Renderer Dispatcher");
         this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.gameSettings);
         this.mcResourceManager.registerReloadListener(this.blockRenderDispatcher);
+        SplashScreen.setProgress(85, "Minecraft - Render Global");
         this.renderGlobal = new RenderGlobal(this);
         this.mcResourceManager.registerReloadListener(this.renderGlobal);
+        SplashScreen.setProgress(90, "Minecraft - Finalizing");
         this.guiAchievement = new GuiAchievement(this);
         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
+        SplashScreen.setProgress(100, "Minecraft - GUI");
         this.ingameGUI = new GuiIngame(this);
 
         if (this.serverName != null)
@@ -1388,7 +1395,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             {
                 this.inGameHasFocus = true;
                 this.mouseHelper.grabMouseCursor();
-                this.displayGuiScreen((GuiScreen)null);
+                for (KeyBinding keyBinding : gameSettings.keyBindings) {
+                    try {
+                        KeyBinding.setKeyBindState(keyBinding.getKeyCode(), keyBinding.getKeyCode() < 256 && Keyboard.isKeyDown(keyBinding.getKeyCode()));
+                    }
+                    catch (Exception ignored) {}
+                }
+                this.displayGuiScreen(null);
                 this.leftClickCounter = 10000;
             }
         }
@@ -2279,12 +2292,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void loadWorld(WorldClient worldClientIn, String loadingMessage)
     {
-        if (worldClientIn != this.theWorld) {
-            this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
-        }
         final WorldEvent e = new WorldEvent(worldClientIn);
         e.call();
 
+        if (worldClientIn != this.theWorld) {
+            this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
+        }
         if (worldClientIn == null)
         {
             NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
@@ -2355,7 +2368,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.thePlayer = null;
         }
 
-        System.gc();
         this.systemTime = 0L;
     }
 

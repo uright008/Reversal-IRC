@@ -3,10 +3,8 @@ package net.minecraft.world.chunk;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.block.Block;
@@ -16,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -510,15 +509,12 @@ public class Chunk
         }
     }
 
-    public IBlockState getBlockState(final BlockPos pos)
-    {
+    public IBlockState getBlockState(BlockPos pos) {
         final int y = pos.getY();
-
-        if (y >= 0 && y >> 4 < this.getBlockStorageArray().length) {
+        if (y >= 0 && y >> 4 < this.entityLists.length) {
             final ExtendedBlockStorage storage = this.getBlockStorageArray()[y >> 4];
             if (storage != null) return storage.get(pos.getX() & 15, y & 15, pos.getZ() & 15);
         }
-
         return Blocks.air.getDefaultState();
     }
 
@@ -856,6 +852,18 @@ public class Chunk
 
     public void onChunkLoad()
     {
+        List<EntityPlayer> players = new ArrayList<>();
+
+        for (final ClassInheritanceMultiMap<Entity> classinheritancemultimap : entityLists) {
+            for (final EntityPlayer player : classinheritancemultimap.getByClass(EntityPlayer.class)) {
+                players.add(player);
+            }
+        }
+
+        for (final EntityPlayer player : players) {
+            worldObj.updateEntityWithOptionalForce(player, false);
+        }
+
         this.isChunkLoaded = true;
         this.worldObj.addTileEntities(this.chunkTileEntityMap.values());
 

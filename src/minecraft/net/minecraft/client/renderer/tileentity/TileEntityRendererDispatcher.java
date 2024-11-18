@@ -120,8 +120,8 @@ public class TileEntityRendererDispatcher
 
             if (flag)
             {
-                RenderHelper.enableStandardItemLighting();
                 int i = this.worldObj.getCombinedLight(tileentityIn.getPos(), 0);
+                RenderHelper.enableGUIStandardItemLighting();
                 int j = i % 65536;
                 int k = i / 65536;
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);

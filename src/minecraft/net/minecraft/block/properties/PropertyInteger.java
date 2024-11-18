@@ -65,9 +65,7 @@ public class PropertyInteger extends PropertyHelper<Integer>
 
     public int hashCode()
     {
-        int i = super.hashCode();
-        i = 31 * i + this.allowedValues.hashCode();
-        return i;
+        return ((ICachedHashcode) this).getCachedHashcode();
     }
 
     public static PropertyInteger create(String name, int min, int max)

@@ -17,10 +17,10 @@ public class Animations extends Module {
     public final NumberValue itemZ = new NumberValue("Item Z", this, 0.0, -1, 1, 0.1);
     public final NumberValue blockY = new NumberValue("Block Y", this, 0.1, -1, 1, 0.1);
     public final NumberValue itemScale = new NumberValue("Item Scale", this, 1.0, 0.1, 2, 0.1);
+    public final NumberValue swingSpeed = new NumberValue("Swing Speed", this, 1.0, 1, 5, 1);
     public final BoolValue swordSwing = new BoolValue("Sword Swing", this, true);
     public final ModeValue swordMode = new ModeValue("Sword Mode", this, "1.7",
-            "None" ,"1.7", "Smooth", "Stab", "Spin", "Leaked", "Old", "Exhibition", "Wood", "Swong", "Chill",
-            "Komorebi", "Rhys", "Allah", "SlideDown", "Liquid");
+            "None" ,"1.7", "Smooth", "Spin", "Leaked", "Old", "Exhibition", "SlideDown", "Liquid");
     public final BoolValue foodSwing = new BoolValue("Food Swing", this, true);
     public final BoolValue drinkSwing = new BoolValue("Drink Swing", this, true);
     public final BoolValue bowSwing = new BoolValue("Bow Swing", this, true);

@@ -578,6 +578,7 @@ public class WorldRenderer
 
     public void endVertex()
     {
+        this.rawIntBuffer.position(this.rawIntBuffer.position() + this.vertexFormat.getIntegerSize());
         ++this.vertexCount;
         this.growBuffer(this.vertexFormat.getIntegerSize());
         this.vertexFormatIndex = 0;
@@ -712,6 +713,7 @@ public class WorldRenderer
             this.isDrawing = false;
             this.byteBuffer.position(0);
             this.byteBuffer.limit(this.getBufferSize() * 4);
+            this.rawIntBuffer.position(0);
         }
     }
 

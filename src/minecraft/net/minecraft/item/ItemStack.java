@@ -46,7 +46,7 @@ public final class ItemStack
     private boolean canDestroyCacheResult;
     private Block canPlaceOnCacheBlock;
     private boolean canPlaceOnCacheResult;
-    private String patcher$cachedDisplayName;
+    private String cachedDisplayName;
 
     public ItemStack(Block blockIn)
     {
@@ -469,8 +469,8 @@ public final class ItemStack
 
     public String getDisplayName()
     {
-        if (patcher$cachedDisplayName != null) {
-            return patcher$cachedDisplayName;
+        if (cachedDisplayName != null) {
+            return cachedDisplayName;
         }
         String s = this.getItem().getItemStackDisplayName(this);
 
@@ -483,13 +483,13 @@ public final class ItemStack
                 s = nbttagcompound.getString("Name");
             }
         }
-        patcher$cachedDisplayName = s;
+        cachedDisplayName = s;
         return s;
     }
 
     public ItemStack setStackDisplayName(String displayName)
     {
-        patcher$cachedDisplayName = null;
+        cachedDisplayName = null;
         if (this.stackTagCompound == null)
         {
             this.stackTagCompound = new NBTTagCompound();
