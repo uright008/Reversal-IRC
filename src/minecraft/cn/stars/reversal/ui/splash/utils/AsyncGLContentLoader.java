@@ -1,5 +1,6 @@
 package cn.stars.reversal.ui.splash.utils;
 
+import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.ui.splash.SplashScreen;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
@@ -93,7 +94,7 @@ public class AsyncGLContentLoader {
     public static void initLoader() {
 
         for (int i = 0; i < threadCount; i++) {
-            long subWindow = AsyncContextUtils.createSubWindow();
+            long subWindow = RainyAPI.createSubWindow();
 
             LoaderThread thread = new LoaderThread(subWindow);
             thread.setName("GL Content Loader " + i);

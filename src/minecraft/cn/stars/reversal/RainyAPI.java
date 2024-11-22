@@ -28,12 +28,16 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 
 @Getter
 @Setter
@@ -46,6 +50,10 @@ public class RainyAPI {
     public static User ircUser = null;
     public static boolean hasJavaFX = true;
 
+    /**
+     * 客户端设置
+     * 在GuiReversalSettings里可以对选项进行修改，在游戏启动时使用loadAPI()加载保存的数据
+     */
     public static int backgroundId = 9;
     public static boolean isShaderCompatibility = false;
     public static boolean isViaCompatibility = false;
@@ -58,13 +66,13 @@ public class RainyAPI {
 
     // 崩溃报告随机语录
     public static final String[] wittyCrashReport = new String[]
-            {"玩原神玩的", "粥批差不多得了", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
+            {"玩原神玩的", "原神?启动!", "哇真的是你啊", "你怎么似了", "加瓦,救一下啊", "Bomb has been planted",
                     "闭嘴!我的父亲在mojang工作,他可以使你的mInEcRaFt崩溃", "纪狗气死我了", "致敬传奇耐崩王MiNeCrAfT", "你的客户端坠机了",
                     "It's been a long day without you my friend", "回来吧牢端", "为了你,我变成狼人模样"};
     // 随机标题
     public static final String[] wittyTitle = new String[]
             {"我们因缘分而相遇，因共同而相聚。", "人生有欢喜也有悲剧,一切已是命中注定。", "在那灿烂的群星中,总有一颗代表我正与你对视。", "东风初开小桃杏，万里故人应有情。", "躲进小楼成一统，管他冬夏与春秋。", "庭院深深花初开，欲寄相思无雁来。", "十年生死两茫茫，不思量，自难忘。",
-            "When hope fade into less, it becomes hopeless.", "去年花里逢君别，今日花开又一年。", "曾经沧海难为水，除却巫山不是云。", "vanitas vanitatum et omnia vanitas."};
+            "When hope fade into less, it becomes hopeless.", "去年花里逢君别，今日花开又一年。", "曾经沧海难为水，除却巫山不是云。", "vanitas vanitatum et omnia vanitas.", "你为什么要花时间维护一个没人用的客户端?"};
 
     public static String getRandomTitle() {
         return wittyTitle[RandomUtil.INSTANCE.nextInt(0, wittyTitle.length)];
@@ -81,7 +89,8 @@ public class RainyAPI {
 
     /**
      * LWJGL3: 初始化GLFW
-     * 获取窗口GL Context, 允许使用GLFW操作
+     * 获取窗口GL Context, 允许使用GLFW操作, 防止杂鱼无法得到上下文导致JVM崩溃
+     * @author Stars
      */
     public static void setupGLFW() {
         window = Display.getWindow();
@@ -90,7 +99,8 @@ public class RainyAPI {
 
     /**
      * 检测窗口拖入文件
-     * 在主菜单接受MP4文件并替换背景
+     * 在主菜单检测是否有.mp4文件拖入并替换背景
+     * @author Stars
      */
     public static void setupDrag() {
         GLFW.glfwSetDropCallback(window, (window, count, names) -> {
@@ -190,5 +200,10 @@ public class RainyAPI {
      */
     public static boolean isSpecialModule(Module module) {
         return module instanceof ClickGui || module instanceof PostProcessing || module instanceof ClientSettings || module instanceof SkinLayers3D || module instanceof HurtCam || module instanceof Optimization || module instanceof Chat;
+    }
+
+    public static long createSubWindow() {
+        GLFW.glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        return GLFW.glfwCreateWindow(1, 1, "SubWindow", MemoryUtil.NULL, Display.getWindow());
     }
 }

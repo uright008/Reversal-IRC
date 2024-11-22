@@ -1,12 +1,16 @@
 package cn.stars.reversal.util.render;
 
 import cn.stars.reversal.GameInstance;
+import cn.stars.reversal.module.impl.hud.CPSCounter;
 import cn.stars.reversal.module.impl.hud.Keystrokes;
 import cn.stars.reversal.module.impl.hud.PostProcessing;
 import cn.stars.reversal.util.misc.ModuleInstance;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 
@@ -15,9 +19,16 @@ public class KeystrokeUtil implements GameInstance {
     int ticksSinceLastPress;
 
     KeyBinding key;
+    int mouseButton;
+    boolean forMouse;
 
     public void setUpKey(final KeyBinding k) {
         key = k;
+        forMouse = false;
+    }
+    public void setUpMouse(int m) {
+        mouseButton = m;
+        forMouse = true;
     }
 
     public void drawButton(final double x, final double y, final double width) {
@@ -37,27 +48,56 @@ public class KeystrokeUtil implements GameInstance {
                 break;
         }
 
-        if (key == Minecraft.getMinecraft().gameSettings.keyBindJump) {
-            RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, new Color(255, 255, 255, 15 + ticksSinceLastPress));
-            regular18.drawString(keyName, (float) (x - 2), (float) (y + 15 - 4), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
-            if (shadow) {
-                MODERN_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
-                });
+        if (ModuleInstance.getModule(Keystrokes.class).modeValue.getMode().equals("Modern")) {
+            if (key == Minecraft.getMinecraft().gameSettings.keyBindJump) {
+                RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, new Color(255, 255, 255, 15 + ticksSinceLastPress));
+                regular18.drawString(keyName, (float) (x - 2), (float) (y + 15 - 4), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                if (shadow) {
+                    MODERN_BLOOM_RUNNABLES.add(() -> {
+                        RenderUtil.roundedRectangle(x - width - 2, y, width * 3 + 8, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
+                    });
+                }
+            } else {
+                RenderUtil.roundedRectangle(x, y, width, width, 2, new Color(255, 255, 255, 15 + ticksSinceLastPress));
+                regular18.drawString(keyName, (float) (x + 13 + offset), (float) (y + 15 - 4.5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                if (shadow) {
+                    MODERN_BLOOM_RUNNABLES.add(() -> {
+                        RenderUtil.roundedRectangle(x, y, width, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
+                    });
+                }
             }
         } else {
-            RenderUtil.roundedRectangle(x, y, width, width, 2, new Color(255,255,255, 15 + ticksSinceLastPress));
-            regular18.drawString(keyName, (float) (x + 13 + offset), (float) (y + 15 - 4.5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
-            if (shadow) {
-                MODERN_BLOOM_RUNNABLES.add(() -> {
-                    RenderUtil.roundedRectangle(x, y, width, width, 2, key.isKeyDown() ? new Color(255, 255, 255, 255) : new Color(255, 255, 255, 15));
-                });
+            if (key == Minecraft.getMinecraft().gameSettings.keyBindJump) {
+                RenderUtil.rect(x - width - 2, y, width * 3 + 8, width - 6, new Color(ticksSinceLastPress, ticksSinceLastPress, ticksSinceLastPress, 100));
+                mc.fontRendererObj.drawStringWithShadow(keyName, (float) (x), (float) (y + 15 - 7.5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+            } else {
+                RenderUtil.rect(x, y, width, width, new Color(ticksSinceLastPress, ticksSinceLastPress, ticksSinceLastPress, 100));
+                mc.fontRendererObj.drawStringWithShadow(keyName, (float) (x + 10), (float) (y + 15 - 5), key.isKeyDown() && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+            }
+        }
+    }
+
+    public void drawButtonForMouse(final double x, final double y, final double width) {
+        final boolean rainbow = ModuleInstance.getModule(Keystrokes.class).rainbow.enabled;
+        final boolean shadow = ModuleInstance.getModule(PostProcessing.class).bloom.enabled;
+        final int leftCps = ModuleInstance.getModule(CPSCounter.class).Lclicks.size();
+        final int rightCps = ModuleInstance.getModule(CPSCounter.class).Rclicks.size();
+
+        if (ModuleInstance.getModule(Keystrokes.class).modeValue.getMode().equals("Minecraft")) {
+            RenderUtil.rect(x, y, width + 15, width, new Color(ticksSinceLastPress, ticksSinceLastPress, ticksSinceLastPress, 100));
+            if (ModuleInstance.getModule(Keystrokes.class).showCpsValue.enabled) {
+                mc.fontRendererObj.drawStringWithShadow(mouseButton == 0 ? "LMB" : "RMB", (float) (x + 12), (float) (y + 15 - 7), Mouse.isButtonDown(mouseButton) && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(0.5f, 0.5f, 0.5f);
+                mc.fontRendererObj.drawStringWithShadow((mouseButton == 0 ? leftCps : rightCps) + " CPS", (float) (x + 14) * 2, (float) (y + 15 + 2) * 2, Mouse.isButtonDown(mouseButton) && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
+                GlStateManager.popMatrix();
+            } else {
+                mc.fontRendererObj.drawStringWithShadow(mouseButton == 0 ? "LMB" : "RMB", (float) (x + 12), (float) (y + 15 - 4.5), Mouse.isButtonDown(mouseButton) && rainbow ? ThemeUtil.getThemeColor(ThemeType.GENERAL).getRGB() : -1);
             }
         }
     }
 
     public void updateAnimations() {
-
         if (key == null)
             return;
 
@@ -74,17 +114,17 @@ public class KeystrokeUtil implements GameInstance {
 
     }
 
-    public void blur(final double x, final double y, final double width) {
+    public void updateAnimationsForMouse() {
+        if (Mouse.isButtonDown(mouseButton))
+            ticksSinceLastPress += 5;
+        else
+            ticksSinceLastPress -= 5;
 
-        if (key == null)
-            return;
+        if (ticksSinceLastPress > 150)
+            ticksSinceLastPress = 150;
 
-        final String keyName = Keyboard.getKeyName(key.getKeyCode());
-        if (key == Minecraft.getMinecraft().gameSettings.keyBindJump) {
-            regular18.drawString(keyName, (float) (x), (float) (y + 15 - 2.5), Color.BLACK.hashCode());
-        } else {
-            RenderUtil.circle(x, y, width, Color.BLACK);
-        }
+        if (ticksSinceLastPress < 0)
+            ticksSinceLastPress = 0;
 
     }
 

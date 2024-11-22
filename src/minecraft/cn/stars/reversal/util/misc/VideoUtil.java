@@ -50,6 +50,11 @@ public class VideoUtil {
         thread.start();
     }
 
+    public static void retryIfFailed(File file) throws InterruptedException, FFmpegFrameGrabber.Exception {
+        Thread.sleep(1000L);
+        init(file);
+    }
+
     public static void stop() {
         try {
             ReversalLogger.info("[*] Stopping video player...");

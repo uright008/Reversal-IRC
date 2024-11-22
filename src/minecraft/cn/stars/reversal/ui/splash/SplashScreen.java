@@ -1,8 +1,7 @@
 package cn.stars.reversal.ui.splash;
 
-import cn.stars.reversal.font.FontManager;
+import cn.stars.reversal.RainyAPI;
 import cn.stars.reversal.ui.splash.impl.FadeInOutLoadingScreen;
-import cn.stars.reversal.ui.splash.utils.AsyncContextUtils;
 import cn.stars.reversal.ui.splash.utils.AsyncGLContentLoader;
 import cn.stars.reversal.ui.splash.utils.Interpolations;
 import cn.stars.reversal.ui.splash.utils.Rect;
@@ -64,9 +63,10 @@ public class SplashScreen {
     @SneakyThrows
     public static void init() {
         // INIT LOL
-        subWindow = AsyncContextUtils.createSubWindow();
+        subWindow = RainyAPI.createSubWindow();
         GLFW.glfwMakeContextCurrent(subWindow);
         GL.createCapabilities();
+        mc.updateDisplay();
 
         splashThread = new Thread(new Runnable() {
             @Override
@@ -235,6 +235,8 @@ public class SplashScreen {
             GLFW.glfwMakeContextCurrent(Display.getWindow());
             GL.createCapabilities();
             hide();
+
+            mc.updateDisplay();
         }
     }
 
@@ -243,6 +245,7 @@ public class SplashScreen {
 //        hide = false;
         waiting = false;
         alpha = 1;
+        mc.updateDisplay();
 
         synchronized (finishLock) {
             finishLock.notifyAll();

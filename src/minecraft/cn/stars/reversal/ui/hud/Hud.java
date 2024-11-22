@@ -32,6 +32,8 @@ public class Hud implements GameInstance {
     public static final KeystrokeUtil left = new KeystrokeUtil();
     public static final KeystrokeUtil right = new KeystrokeUtil();
     public static final KeystrokeUtil space = new KeystrokeUtil();
+    public static final KeystrokeUtil lmb = new KeystrokeUtil();
+    public static final KeystrokeUtil rmb = new KeystrokeUtil();
     static ModuleComparator moduleComparator = new ModuleComparator();
 
     public static void renderKeyStrokes() {
@@ -62,7 +64,15 @@ public class Hud implements GameInstance {
 
             space.setUpKey(mc.gameSettings.keyBindJump);
             space.updateAnimations();
-            space.drawButton(x - 2, y + distanceBetweenButtons * 2, width);
+            space.drawButton(x - 2, y + distanceBetweenButtons * 3, width);
+
+            lmb.setUpMouse(0);
+            lmb.updateAnimationsForMouse();
+            lmb.drawButtonForMouse(x - distanceBetweenButtons, y + distanceBetweenButtons * 2, width);
+
+            rmb.setUpMouse(1);
+            rmb.updateAnimationsForMouse();
+            rmb.drawButtonForMouse(x + distanceBetweenButtons - 15, y + distanceBetweenButtons * 2, width);
         }
     }
 

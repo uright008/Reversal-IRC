@@ -32,8 +32,8 @@ public class CPSCounter extends Module {
         this.Lclicks = new ArrayList<>();
         this.Rclicks = new ArrayList<>();
     }
-    private final List<Long> Lclicks;
-    private final List<Long> Rclicks;
+    public final List<Long> Lclicks;
+    public final List<Long> Rclicks;
     MFont psm = FontManager.getPSM(18);
     MFont icon = FontManager.getIcon(24);
 

@@ -54,7 +54,7 @@ import java.io.IOException;
 public class Reversal {
     // Client Info
     public static final String NAME = "Reversal";
-    public static final String VERSION = "v0.9.0";
+    public static final String VERSION = "v0.11.0";
     public static final String MINECRAFT_VERSION = "1.8.9";
     public static final String AUTHOR = "Stars";
     public static final Branch BRANCH = Branch.PRE_RELEASE;
@@ -209,7 +209,11 @@ public class Reversal {
                 FileUtil.unpackFile(videoFile, "assets/minecraft/reversal/background.mp4");
             }
 
-            VideoUtil.init(videoFile);
+            try {
+                VideoUtil.init(videoFile);
+            } catch (Exception e) {
+                VideoUtil.retryIfFailed(videoFile);
+            }
         } catch (final Exception e) {
             ReversalLogger.error("An error has occurred while loading Reversal: ", e);
         }

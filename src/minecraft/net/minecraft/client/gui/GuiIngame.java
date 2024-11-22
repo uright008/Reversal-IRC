@@ -80,7 +80,6 @@ public class GuiIngame extends Gui {
     private int lastPlayerHealth = 0;
     private long lastSystemTime = 0L;
     private long healthUpdateCounter = 0L;
-    private PostProcessing postProcessing;
 
     public GuiIngame(Minecraft mcIn) {
         this.mc = mcIn;
@@ -308,11 +307,14 @@ public class GuiIngame extends Gui {
 
         if (scoreobjective1 != null)
         {
-            this.renderScoreboard(scoreobjective1, scaledresolution);
+            if (ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class).enabled) {
+                ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class).renderScoreboard(scoreobjective1, scaledresolution);
+            } else {
+                renderScoreboard(scoreobjective1, scaledresolution);
+            }
         } else {
-            cn.stars.reversal.module.impl.hud.Scoreboard scoreboardModule = ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class);
-            scoreboardModule.setWidth(0);
-            scoreboardModule.setHeight(0);
+            ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class).setWidth(0);
+            ModuleInstance.getModule(cn.stars.reversal.module.impl.hud.Scoreboard.class).setHeight(0);
         }
 
         GlStateManager.enableBlend();
@@ -340,8 +342,7 @@ public class GuiIngame extends Gui {
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();
 
-        postProcessing = (PostProcessing) ModuleInstance.getModule(PostProcessing.class);
-        postProcessing.blurScreen();
+        ModuleInstance.getModule(PostProcessing.class).blurScreen();
 
         final Render2DEvent render2DEvent = new Render2DEvent(partialTicks, scaledresolution);
         render2DEvent.call();
