@@ -21,7 +21,6 @@ import cn.stars.reversal.module.impl.world.*;
 import cn.stars.reversal.music.MusicManager;
 import cn.stars.reversal.ui.clickgui.modern.MMTClickGUI;
 import cn.stars.reversal.ui.clickgui.modern.ModernClickGUI;
-import cn.stars.reversal.ui.hud.Hud;
 import cn.stars.reversal.ui.notification.NotificationManager;
 import cn.stars.reversal.ui.theme.GuiTheme;
 import cn.stars.reversal.util.ReversalLogger;
@@ -42,7 +41,6 @@ import tech.skidonion.obfuscator.annotations.StringEncryption;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Copyright (c) 2024 Stars, All rights reserved.
@@ -295,6 +293,7 @@ public class Reversal {
             new Particles(),
             new SpeedGraph(),
             new Wings(),
+            new NoOverlay(),
             // Hud
             new ClientSettings(), // Special Module
             new PostProcessing(), // Special Module

@@ -6,6 +6,7 @@ import cn.stars.reversal.module.impl.addons.FreeLook;
 import cn.stars.reversal.module.impl.misc.Protocol;
 import cn.stars.reversal.module.impl.render.Animations;
 import cn.stars.reversal.module.impl.render.HurtCam;
+import cn.stars.reversal.module.impl.render.NoOverlay;
 import cn.stars.reversal.module.impl.world.TimeTraveller;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import cn.stars.reversal.util.render.particle.ParticleManager;
@@ -979,7 +980,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             if (this.mc.gameSettings.thirdPersonView == 0 && !flag)
             {
-                this.itemRenderer.renderOverlays(p_renderHand_1_);
+                if(!ModuleInstance.getModule(NoOverlay.class).isEnabled()) this.itemRenderer.renderOverlays(p_renderHand_1_);
                 this.hurtCameraEffect(p_renderHand_1_);
             }
 
