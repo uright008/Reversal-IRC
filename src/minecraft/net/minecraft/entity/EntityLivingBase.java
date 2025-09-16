@@ -1,7 +1,9 @@
 package net.minecraft.entity;
 
 import cn.stars.reversal.module.impl.misc.Protocol;
+import cn.stars.reversal.module.impl.movement.NoJumpDelay;
 import cn.stars.reversal.module.impl.render.Animations;
+import cn.stars.reversal.module.impl.render.NoOverlay;
 import cn.stars.reversal.util.misc.ModuleInstance;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -1768,7 +1770,7 @@ public abstract class EntityLivingBase extends Entity
             {
                 this.handleJumpLava();
             }
-            else if (this.onGround && this.jumpTicks == 0)
+            else if (this.onGround && (this.jumpTicks == 0 || ModuleInstance.getModule(NoJumpDelay.class).isEnabled()))
             {
                 this.jump();
                 this.jumpTicks = 10;

@@ -252,6 +252,7 @@ public class Reversal {
             new NoClickDelay(),
             // Movement
             new Sprint(),
+            new NoJumpDelay(),
             // Misc
             new cn.stars.reversal.module.impl.misc.Chat(),
             new ClientSpoofer(),
